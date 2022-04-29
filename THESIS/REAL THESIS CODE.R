@@ -4,13 +4,11 @@ library(dplyr)
 #tidyverse gets the data into the format you want; when you run statistics you aren't using tidyverse
 #"~" denotes an equation
 #hold "control" and "return" to run line
-library(minpack.lm)
-library(nlstools)
-library(grid)
-library(gridExtra)
 
-###INCORPORATE SURVIVAL AS A PERCENT? ADD AS NEW COLUMN BASED ON PHYTO (0-3)
-###WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
+#library(minpack.lm)
+#library(nlstools)
+#library(grid)
+#library(gridExtra)
 
 setwd("~/Desktop/Repositories/mega-competition/THESIS/")  
 
@@ -36,7 +34,7 @@ Neighbor_Clean <- Neighbor_Clean %>%
   mutate(Survival = Phyto.. / 3) 
 #created survival percentage
 
-colnames(Neighbor_Clean) <- c("Block..", "Plot..", "Sub..", "Treatment", "Background", "Density","Sample.Name", "Back.Ind..", "Phyto..","CRCO","ERBO","FIGA","GAMU","HYGL","SIGA","other","X") 
+colnames(Neighbor_Clean) <- c("Block..", "Plot..", "Sub..", "Treatment", "Background", "Density","Sample.Name", "Back.Ind..", "Phyto..","ERBO","FIGA","GAMU","HYGL","SIGA","other","X", "Weed_Sum", "Survival") 
 
 Focal_All<-left_join(Neighbor_Clean,Focal,by=c("Block..", "Plot..", "Treatment", "Sample.Name"))
 #"c"=character vector (list)
@@ -97,6 +95,20 @@ ggplot(TWIL_focal,aes(x=Treatment, y=Adjusted.Biomass))+
 
 ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()
+
+###WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
+
+ggplot(Focal_All, aes(x=Weed_Sum, y=Survival, color=Treatment))+
+  geom_boxplot()
+
+ggplot(Focal_All, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
+  geom_boxplot()
+
+ggplot(Focal_All, aes(x=Weed_Sum, y=Survival, color=Treatment))+
+  geom_point()
+
+ggplot(Focal_All, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
+  geom_point()
 
 #means and stand.devs
 #what significance tests should i run
