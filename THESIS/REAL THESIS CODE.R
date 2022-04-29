@@ -8,13 +8,12 @@ library(nlstools)
 library(grid)
 library(gridExtra)
 
-###FIX THAT ONE WEIRD ROW
-###INCORPORATE SURVIVAL AS A PERCENT? ADD AS NEW COLUMN BASED ON PHYTO (0-3), FILTER OUT ONLY TWIL AND THIR, LEAVE OUT CRCO BUT CREATE NEW COLUMN WITH TOTAL WEED COUNT
+###INCORPORATE SURVIVAL AS A PERCENT? ADD AS NEW COLUMN BASED ON PHYTO (0-3), LEAVE OUT CRCO BUT CREATE NEW COLUMN WITH TOTAL WEED COUNT
 ###WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND      BOXPLOT;COLOR BY TREATMENT OR INOCULATION
 
 setwd("~/Desktop/Repositories/mega-competition/THESIS/")  
 
-Focal<- read.csv("Focal_Individuals.csv")
+Focal<- read.csv("Focal Individuals.csv")
 Back<- read.csv("Background_Individuals.csv")
 Neighbor<- read.csv("Neighborhood_Counts.csv")
 
@@ -24,6 +23,12 @@ colnames(Focal)
 Neighbor_Clean<-Neighbor%>%
   filter(Phytometer!="BRHO", Phytometer!="PLER", Phytometer!="BHRO")
 #"!=" does not equal 
+
+Neighbor_Clean$CRCO <- NULL
+head(Neighbor_Clean)
+#removed CRCO
+
+Neighbor_Clean$Weed_Sum <-rowSums(Neighbor_Clean[ ,c(10,11,12,13,14,15)], na.rm=TRUE)
 
 colnames(Neighbor_Clean) <- c("Block..", "Plot..", "Sub..", "Treatment", "Background", "Density","Sample.Name", "Back.Ind..", "Phyto..","CRCO","ERBO","FIGA","GAMU","HYGL","SIGA","other","X") 
 
