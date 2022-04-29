@@ -98,17 +98,20 @@ ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
 
 ###WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
 
-ggplot(Focal_All, aes(x=Weed_Sum, y=Survival, color=Treatment))+
+ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Treatment))+
   geom_boxplot()
 
-ggplot(Focal_All, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
+ggplot(THIR_focal, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
   geom_boxplot()
 
-ggplot(Focal_All, aes(x=Weed_Sum, y=Survival, color=Treatment))+
+ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Treatment))+
   geom_point()
 
-ggplot(Focal_All, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
+ggplot(THIR_focal, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
   geom_point()
+
+#separate by TWIL and THIR
+#run anova 
 
 #means and stand.devs
 #what significance tests should i run
