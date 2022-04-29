@@ -1,4 +1,5 @@
 library(tidyverse)
+library(dplyr)
 #%>% is called a pipeline=(ex.name%>%) it will continue whatever you want to apply to the initial data frame
 #tidyverse gets the data into the format you want; when you run statistics you aren't using tidyverse
 #"~" denotes an equation
@@ -8,8 +9,8 @@ library(nlstools)
 library(grid)
 library(gridExtra)
 
-###INCORPORATE SURVIVAL AS A PERCENT? ADD AS NEW COLUMN BASED ON PHYTO (0-3), LEAVE OUT CRCO BUT CREATE NEW COLUMN WITH TOTAL WEED COUNT
-###WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND      BOXPLOT;COLOR BY TREATMENT OR INOCULATION
+###INCORPORATE SURVIVAL AS A PERCENT? ADD AS NEW COLUMN BASED ON PHYTO (0-3)
+###WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
 
 setwd("~/Desktop/Repositories/mega-competition/THESIS/")  
 
@@ -29,6 +30,11 @@ head(Neighbor_Clean)
 #removed CRCO
 
 Neighbor_Clean$Weed_Sum <-rowSums(Neighbor_Clean[ ,c(10,11,12,13,14,15)], na.rm=TRUE)
+#summed weed counts
+
+Neighbor_Clean <- Neighbor_Clean %>% 
+  mutate(Survival = Phyto.. / 3) 
+#created survival percentage
 
 colnames(Neighbor_Clean) <- c("Block..", "Plot..", "Sub..", "Treatment", "Background", "Density","Sample.Name", "Back.Ind..", "Phyto..","CRCO","ERBO","FIGA","GAMU","HYGL","SIGA","other","X") 
 
