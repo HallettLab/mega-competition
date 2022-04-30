@@ -96,7 +96,9 @@ ggplot(TWIL_focal,aes(x=Treatment, y=Adjusted.Biomass))+
 ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()
 
-###WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
+
+###HELP
+#WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
 
 ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Treatment))+
   geom_boxplot()
@@ -104,10 +106,13 @@ ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Treatment))+
 ggplot(THIR_focal, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
   geom_boxplot()
 
-ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Treatment))+
+ggplot(Focal_All, aes(x=Survival, y=Weed_Sum, color=Treatment))+
   geom_point()
 
 ggplot(THIR_focal, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
+  geom_point()
+
+ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
   geom_point()
 
 #separate by TWIL and THIR
