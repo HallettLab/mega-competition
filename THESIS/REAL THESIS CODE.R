@@ -57,9 +57,11 @@ summary(aov_THIR_focal)
 #look at "Pr(>F) for the p-value
 #"*" in Signif.codes mean less than 0.05
 #"." in Signif.codes means "marginally significant"
+#####CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0772)
 
 aov_THIR_focal_add<-aov(Adjusted.Biomass~Treatment+Innoculation, data=THIR_focal)
 summary(aov_THIR_focal_add)
+######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0887)
 
 ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
   geom_boxplot()
@@ -85,9 +87,11 @@ summary(aov_TWIL_focal)
 #look at "Pr(>F) for the p-value
 #"*" in Signif.codes mean less than 0.05
 #"." in Signif.codes means "marginally significant"
+######CONCLUSION: NO SIGNIFICANCE
 
 aov_TWIL_focal_add<-aov(Adjusted.Biomass~Treatment+Innoculation, data=TWIL_focal)
 summary(aov_TWIL_focal_add)
+######CONCLUSION: NO SIGNIFICANCE
 
 ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass))+
   geom_boxplot()
@@ -98,8 +102,108 @@ ggplot(TWIL_focal,aes(x=Treatment, y=Adjusted.Biomass))+
 ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()
 
-aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum*Survival, data=TWIL_focal)
+#WEED STATS
+
+#TWIL
+aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum*Innoculation, data=TWIL_focal)
 summary(aov_TWIL_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum+Innoculation, data=TWIL_focal)
+summary(aov_TWIL_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum*Treatment, data=TWIL_focal)
+summary(aov_TWIL_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum+Treatment, data=TWIL_focal)
+summary(aov_TWIL_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_weed<-aov(Survival~Weed_Sum*Innoculation, data=TWIL_focal)
+summary(aov_TWIL_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_weed<-aov(Survival~Weed_Sum+Innoculation, data=TWIL_focal)
+summary(aov_TWIL_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_weed<-aov(Survival~Weed_Sum*Treatment, data=TWIL_focal)
+summary(aov_TWIL_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_weed<-aov(Survival~Weed_Sum+Treatment, data=TWIL_focal)
+summary(aov_TWIL_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+
+#THIR
+aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Innoculation, data=THIR_focal)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum+Innoculation, data=THIR_focal)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Treatment, data=THIR_focal)
+summary(aov_THIR_weed)
+######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.072)
+
+aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum+Treatment, data=THIR_focal)
+summary(aov_THIR_weed)
+######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0649)
+
+aov_THIR_weed<-aov(Survival~Weed_Sum*Innoculation, data=THIR_focal)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_THIR_weed<-aov(Survival~Weed_Sum+Innoculation, data=THIR_focal)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_THIR_weed<-aov(Survival~Weed_Sum*Treatment, data=THIR_focal)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_THIR_weed<-aov(Survival~Weed_Sum+Treatment, data=THIR_focal)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+
+#BACK STATS
+
+#BACK STATS NOTES:what to comapare with treatment/if anything, create a separate TWIL and THIR background table, create adjusted biomass row
+
+#TWIL
+
+aov_TWIL_back<-aov(Adjusted.Biomass~Treatment, data=Back)
+summary(aov_TWIL_back)
+######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.072)
+
+aov_TWIL_back<-aov(Adjusted.Biomass~Weed_Sum+Treatment, data=Back)
+summary(aov_THIR_weed)
+######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0649)
+
+aov_TWIL_back<-aov(Adjusted.Nodules~Weed_Sum*Innoculation, data=Back)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_back<-aov(Adjusted.Nodules~Weed_Sum+Innoculation, data=Back)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_back<-aov(Adjusted.Nodules~Weed_Sum*Treatment, data=Back)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_back<-aov(Adjusted.Nodules~Weed_Sum+Treatment, data=Back)
+summary(aov_THIR_weed)
+######CONCLUSION: NO SIGNIFICANCE
+
+#THIR
+xxxx
 
 ###HELP
 #WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
