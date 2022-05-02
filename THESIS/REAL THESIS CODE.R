@@ -178,20 +178,35 @@ summary(aov_THIR_weed)
 TWIL_back<-Back%>%
   filter(Species=="TWIL")
 
-aov_TWIL_back<-aov(Adjusted.Biomass~Adjusted.Nodules*Treatment, data=TWIL_back)
+aov_TWIL_back<-aov(Adjusted.Biomass~Treatment, data=TWIL_back)
 summary(aov_TWIL_back)
-######CONCLUSION: 
+######CONCLUSION: NO SIGNIFICANCE
 
-aov_TWIL_back<-aov(Adjusted.Biomass~Adjusted.Nodules+Treatment, data=TWIL_back)
+aov_TWIL_back<-aov(Adjusted.Nodules~Treatment, data=TWIL_back)
 summary(aov_TWIL_back)
-######CONCLUSION: 
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_TWIL_back<-aov(Adjusted.Nodules~Adjusted.Biomass, data=TWIL_back)
+summary(aov_TWIL_back)
+######CONCLUSION: BIOMASS IS SIGNIFICANT (0.0413)
 
 #THIR
 THIR_back<-Back%>%
   filter(Species=="THIR")
 
+aov_THIR_back<-aov(Adjusted.Biomass~Treatment, data=THIR_back)
+summary(aov_THIR_back)
+######CONCLUSION: TREATMENT IS SIGNIFICANT (0.0284)
+
+aov_THIR_back<-aov(Adjusted.Nodules~Treatment, data=THIR_back)
+summary(aov_THIR_back)
+######CONCLUSION: NO SIGNIFICANCE
+
+aov_THIR_back<-aov(Adjusted.Nodules~Adjusted.Biomass, data=THIR_back)
+summary(aov_THIR_back)
+######CONCLUSION: NO SIGNIFICANCE
+
 ###HELP
-#WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
 
 #BOXPLOTS W/ WEEDS
 ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Treatment))+
@@ -217,12 +232,10 @@ ggplot(TWIL_focal, aes(x=Survival, y=Weed_Sum, fill=Innoculation))+
 ggplot(TWIL_focal, aes(x=Survival, y=Weed_Sum, fill=Treatment))+
   geom_bar(position='dodge', stat='identity')
 
-#separate by TWIL and THIR
-#run anova 
 
-#means and stand.devs
-#what significance tests should i run
+
 ###Two-way ANOVA: good for categorical comparisons (ex.FOCAL=we have multiple predictor variables; two independent variables (Treatment and Inoculation), one dependent variable (Adjusted.Biomass)) 
+
 #FOCAL: TWIL-U and TWIL-I D/A biomass, THIR-U and THIR-I D/A biomass
 #BACK: TWIL-U D/A biomass and nodules, THIR-U D/A biomass and nodules
 #nodules=continuous variable---scatter plot
