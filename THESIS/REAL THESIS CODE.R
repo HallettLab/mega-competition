@@ -174,36 +174,21 @@ summary(aov_THIR_weed)
 
 #BACK STATS
 
-#BACK STATS NOTES:what to comapare with treatment/if anything, create a separate TWIL and THIR background table, create adjusted biomass row
-
 #TWIL
+TWIL_back<-Back%>%
+  filter(Species=="TWIL")
 
-aov_TWIL_back<-aov(Adjusted.Biomass~Treatment, data=Back)
+aov_TWIL_back<-aov(Adjusted.Biomass~Adjusted.Nodules*Treatment, data=TWIL_back)
 summary(aov_TWIL_back)
-######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.072)
+######CONCLUSION: 
 
-aov_TWIL_back<-aov(Adjusted.Biomass~Weed_Sum+Treatment, data=Back)
-summary(aov_THIR_weed)
-######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0649)
-
-aov_TWIL_back<-aov(Adjusted.Nodules~Weed_Sum*Innoculation, data=Back)
-summary(aov_THIR_weed)
-######CONCLUSION: NO SIGNIFICANCE
-
-aov_TWIL_back<-aov(Adjusted.Nodules~Weed_Sum+Innoculation, data=Back)
-summary(aov_THIR_weed)
-######CONCLUSION: NO SIGNIFICANCE
-
-aov_TWIL_back<-aov(Adjusted.Nodules~Weed_Sum*Treatment, data=Back)
-summary(aov_THIR_weed)
-######CONCLUSION: NO SIGNIFICANCE
-
-aov_TWIL_back<-aov(Adjusted.Nodules~Weed_Sum+Treatment, data=Back)
-summary(aov_THIR_weed)
-######CONCLUSION: NO SIGNIFICANCE
+aov_TWIL_back<-aov(Adjusted.Biomass~Adjusted.Nodules+Treatment, data=TWIL_back)
+summary(aov_TWIL_back)
+######CONCLUSION: 
 
 #THIR
-xxxx
+THIR_back<-Back%>%
+  filter(Species=="THIR")
 
 ###HELP
 #WEED COUNT (X-AXIS) AND PERCENT SURVIVAL (Y-AXIS) CONTINOUS VARIABLES AS SCATTERPLOT AND BOXPLOT;COLOR BY TREATMENT OR INOCULATION
