@@ -1,5 +1,6 @@
 library(tidyverse)
 library(dplyr)
+library(lme4)
 #%>% is called a pipeline=(ex.name%>%) it will continue whatever you want to apply to the initial data frame
 #tidyverse gets the data into the format you want; when you run statistics you aren't using tidyverse
 #"~" denotes an equation
@@ -92,6 +93,8 @@ summary(aov_TWIL_focal)
 aov_TWIL_focal_add<-aov(Adjusted.Biomass~Treatment+Innoculation, data=TWIL_focal)
 summary(aov_TWIL_focal_add)
 ######CONCLUSION: NO SIGNIFICANCE
+
+TWIL_focal_model <- lmer(Adjusted.Biomass~ Treatment+Innoculation+(1|Block..),data=TWIL_focal, na.action = "na.fail")
 
 ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass))+
   geom_boxplot()
@@ -186,9 +189,27 @@ aov_TWIL_back<-aov(Adjusted.Nodules~Treatment, data=TWIL_back)
 summary(aov_TWIL_back)
 ######CONCLUSION: NO SIGNIFICANCE
 
-aov_TWIL_back<-aov(Adjusted.Nodules~Adjusted.Biomass, data=TWIL_back)
-summary(aov_TWIL_back)
-######CONCLUSION: BIOMASS IS SIGNIFICANT (0.0413)
+lm_TWIL_back<-lm(Adjusted.Nodules~Adjusted.Biomass, data=TWIL_back)
+#lm=linear model; comparing two continuous variables; testing for linear relationship between them 
+#think about which might be more predictive of the other
+summary(lm_TWIL_back)
+######CONCLUSION: BIOMASS IS SIGNIFICANT (0.04129); for every unit increase in biomass we see a decrease in nodules.
+#Estimate(Intercept) is y-int, Adjusted.Biomass-Estimate is equation
+ggplot(TWIL_back, aes(x=Adjusted.Biomass, y=Adjusted.Nodules))+
+  geom_point()+
+  geom_smooth(method="lm")
+#note that there is one outlier that may be influencing results
+ggplot(TWIL_back, aes(x=Adjusted.Biomass, y=Adjusted.Nodules))+
+  geom_point()+
+  geom_smooth(method="lm")+
+  xlim(4.5,10)
+  #coord_cartesian(xlim=c(4.5,10))
+#check trend without outlier; there is still a slight negative trend: CREATE NEW DATA FRAME WITHOUT OUTLIER TOO AND COMPARE SIGNIFICANCE
+
+
+#Can't Use For Back (only one per block)
+#TWIL_back_model <- lmer(Adjusted.Nodules~Adjusted.Biomass +(1|Block..),data=TWIL_back, na.action = "na.fail")
+#linear mixed effects models = includes a "random effect" (in our case block) that might contribute in the variance in biomass (for example), so we want to control for that
 
 #THIR
 THIR_back<-Back%>%
@@ -202,9 +223,13 @@ aov_THIR_back<-aov(Adjusted.Nodules~Treatment, data=THIR_back)
 summary(aov_THIR_back)
 ######CONCLUSION: NO SIGNIFICANCE
 
-aov_THIR_back<-aov(Adjusted.Nodules~Adjusted.Biomass, data=THIR_back)
-summary(aov_THIR_back)
-######CONCLUSION: NO SIGNIFICANCE
+
+lm_THIR_back<-lm(Adjusted.Biomass~Adjusted.Nodules, data=THIR_back)
+summary(lm_THIR_back)
+ggplot(THIR_back, aes(x=Adjusted.Nodules, y=Adjusted.Biomass))+
+  geom_point()+
+  geom_smooth(method="lm")
+######CONCLUSION: NOT SIGNIFICANT
 
 ###HELP
 
