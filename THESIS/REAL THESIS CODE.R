@@ -1,6 +1,10 @@
+###5/1 What info from ANOVA models do we get versus the other models? What is coming out as significant? Interesting? 
+
 library(tidyverse)
 library(dplyr)
 library(lme4)
+library(MuMIn)
+#stall.packages("name") to install new package
 #%>% is called a pipeline=(ex.name%>%) it will continue whatever you want to apply to the initial data frame
 #tidyverse gets the data into the format you want; when you run statistics you aren't using tidyverse
 #"~" denotes an equation
@@ -64,6 +68,21 @@ aov_THIR_focal_add<-aov(Adjusted.Biomass~Treatment+Innoculation, data=THIR_focal
 summary(aov_THIR_focal_add)
 ######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0887)
 
+THIR_focal_model <- lmer(Adjusted.Biomass~ Treatment+Innoculation+(1|Block..),data=THIR_focal, na.action = "na.fail")
+dredge(THIR_focal_model)
+#CONCLUSION: THERE ARE 3 MODELS WE CAN'T DISTINGUISH BETWEEN (1-3), SO THERE MIGHT BE SOME EFFECT OF INOCULATION AND TREATMENT 
+
+THIR_focal_nullmodel1<-lmer(Adjusted.Biomass~ 1+(1|Block..),data=THIR_focal, na.action = "na.fail")
+summary(THIR_focal_nullmodel1)
+#CONCLUSION: BLOCK DOES EXPLAIN SOME VARIANCE (look at Variance for row "Block..")
+
+THIR_focal_model2<-lmer(Adjusted.Biomass~ Innoculation+(1|Block..),data=THIR_focal, na.action = "na.fail")
+summary(THIR_focal_model2)
+#CONCLUSION: (look at Estimate row InnoculationU)
+
+THIR_focal_model3<-lmer(Adjusted.Biomass~ Treatment+(1|Block..),data=THIR_focal, na.action = "na.fail")
+summary(THIR_focal_model3)
+
 ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
   geom_boxplot()
 #aes means "aesthetics"?, tell it x-var and y-var
@@ -95,6 +114,19 @@ summary(aov_TWIL_focal_add)
 ######CONCLUSION: NO SIGNIFICANCE
 
 TWIL_focal_model <- lmer(Adjusted.Biomass~ Treatment+Innoculation+(1|Block..),data=TWIL_focal, na.action = "na.fail")
+dredge(TWIL_focal_model)
+#we are using this model to check if block impacts data
+#linear mixed effect model; using a (AIC) score (low is good; if one score is at least 2 lower than the others then we say it's the best model (it "fit" the best)) to compare the impact of the predictor variables (Treatment, Inoculation, or Treatment and Inoculation, or neither) on biomass 
+#make sure to report df...even if we don't know what it means
+#delta=difference between the first model (1) and everything else below it
+#CONCLUSION: NULL MODEL BEST EXPLAINS OUR DATA; IT HAS THE LOWEST AIC AND THE NEXT CLOSEST AIC IS 6.5 AWAY (WHICH IS >2)
+    #RESULTS SECTION: biomass did not vary significantly between treatment or inoculation...the best fit modeling predicting biomass is the null model, which didn't include either predictor 
+
+TWIL_focal_nullmodel<-lmer(Adjusted.Biomass~ 1+(1|Block..),data=TWIL_focal, na.action = "na.fail")
+summary(TWIL_focal_nullmodel)
+#"1"=null model, no predictors 
+#block does not explain the intercept of biomass, it explains a small amount of residual variance..
+#CONCLUSION: block doesn't impact the trends we see in the data 
 
 ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass))+
   geom_boxplot()
