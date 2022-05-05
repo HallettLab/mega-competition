@@ -1,10 +1,13 @@
-###5/1 What info from ANOVA models do we get versus the other models? What is coming out as significant? Interesting? 
+###5/1 What info from ANOVA models do we get versus the other models? What is coming out as significant? Interesting? Find a package that calculates p-value.
+#How long should my introduction be? Scope? How much background or just what is necessary? Ask lab members. 
 
 library(tidyverse)
 library(dplyr)
 library(lme4)
 library(MuMIn)
-#stall.packages("name") to install new package
+library(lmerTest)
+
+#install.packages("name") to install new package
 #%>% is called a pipeline=(ex.name%>%) it will continue whatever you want to apply to the initial data frame
 #tidyverse gets the data into the format you want; when you run statistics you aren't using tidyverse
 #"~" denotes an equation
@@ -52,36 +55,77 @@ mean_focal<-Focal_All%>%
   group_by(Species, Innoculation, Treatment) %>% 
   summarize(mean_biomass=mean(Adjusted.Biomass),sd_biomass=sd(Adjusted.Biomass))
 
+Focal_All_Boxplot<-Focal_All%>%
+  filter(!is.na(Species))
+
+ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
+  geom_boxplot()+
+  theme_bw()+
+  ylab("Biomass (g)")+
+  ggtitle("Focal Treatment")
+#USE THIS GRAPH
+
+ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
+  geom_boxplot()+
+  theme_bw()+
+  ylab("Biomass (g)")+
+  facet_wrap(~Innoculation)+
+  ggtitle("Focal Inoculation and Treatment")
+#this graph compares treatment and inoculation 
+
+ggplot(Back,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
+  geom_boxplot()+
+  theme_bw()+
+  ylab("Biomass (g)")+
+  ggtitle("Background Treatment")
+#USE THIS GRAPH; in the figure caption be clear which figure is focal data and which is back data...
+  #why does this graph look opposite of focal individual. graph? background individuals were growing in competition with itself (intraspecific competition)...even when we compare it to uninoculated focal individuals it's still the opposite relationship
+      #maybe trif. individuals are limiting themselves more than other species...
+
 #TRIF STATS
 THIR_focal<-Focal_All%>%
   filter(Species=="THIR")
 #Boolean "==" evaluates if an expression is true or false; if true it will keep it, if false it will remove it
-aov_THIR_focal<-aov(Adjusted.Biomass~Treatment*Innoculation, data=THIR_focal)
+#aov_THIR_focal<-aov(Adjusted.Biomass~Treatment*Innoculation, data=THIR_focal)
 #"+" means no interaction between variables, "*" means you are assuming there is interaction 
-summary(aov_THIR_focal)
+#summary(aov_THIR_focal)
 #look at "Pr(>F) for the p-value
 #"*" in Signif.codes mean less than 0.05
 #"." in Signif.codes means "marginally significant"
-#####CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0772)
+#####CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (P-VALUE 0.0772)
 
 aov_THIR_focal_add<-aov(Adjusted.Biomass~Treatment+Innoculation, data=THIR_focal)
 summary(aov_THIR_focal_add)
 ######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0887)
 
-THIR_focal_model <- lmer(Adjusted.Biomass~ Treatment+Innoculation+(1|Block..),data=THIR_focal, na.action = "na.fail")
-dredge(THIR_focal_model)
+#THIR_focal_model <- lmerTest::lmer(Adjusted.Biomass~ Treatment+Innoculation+(1|Block..),data=THIR_focal, na.action = "na.fail")
+#dredge(THIR_focal_model)
 #CONCLUSION: THERE ARE 3 MODELS WE CAN'T DISTINGUISH BETWEEN (1-3), SO THERE MIGHT BE SOME EFFECT OF INOCULATION AND TREATMENT 
 
-THIR_focal_nullmodel1<-lmer(Adjusted.Biomass~ 1+(1|Block..),data=THIR_focal, na.action = "na.fail")
-summary(THIR_focal_nullmodel1)
+#stepTHIR<-step(THIR_focal_model)
+#CONCLUSION: INOCULATION ALONE IS MARGINALLY SIGNIFICANT (0.09435)
+#get_model(stepTHIR)
+#CONCLUSION:Adjusted.Biomass~ 1 returned: THE NULL MODEL IS BEST FIT
+
+#THIR_focal_nullmodel1<-lmer(Adjusted.Biomass~ 1+(1|Block..),data=THIR_focal, na.action = "na.fail")
+#summary(THIR_focal_nullmodel1)
 #CONCLUSION: BLOCK DOES EXPLAIN SOME VARIANCE (look at Variance for row "Block..")
 
-THIR_focal_model2<-lmer(Adjusted.Biomass~ Innoculation+(1|Block..),data=THIR_focal, na.action = "na.fail")
-summary(THIR_focal_model2)
-#CONCLUSION: (look at Estimate row InnoculationU)
+#THIR_focal_model2<-lmerTest::lmer(Adjusted.Biomass~ Innoculation+(1|Block..),data=THIR_focal, na.action = "na.fail")
+#summary(THIR_focal_model2)
+#CONCLUSION: INOCULATION IS MARGINALLY SIGNIFICANT (0.0944)
+    #Block may be contributing to inoculation as a marginally significant factor..
+#ranova(THIR_focal_model2)
+#looking at random effects (ex.block effect on dependent variable) and putting it in an anova-like table..using likelihood ratio tests (vs. a fixed effect such as treatment on the dependent variable)
+#CONCLUSION: (looking at AIC) SINCE BLOCK..AIC DIFFERENCE IS =2 (AND THE LOWEST AIC), INCLUDING BLOCK MAY BE THE BEST FIT FOR OUR DATA.
+    #P-VALUE=1
 
-THIR_focal_model3<-lmer(Adjusted.Biomass~ Treatment+(1|Block..),data=THIR_focal, na.action = "na.fail")
-summary(THIR_focal_model3)
+
+#THIR_focal_model3<-lmerTest::lmer(Adjusted.Biomass~ Treatment+(1|Block..),data=THIR_focal, na.action = "na.fail")
+#summary(THIR_focal_model3)
+#CONCLUSION: TREATMENT IS MARGINALLY SIGNIFICANT (0.09566)
+#ranova(THIR_focal_model3)
+#CONCLUSION: (looking at AIC) SINCE BLOCK..AIC DIFFERENCE IS =2 (AND THE LOWEST AIC), INCLUDING BLOCK MAY BE THE BEST FIT FOR OUR DATA..MAKES SENSE THEY ARE THE SAME SINCE IT'S STILL LOOKING AT RANDOM EFFECT OF BLOCK
 
 ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
   geom_boxplot()
@@ -91,8 +135,9 @@ ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
 ggplot(THIR_focal,aes(x=Innoculation, y=Adjusted.Biomass))+
   geom_boxplot()
 
-ggplot(THIR_focal,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
+ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
   geom_boxplot()
+#USE THIS ONE
 
 aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Survival, data=THIR_focal)
 summary(aov_THIR_weed)
@@ -101,9 +146,9 @@ summary(aov_THIR_weed)
 TWIL_focal<-Focal_All%>%
   filter(Species=="TWIL")
 #Boolean "==" evaluates if an expression is true or false; if true it will keep it, if false it will remove it
-aov_TWIL_focal<-aov(Adjusted.Biomass~Treatment*Innoculation, data=TWIL_focal)
+#aov_TWIL_focal<-aov(Adjusted.Biomass~Treatment*Innoculation, data=TWIL_focal)
 #"+" means no interaction between variables, "*" means you are assuming there is interaction 
-summary(aov_TWIL_focal)
+#summary(aov_TWIL_focal)
 #look at "Pr(>F) for the p-value
 #"*" in Signif.codes mean less than 0.05
 #"." in Signif.codes means "marginally significant"
@@ -113,8 +158,8 @@ aov_TWIL_focal_add<-aov(Adjusted.Biomass~Treatment+Innoculation, data=TWIL_focal
 summary(aov_TWIL_focal_add)
 ######CONCLUSION: NO SIGNIFICANCE
 
-TWIL_focal_model <- lmer(Adjusted.Biomass~ Treatment+Innoculation+(1|Block..),data=TWIL_focal, na.action = "na.fail")
-dredge(TWIL_focal_model)
+#TWIL_focal_model <- lmer(Adjusted.Biomass~ Treatment+Innoculation+(1|Block..),data=TWIL_focal, na.action = "na.fail")
+#dredge(TWIL_focal_model)
 #we are using this model to check if block impacts data
 #linear mixed effect model; using a (AIC) score (low is good; if one score is at least 2 lower than the others then we say it's the best model (it "fit" the best)) to compare the impact of the predictor variables (Treatment, Inoculation, or Treatment and Inoculation, or neither) on biomass 
 #make sure to report df...even if we don't know what it means
@@ -122,8 +167,8 @@ dredge(TWIL_focal_model)
 #CONCLUSION: NULL MODEL BEST EXPLAINS OUR DATA; IT HAS THE LOWEST AIC AND THE NEXT CLOSEST AIC IS 6.5 AWAY (WHICH IS >2)
     #RESULTS SECTION: biomass did not vary significantly between treatment or inoculation...the best fit modeling predicting biomass is the null model, which didn't include either predictor 
 
-TWIL_focal_nullmodel<-lmer(Adjusted.Biomass~ 1+(1|Block..),data=TWIL_focal, na.action = "na.fail")
-summary(TWIL_focal_nullmodel)
+#TWIL_focal_nullmodel<-lmer(Adjusted.Biomass~ 1+(1|Block..),data=TWIL_focal, na.action = "na.fail")
+#summary(TWIL_focal_nullmodel)
 #"1"=null model, no predictors 
 #block does not explain the intercept of biomass, it explains a small amount of residual variance..
 #CONCLUSION: block doesn't impact the trends we see in the data 
@@ -140,24 +185,38 @@ ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
 #WEED STATS
 
 #TWIL
-aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum*Innoculation, data=TWIL_focal)
-summary(aov_TWIL_weed)
+
+TWIL_focal_lm<-lm(Adjusted.Biomass~Back.Ind..+Weed_Sum+Treatment+Innoculation,data=TWIL_focal)
+summary(TWIL_focal_lm)
+######CONCLUSION: NO SIGNIFICANCE
+#How do we add covariates to a model (that's how we want to factor weeds into this)
+
+#aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum*Innoculation, data=TWIL_focal)
+#summary(aov_TWIL_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
 aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum+Innoculation, data=TWIL_focal)
 summary(aov_TWIL_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
-aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum*Treatment, data=TWIL_focal)
-summary(aov_TWIL_weed)
+aov_TWIL_backind<-aov(Adjusted.Biomass~Back.Ind..+Innoculation, data=TWIL_focal)
+summary(aov_TWIL_backind)
+######CONCLUSION: NO SIGNIFICANCE
+
+#aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum*Treatment, data=TWIL_focal)
+#summary(aov_TWIL_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
 aov_TWIL_weed<-aov(Adjusted.Biomass~Weed_Sum+Treatment, data=TWIL_focal)
 summary(aov_TWIL_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
-aov_TWIL_weed<-aov(Survival~Weed_Sum*Innoculation, data=TWIL_focal)
-summary(aov_TWIL_weed)
+aov_TWIL_backind<-aov(Adjusted.Biomass~Back.Ind..+Treatment, data=TWIL_focal)
+summary(aov_TWIL_backind)
+######CONCLUSION: NO SIGNIFICANCE
+
+#aov_TWIL_weed<-aov(Survival~Weed_Sum*Innoculation, data=TWIL_focal)
+#summary(aov_TWIL_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
 aov_TWIL_weed<-aov(Survival~Weed_Sum+Innoculation, data=TWIL_focal)
@@ -174,6 +233,10 @@ summary(aov_TWIL_weed)
 
 
 #THIR
+THIR_focal_lm<-lm(Adjusted.Biomass~Back.Ind..+Weed_Sum+Treatment+Innoculation,data=THIR_focal)
+summary(THIR_focal_lm)
+######CONCLUSION: NO SIGNIFICANCE
+
 aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Innoculation, data=THIR_focal)
 summary(aov_THIR_weed)
 ######CONCLUSION: NO SIGNIFICANCE
@@ -182,24 +245,24 @@ aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum+Innoculation, data=THIR_focal)
 summary(aov_THIR_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
-aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Treatment, data=THIR_focal)
-summary(aov_THIR_weed)
+#aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Treatment, data=THIR_focal)
+#summary(aov_THIR_weed)
 ######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.072)
 
 aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum+Treatment, data=THIR_focal)
 summary(aov_THIR_weed)
 ######CONCLUSION: TREATMENT ALONE IS MARGINALLY SIGNIFICANT (0.0649)
 
-aov_THIR_weed<-aov(Survival~Weed_Sum*Innoculation, data=THIR_focal)
-summary(aov_THIR_weed)
+#aov_THIR_weed<-aov(Survival~Weed_Sum*Innoculation, data=THIR_focal)
+#summary(aov_THIR_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
 aov_THIR_weed<-aov(Survival~Weed_Sum+Innoculation, data=THIR_focal)
 summary(aov_THIR_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
-aov_THIR_weed<-aov(Survival~Weed_Sum*Treatment, data=THIR_focal)
-summary(aov_THIR_weed)
+#aov_THIR_weed<-aov(Survival~Weed_Sum*Treatment, data=THIR_focal)
+#summary(aov_THIR_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
 aov_THIR_weed<-aov(Survival~Weed_Sum+Treatment, data=THIR_focal)
