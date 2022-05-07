@@ -139,8 +139,8 @@ ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
   geom_boxplot()
 #USE THIS ONE
 
-aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Survival, data=THIR_focal)
-summary(aov_THIR_weed)
+#aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Survival, data=THIR_focal)
+#summary(aov_THIR_weed)
 
 #TWIL STATS
 TWIL_focal<-Focal_All%>%
@@ -237,8 +237,8 @@ THIR_focal_lm<-lm(Adjusted.Biomass~Back.Ind..+Weed_Sum+Treatment+Innoculation,da
 summary(THIR_focal_lm)
 ######CONCLUSION: NO SIGNIFICANCE
 
-aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Innoculation, data=THIR_focal)
-summary(aov_THIR_weed)
+#aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Innoculation, data=THIR_focal)
+#summary(aov_THIR_weed)
 ######CONCLUSION: NO SIGNIFICANCE
 
 aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum+Innoculation, data=THIR_focal)
@@ -286,7 +286,6 @@ summary(aov_TWIL_back)
 
 lm_TWIL_back<-lm(Adjusted.Nodules~Adjusted.Biomass, data=TWIL_back)
 #lm=linear model; comparing two continuous variables; testing for linear relationship between them 
-#think about which might be more predictive of the other
 summary(lm_TWIL_back)
 ######CONCLUSION: BIOMASS IS SIGNIFICANT (0.04129); for every unit increase in biomass we see a decrease in nodules.
 #Estimate(Intercept) is y-int, Adjusted.Biomass-Estimate is equation
@@ -297,7 +296,11 @@ ggplot(TWIL_back, aes(x=Adjusted.Biomass, y=Adjusted.Nodules))+
 ggplot(TWIL_back, aes(x=Adjusted.Biomass, y=Adjusted.Nodules))+
   geom_point()+
   geom_smooth(method="lm")+
-  xlim(4.5,10)
+  xlim(4.5,10)+
+  xlab("Biomass (g)")+
+  ylab("Nodule Mass (g)")+
+  theme_bw()+
+  ggtitle("Background T.willdenovii Biomass and Nodule Mass")
   #coord_cartesian(xlim=c(4.5,10))
 #check trend without outlier; there is still a slight negative trend: CREATE NEW DATA FRAME WITHOUT OUTLIER TOO AND COMPARE SIGNIFICANCE
 
