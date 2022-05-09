@@ -8,6 +8,7 @@ library(MuMIn)
 library(lmerTest)
 library(cowplot) ## using this package to make a multipanel figure
 
+## create a function to calculate standard error (will use in plots)
 calcSE<-function(x){
   x2<-na.omit(x)
   sd(x2)/sqrt(length(x2))
@@ -69,16 +70,18 @@ inoc <- c("TWIL-I", "THIR-I")
 
 Focal_All_Cleaned <- Focal_All %>%
   mutate(Species = ifelse(Sample.Name %in% twil, "TWIL", "THIR"))  %>% ## I'm filling out the species column fully here. This line of code checks the same name column and if it contains TWIL-I or TWIL-U it fills the Species column with TWIL and if it does NOT contain these, it fills in THIR
-  mutate(Inoc = ifelse(Sample.Name %in% inoc, "I", "U")) %>%
+  mutate(Inoc = ifelse(Sample.Name %in% inoc, "I", "U")) %>% ## fill out the inoculation column, which was also missing data
   mutate(Trt = ifelse(Block == 5, "A", Treatment)) %>% ## making a new treatment column as one is missing a value 
   select(-Treatment, -Innoculation) %>% ## remove the old treatment column 
   mutate(Treatment = Trt, Innoculation = Inoc) %>% ## remake the treatment column with filled in value so that we don't need to change the name in all of the following code.
   select(-Trt, -Inoc) ## get rid of unnecessary columns
-  
+
+## NOTE: We should use the Focal_All_Cleaned data set going forward ####
 
 ## here I am selecting the Sample.Name and Species columns and putting them in a new dataframe just so I can check them side by side and make sure my last line of code worked correctly.
 check <- Focal_All_Cleaned %>%
   select(Sample.Name, Species, Innoculation)
+  ## looks good
 
 count_focal<-Focal_All%>%
   group_by(Species, Innoculation, Treatment, Density) %>% 
@@ -88,6 +91,7 @@ count_focal<-Focal_All%>%
 
 ## for TWIL-I -> part of the story might be that it survived better in drought treatments than ambient
 
+## Calculate the mean ####
 mean_focal<-Focal_All_Cleaned %>%
   group_by(Species, Innoculation, Treatment) %>% 
   summarize(mean_biomass=mean(Adjusted.Biomass, na.rm = TRUE),sd_biomass=sd(Adjusted.Biomass, na.rm = TRUE))
@@ -96,7 +100,72 @@ mean_focal<-Focal_All_Cleaned %>%
 Focal_All_Boxplot<-Focal_All_Cleaned %>%
   filter(Survival != 0)
 
-# VISUALIZE Biomass by Trt ####
+# FIGURES ####
+## Exploration ####
+
+### THIR focal figs ####
+ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
+  geom_boxplot()
+#aes means "aesthetics"?, tell it x-var and y-var
+#"+" like adding another "layer"
+
+ggplot(THIR_focal,aes(x=Innoculation, y=Adjusted.Biomass))+
+  geom_boxplot()
+
+ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
+  geom_boxplot()
+#USE THIS ONE
+
+### TWIL focal figs ####
+ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass))+
+  geom_boxplot()
+
+ggplot(TWIL_focal,aes(x=Treatment, y=Adjusted.Biomass))+
+  geom_boxplot()
+
+ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
+  geom_boxplot()
+
+### BOXPLOTS W/ WEEDS ####
+ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Treatment))+
+  geom_boxplot()
+
+ggplot(THIR_focal, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
+  geom_boxplot()
+
+#SCATTERPLOTS???
+#ggplot(Focal_All, aes(x=Survival, y=Weed_Sum, color=Treatment))+
+#geom_point()
+
+### Survival by treatment ####
+ggplot(Focal_All_Cleaned, aes(x=Treatment, y=Survival, fill = Species)) +
+  geom_bar(position='dodge', stat='identity')
+## this doesn't look right to me yet... not sure why the values of survival are the same between treatments for the species...
+
+ggplot(Focal_All_Cleaned, aes(x=Treatment, y=Survival, fill = Species)) +
+  geom_boxplot()
+
+## Survival by background individuals
+ggplot(Focal_All_Cleaned, aes(y=Back.Ind, x=Survival, color = Sample.Name)) +
+  geom_boxplot()
+
+
+#BARPLOTS
+ggplot(THIR_focal, aes(x=Survival, y=Weed_Sum, fill=Innoculation))+
+  geom_bar(position='dodge', stat='identity')
+
+ggplot(THIR_focal, aes(x=Survival, y=Weed_Sum, fill=Treatment))+
+  geom_bar(position='dodge', stat='identity')
+
+ggplot(TWIL_focal, aes(x=Survival, y=Weed_Sum, fill=Innoculation))+
+  geom_bar(position='dodge', stat='identity')
+
+ggplot(TWIL_focal, aes(x=Survival, y=Weed_Sum, fill=Treatment))+
+  geom_bar(position='dodge', stat='identity')
+
+
+## Final Figures ####
+### Biomass by Trt ####
 focals <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()+
   theme_bw()+
@@ -137,8 +206,78 @@ pt1 <- plot_grid(focals,
 ## combining both parts of the plot to make the final multi-panel figure
 plot_grid(pt1, pt2, ncol = 1, nrow = 2)
 
-
 ## feel free to change any of these figure aesthetics :) 
+## I like to find colors using the website Carto Colors - they have many color schemes and if you copy one it will give you the hex codes (i.e. #008080) that specify each color in the color scheme
+
+
+### Nodules v Biomass ####
+## visualize the relationship between nodules and biomass
+## TWIL
+ggplot(TWIL_back, aes(x=Adjusted.Biomass, y=Adjusted.Nodules))+
+  geom_point()+
+  geom_smooth(method="lm") +
+  theme_bw() +
+  xlab("Average Background Biomass (g)") +
+  ylab("Average Background Nodule mass (g)")
+## this is another figure we could use for the thesis!
+
+#note that there is one outlier that may be influencing results
+ggplot(TWIL_back, aes(x=Adjusted.Biomass, y=Adjusted.Nodules))+
+  geom_point()+
+  geom_smooth(method="lm")+
+  xlim(4.5,10)+
+  xlab("Biomass (g)")+
+  ylab("Nodule Mass (g)")+
+  theme_bw()+
+  ggtitle("Background T.willdenovii Biomass and Nodule Mass")
+#coord_cartesian(xlim=c(4.5,10))
+#check trend without outlier; there is still a slight negative trend: CREATE NEW DATA FRAME WITHOUT OUTLIER TOO AND COMPARE SIGNIFICANCE
+
+## Nodules vs. Biomass for THIR
+ggplot(THIR_back, aes(x=Adjusted.Nodules, y=Adjusted.Biomass))+
+  geom_point()+
+  geom_smooth(method="lm")
+
+### Survival Figs ####
+## Calculate mean survival for better visualization
+mean_survival <- Focal_All_Cleaned %>%
+  group_by(Sample.Name, Species, Innoculation, Treatment) %>%
+  summarise(mean_surv = mean(Survival), SE_surv = calcSE(Survival), mean_weeds = mean(Weed_Sum), meanbg = mean(Back.Ind))
+
+## mean survival of species in drought treatments
+ggplot(mean_survival, aes(x=Treatment, y=mean_surv, fill = Sample.Name)) +
+  geom_bar(position='dodge', stat='identity') +
+  geom_errorbar(aes(ymin = mean_surv - SE_surv, ymax = mean_surv + SE_surv), width = 0.2, position=position_dodge(.9)) +
+  theme_bw() +
+  ylab("Mean Survival (%)") +
+  facet_wrap(~Species)
+
+
+## need this for labeling facets in the figure below
+treats <- c("Ambient", "Drought")
+names(treats) <- c("A", "D")
+
+## visualizing relationship between survival and weed density
+ggplot(mean_survival, aes(x=mean_weeds, y=mean_surv, color = Species, shape = Innoculation)) +
+  geom_errorbar(aes(ymin = mean_surv - SE_surv, ymax = mean_surv + SE_surv), width = 0.1) + ## adding error bars 
+  geom_point(size = 5) +
+  scale_shape_manual(values = c(15,16))+ ## changing the point shape
+  scale_color_manual(values = c("#a3ad62", "#df91a3"))+ ## changing point color
+  theme_bw() + 
+  ylab("Mean Survival (%)") + xlab("Mean Weed Density") +
+  facet_grid(~Treatment, labeller = labeller(Treatment = treats))
+
+## survival depending on bg individuals
+ggplot(mean_survival, aes(x=meanbg, y=mean_surv, color = Species, shape = Innoculation)) +
+  geom_errorbar(aes(ymin = mean_surv - SE_surv, ymax = mean_surv + SE_surv), width = 0.1) + ## adding error bars 
+  geom_point(size = 5) +
+  scale_shape_manual(values = c(15,16))+ ## changing the point shape
+  scale_color_manual(values = c("#a3ad62", "#df91a3"))+ ## changing point color
+  theme_bw() + 
+  ylab("Mean Survival (%)") + xlab("Mean BG Density") +
+  facet_grid(~Treatment, labeller = labeller(Treatment = treats))
+
+
 
 
 
@@ -190,19 +329,6 @@ summary(aov_THIR_focal_add)
 #ranova(THIR_focal_model3)
 #CONCLUSION: (looking at AIC) SINCE BLOCK..AIC DIFFERENCE IS =2 (AND THE LOWEST AIC), INCLUDING BLOCK MAY BE THE BEST FIT FOR OUR DATA..MAKES SENSE THEY ARE THE SAME SINCE IT'S STILL LOOKING AT RANDOM EFFECT OF BLOCK
 
-## THIR focal figs ####
-ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
-  geom_boxplot()
-#aes means "aesthetics"?, tell it x-var and y-var
-#"+" like adding another "layer"
-
-ggplot(THIR_focal,aes(x=Innoculation, y=Adjusted.Biomass))+
-  geom_boxplot()
-
-ggplot(THIR_focal,aes(x=Treatment, y=Adjusted.Biomass))+
-  geom_boxplot()
-#USE THIS ONE
-
 #aov_THIR_weed<-aov(Adjusted.Biomass~Weed_Sum*Survival, data=THIR_focal)
 #summary(aov_THIR_weed)
 
@@ -236,15 +362,7 @@ summary(aov_TWIL_focal_add)
 #"1"=null model, no predictors 
 #block does not explain the intercept of biomass, it explains a small amount of residual variance..
 #CONCLUSION: block doesn't impact the trends we see in the data 
-## TWIL focal figs ####
-ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass))+
-  geom_boxplot()
 
-ggplot(TWIL_focal,aes(x=Treatment, y=Adjusted.Biomass))+
-  geom_boxplot()
-
-ggplot(TWIL_focal,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
-  geom_boxplot()
 
 
 ## WEED Stats ####
@@ -355,26 +473,7 @@ summary(lm_TWIL_back)
 #Estimate(Intercept) is y-int, Adjusted.Biomass-Estimate is equation
 
 
-## visualize the relationship between nodules and biomass
-ggplot(TWIL_back, aes(x=Adjusted.Biomass, y=Adjusted.Nodules))+
-  geom_point()+
-  geom_smooth(method="lm") +
-  theme_bw() +
-  xlab("Average Background Biomass (g)") +
-  ylab("Average Background Nodule mass (g)")
-## this is another figure we could use for the thesis!
 
-#note that there is one outlier that may be influencing results
-ggplot(TWIL_back, aes(x=Adjusted.Biomass, y=Adjusted.Nodules))+
-  geom_point()+
-  geom_smooth(method="lm")+
-  xlim(4.5,10)+
-  xlab("Biomass (g)")+
-  ylab("Nodule Mass (g)")+
-  theme_bw()+
-  ggtitle("Background T.willdenovii Biomass and Nodule Mass")
-  #coord_cartesian(xlim=c(4.5,10))
-#check trend without outlier; there is still a slight negative trend: CREATE NEW DATA FRAME WITHOUT OUTLIER TOO AND COMPARE SIGNIFICANCE
 
 
 #Can't Use For Back (only one per block)
@@ -396,72 +495,30 @@ summary(aov_THIR_back)
 
 lm_THIR_back<-lm(Adjusted.Biomass~Adjusted.Nodules, data=THIR_back)
 summary(lm_THIR_back)
-ggplot(THIR_back, aes(x=Adjusted.Nodules, y=Adjusted.Biomass))+
-  geom_point()+
-  geom_smooth(method="lm")
 ######CONCLUSION: NOT SIGNIFICANT
 
 ## one comparison we could make here between TWIL and THIR -> there is a negative relationship between biomass and nodules for both species, but the relationship is significant for TWIL but not THIR.
 
 ###HELP
 
-## Survival ####
-### Survival Figs ####
-## Survival by treatment 
-ggplot(Focal_All_Cleaned, aes(x=Treatment, y=Survival, fill = Species)) +
-  geom_bar(position='dodge', stat='identity')
-## this doesn't look right to me yet... not sure why the values of survival are the same between treatments for the species...
 
-ggplot(Focal_All_Cleaned, aes(x=Treatment, y=Survival, fill = Species)) +
-  geom_boxplot()
+## Survival Stats ####
 
-## Survival by background individuals
-ggplot(Focal_All_Cleaned, aes(y=Back.Ind, x=Survival, color = Sample.Name)) +
-  geom_boxplot()
-ggplot(Focal_All_Cleaned, aes(y=Survival, x=Back.Ind)) +
-  geom_point()
+### Survival by Species ####
+### did the species differ significantly in survival?
+sp_surv <- aov(Survival~Species, data = Focal_All_Cleaned)
+summary(sp_surv)
 
-## look at mean survival
-mean_survival <- Focal_All_Cleaned %>%
-  group_by(Sample.Name, Species, Innoculation, Treatment) %>%
-  summarise(mean_surv = mean(Survival), SE_surv = calcSE(Survival), mean_weeds = mean(Weed_Sum))
+### TWIL ####
+## create data frame of TWIL survival data
+TWIL_survival <- Focal_All_Cleaned %>%
+  filter(Species == "TWIL") 
 
-ggplot(mean_survival, aes(x=Treatment, y=mean_surv, fill = Sample.Name)) +
-  geom_bar(position='dodge', stat='identity') +
-  geom_errorbar(aes(ymin = mean_surv - SE_surv, ymax = mean_surv + SE_surv), width = 0.2, position=position_dodge(.9)) +
-  theme_bw() +
-  ylab("Mean Survival (%)")
-
-
-
-
-## survival depending on weeds or bg individuals
-ggplot(mean_survival, aes(x=mean_weeds, y=mean_surv)) +
-  #geom_bar(position='dodge', stat='identity') +
-  geom_errorbar(aes(ymin = mean_surv - SE_surv, ymax = mean_surv + SE_surv), width = 0.1) +
-  geom_point(aes(fill=Sample.Name), 
-             colour="black",pch=21, size=4.5) +
-  theme_bw() +
-  ylab("Mean Survival (%)") + xlab("Mean Weed Density") +
-  facet_wrap(~Treatment)
-
-
-### Survival Stats ####
-
-## NOTE: the way we were filtering using 'Species' gets rid of all of the observations that did not survive, thus we can't use this filter for the survival data. Below I filter using Sample.Name and this is the correct way to filter when we want to look at survival data!
-
-twils <- c("TWIL-I", "TWIL-U") ## make a list of TWIL samples
-
-TWIL_survival <- Focal_All %>%
-  filter(Sample.Name %in% twils) ## filter by this list
-
-twil_surv <- aov(Survival~Treatment+Sample.Name + Back.Ind + Weed_Sum, data = TWIL_survival) ## Sample.Name is a stand in for inoculation here, as the Inoculation column does not have values when the phyto didn't survive
+twil_surv <- aov(Survival~Treatment+Innoculation + Back.Ind + Weed_Sum, data = TWIL_survival)
 summary(twil_surv)
 
-twil_surv_all <- lm(Survival~Treatment+Sample.Name + Back.Ind + Weed_Sum, data = TWIL_survival)
-summary(twil_surv_all)
 
-## THIR survival
+### THIR ####
 THIR_survival <- Focal_All %>%
   filter(!(Sample.Name %in% twils))
 
@@ -469,33 +526,10 @@ thir_surv <- aov(Survival~Treatment+Sample.Name + Back.Ind + Weed_Sum, data = TH
 summary(thir_surv)
 
 
-# MORE FIGURES ####
-#BOXPLOTS W/ WEEDS
-ggplot(TWIL_focal, aes(x=Weed_Sum, y=Survival, color=Treatment))+
-  geom_boxplot()
-
-ggplot(THIR_focal, aes(x=Weed_Sum, y=Survival, color=Innoculation))+
-  geom_boxplot()
-
-#SCATTERPLOTS???
-#ggplot(Focal_All, aes(x=Survival, y=Weed_Sum, color=Treatment))+
-  #geom_point()
-
-#BARPLOTS
-ggplot(THIR_focal, aes(x=Survival, y=Weed_Sum, fill=Innoculation))+
-  geom_bar(position='dodge', stat='identity')
-
-ggplot(THIR_focal, aes(x=Survival, y=Weed_Sum, fill=Treatment))+
-  geom_bar(position='dodge', stat='identity')
-
-ggplot(TWIL_focal, aes(x=Survival, y=Weed_Sum, fill=Innoculation))+
-  geom_bar(position='dodge', stat='identity')
-
-ggplot(TWIL_focal, aes(x=Survival, y=Weed_Sum, fill=Treatment))+
-  geom_bar(position='dodge', stat='identity')
 
 
 
+# NOTES ####
 ###Two-way ANOVA: good for categorical comparisons (ex.FOCAL=we have multiple predictor variables; two independent variables (Treatment and Inoculation), one dependent variable (Adjusted.Biomass)) 
 
 #FOCAL: TWIL-U and TWIL-I D/A biomass, THIR-U and THIR-I D/A biomass
