@@ -101,7 +101,9 @@ focals <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Trea
   geom_boxplot()+
   theme_bw()+
   ylab("Biomass (g)") +
-  scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) ## setting colors (orange for drought, blue for ambient to make more intuitive) and also labeling the legend more clearly so someone looking at the figure does not wonder what D and A are!
+  scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) 
+
+## setting colors (orange for drought, blue for ambient to make more intuitive) and also labeling the legend more clearly so someone looking at the figure does not wonder what D and A are!
   #ggtitle("Focal Treatment") ## removed title as these are not present on final figures
 #USE THIS GRAPH
 
@@ -467,6 +469,10 @@ THIR_survival <- Focal_All %>%
 
 thir_surv <- aov(Survival~Treatment+Sample.Name + Back.Ind + Weed_Sum, data = THIR_survival) ## Sample.Name is a stand in for inoculation here, as the Inoculation column does not have values when the phyto didn't survive
 summary(thir_surv)
+
+
+
+
 
 
 # MORE FIGURES ####
