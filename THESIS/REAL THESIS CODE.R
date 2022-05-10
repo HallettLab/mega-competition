@@ -169,7 +169,7 @@ ggplot(TWIL_focal, aes(x=Survival, y=Weed_Sum, fill=Treatment))+
 focals <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()+
   theme_bw()+
-  ylab("Biomass (g)") +
+  ylab("Focal Biomass (g)") +
   scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) ## setting colors (orange for drought, blue for ambient to make more intuitive) and also labeling the legend more clearly so someone looking at the figure does not wonder what D and A are!
   #ggtitle("Focal Treatment") ## removed title as these are not present on final figures
 #USE THIS GRAPH
@@ -177,7 +177,7 @@ focals <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Trea
 focals_inoc <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()+
   theme_bw()+
-  ylab("Biomass (g)")+
+  ylab("Focal Biomass (g)")+
   facet_wrap(~Innoculation)+
   scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) +
   theme(legend.position = "none")# + ## removing legend for the multipanel figure
@@ -187,7 +187,7 @@ focals_inoc <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color
 bgs <- ggplot(Back,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()+
   theme_bw()+
-  ylab("Biomass (g)")+
+  ylab("Back Biomass (g)")+
   scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) +
   theme(legend.position = "none") #+ ## removing legend for the multipanel figure
   #ggtitle("Background Treatment")
@@ -517,6 +517,8 @@ TWIL_survival <- Focal_All_Cleaned %>%
 twil_surv <- aov(Survival~Treatment+Innoculation + Back.Ind + Weed_Sum, data = TWIL_survival)
 summary(twil_surv)
 
+twil_surv_anova <- aov(Survival~Treatment, data = TWIL_survival)
+summary(twil_surv_anova)
 
 ### THIR ####
 THIR_survival <- Focal_All %>%
