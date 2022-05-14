@@ -87,4 +87,58 @@ ggplot(intro_grass_phytos, aes(x=phyto.n.indiv, fill = Treatment)) +
 
 ggsave("intro-grass-phytos.png", height = 3.5, width = 6)
 
+
+## quantify survival of each species
+surv_block <- phyto_dat_clean %>%
+  mutate(survival = ifelse(phyto.n.indiv == 0, 0, 1)) %>%
+  group_by(phyto, block) %>%
+  summarise(perc_surv = sum(survival)/n(), Treatment = unique(Treatment)) #%>%
+
+surv_block$block <- as.factor(surv_block$block)
+
+surv_block <- surv_block %>%
+  mutate(block = fct_relevel(block, "1", "3", "4", "6", "12", "14", "5", "7", "8", "15", "16"))
+
+ggplot(surv_block, aes(x=block, y=perc_surv, fill = Treatment)) +
+  geom_bar(position='dodge', stat='identity', color = "black")+
+  ylab("Percent Survival") + xlab("Block") +
+  #scale_fill_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) +
+  theme_bw() +
+  facet_wrap(~phyto) +
+  theme(text = element_text(size = 8)) +
+  scale_fill_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) +
+  theme_bw()
+
+ggsave("surv-block-trt.png", height = 4, width = 7)
+
+surv_trt <- phyto_dat_clean %>%
+  mutate(survival = ifelse(phyto.n.indiv == 0, 0, 1)) %>%
+  group_by(phyto, Treatment) %>%
+  summarise(perc_surv = sum(survival)/n()) 
+  
+ggplot(surv_trt, aes(x=phyto, y=perc_surv, fill = Treatment)) +
+  geom_bar(position='dodge', stat='identity', color = "black")+
+  ylab("Percent Survival") + xlab("Species") +
+  scale_fill_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) +
+  theme_bw() +
+  theme(axis.text.x=element_text(angle = 45, hjust = 0.52))
+
+ggsave("surv-trt.png", height = 4, width = 7)
+
+
+surv_overall <- phyto_dat_clean %>%
+  mutate(survival = ifelse(phyto.n.indiv == 0, 0, 1)) %>%
+  group_by(phyto) %>%
+  summarise(perc_surv = sum(survival)/n()) 
+
+ggplot(surv_overall, aes(x=phyto, y=perc_surv)) +
+  geom_bar(position='dodge', stat='identity', color = "black")+
+  ylab("Percent Survival") + xlab("Species") +
+  theme_bw() +
+  theme(axis.text.x=element_text(angle = 45, hjust = 0.52))
+
+ggsave("surv-overall.png", height = 4, width = 7)
+
+
+
 ## calculate num background individuals by each phyto - really to see how many are missing bg indiv
