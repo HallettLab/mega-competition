@@ -96,6 +96,19 @@ mean_focal<-Focal_All_Cleaned %>%
   group_by(Species, Innoculation, Treatment) %>% 
   summarize(mean_biomass=mean(Adjusted.Biomass, na.rm = TRUE),sd_biomass=sd(Adjusted.Biomass, na.rm = TRUE))
 
+mean_back_noinoc<-THIR_back %>%
+  group_by(Species, Treatment) %>% 
+  summarize(mean_biomass=mean(Adjusted.Biomass, na.rm = TRUE),sd_biomass=sd(Adjusted.Biomass, na.rm = TRUE))
+
+mean_back_linear<-TWIL_back %>%
+  group_by(Species) %>% 
+  summarize(mean_biomass=mean(Adjusted.Biomass, na.rm = TRUE),sd_biomass=sd(Adjusted.Biomass, na.rm = TRUE))
+#is there a mean or sd for linear model? 
+
+mean_focal_noinoc<-Focal_All_Cleaned %>%
+  group_by(Species, Treatment) %>% 
+  summarize(mean_biomass=mean(Adjusted.Biomass, na.rm = TRUE),sd_biomass=sd(Adjusted.Biomass, na.rm = TRUE))
+
 ## remove individuals that didn't survive
 Focal_All_Boxplot<-Focal_All_Cleaned %>%
   filter(Survival != 0)
@@ -173,16 +186,18 @@ focals <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Trea
   scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) ## setting colors (orange for drought, blue for ambient to make more intuitive) and also labeling the legend more clearly so someone looking at the figure does not wonder what D and A are!
   #ggtitle("Focal Treatment") ## removed title as these are not present on final figures
 #USE THIS GRAPH
+focals
 
-focals_inoc <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
+focals_inoc <- ggplot(Focal_All_Boxplot,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()+
   theme_bw()+
   ylab("Focal Biomass (g)")+
-  facet_wrap(~Innoculation)+
+  facet_wrap(~Species)+
   scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) +
   theme(legend.position = "none")# + ## removing legend for the multipanel figure
   #ggtitle("Focal Inoculation and Treatment")
 #this graph compares treatment and inoculation 
+focals_inoc
 
 bgs <- ggplot(Back,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
   geom_boxplot()+
@@ -194,6 +209,7 @@ bgs <- ggplot(Back,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
 #USE THIS GRAPH; in the figure caption be clear which figure is focal data and which is back data...
   #why does this graph look opposite of focal individual. graph? background individuals were growing in competition with itself (intraspecific competition)...even when we compare it to uninoculated focal individuals it's still the opposite relationship
       #maybe trif. individuals are limiting themselves more than other species...
+bgs
 
 ## Combining all three panels into one figure!
 
@@ -245,12 +261,13 @@ mean_survival <- Focal_All_Cleaned %>%
   summarise(mean_surv = mean(Survival), SE_surv = calcSE(Survival), mean_weeds = mean(Weed_Sum), meanbg = mean(Back.Ind))
 
 ## mean survival of species in drought treatments
-ggplot(mean_survival, aes(x=Treatment, y=mean_surv, fill = Sample.Name)) +
+ggplot(mean_survival, aes(x=Sample.Name, y=mean_surv, fill = Treatment)) +
   geom_bar(position='dodge', stat='identity') +
   geom_errorbar(aes(ymin = mean_surv - SE_surv, ymax = mean_surv + SE_surv), width = 0.2, position=position_dodge(.9)) +
   theme_bw() +
-  ylab("Mean Survival (%)") +
-  facet_wrap(~Species)
+  ylab("Mean Survival (%)")+
+  xlab("")+
+  scale_fill_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought"))
 
 
 ## need this for labeling facets in the figure below
