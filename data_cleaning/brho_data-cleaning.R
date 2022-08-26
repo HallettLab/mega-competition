@@ -44,7 +44,7 @@ unique(brho$phyto.unique) ## need to standardize caps on this.
 unique(brho$`complete?`) ## should explore NA & N values more closely to see if they are good to use; probs also change the column name as the question mark is throwing it off.
 
 brho_complete_check_no <- brho %>%
-  filter(`complete?` != "Y") 
+  filter(`complete?` == "N") 
 ## there are 7 phytos that aren't marked complete. 
     ## 2 are vegetative (I think we should use these and it will just predict a small amount of seeds that they might have eventually produced seed?)
     ## 4 are missing some part of an inflorescence
@@ -99,11 +99,11 @@ brho_temp <- brho %>%
   mutate(treatment = ifelse(block %in% drought, "D", "C")) %>% ## add a treatment column
   mutate(phyto.unique.caps = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                     ifelse(phyto.unique == "b","B", phyto.unique))) %>%
-  mutate(complete = `complete?`, unique.id = unique) %>% 
+  mutate(complete.sample = `complete?`, unique.id = unique) %>% 
   ## change the name of the complete column to be easier to use
   ## change the name of the unique column so that it doesn't match a function
-  select(-`complete?`, -unique, -biomass.no.seed.g) %>%
-  filter(!unique.id %in% brho_NC) ## remove the incomplete phytos
+  filter(!unique.id %in% brho_NC) %>% ## remove the incomplete phytos
+  select(-`complete?`, -unique, -biomass.no.seed.g)
 
 ## add unique.id numbers for 4 samples missing it.
 brho_temp[brho_temp$block == 4 & brho_temp$plot == 15 & brho_temp$sub == 13 & brho_temp$phyto.unique.caps == "B",]$unique.id <- 11795
@@ -130,3 +130,6 @@ brho_proc_clean <- brho_temp
 rm(list = c("unique.id.final.checks"))
 
 ## Census Data ####
+
+
+
