@@ -38,6 +38,7 @@ unique(pler$phyto.n.indiv) ## 1-3 phytos
 
 unique(pler$`complete?`) ## need to remove a space from one of the N values; 
     ## also there is an "A"... not sure what this means here?
+    ## also need to change the column name
 pler[pler$block == 8 & pler$plot == 25 & pler$sub == 8 & pler$phyto.unique == "A",]$`complete?` <- "N"
 ## pler[pler$block == 15 & pler$plot == 4 & pler$sub == 15 & pler$phyto.unique == "A", ] ##15-4-15
     ## eventually use the above line to fix the "A" value in the complete? column after checking sample.
@@ -133,7 +134,9 @@ pler_temp <- pler %>%
                                ifelse(phyto.unique == "b", "B", 
                                       ifelse(phyto.unique == "c", "C", phyto.unique)))) %>%
   filter(!is.na(`complete?`)) %>% ## remove the 2 missing samples (which are the only ones that have NAs in the complete column)
-  filter(!(block == 14 & plot == 4 & sub == 21), !(block == 15 & plot == 11 & sub == 15)) ## removing two samples that seem like they are missing part of the inflorescence. Only add back in after physically checking sample to determine suitability.
+  mutate(complete.sample = `complete?`, unique.ID = unique)
+  filter(!(block == 14 & plot == 4 & sub == 21), !(block == 15 & plot == 11 & sub == 15)) %>% ## removing two samples that seem like they are missing part of the inflorescence. Only add back in after physically checking sample to determine suitability.
+    select()
   
 ## Make final Dataframe ####
 drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vectors
