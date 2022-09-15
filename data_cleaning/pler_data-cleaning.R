@@ -1,41 +1,50 @@
 # PLER Data Cleaning 
+## script current as of 09/14/2022
+## data current as of 08/25/2022, will need to be replaced as I think some changes were made.
 
+## load packages
 library(googlesheets4)
 library(plyr)
 library(tidyverse)
 library(googledrive)
 library(openxlsx)
 
-## QUESTION: How will we account for using scales with different specificity levels? I believe scales A & E have diff signif digits
-    ## yep, scale A has 4 decimal places and scale E has 3 decimal places.
 
+# Read in Data ####
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
 date <- 20220825
 
+## Processing data
 pler <- read.xlsx(paste0(lead, "Phytometer-Processing/", date, "_Phyto-Processing.xlsx"), sheet = 14)
+## Collections data
+collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
+
+## make sure the dates read in correctly
+collections$phyto.date.collect <- as.Date(collections$phyto.date.collect, origin = "1899-12-30")
+collections$phyto.date.census <- as.Date(collections$phyto.date.census, origin = "1899-12-30")
+collections$bg.date.census <- as.Date(collections$bg.date.census, origin = "1899-12-30")
+collections$phyto.unique <- as.character(collections$phyto.unique)
 
 
-# Processing Data ####
 
-str(pler)
-
-## Check all Columns ####
-### ID info ####
-unique(pler$block) ## looks good
-unique(pler$plot)
-sort(unique(pler$plot)) ## still contains phytos from the trifolium subexperiment
-unique(pler$sub)
-sort(unique(pler$sub))
+# Data Cleaning ####
+theme_set(theme_bw())
+## Processing Data ####
+### Check ID info ####
+ggplot(pler, aes(x=bkgrd)) +
+  geom_bar() ## TWIL-U and THIR-U still in this, need to be removed
 unique(pler$bkgrd) ## will need to remove TWIL-U & THIR-U backgrounds
+
 unique(pler$dens)
 pler_dens_na_check <- pler %>% ## all dens NAs are controls. Good.
   filter(is.na(dens))
+
 unique(pler$phyto) ## all PLER, good
 unique(pler$phyto.unique) ## need to standardize capitalization
 
-### Collected/Measured Info ####
-unique(pler$phyto.n.indiv) ## 1-3 phytos
-
+### Check Sample Completion ####
+ggplot(pler, aes(x=`complete?`)) +
+  geom_bar()
 unique(pler$`complete?`) ## need to remove a space from one of the N values; 
     ## also there is an "A"... not sure what this means here?
     ## also need to change the column name
@@ -62,14 +71,20 @@ pler_complete_no_check <- pler %>%
     ## Will remove these for now and add back in later after checking the samples to determine usability.
 
 
+### Check Measured Info ####
+ggplot(pler, aes(x=phyto.n.indiv)) +
+  geom_bar()
+## 1-3 phytos
 
-unique(pler$inflor.g) ## some NAs present, which makes sense for samples that were incomplete. Still check which ones are NAs.
-sort(unique(pler$inflor.g)) ## varies from 0.0010 - 2.4628g
+ggplot(pler, aes(x=inflor.g)) +
+  geom_histogram()
+## 165 NAs removed...
+
 pler_inflor_na_check <- pler %>%
   filter(is.na(inflor.g)) %>%
   filter(plot < 43) %>%
   filter(`complete?` == "Y")
-    ## all inflor.g values that were marked NA were not complete samples.
+    ## all inflor.g values that were marked NA were incomplete samples.
     ## the two missing samples also show up here again.
 
 

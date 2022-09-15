@@ -1,6 +1,7 @@
 ## GITR Data Cleaning
-## script current as of 09/01/2022
-## data current as of 08/25/2022
+## script current as of 09/15/2022
+## processing data current as of 09/14/2022
+## collections data current as of 08/25/2022 -- this should be updated to the most current version
 
 library(googlesheets4)
 library(plyr)
@@ -10,13 +11,14 @@ library(openxlsx)
 
 # Read in Data ####
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
-date <- 20220825
+date <- 20220914
+date_collections <- 20220825
 
 ## Upload data from dropbox ####
 ## Processing data
-gitr <- read.xlsx(paste0(lead, "Phytometer-Processing/", date, "_Phyto-Processing.xlsx"), sheet = 9)
+gitr <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 9)
 ## Collections data
-collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
+collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date_collections, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
 
 ## make sure the dates read in correctly
 collections$phyto.date.collect <- as.Date(collections$phyto.date.collect, origin = "1899-12-30")
@@ -26,51 +28,51 @@ collections$phyto.unique <- as.character(collections$phyto.unique)
 
 
 
+
 # Data Cleaning ####
 ## Processing Data ####
 theme_set(theme_bw())
-str(gitr)
 
 ### Check ID Info ####
+ggplot(gitr, aes(x=bkgrd)) +
+  geom_bar()
 unique(gitr$bkgrd) ## one of the TWIL-I backgrounds has a space in the title
 gitr[gitr$bkgrd == "TWIL-I ",]
   ## 4-42-21 has the space in its bkgrd column (unique 11595). Need to change this manually.
 gitr[gitr$unique == 11595,]$bkgrd <- "TWIL-I" ## manually remove space from bkgrd
 
-unique(gitr$dens)
+ggplot(gitr, aes(x=dens)) +
+  geom_bar()
 gitr_dens_check <- gitr %>%
   filter(is.na(dens)) ## looks good, these are all controls
 
 unique(gitr$phyto) ## all GITR, looks good
-unique(gitr$phyto.n.indiv) ## 1-3 phytos, looks good
+ggplot(gitr, aes(x=phyto.n.indiv)) +
+  geom_bar() 
+    ## 1-3 phytos, looks good
 
 unique(gitr$phyto.unique) ## will need to standardize capitalization!
 
 ### Check Sample Completion ####
+ggplot(gitr, aes(x=`complete?`)) + 
+  geom_bar()
 unique(gitr$`complete?`) ## will need to standardize capitalization! 
+  ## Will need to remove the space before one of the Y values
   ## Also, need to explore the NAs and Ns
   ## also need to change the column name
-  ## Will need to remove the space before one of the Y values
-
+  
 gitr_complete_check_no <- gitr %>%
   filter(`complete?` == "N") 
 ## 20 are not complete
-
-gitr_incompletes <- gitr_complete_check_no$unique ## make a vector of incompletes
-## will remove all incompletes for the moment and add them back in if appropriate after checking samples
 
 gitr_complete_check_nas <- gitr %>%
   filter(is.na(`complete?`))
 ## 1 NA, this sample is missing (5-23-11)
 
-gitr_missing_samples <- gitr_complete_check_nas$unique ## make a vector of missing samples
-
-
-
 ### Check Measured Info ####
 ggplot(gitr, aes(x=total.biomass.g)) +
   geom_histogram()
-## a few outliers
+## a few outliers but could be the result of multiple phytos
 
 gitr_biomass_nas <- gitr %>%
   filter(is.na(total.biomass.g))
@@ -85,7 +87,7 @@ ggplot(gitr, aes(x=total.biomass.g, y=flower.num)) +
 gitr_flower_nas <- gitr %>% ## lots of NAs, but this is okay because there are biomass measurements for all of them
   filter(is.na(flower.num))
 
-unique(gitr$scale.ID) ## will need capitalization standardization if we retain this column
+unique(gitr$scale.ID) ## will need capitalization standardized
 unique(gitr$process.notes)
 ## filter for observations containing processing notes
 gitr_process_notes_check <- gitr %>%
@@ -107,7 +109,7 @@ gitr_temp <- gitr %>%
   mutate(complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
                                     ifelse(`complete?` == " Y","Y", `complete?`))) %>% ## remove the space
   ## also change the column name for ease
-  filter(complete.sample != "N", !is.na(complete.sample)) %>% ## filter out incompletes, missing phytos
+  filter(complete.sample == "Y") %>% ## filter out incompletes, missing phytos
   mutate(scale.ID = ifelse(scale.ID == "e", "E", scale.ID)) %>% ## change all values to caps
   mutate(unique.ID = unique) %>% ## change column name
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, flower.num, scale.ID, process.notes, census.notes, unique.ID) ## choose which columns to retain and which order
@@ -137,7 +139,7 @@ gitr_proc_clean <- gitr_temp2 %>%
 ### Needed tweaks ####
 ## filter to only GITR phytos, get rid of unused backgrounds and phytos that did not survive
 gitr_cen <- collections %>%
-  filter(phyto == "GITR", bkgrd != "VIVI", bkgrd != "ERBO", phyto.n.indiv > 0) %>%
+  filter(phyto == "GITR", bkgrd != "VIVI", phyto.n.indiv > 0) %>%
   mutate(phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B", phyto.unique))) %>%
   mutate(unique.ID = unique) %>%
@@ -151,6 +153,8 @@ unique(gitr_cen$Nbrhood.size)
 ## should finish filling in the neighborhood size column
 ## DONE
 
+ggplot(gitr_cen, aes(x=bkgrd)) +
+  geom_bar()
 
 unique(gitr_cen$bkgrd) ## one of the TWIL-I backgrounds has a space in the title
 gitr_cen[gitr_cen$bkgrd == "TWIL-I ",]
@@ -197,6 +201,12 @@ ggplot(gitr_cen, aes(x = other)) +
   facet_wrap(~block)
 
 # Merge the Dataframes ####
+nrow(gitr_proc_clean) 
+nrow(gitr_cen) 
+
+gitr_unmatched <- anti_join(gitr_cen, gitr_proc_clean, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique", "unique.ID"))
+## all 21 align with samples on the data cleaning checks spreadsheet
+
 gitr_all <- left_join(gitr_proc_clean, gitr_cen, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique", "unique.ID"))
 
 ggplot(gitr_all, aes(x = phyto.n.indiv.x, y = phyto.n.indiv.y)) +
@@ -221,8 +231,6 @@ gitr_clean <- gitr_all %>%
   mutate(phyto.n.indiv = phyto.n.indiv.x) %>%
   select(-phyto.n.indiv.y, -unique, -phyto.n.indiv.x)
 
-
-
 ggplot(gitr_clean, aes(y=total.biomass.g.rounded, x = treatment)) +
   geom_boxplot() +
   facet_wrap(~bkgrd)
@@ -231,4 +239,6 @@ ggplot(gitr_clean, aes(y=total.biomass.g.rounded, x = bkgrd.n.indiv)) +
   geom_point() +
   facet_wrap(~bkgrd)
 
+## clean up environment
 
+rm(list = c("collections", "date", "date_collections", "drought", "gitr", "gitr_all", "gitr_biomass_nas", "gitr_cen", "gitr_complete_check_nas", "gitr_complete_check_no", "gitr_dens_check", "gitr_flower_nas", "gitr_incompletes", "gitr_missing_samples", "gitr_proc_clean", "gitr_temp", "gitr_temp2", "gitr_unique_check", "gitr_unmatched", "lead", "round_check"))

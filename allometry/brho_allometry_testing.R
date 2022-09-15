@@ -9,6 +9,12 @@ library(googledrive)
 library(openxlsx)
 library(ggpubr)
 
+## create a function to calculate standard error
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
+
 # Read in Data ####
 ## read in cleaned processing/censusing data
 source("data_cleaning/brho_data-cleaning.R")

@@ -14,11 +14,18 @@ calcSE<-function(x){
 # Read in Data ####
 source("data_cleaning/mica_data-cleaning.R")
 
+## put variables in terms of per-capita
+mica_clean <- mica_clean %>%
+  mutate(percap.total.biomass.g.rounded = total.biomass.g.rounded/phyto.n.indiv,
+         percap.seed.num = seed.num/phyto.n.indiv)
+
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
 date <- 20220901
 
 # Upload data from dropbox ####
 ## Allometry data
+drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vector
+
 mica_allo <- read.xlsx(paste0(lead, "Allometry/Allometry_entered/", date, "_Allometry.xlsx"), sheet = 17) %>%
   mutate(seed.num = seeds.num,
          treatment = ifelse(block %in% drought, "D", "C"))
@@ -27,6 +34,7 @@ mica_allo <- read.xlsx(paste0(lead, "Allometry/Allometry_entered/", date, "_Allo
 # Explore data ####
 theme_set(theme_bw())
 
+## Vis Allo Relationship ####
 ggplot(mica_allo, aes(x=seed.num, y=total.biomass.g, color = treatment)) +
   geom_point() +
   scale_color_manual(values = c("#699FA1", "#DD8627")) +
@@ -34,6 +42,39 @@ ggplot(mica_allo, aes(x=seed.num, y=total.biomass.g, color = treatment)) +
 ## relationship looks okay to use preliminarily
 ## keep drought and ambient separate for the time being
 
+## Compare Distribs ####
+micadphytos <- ggplot(mica_clean[mica_clean$treatment == "D",], aes(x=percap.total.biomass.g.rounded)) +
+  geom_histogram() +
+  coord_cartesian(xlim = c(0,2), ylim = c(0,60)) +
+  ggtitle("MICA All Samples - Drought") +
+  xlab("MICA per cap total biomass (g)")
+
+micadallo <- ggplot(mica_allo[mica_allo$treatment == "D",], aes(x=total.biomass.g)) +
+  geom_histogram() +
+  coord_cartesian(xlim = c(0,2), ylim = c(0,5)) +
+  ggtitle("MICA Allometry Samples - Drought") +
+  xlab("MICA per cap total biomass (g)")
+
+micacphytos <- ggplot(mica_clean[mica_clean$treatment == "C",], aes(x=percap.total.biomass.g.rounded)) +
+  geom_histogram() +
+  coord_cartesian(xlim = c(0,2), ylim = c(0,60)) +
+  ggtitle("MICA All Samples - Control") +
+  xlab("MICA per cap total biomass (g)")
+
+micacallo <- ggplot(mica_allo[mica_allo$treatment == "C",], aes(x=total.biomass.g)) +
+  geom_histogram() +
+  coord_cartesian(xlim = c(0,2), ylim = c(0,5)) +
+  ggtitle("MICA Allometry Samples - Control") +
+  xlab("MICA per cap total biomass (g)")
+
+ggarrange(micacphytos, micadphytos, micacallo, micadallo, 
+          nrow = 2, ncol = 2)
+ggsave("allometry/preliminary_figs/allometric_relationship_fits/mica_allo_distributions.png", height = 5, width = 7)
+
+
+
+
+# Predict Seed Num ####
 mica_allo_D <- lm(seed.num ~ total.biomass.g, data = mica_allo[mica_allo$treatment == "D",])
 summary(mica_allo_D)
 ## slope = 791.41
@@ -110,31 +151,4 @@ var(mica_clean[mica_clean$treatment == "D",]$total.biomass.g.rounded)
 var(mica_allo[mica_allo$treatment == "D",]$total.biomass.g)
 
 
-dphytos <- ggplot(mica_clean[mica_clean$treatment == "D",], aes(x=total.biomass.g.rounded)) +
-  geom_histogram() +
-  coord_cartesian(xlim = c(0,4), ylim = c(0,70)) +
-  ggtitle("MICA All Samples - Drought") +
-  xlab("MICA total biomass (g)")
-
-dallo <- ggplot(mica_allo[mica_allo$treatment == "D",], aes(x=total.biomass.g)) +
-  geom_histogram() +
-  coord_cartesian(xlim = c(0,4)) +
-  ggtitle("MICA Allometry Samples - Drought") +
-  xlab("MICA total biomass (g)")
-
-cphytos <- ggplot(mica_clean[mica_clean$treatment == "C",], aes(x=total.biomass.g.rounded)) +
-  geom_histogram() +
-  coord_cartesian(xlim = c(0,4), ylim = c(0,70)) +
-  ggtitle("MICA All Samples - Control") +
-  xlab("MICA total biomass (g)")
-
-callo <- ggplot(mica_allo[mica_allo$treatment == "C",], aes(x=total.biomass.g)) +
-  geom_histogram() +
-  coord_cartesian(xlim = c(0,4), ylim = c(0,5)) +
-  ggtitle("MICA Allometry Samples - Control") +
-  xlab("MICA total biomass (g)")
-
-ggarrange(cphytos, dphytos, callo, dallo, 
-          nrow = 2, ncol = 2)
-ggsave("mica_allo_distributions.png", height = 5, width = 7)
 
