@@ -63,6 +63,7 @@ brho[brho$phyto.n.indiv==0,] ## looks like two of the phytos that were buried by
 unique(brho$phyto.unique) ## need to standardize caps on this.
     ## DONE
 
+
 ### Check sample completion ####
 ggplot(brho[brho$plot < 43,], aes(x=`complete?`)) + 
   geom_bar()
