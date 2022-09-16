@@ -1,6 +1,7 @@
 # PLER Data Cleaning 
-## script current as of 09/14/2022
-## data current as of 08/25/2022, will need to be replaced as I think some changes were made.
+## script current as of 09/15/2022
+## processing data current as of 09/14/2022
+## collections data current as of 08/25/2022 -- this should be updated to the most current version
 
 ## load packages
 library(googlesheets4)
@@ -12,12 +13,13 @@ library(openxlsx)
 
 # Read in Data ####
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
-date <- 20220825
+date <- 20220914
+date_collections <- 20220825
 
 ## Processing data
-pler <- read.xlsx(paste0(lead, "Phytometer-Processing/", date, "_Phyto-Processing.xlsx"), sheet = 14)
+pler <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 14)
 ## Collections data
-collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
+collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date_collections, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
 
 ## make sure the dates read in correctly
 collections$phyto.date.collect <- as.Date(collections$phyto.date.collect, origin = "1899-12-30")
@@ -29,6 +31,8 @@ collections$phyto.unique <- as.character(collections$phyto.unique)
 
 # Data Cleaning ####
 theme_set(theme_bw())
+
+
 ## Processing Data ####
 ### Check ID info ####
 ggplot(pler, aes(x=bkgrd)) +
