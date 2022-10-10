@@ -17,13 +17,9 @@ calcSE<-function(x){
 
 # Read in Data ####
 ## read in cleaned processing/censusing data
-source("data_cleaning/brho_data-cleaning.R")
+source("data_cleaning/clean_collections_merge_processing.R")
 
-## put variables in terms of per capita
-brho_clean <- brho_clean %>%
-  mutate(percap.inflor.g.rounded = inflor.g.rounded/phyto.n.indiv,
-         percap.total.biomass.g.rounded = total.biomass.g.rounded/phyto.n.indiv,
-         percap.seed.num = seed.num/phyto.n.indiv)
+colnames(mc_dat)
   
 
 ## file paths for allometry data
@@ -51,6 +47,7 @@ theme_set(theme_bw())
 ggplot(brho_allo, aes(x=inflor.g, y=seed.num, color = treatment)) +
   geom_point() +
   geom_smooth(method = "lm")
+
 ggplot(brho_allo, aes(x=inflor.g, y=seed.num, color = treatment)) +
   geom_point()
 

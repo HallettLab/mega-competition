@@ -1,28 +1,25 @@
 ## Cleaning all processing data together
 
 ## load packages
-library(googlesheets4)
-library(plyr)
 library(tidyverse)
-library(googledrive)
-library(openxlsx)
+
 
 # Read in Data ####
-lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
-date <- 20220914
+lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/" # Carmen's file path
+date <- 20220927
 date_collections <- 20220825
 
 ## Processing data
-acam <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 1)
-anar <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 3)
-avba <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 4)
-brho <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 5)
-gitr <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 9)
-leni <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 10)
-mica <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 13)
-pler <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 14)
-thir <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 17)
-twil <- read.xlsx(paste0(lead, "Processing/Phytometer-Processing/Phytometer-Processing_entered/", date, "_Phyto-Processing.xlsx"), sheet = 18)
+acam <- read.csv(paste0(lead, "ACAM_phyto-processing_", date, ".csv"))
+anar <- read.csv(paste0(lead, "ANAR_phyto-processing_", date, ".csv"))
+avba <- read.csv(paste0(lead, "AVBA_phyto-processing_", date, ".csv"))
+brho <- read.csv(paste0(lead, "BRHO_phyto-processing_", date, ".csv"))
+gitr <- read.csv(paste0(lead, "GITR_phyto-processing_", date, ".csv"))
+leni <- read.csv(paste0(lead, "LENI_phyto-processing_", date, ".csv"))
+mica <- read.csv(paste0(lead, "MICA_phyto-processing_", date, ".csv"))
+pler <- read.csv(paste0(lead, "PLER_phyto-processing_", date, ".csv"))
+thir <- read.csv(paste0(lead, "THIR_phyto-processing_", date, ".csv"))
+twil <- read.csv(paste0(lead, "TWIL_phyto-processing_", date, ".csv"))
 
 
 drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vector
@@ -34,9 +31,9 @@ acamC <- acam %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                       ifelse(phyto.unique == "b","B",
                                              ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -60,9 +57,9 @@ anarC <- anar %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B",
                                       ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -90,9 +87,9 @@ avbaC <- avba %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B",
                                       ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          #scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            #ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -121,9 +118,9 @@ brhoC <- brho %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B",
                                       ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -150,9 +147,9 @@ gitrC <- gitr %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B",
                                       ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -178,9 +175,9 @@ micaC <- mica %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B",
                                       ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -207,9 +204,9 @@ leniC <- leni %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B",
                                       ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -238,9 +235,9 @@ plerC <- pler %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B",
                                       ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -269,9 +266,9 @@ thirC <- thir %>%
                 phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                       ifelse(phyto.unique == "b","B",
                                              ifelse(phyto.unique == "c", "C", phyto.unique))),
-                complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                         ifelse(`complete?` == " Y","Y", 
-                                                ifelse(`complete?` == "n", "N", `complete?`))),
+                complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                         ifelse(complete. == " Y","Y", 
+                                                ifelse(complete. == "n", "N", complete.))),
                 scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                                   ifelse(scale.ID == "a","A", scale.ID)),
                 unique.ID = unique,
@@ -298,9 +295,9 @@ twilC <- twil %>%
          phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
                                ifelse(phyto.unique == "b","B",
                                       ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(`complete?` == "y", "Y", ## change all values to caps
-                                  ifelse(`complete?` == " Y","Y", 
-                                         ifelse(`complete?` == "n", "N", `complete?`))),
+         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
+                                  ifelse(complete. == " Y","Y", 
+                                         ifelse(complete. == "n", "N", complete.))),
          scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
                            ifelse(scale.ID == "a","A", scale.ID)),
          unique.ID = unique,
@@ -408,9 +405,12 @@ round2 <- round1 %>%
   filter(complete.sample == "Y") %>% ## remove incomplete samples
   mutate(total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(total.biomass.g, digits = 3), total.biomass.g),
          inflor.g.rounded = ifelse(scale.ID %in% med_scales, round(inflor.g, digits = 3), inflor.g)) %>%
+  
   mutate(total.biomass.rounded.percap = total.biomass.g.rounded/phyto.n.indiv,
+         
          inflor.g.rounded.percap = inflor.g.rounded/phyto.n.indiv,
-         seed.num,percap = seed.num/phyto.n.indiv,
+         
+         seed.num.percap = seed.num/phyto.n.indiv,
          flower.num.percap = flower.num/phyto.n.indiv,
          total.stem.length.mm.percap = total.stem.length.mm/phyto.n.indiv,
          empty.flower.num.percap = empty.flower.num/phyto.n.indiv,

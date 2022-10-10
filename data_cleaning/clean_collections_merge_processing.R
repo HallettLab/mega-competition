@@ -1,11 +1,13 @@
-
 # Read in Data ####
 ## Clean processing data
-source("data_cleaning/summer_phytos_standardization.R")
+source("data_cleaning/clean_summer_phyto_processing_data.R")
+
+## Load packages
+library(openxlsx)
 
 ## Collections data
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
-date_collections <- 20220825
+date_collections <- 20220927
 
 collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date_collections, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
 
@@ -36,16 +38,17 @@ unique(collections$bkgrd)
 phyto.unique_spaces_collections <- collections %>%
   filter(phyto.unique == " ")
 #view(phyto.unique_spaces_collections)
+## there are 9 phyto.uniques with spaces in the collections data
+## remove spaces below
 
 phyto.unique_spaces_proc <- proc_dat_clean %>%
   filter(phyto.unique == " ")
-#view(phyto.unique_spaces_proc)
 ## there are 4 phyto.uniques with spaces in the clean processing data 
-## these 4 are also in the collections data
-## in addition, the collections data also contain 1 relevant phyto.unique space that should be fixed
-collections[collections$block == 16 & collections$plot == 18 & collections$sub == 21,]$phyto.unique <- NA
-    ## Fix this issue here
-
+## remove these spaces here
+proc_dat_clean[proc_dat_clean$block == 1 & proc_dat_clean$plot == 4 & proc_dat_clean$sub == 17,]$phyto.unique <- NA
+proc_dat_clean[proc_dat_clean$block == 5 & proc_dat_clean$plot == 11 & proc_dat_clean$sub == 7,]$phyto.unique <- NA
+proc_dat_clean[proc_dat_clean$block == 3 & proc_dat_clean$plot == 26 & proc_dat_clean$sub == 20,]$phyto.unique <- NA
+proc_dat_clean[proc_dat_clean$block == 7 & proc_dat_clean$plot == 41 & proc_dat_clean$sub == 7,]$phyto.unique <- NA
 
 ## Fix phyto.unique mismatch in ANAR 4-6-2
     ## Seems like the phyto unique was removed from envelope & processing data but we forgot to remove it from the collections data so it is kicking up a fuss.
@@ -57,9 +60,10 @@ collections[collections$block == 4 & collections$plot == 6 & collections$sub == 
 ## Make the modifications
 collectionsC <- collections %>%
   filter(plot < 43, bkgrd != "VIVI", phyto.n.indiv > 0) %>%
-  mutate(phyto.unique = ifelse(phyto.unique %in% As, "A", ## change all values to caps
+  mutate(phyto.unique = ifelse(phyto.unique %in% As, "A", ## change all values to caps, remove spaces
                                ifelse(phyto.unique == "b","B", 
-                                      ifelse(phyto.unique %in% Cs, "C", phyto.unique)))) %>%
+                                      ifelse(phyto.unique %in% Cs, "C", 
+                                             ifelse(phyto.unique == " ", NA, phyto.unique))))) %>%
   mutate(unique.ID = unique) %>% ## standardize column name
   mutate(bkgrd.n.indiv = ifelse(bkgrd == "Control", NA, bkgrd.n.indiv)) %>% ## change # of background indiv in controls to NA
   mutate(Nbrhood.size = ifelse(phyto %in% nhood10, 10, ## fill in all vals of neighborhood size
@@ -83,7 +87,6 @@ duplicated(processing_rejects)
 ## Check row nums ####
 nrow(collectionsC) - nrow(proc_dat_clean)
 ## there are 347 more rows in collections than processing data
-## WHY are there 347 more rows in collections but 348 that do not match.....
 
 ### Are proc and proc rejects separate? ####
 unM_proc_and_rejects <- anti_join(proc_dat_clean, processing_rejects, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
@@ -97,13 +100,14 @@ unM_proc_and_rejects <- anti_join(proc_dat_clean, processing_rejects, by = c("bl
 
 ### Collections should contain all the processing rejects rows? ####
 test <- semi_join(collectionsC, processing_rejects, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
+## looks like there are 81 in common between the dataframes?
 
 test2 <- semi_join(processing_rejects, collectionsC, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 ## looks like all of the processing rejects are present in collectionsC except the two Gopher BRHOs
 
 
 unM_coll_and_rejects <- anti_join(collectionsC, processing_rejects, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
-## There are 2958 rows here 
+## There are 3225 rows here 
 ## 2958 + 348 = 3306, so the rows that don't match proc_rejects + rows that do match proc_rejects add up
 
 ### Duplicates in Processing Data? ####
