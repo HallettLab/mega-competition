@@ -273,7 +273,8 @@ ggplot(round2, aes(x=bkgrd)) +
 ## More Mods ####
 round2_final <- round2 %>%
   mutate(phyto.unique = ifelse(phyto.unique == "", NA, phyto.unique),
-         scale.ID = ifelse(scale.ID == "", NA, scale.ID))
+         scale.ID = ifelse(scale.ID == "", NA, scale.ID), 
+         dens = ifelse(dens == "", NA, dens))
                   
 ggplot(round2_final, aes(x=phyto.unique)) +
   geom_bar()
@@ -344,4 +345,4 @@ nrow(nas_to_check)
 proc_dat_clean <- round3
 
 ## clean up environment
-rm(list = c("acam", "acamC", "anar", "anarC", "avba", "avbaC", "brho", "brhoC", "date", "date_collections", "drought", "gitr", "gitrC", "lead", "leni", "leniC", "med_scales",  "mica", "micaC", "non_nums_flower", "non_nums_inflor", "pler", "plerC", "round1", "round2", "tempanar", "tempavba", "tempbrho", "tempgitr", "templeni", "tempmica", "temppler", "tempthir", "temptwil", "thir", "thirC", "twil", "twilC", "round1_final", "round2_final", "round3"))
+rm(list = c("acam", "acamC", "anar", "anarC", "avba", "avbaC", "brho", "brhoC", "date", "date_collections", "drought", "gitr", "gitrC", "lead", "leni", "leniC", "med_scales",  "mica", "micaC", "non_nums_flower", "non_nums_inflor", "pler", "plerC", "round2", "tempanar", "tempavba", "tempbrho", "tempgitr", "templeni", "tempmica", "temppler", "tempthir", "thir", "thirC", "twil", "twilC", "round1_final", "round2_final", "round3"))
