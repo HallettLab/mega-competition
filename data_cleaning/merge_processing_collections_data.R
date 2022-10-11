@@ -1,82 +1,22 @@
+# Load Packages ####
+library(tidyverse)
+
+
+
 # Read in Data ####
 ## Clean processing data
-source("data_cleaning/clean_summer_phyto_processing_data.R")
+source("data_cleaning/phyto-processing_data-cleaning.R")
 
-## Load packages
-library(openxlsx)
+## Clean collections data
+source("data_cleaning/phyto-collections_data-cleaning.R")
 
-## Collections data
-lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
-date_collections <- 20220927
-
-collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date_collections, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
-
-## make sure the dates read in correctly
-collections$phyto.date.collect <- as.Date(collections$phyto.date.collect, origin = "1899-12-30")
-collections$phyto.date.census <- as.Date(collections$phyto.date.census, origin = "1899-12-30")
-collections$bg.date.census <- as.Date(collections$bg.date.census, origin = "1899-12-30")
-collections$phyto.unique <- as.character(collections$phyto.unique)
-
-
-
-
-# Clean Collections Data ####
-## all of the vectors to eventually filter by
-Cs <- c("c", "c ", "C ") ## phyto.uniques
-As <- c("a", "A ") ## phyto.uniques
-summer_phytos <- unique(proc_dat_clean$phyto)
-nhood10 <- c("MICA", "PLER", "BRHO", "ANAR", "GITR", "ACAM") ## neighborhood size
-nhood18 <- c("LENI", "TWIL-I", "AVBA", "THIR-I") ## neighborhood size
-
-## check for spaces in phyto names
-unique(collections$phyto)
-
-## check for spaces in background names
-unique(collections$bkgrd)
-
-## check for spaces in phyto.uniques
-phyto.unique_spaces_collections <- collections %>%
-  filter(phyto.unique == " ")
-#view(phyto.unique_spaces_collections)
-## there are 9 phyto.uniques with spaces in the collections data
-## remove spaces below
-
-phyto.unique_spaces_proc <- proc_dat_clean %>%
-  filter(phyto.unique == " ")
-## there are 4 phyto.uniques with spaces in the clean processing data 
-## remove these spaces here
-proc_dat_clean[proc_dat_clean$block == 1 & proc_dat_clean$plot == 4 & proc_dat_clean$sub == 17,]$phyto.unique <- NA
-proc_dat_clean[proc_dat_clean$block == 5 & proc_dat_clean$plot == 11 & proc_dat_clean$sub == 7,]$phyto.unique <- NA
-proc_dat_clean[proc_dat_clean$block == 3 & proc_dat_clean$plot == 26 & proc_dat_clean$sub == 20,]$phyto.unique <- NA
-proc_dat_clean[proc_dat_clean$block == 7 & proc_dat_clean$plot == 41 & proc_dat_clean$sub == 7,]$phyto.unique <- NA
 
 ## Fix phyto.unique mismatch in ANAR 4-6-2
-    ## Seems like the phyto unique was removed from envelope & processing data but we forgot to remove it from the collections data so it is kicking up a fuss.
-    ## Need to remove the A value from phyto unique in collections data
+## Seems like the phyto unique was removed from envelope & processing data but we forgot to remove it from the collections data so it is kicking up a fuss.
+## Need to remove the A value from phyto unique in collections data
 proc_dat_clean[proc_dat_clean$block == 4 & proc_dat_clean$plot == 6 & proc_dat_clean$sub == 2,]
 collections[collections$block == 4 & collections$plot == 6 & collections$sub == 2,]$phyto.unique <- NA
 
-
-## Make the modifications
-collectionsC <- collections %>%
-  filter(plot < 43, bkgrd != "VIVI", phyto.n.indiv > 0) %>%
-  mutate(phyto.unique = ifelse(phyto.unique %in% As, "A", ## change all values to caps, remove spaces
-                               ifelse(phyto.unique == "b","B", 
-                                      ifelse(phyto.unique %in% Cs, "C", 
-                                             ifelse(phyto.unique == " ", NA, phyto.unique))))) %>%
-  mutate(unique.ID = unique) %>% ## standardize column name
-  mutate(bkgrd.n.indiv = ifelse(bkgrd == "Control", NA, bkgrd.n.indiv)) %>% ## change # of background indiv in controls to NA
-  mutate(Nbrhood.size = ifelse(phyto %in% nhood10, 10, ## fill in all vals of neighborhood size
-                               ifelse(phyto %in% nhood18, 18, Nbrhood.size)),
-         phyto = ifelse(phyto == "ACAM ", "ACAM", ## fix phytos with spaces in the name
-                        ifelse(phyto == "THIR-I ", "THIR-I", phyto)),
-         bkgrd = ifelse(bkgrd == "BRNI ", "BRNI", ## fix backgrounds with spaces in the name
-                        ifelse(bkgrd == "THIR-I ", "THIR-I",
-                               ifelse(bkgrd == "TWIL-I ", "TWIL-I", 
-                                      ifelse(bkgrd == "CESO ", "CESO",
-                                             ifelse(bkgrd == "CLPU ", "CLPU", bkgrd)))))) %>%
-  filter(phyto %in% summer_phytos) ## filter out only the fully processed phytos
-    ## IMPORTANT THAT THIS STEP IS AFTER FIXING PHYTO NAMES
 
 
 
@@ -167,9 +107,9 @@ unmatched_in_collections2 <- anti_join(collectionsC, proc_dat_distinct, by = c("
 unmatched_not_reject <- anti_join(unmatched_in_collections, processing_rejects, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 ## 2 are present in the unmatched dataframe that are not in the incomplete samples
 ## ANAR 4-6-2-A 
-    ## FIXED!
+## FIXED!
 ## AVBA 16-18-21-" " 
-    ## FIXED!
+## FIXED!
 ## these both have issues with the phyto.uniques
 
 #unique(unmatched_not_reject$phyto.unique)
@@ -182,12 +122,12 @@ reject_not_unmatched <- anti_join(processing_rejects, unmatched_in_collections, 
 ## 4 are present in the incomplete samples that are not in the unmatched dataframe
 ## These shouldn't matter currently because they are incomplete
 
-    ## AVBA 16-18-21-NA ## looks like the phyto-unique in the processing data (NA), does not align with the phyto-unique in collections data because of a space in the collections data phyto-unique.
-        ## FIXED 
-    ## THIR-I 16-27-4-B 
-        ## FIXED
-    ## the 2 BRHO phytos that were gopher casualties (7-25-8 A & B); These are in the processing rejects but not in collections because collections data were filtered for phyto > 0
-        ## THESE DON'T MATTER
+## AVBA 16-18-21-NA ## looks like the phyto-unique in the processing data (NA), does not align with the phyto-unique in collections data because of a space in the collections data phyto-unique.
+## FIXED 
+## THIR-I 16-27-4-B 
+## FIXED
+## the 2 BRHO phytos that were gopher casualties (7-25-8 A & B); These are in the processing rejects but not in collections because collections data were filtered for phyto > 0
+## THESE DON'T MATTER
 
 ## Investigate THIR-I 16-27-4 
 #collectionsC[collectionsC$block == 16 & collectionsC$plot == 27 & collectionsC$sub == 4,]
@@ -195,17 +135,17 @@ reject_not_unmatched <- anti_join(processing_rejects, unmatched_in_collections, 
 #collections[collections$block == 16 & collections$plot == 27 & collections$sub == 4,]
 ## phyto.unique B IS present in the collections cleaned data
 ## Why is it being filtered out? -- looks like a space in teh phyto name. 
-    ## FIXED THIS!
+## FIXED THIS!
 
 
 ## Check rows in proc NOT coll ####
 unmatched_in_processing <- anti_join(proc_dat_clean, collectionsC, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 ## NOTHING LEFT HERE!
 ## 4 samples are in the processing dataframe but not the collections dataframe
-    ## ACAM 8-22-4-B
-    ## ANAR 4-6-2-NA ## This appears to be a problem with a phyto.unique
-    ## THIR-I 14-15-15-B
-    ## THIR-I 15-39-13-C
+## ACAM 8-22-4-B
+## ANAR 4-6-2-NA ## This appears to be a problem with a phyto.unique
+## THIR-I 14-15-15-B
+## THIR-I 15-39-13-C
 ## These issues have largely been resolved (I believe by taking out spaces in the phyto names)
 ## The only one left after the most recent modifications is ANAR 4-6-2-NA
 

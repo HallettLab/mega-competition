@@ -3,7 +3,6 @@
 ## load packages
 library(tidyverse)
 
-
 # Read in Data ####
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/" # Carmen's file path
 date <- 20220927
@@ -24,18 +23,13 @@ twil <- read.csv(paste0(lead, "TWIL_phyto-processing_", date, ".csv"))
 
 drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vector
 
-# Round 1 Cleaning ####
+# Round 1 ####
+## Standardize column names
+
 ## Standardize ACAM ####
+colnames(acam)
 acamC <- acam %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                                      ifelse(phyto.unique == "b","B",
-                                             ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          biomass.no.seed.g = NA, 
          #total.biomass.g = NA,
@@ -47,21 +41,12 @@ acamC <- acam %>%
          empty.flower.num = NA,
          seeds.present = NA,
          glume.num = NA) %>%
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
-
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 ## Standardize ANAR ####
+colnames(anar)
 anarC <- anar %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                               ifelse(phyto.unique == "b","B",
-                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          biomass.no.seed.g = NA, 
          #total.biomass.g = NA,
@@ -74,24 +59,16 @@ anarC <- anar %>%
          glume.num = NA,
          seeds.present = NA,
          census.notes = notes) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 
 ### add in anar data ####
 tempanar <- rbind(acamC, anarC)
 
 ## Standardize AVBA ####
+colnames(avba)
 avbaC <- avba %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                               ifelse(phyto.unique == "b","B",
-                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         #scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           #ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          biomass.no.seed.g = NA, 
          total.biomass.g = NA,
@@ -105,24 +82,16 @@ avbaC <- avba %>%
          seeds.present = NA,
          scale.ID = NA
          ) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 ### add in avba data ####
 tempavba <- rbind(tempanar, avbaC)
 
 
 ## Standardize BRHO ####
+colnames(brho)
 brhoC <- brho %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                               ifelse(phyto.unique == "b","B",
-                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          #biomass.no.seed.g = NA, 
          #total.biomass.g = NA,
@@ -134,24 +103,16 @@ brhoC <- brho %>%
          empty.flower.num = NA,
          seeds.present = NA,
          glume.num = NA) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 
 ### add in brho data ####
 tempbrho <- rbind(tempavba, brhoC)
 
 ## Standardize GITR ####
+colnames(gitr)
 gitrC <- gitr %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                               ifelse(phyto.unique == "b","B",
-                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          biomass.no.seed.g = NA, 
          #total.biomass.g = NA,
@@ -163,23 +124,15 @@ gitrC <- gitr %>%
          empty.flower.num = NA,
          seeds.present = NA,
          glume.num = NA) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 ### add in gitr data ####
 tempgitr <- rbind(tempbrho, gitrC)
 
 ## Standardize MICA ####
+colnames(mica)
 micaC <- mica %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                               ifelse(phyto.unique == "b","B",
-                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          #biomass.no.seed.g = NA, 
          #total.biomass.g = NA,
@@ -191,24 +144,16 @@ micaC <- mica %>%
          empty.flower.num = NA,
          seeds.present = NA,
          glume.num = NA) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 ### add in mica data ####
 tempmica <- rbind(tempgitr, micaC)
 
 
 ## Standardize LENI ####
+colnames(leni)
 leniC <- leni %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                               ifelse(phyto.unique == "b","B",
-                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          biomass.no.seed.g = NA, 
          total.biomass.g = total.biomass,
@@ -220,8 +165,7 @@ leniC <- leni %>%
          empty.flower.num = NA,
          seeds.present = NA,
          glume.num = NA) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 
 
@@ -230,16 +174,9 @@ templeni <- rbind(tempmica, leniC)
 
 
 ## Standardize PLER ####
+colnames(pler)
 plerC <- pler %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                               ifelse(phyto.unique == "b","B",
-                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          biomass.no.seed.g = NA, 
          #total.biomass.g = NA,
@@ -252,8 +189,7 @@ plerC <- pler %>%
          glume.num = NA,
          seeds.present = NA
          ) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 
 ### add in pler data ####
@@ -261,16 +197,9 @@ temppler <- rbind(templeni, plerC)
 
 
 ## Standardize THIR ####
+colnames(thir)
 thirC <- thir %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-                phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                                      ifelse(phyto.unique == "b","B",
-                                             ifelse(phyto.unique == "c", "C", phyto.unique))),
-                complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                         ifelse(complete. == " Y","Y", 
-                                                ifelse(complete. == "n", "N", complete.))),
-                scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                                  ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
                 unique.ID = unique,
                 #biomass.no.seed.g = NA, 
                 #total.biomass.g = NA,
@@ -282,24 +211,16 @@ thirC <- thir %>%
                 empty.flower.num = NA,
          seeds.present = NA,
          glume.num = NA) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 ### add in thir data ####
 tempthir <- rbind(temppler, thirC)
 
 
 ## Standardize TWIL ####
+colnames(twil)
 twilC <- twil %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
-                               ifelse(phyto.unique == "b","B",
-                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
-         complete.sample = ifelse(complete. == "y", "Y", ## change all values to caps
-                                  ifelse(complete. == " Y","Y", 
-                                         ifelse(complete. == "n", "N", complete.))),
-         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
-                           ifelse(scale.ID == "a","A", scale.ID)),
+  mutate(complete.sample = complete.,
          unique.ID = unique,
          biomass.no.seed.g = NA, 
          #total.biomass.g = NA,
@@ -309,91 +230,86 @@ twilC <- twil %>%
          pod.num = NA,
          total.stem.length.mm = NA, 
          empty.flower.num = NA,
-         seeds.present = NA,
+         #seeds.present = NA,
          glume.num = NA) %>% 
-  filter(plot < 43, bkgrd != "VIVI") %>% 
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes, unique.ID) ## make sure column ordering works
+  select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 ### add in twil data ####
-temptwil <- rbind(tempthir, twilC)
+round1_final <- rbind(tempthir, twilC)
 
 
+# Round 2 ####
+## Mods ####
+round2 <- round1_final %>%
+  mutate(across(where(is.character), str_trim)) %>% ## remove leading & trailing whitespace!!
+  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## add a treatment column
+         phyto.unique = ifelse(phyto.unique == "a", "A", ## change all values to caps
+                               ifelse(phyto.unique == "b","B",
+                                      ifelse(phyto.unique == "c", "C", phyto.unique))),
+         complete.sample = ifelse(complete.sample == "y", "Y", ## change all values to caps
+                                  ifelse(complete.sample == "n", "N", complete.sample)),
+         scale.ID = ifelse(scale.ID == "e", "E", ## change all values to caps
+                           ifelse(scale.ID == "a","A", 
+                                  ifelse(scale.ID == "d", "D", scale.ID)))) %>%
+  filter(plot < 43, bkgrd != "VIVI")
+           
 
-
-# Round 1 Checks ####
-ggplot(temptwil, aes(x=phyto.unique)) +
+## Checks ####
+ggplot(round2, aes(x=phyto.unique)) +
   geom_bar()
-unique(temptwil$phyto.unique)
-## Need to standardize, further
+unique(round2$phyto.unique)
+## Need to standardize, further, lots of values of "" that should be changed to NA
 
-ggplot(temptwil, aes(x=scale.ID)) +
+ggplot(round2, aes(x=scale.ID)) +
   geom_bar()
-## Need to standardize, further
+## Need to standardize, further, lots of values of "" that should be changed to NA
 
-ggplot(temptwil, aes(x=complete.sample)) +
+ggplot(round2, aes(x=complete.sample)) +
   geom_bar()
-## Need to standardize, further
 
-
-ggplot(temptwil, aes(x=bkgrd)) +
+ggplot(round2, aes(x=bkgrd)) +
   geom_bar()
-## Not all the background names are standardized
-unique(temptwil$bkgrd)
 
-round1 <- temptwil %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"), ## make sure all of the columns match!!
-         phyto.unique = ifelse(phyto.unique == "A ", "A", ## change all values to caps
-                               ifelse(phyto.unique == "c ", "C", 
-                                      ifelse(phyto.unique == "C ", "C", phyto.unique))),
-         complete.sample = ifelse(complete.sample == " N", "N", complete.sample),
-         scale.ID = ifelse(scale.ID == "d", "D", scale.ID),
-         phyto = ifelse(phyto == "THIR-I ", "THIR-I", phyto),
-         bkgrd = ifelse(bkgrd == "BRNI ", "BRNI",
-                        ifelse(bkgrd == "THIR-I ", "THIR-I",
-                               ifelse(bkgrd == "TWIL-I ", "TWIL-I", bkgrd)))) ## change all values to caps
+## More Mods ####
+round2_final <- round2 %>%
+  mutate(phyto.unique = ifelse(phyto.unique == "", NA, phyto.unique),
+         scale.ID = ifelse(scale.ID == "", NA, scale.ID))
                   
-ggplot(round1, aes(x=phyto.unique)) +
+ggplot(round2_final, aes(x=phyto.unique)) +
   geom_bar()
 
-ggplot(round1, aes(x=scale.ID)) +
+ggplot(round2_final, aes(x=scale.ID)) +
   geom_bar()
-## Need to standardize, further
-
-ggplot(round1, aes(x=complete.sample)) +
-  geom_bar()
-
-ggplot(round1, aes(x=bkgrd)) +
-  geom_bar()
+## fixed both!
 
 
-
-# Round 2 Cleaning ####
-
+# Round 3 ####
+str(round2_final)
 ## Fix non-numeric cols ####
 ## Initial issues that arose during this step: 
     ## inflor.g is a character
     ## flower.num is a character
 
 ## filter out the non-numeric observations that are messing up inflor.g and flower.num
-non_nums_inflor <- round1 %>%
+non_nums_inflor <- round2_final %>%
   filter(!is.na(inflor.g)) %>%
   filter(!(!is.na(as.numeric(inflor.g)))) ## lol I don't quite know why this works.... but it did separate out the problematic observation!
 ## 7-15-8; BRHO phyto with inflor.g "1.6847g"
+## also lots of BRHO missing vals
 
-round1[round1$block == 7 & round1$plot == 15 & round1$sub == 8, ]$inflor.g <- 1.6847
+round2_final[round2_final$block == 7 & round2_final$plot == 15 & round2_final$sub == 8, ]$inflor.g <- 1.6847
 
 ## change the column to numeric
-round1$inflor.g <- as.numeric(round1$inflor.g)
+round2_final$inflor.g <- as.numeric(round2_final$inflor.g)
 
-non_nums_flower <- round1 %>%
+non_nums_flower <- round2_final %>%
   filter(!is.na(flower.num)) %>%
   filter(!(!is.na(as.numeric(flower.num))))
-## 1-30-23; PLER phyto has a space in flower.num
-
-round1[round1$block == 1 & round1$plot == 30 & round1$sub == 23,]$flower.num <- NA
+## nothing shows up, think there used to be a space here, change back to numeric
 
 ## change the column to numeric
-round1$flower.num <- as.numeric(round1$flower.num)
+round2_final$flower.num <- as.numeric(round2_final$flower.num)
+
 
 
 ## Filter, Round, & PerCap ####
@@ -401,35 +317,31 @@ med_scales <- c("A", "E", "F") ## scales that need to be rounded
 
 ## round weights that were taken using the medium scales as scale A goes to 4 decimal places while scales E and F go to 3
 ## we are rounding to 3 decimal places overall 
-round2 <- round1 %>%
+round3 <- round2_final %>%
   filter(complete.sample == "Y") %>% ## remove incomplete samples
   mutate(total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(total.biomass.g, digits = 3), total.biomass.g),
-         inflor.g.rounded = ifelse(scale.ID %in% med_scales, round(inflor.g, digits = 3), inflor.g)) %>%
-  
+         inflor.g.rounded = ifelse(scale.ID %in% med_scales, round(inflor.g, digits = 3), inflor.g)) %>% ## round to 3 decimal places
   mutate(total.biomass.rounded.percap = total.biomass.g.rounded/phyto.n.indiv,
-         
          inflor.g.rounded.percap = inflor.g.rounded/phyto.n.indiv,
-         
          seed.num.percap = seed.num/phyto.n.indiv,
          flower.num.percap = flower.num/phyto.n.indiv,
          total.stem.length.mm.percap = total.stem.length.mm/phyto.n.indiv,
          empty.flower.num.percap = empty.flower.num/phyto.n.indiv,
          pod.num.percap = pod.num/phyto.n.indiv,
-         glume.num.percap = glume.num/phyto.n.indiv)
+         glume.num.percap = glume.num/phyto.n.indiv) ## put everything in per-capita
 
 ## Samples to Check ####        
-incompletes_to_check <- round1 %>%
+incompletes_to_check <- round2_final %>%
   filter(complete.sample != "Y")
 nrow(incompletes_to_check)
 
-nas_to_check <- round1 %>%
+nas_to_check <- round2_final %>%
   filter(is.na(complete.sample))
 nrow(nas_to_check)
 
 ## 350 samples removed for completion issues. Will need to check through these!!
 
-proc_dat_clean <- round2
+proc_dat_clean <- round3
 
 ## clean up environment
-rm(list = c("acam", "acamC", "anar", "anarC", "avba", "avbaC", "brho", "brhoC", "date", "date_collections", "drought", "gitr", "gitrC", "lead", "leni", "leniC", "med_scales",  "mica", "micaC", "non_nums_flower", "non_nums_inflor", "pler", "plerC", "round1", "round2", "tempanar", "tempavba", "tempbrho", "tempgitr", "templeni", "tempmica", "temppler", "tempthir", "temptwil", "thir", "thirC", "twil", "twilC"))
-
+rm(list = c("acam", "acamC", "anar", "anarC", "avba", "avbaC", "brho", "brhoC", "date", "date_collections", "drought", "gitr", "gitrC", "lead", "leni", "leniC", "med_scales",  "mica", "micaC", "non_nums_flower", "non_nums_inflor", "pler", "plerC", "round1", "round2", "tempanar", "tempavba", "tempbrho", "tempgitr", "templeni", "tempmica", "temppler", "tempthir", "temptwil", "thir", "thirC", "twil", "twilC", "round1_final", "round2_final", "round3"))
