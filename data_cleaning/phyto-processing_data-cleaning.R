@@ -5,20 +5,20 @@ library(tidyverse)
 
 # Read in Data ####
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/" # Carmen's file path
-date <- 20220927
+date_processing <- 20221018
 date_collections <- 20220825
 
 ## Processing data
-acam <- read.csv(paste0(lead, "ACAM_phyto-processing_", date, ".csv"))
-anar <- read.csv(paste0(lead, "ANAR_phyto-processing_", date, ".csv"))
-avba <- read.csv(paste0(lead, "AVBA_phyto-processing_", date, ".csv"))
-brho <- read.csv(paste0(lead, "BRHO_phyto-processing_", date, ".csv"))
-gitr <- read.csv(paste0(lead, "GITR_phyto-processing_", date, ".csv"))
-leni <- read.csv(paste0(lead, "LENI_phyto-processing_", date, ".csv"))
-mica <- read.csv(paste0(lead, "MICA_phyto-processing_", date, ".csv"))
-pler <- read.csv(paste0(lead, "PLER_phyto-processing_", date, ".csv"))
-thir <- read.csv(paste0(lead, "THIR_phyto-processing_", date, ".csv"))
-twil <- read.csv(paste0(lead, "TWIL_phyto-processing_", date, ".csv"))
+acam <- read.csv(paste0(lead, "ACAM_phyto-processing_", date_processing, ".csv"))
+anar <- read.csv(paste0(lead, "ANAR_phyto-processing_", date_processing, ".csv"))
+avba <- read.csv(paste0(lead, "AVBA_phyto-processing_", date_processing, ".csv"))
+brho <- read.csv(paste0(lead, "BRHO_phyto-processing_", date_processing, ".csv"))
+gitr <- read.csv(paste0(lead, "GITR_phyto-processing_", date_processing, ".csv"))
+leni <- read.csv(paste0(lead, "LENI_phyto-processing_", date_processing, ".csv"))
+mica <- read.csv(paste0(lead, "MICA_phyto-processing_", date_processing, ".csv"))
+pler <- read.csv(paste0(lead, "PLER_phyto-processing_", date_processing, ".csv"))
+thir <- read.csv(paste0(lead, "THIR_phyto-processing_", date_processing, ".csv"))
+twil <- read.csv(paste0(lead, "TWIL_phyto-processing_", date_processing, ".csv"))
 
 
 drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vector
