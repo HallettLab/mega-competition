@@ -38,7 +38,8 @@ allo <- ggplot(brho_allo, aes(x=inflor.g)) +
 
 ggarrange(phyto, allo, ncol = 1, nrow=2)
 
-ggsave("allometry/preliminary_figs/allometric_relationship_fits/brho_allometry_check.png", height = 4, width = 6)
+#ggsave("allometry/preliminary_figs/allometric_relationship_fits/brho_allometry_check.png", height = 4, width = 6)
+
 
 ## To-Do ####
   ## Looks like BRHO control could use a few more samples in the lower range.
