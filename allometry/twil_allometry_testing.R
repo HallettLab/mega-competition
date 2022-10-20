@@ -19,28 +19,27 @@ allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/
 
 ## Allometry data
 drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vector
-mica_allo <- read.xlsx(paste0(allo_lead, "20220901_Allometry.xlsx"), sheet = 17) %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"),
-         seed.num = seeds.num)
+twil_allo <- read.xlsx(paste0(allo_lead, "20220901_Allometry.xlsx"), sheet = 22) %>%
+  mutate(treatment = ifelse(block %in% drought, "D", "C"))
 
 
 # Dat Range ####
 theme_set(theme_bw())
 
-mica_dat <- all_dat_final %>%
-  filter(phyto == "MICA")
+twil_dat <- all_dat_final %>%
+  filter(phyto == "TWIL-I")
 
-phyto<-ggplot(mica_dat, aes(x=total.biomass.rounded.percap)) +
+phyto<-ggplot(twil_dat, aes(x=total.biomass.rounded.percap)) +
   geom_histogram() +
   facet_wrap(~treatment)
 
-allo<-ggplot(mica_allo, aes(x=total.biomass.g)) +
+allo<-ggplot(twil_allo, aes(x=total.biomass.g)) +
   geom_histogram() +
   facet_wrap(~treatment) +
-  coord_cartesian(xlim = c(0,2))
+  coord_cartesian(xlim = c(0,0.8))
 
 
 ggarrange(phyto, allo, ncol = 1, nrow=2)
 
-ggsave("allometry/preliminary_figs/allometric_relationship_fits/mica_allometry_check.png", height = 4, width = 6)
+ggsave("allometry/preliminary_figs/allometric_relationship_fits/twil_allometry_check.png", height = 4, width = 6)
 

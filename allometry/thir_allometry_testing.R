@@ -12,20 +12,16 @@ calcSE<-function(x){
 ## Processing data
 source("data_cleaning/merge_processing_collections_data.R")
 
-acam_dat <- all_dat_final %>%
-  filter(phyto == "ACAM")
+thir_dat <- all_dat_final %>%
+  filter(phyto == "THIR-I")
 
 ## Allometry data
-    ## none yet
+## none yet
 
 
 # Flower Dat Range ####
-ggplot(acam_dat, aes(x=total.biomass.rounded.percap)) +
+ggplot(thir_dat, aes(x=total.biomass.rounded.percap)) +
   geom_histogram() +
   facet_wrap(~treatment)
 
-ggsave("acam_dat_range.png", width = 5, height = 3)
-
-
-
-
+ggsave("thir_dat_range.png", width = 5, height = 3)
