@@ -173,6 +173,6 @@ all_dat_final <- cen_proc_all %>%
 rm(list = c("cen_proc_all", "coll_NO_rejects", "collections", "collectionsC", "date_collections", "incompletes_to_check", "lead", "nas_to_check", "nhood10", "nhood18", "proc_coll_diff", "proc_dat_clean", "proc_dat_distinct", "proc_distinct",  "reject_not_unmatched", "summer_phytos", "temp_proc", "test", "test2", "unM_coll_and_rejects", "unM_proc_and_rejects", "unmatched_in_collections", "unmatched_in_collections2", "unmatched_in_processing", "unmatched_not_reject", "not_unique", "test3", "try_the_opp", "phyto_n_mismatch"))
 
 # Save a Copy ####
-lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_cleaned/"
+#lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_cleaned/"
 
-write.csv(all_dat_final, paste0(lead, "phyto_merged-prelim-data_20221020.csv"))
+#write.csv(all_dat_final, paste0(lead, "phyto_merged-prelim-data_20221020.csv"))
