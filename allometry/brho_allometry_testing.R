@@ -61,10 +61,26 @@ ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
 inflorseeds <- lm(seed.num~inflor.g, data = brho_allo)
 summary(inflorseeds)
 ## slope = 951.7297
+# y = 0.7543 + 951.7297x
 
 ## Q here ####
     ## how do we test other models?
+inflorseeds2 <- lm(seed.num ~ I(inflor.g^2), data = brho_allo)
+summary(inflorseeds2)
 
+
+
+ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ poly(x,2))
+
+ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x)
+
+ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ log(x))
 
 
 # Predict Seed Num ####
