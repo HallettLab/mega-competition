@@ -12,6 +12,9 @@ calcSE<-function(x){
 source("data_cleaning/merge_processing_collections_data.R")
 
 allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/" # Carmen's file path
+
+allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/" # Marina's file path
+
 date <- 20221019
 
 ## Allometry data
