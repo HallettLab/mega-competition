@@ -4,7 +4,11 @@ library(tidyverse)
 
 # Read in Data ####
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
+<<<<<<< HEAD
 lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/" # Marina's file path
+=======
+lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/"
+>>>>>>> fd15376f3bfc4338272a339f21e938559cc7c7a3
 date_collections <- 20220927
 
 collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date_collections, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
