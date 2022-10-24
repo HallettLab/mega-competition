@@ -5,6 +5,9 @@ library(tidyverse)
 
 # Read in Data ####
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/" # Carmen's file path
+
+lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/" #Marina's file path
+
 date_processing <- 20221018
 date_collections <- 20220825
 
