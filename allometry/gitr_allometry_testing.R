@@ -60,7 +60,7 @@ ggplot(gitr_seed_allo, aes(x=seed.per.pod)) +
 
 ## look at sample num per treatment
 nrow(gitr_seed_allo[gitr_seed_allo$treatment == "D",]) ## 19
-nrow(gitr_seed_allo[gitr_seed_allo$treatment == "C",]) ## 33
+nrow(gitr_seed_allo[gitr_seed_allo$treatment == "C",]) ## 32
 ## Q here ####
   ## somewhat uneven sample sizes. Does this matter here?
 
@@ -94,25 +94,34 @@ TukeyHSD(seedtrt)
 
 
 # TotBio - Flower Rel. ####
-ggplot(gitr_flower_allo, aes(x=total.biomass.g, y=flower.num, color = treatment)) +
+# Combine drought and controls together for flowering relationships
+ggplot(gitr_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
   geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, size = 0.75)
+  geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ poly(x, 2))
+
+ggplot(gitr_flower_allo[gitr_flower_allo$total.biomass.g <2,], aes(x=total.biomass.g, y=flower.num)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ x)
+
+
 
 gitr_fallo_rel <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo)
 summary(gitr_fallo_rel)
 ## slope = 55.505
 
-gitr_fallo_D <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo[gitr_flower_allo$treatment == "D",])
-summary(gitr_fallo_D)
-## slope = 48.942
-
-gitr_fallo_C <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo[gitr_flower_allo$treatment == "C",])
-summary(gitr_fallo_C)
-## slope = 66.484
+gitr_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = gitr_flower_allo)
+summary(gitr_fallo_rel)
+# y = 0.3267 + 77.6127x - 7.1135x^2
 
 ## Q here ####
     ## how do we decide whether to differentiate the relationship or not?
     ## how do we test other models?
+ggplot(gitr_flower_allo, aes(x=total.biomass.g, y=flower.num, color = treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ poly(x, 2))
+
+gitr_fallo_rel <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo)
+summary(gitr_fallo_rel)
 
 
 # Predict Flower Num ####
