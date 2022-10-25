@@ -3,9 +3,17 @@ library(openxlsx)
 library(tidyverse)
 
 # Read in Data ####
-lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/" # Carmen's file path
 
-lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/" # Marina's file path
+# specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/"
+} 
+
 
 date_collections <- 20220927
 
