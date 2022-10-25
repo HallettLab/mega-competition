@@ -11,14 +11,20 @@ calcSE<-function(x){
 ## Processing data
 source("data_cleaning/merge_processing_collections_data.R")
 
-#allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/" # Carmen's file path
-
-
-allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/" # Marina's file path
+## Allometry data
+# specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/")){
+  # Carmen
+  allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/"
+  
+} else {
+  # Marina
+  allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/"
+} 
 
 date <- 20221019
 
-## Allometry data
+
 gitr_flower_allo <- read.csv(paste0(allo_lead, "GITR-flowers_allometry-processing_", date, ".csv"))
 
 drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vector
@@ -124,6 +130,8 @@ gitr_fallo_rel <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo)
 summary(gitr_fallo_rel)
 
 
-# Predict Flower Num ####
-
 # Predict Seed Num ####
+gitr_final <- gitr_dat %>%
+  mutate(predicted.flower.num = (0.3267 + (77.6127*total.biomass.rounded.percap) - (7.1135*(total.biomass.rounded.percap^2))),
+         predicted.seed.num = ifelse(treatment == "D", predicted.flower.num*8.701754, predicted.flower.num*11.640625))
+

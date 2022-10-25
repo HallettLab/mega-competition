@@ -11,9 +11,15 @@ calcSE<-function(x){
 ## Processing data
 source("data_cleaning/merge_processing_collections_data.R")
 
-allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/" # Carmen's file path
-
-allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/" # Marina's file path
+# specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/")){
+  # Carmen
+  allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/"
+  
+} else {
+  # Marina
+  allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/"
+} 
 
 date <- 20221019
 
@@ -49,6 +55,7 @@ ggarrange(phyto, allo, ncol = 1, nrow=2)
 
 
 # Inflor-Seed Rel. ####
+## Visualize ####
 ggplot(brho_allo, aes(x=inflor.g, y=seed.num, color = treatment)) +
   geom_point() +
   geom_smooth(method = "lm")
@@ -57,18 +64,6 @@ ggplot(brho_allo, aes(x=inflor.g, y=seed.num, color = treatment)) +
 ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
   geom_point() +
   geom_smooth(method = "lm")
-
-inflorseeds <- lm(seed.num~inflor.g, data = brho_allo)
-summary(inflorseeds)
-## slope = 951.7297
-# y = 0.7543 + 951.7297x
-
-## Q here ####
-    ## how do we test other models?
-inflorseeds2 <- lm(seed.num ~ I(inflor.g^2), data = brho_allo)
-summary(inflorseeds2)
-
-
 
 ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
   geom_point() +
@@ -83,10 +78,26 @@ ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
   geom_smooth(method = "lm", formula = y ~ log(x))
 
 
+## Model ####
+inflorseeds <- lm(seed.num~inflor.g, data = brho_allo)
+summary(inflorseeds)
+## slope = 951.7297
+# y = 0.7543 + 951.7297x
+
+inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = brho_allo)
+summary(inflorseeds2)
+
+
 # Predict Seed Num ####
+brho_final <- brho_dat %>%
+  mutate(predicted.seed.num = 0.7543 + 951.7297*inflor.g.rounded.percap)
 
-
-
+## Other things to do before data are ready for modeling: 
+    ## remove extraneous columns
+    ## add in background indiv seed output?
+    ## add in background seed input?
+    ## phytometer seeds in??
+    ## go through notes and make sure census data are fully cleaned, at least in GITR backgrounds for the moment...
 
 
 
