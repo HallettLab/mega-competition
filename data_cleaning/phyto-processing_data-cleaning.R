@@ -71,10 +71,6 @@ anarC <- anar %>%
          census.notes = notes) %>% 
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
-
-### add in anar data ####
-tempanar <- rbind(acamC, anarC)
-
 ## Standardize AVBA ####
 colnames(avba)
 avbaC <- avba %>%
@@ -94,10 +90,6 @@ avbaC <- avba %>%
          ) %>% 
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
-### add in avba data ####
-tempavba <- rbind(tempanar, avbaC)
-
-
 ## Standardize BRHO ####
 colnames(brho)
 brhoC <- brho %>%
@@ -116,9 +108,6 @@ brhoC <- brho %>%
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 
-### add in brho data ####
-tempbrho <- rbind(tempavba, brhoC)
-
 ## Standardize GITR ####
 colnames(gitr)
 gitrC <- gitr %>%
@@ -136,8 +125,6 @@ gitrC <- gitr %>%
          glume.num = NA) %>% 
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
-### add in gitr data ####
-tempgitr <- rbind(tempbrho, gitrC)
 
 ## Standardize MICA ####
 colnames(mica)
@@ -155,9 +142,6 @@ micaC <- mica %>%
          seeds.present = NA,
          glume.num = NA) %>% 
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
-
-### add in mica data ####
-tempmica <- rbind(tempgitr, micaC)
 
 
 ## Standardize LENI ####
@@ -179,10 +163,6 @@ leniC <- leni %>%
 
 
 
-### add in leni data ####
-templeni <- rbind(tempmica, leniC)
-
-
 ## Standardize PLER ####
 colnames(pler)
 plerC <- pler %>%
@@ -202,10 +182,6 @@ plerC <- pler %>%
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
 
-### add in pler data ####
-temppler <- rbind(templeni, plerC)
-
-
 ## Standardize THIR ####
 colnames(thir)
 thirC <- thir %>%
@@ -222,9 +198,6 @@ thirC <- thir %>%
          seeds.present = NA,
          glume.num = NA) %>% 
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
-
-### add in thir data ####
-tempthir <- rbind(temppler, thirC)
 
 
 ## Standardize TWIL ####
@@ -244,8 +217,6 @@ twilC <- twil %>%
          glume.num = NA) %>% 
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
-### add in twil data ####
-temptwil <- rbind(tempthir, twilC)
 
 ## Standardize LOMU ####
 colnames(lomu)
@@ -264,8 +235,9 @@ lomuC <- lomu %>%
          glume.num = NA) %>% 
   select(block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, biomass.no.seed.g, inflor.g, seed.num, flower.num, total.stem.length.mm, empty.flower.num, pod.num, glume.num, seeds.present, scale.ID, process.notes, census.notes,unique.ID) ## make sure column ordering works
 
-### add in lomu data ####
-round1_final <- rbind(temptwil, lomuC)
+## Merge all together ####
+round1_final <- do.call("rbind", list(acamC, anarC, avbaC, brhoC, gitrC, micaC, leniC, lomuC, plerC, thirC, twilC))
+
 
 # Round 2 ####
 ## Mods ####
@@ -384,5 +356,7 @@ nrow(nas_to_check)
 
 proc_dat_clean <- round3
 
-## clean up environment
-rm(list = c("acam", "acamC", "anar", "anarC", "avba", "avbaC", "brho", "brhoC",  "date_collections", "drought", "gitr", "gitrC", "lead", "leni", "leniC", "med_scales",  "mica", "micaC", "non_nums_flower", "non_nums_inflor", "pler", "plerC", "round2", "tempanar", "tempavba", "tempbrho", "tempgitr", "templeni", "tempmica", "temppler", "tempthir", "thir", "thirC", "twil", "twilC", "temptwil", "lomu", "lomuC", "round1_final", "round2_final", "round3"))
+# Clean Environment ####
+
+rm(list=setdiff(ls(), c("proc_dat_clean", "nas_to_check", "incompletes_to_check")))
+
