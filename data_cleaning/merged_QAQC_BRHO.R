@@ -1,21 +1,32 @@
-### Merged BROHOR QAQC ##
+## Merged BRHO QAQC ##
+library(tidyverse)
 
+# Read in Data ####
 rm(list=ls())
 source("data_cleaning/merge_processing_collections_data.R")
 
-all_dat_final_BRHO <- filter(all_dat_final, phyto == "BRHO")
+brho  <- all_dat_final %>%
+  filter(phyto == "BRHO")
 
+# Filter for Phyto Change Notes ####
+## keywords
+## die, chang, ->
+
+## create empty data frame
 df <- data.frame()
 
-for(i in colnames(all_dat_final_BRHO)[45:48]) {
-  tmp <- dplyr::filter(all_dat_final_BRHO, grepl("die", all_dat_final_BRHO[,i]))
+## search for "die"
+df <- data.frame()
+
+for(i in colnames(brho)[45:48]) {
+  tmp <- dplyr::filter(brho, grepl("die", brho[,i]))
   df <- rbind(df, tmp)
 }
 
-for(i in colnames(all_dat_final_BRHO)[45:48]) {
-  tmp <- dplyr::filter(all_dat_final_BRHO, grepl("chang", all_dat_final_BRHO[,i]))
+for(i in colnames(brho)[45:48]) {
+  tmp <- dplyr::filter(brho, grepl("chang", brho[,i]))
   df <- rbind(df, tmp)
 }
 
-all_dat_final$intraphyto <- 0 
+brho$intraphyto <- 0 
 
