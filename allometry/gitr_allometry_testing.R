@@ -1,11 +1,13 @@
+## GITR Allometric Relationship
+## this script 
+    ## 1. checks that phyto & allometry data cover approx the same range
+    ## 2. tests & plots various allometric relationships
+    ## 3. saves the output from the final best model for use later in predicting seed output.
+
+# set up env
 library(tidyverse)
 library(ggpubr)
-
-## create a function to calculate standard error
-calcSE<-function(x){
-  x2<-na.omit(x)
-  sd(x2)/sqrt(length(x2))
-}
+theme_set(theme_bw())
 
 # Read in Data ####
 ## Processing data
@@ -33,10 +35,15 @@ gitr_seed_allo <- read.csv(paste0(allo_lead, "GITR-seeds_allometry-processing_",
   mutate(treatment = ifelse(Block %in% drought, "D", "C")) %>%
   filter(!is.na(seed.num))
 
+## create a function to calculate standard error
+
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
+
 
 # Flower Dat Range ####
-theme_set(theme_bw())
-
 gitr_dat <- all_dat_final %>%
   filter(phyto == "GITR")
 
@@ -100,38 +107,35 @@ TukeyHSD(seedtrt)
 
 
 # TotBio - Flower Rel. ####
-# Combine drought and controls together for flowering relationships
+## Combine drought and controls together for biomass-flower relationship
+
+## visualize ####
 ggplot(gitr_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ poly(x, 2))
 
+## try removing the outliers to see how they influence the relationship
 ggplot(gitr_flower_allo[gitr_flower_allo$total.biomass.g <2,], aes(x=total.biomass.g, y=flower.num)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ x)
 
-
-
-gitr_fallo_rel <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo)
-summary(gitr_fallo_rel)
-## slope = 55.505
-
-gitr_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = gitr_flower_allo)
-summary(gitr_fallo_rel)
-# y = 0.3267 + 77.6127x - 7.1135x^2
-
-## Q here ####
-    ## how do we decide whether to differentiate the relationship or not?
-    ## how do we test other models?
+## plot as polynomial
 ggplot(gitr_flower_allo, aes(x=total.biomass.g, y=flower.num, color = treatment)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ poly(x, 2))
 
+
+## model ####
+## test linear model first
 gitr_fallo_rel <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo)
 summary(gitr_fallo_rel)
+## slope = 55.505
 
+## test polynomial model
+gitr_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = gitr_flower_allo)
+summary(gitr_fallo_rel)
+# y = 0.3267 + 77.6127x - 7.1135x^2
+# slightly higher R2 value, use the polynomial model
 
-# Predict Seed Num ####
-gitr_final <- gitr_dat %>%
-  mutate(predicted.flower.num = (0.3267 + (77.6127*total.biomass.rounded.percap) - (7.1135*(total.biomass.rounded.percap^2))),
-         predicted.seed.num = ifelse(treatment == "D", predicted.flower.num*8.701754, predicted.flower.num*11.640625))
-
+## save the model outputs
+gitr.allo.output <- gitr_fallo_rel$coefficients
