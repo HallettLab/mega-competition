@@ -357,6 +357,4 @@ nrow(nas_to_check)
 proc_dat_clean <- round3
 
 # Clean Environment ####
-
-rm(list=setdiff(ls(), c("proc_dat_clean", "nas_to_check", "incompletes_to_check")))
-
+rm(list = c("acam", "acamC", "anar", "anarC", "avba", "avbaC", "brho", "brhoC", "date_collections", "date_processing", "drought", "gitr", "gitrC", "lead", "leni", "leniC", "lomu", "lomuC", "med_scales", "mica", "micaC", "non_nums_inflor", "pler", "plerC", "round1_final", "round2", "round2_final", "round3", "thir", "thirC", "twil", "twilC"))

@@ -1,3 +1,6 @@
+## Merging Processing & Collections Data
+## the purpose of this script is to merge the semi-cleaned processing data with the collections data into one dataframe containing all the species.
+
 # Load Packages ####
 library(tidyverse)
 
@@ -170,7 +173,7 @@ all_dat_final <- cen_proc_all %>%
   select(-phyto.n.indiv.y, -phyto.n.indiv.x, -unique.ID.y, -unique.ID.x)
 
 # Clean up Environment ####
-rm(list=setdiff(ls(), c("all_dat_final", "processing_rejects")))
+rm(list= c("cen_proc_all", "coll_NO_rejects", "collections", "collectionsC", "incompletes_to_check", "lead", "nas_to_check", "nhood10", "nhood18", "not_unique", "phyto_n_mismatch", "proc_coll_diff", "proc_dat_clean", "proc_dat_distinct", "proc_distinct", "processing_rejects", "reject_not_unmatched", "summer_phytos", "temp_proc", "test", "test2", "test3", "try_the_opp", "unM_coll_and_rejects", "unM_proc_and_rejects", "unmatched_in_collections", "unmatched_in_collections2", "unmatched_in_processing", "unmatched_not_reject"))
 
 # Save a Copy ####
 #lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_cleaned/"

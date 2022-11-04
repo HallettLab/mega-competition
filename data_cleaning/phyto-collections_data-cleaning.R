@@ -45,3 +45,5 @@ collectionsC <- collections %>%
   mutate(Nbrhood.size = ifelse(phyto %in% nhood10, 10, ## fill in all vals of neighborhood size
                                ifelse(phyto %in% nhood18, 18, Nbrhood.size))) %>%
   filter(phyto %in% summer_phytos)
+
+rm(list = c("date_collections"))
