@@ -6,10 +6,10 @@ library(tidyverse)
 
 # Read in Data ####
 ## Clean processing data
-source("data_cleaning/phyto-processing_data-cleaning.R")
+source("data_cleaning/initial_data_prep/phyto-processing_data-cleaning.R")
 
 ## Clean collections data
-source("data_cleaning/phyto-collections_data-cleaning.R")
+source("data_cleaning/initial_data_prep/phyto-collections_data-cleaning.R")
 
 
 # Checks before Merge ####
