@@ -1,5 +1,14 @@
+## BRHO Allometric Relationship
+## this script 
+    ## 1. checks that phyto & allometry data cover approx the same range
+          ## after this is checked & confirmed to be okay, comment out this part so that we do not load & reload the same phyto data multiple times in later scripts.
+    ## 2. tests & plots various allometric relationships
+    ## 3. saves the output from the final best model for use later in predicting seed output.
+
+# set up env
 library(tidyverse)
 library(ggpubr)
+theme_set(theme_bw())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -9,7 +18,7 @@ calcSE<-function(x){
 
 # Read in Data ####
 ## Processing data
-source("data_cleaning/merge_processing_collections_data.R")
+#source("data_cleaning/merge_processing_collections_data.R")
 
 # specify dropbox pathway 
 if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/")){
@@ -30,22 +39,20 @@ brho_allo <- read.csv(paste0(allo_lead, "BRHO_allometry-processing_", date, ".cs
 
 
 # Dat Range ####
-theme_set(theme_bw())
+#brho_dat <- all_dat_final %>%
+ # filter(phyto == "BRHO")
 
-brho_dat <- all_dat_final %>%
-  filter(phyto == "BRHO")
+#phyto <- ggplot(brho_dat, aes(x=inflor.g.rounded.percap)) +
+ # geom_histogram() +
+#  facet_wrap(~treatment)+
+ # coord_cartesian(xlim = c(0,2))
 
-phyto <- ggplot(brho_dat, aes(x=inflor.g.rounded.percap)) +
-  geom_histogram() +
-  facet_wrap(~treatment)+
-  coord_cartesian(xlim = c(0,2))
+#allo <- ggplot(brho_allo, aes(x=inflor.g)) +
+ # geom_histogram() +
+  #facet_wrap(~treatment) +
+  #coord_cartesian(xlim = c(0,2))
 
-allo <- ggplot(brho_allo, aes(x=inflor.g)) +
-  geom_histogram() +
-  facet_wrap(~treatment) +
-  coord_cartesian(xlim = c(0,2))
-
-ggarrange(phyto, allo, ncol = 1, nrow=2)
+#ggarrange(phyto, allo, ncol = 1, nrow=2)
 
 #ggsave("allometry/preliminary_figs/allometric_relationship_fits/brho_allometry_check.png", height = 4, width = 6)
 
@@ -87,18 +94,8 @@ summary(inflorseeds)
 inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = brho_allo)
 summary(inflorseeds2)
 
+## save the model outputs
+brho.allo.output <- inflorseeds$coefficients
 
-# Predict Seed Num ####
-brho_final <- brho_dat %>%
-  mutate(predicted.seed.num = 0.7543 + 951.7297*inflor.g.rounded.percap)
-
-## Other things to do before data are ready for modeling: 
-    ## remove extraneous columns
-    ## add in background indiv seed output?
-    ## add in background seed input?
-    ## phytometer seeds in??
-    ## go through notes and make sure census data are fully cleaned, at least in GITR backgrounds for the moment...
-
-
-
-
+# Clean Env ####
+rm(list = c("allo_lead", "brho_allo", "date", "inflorseeds", "inflorseeds2"))

@@ -40,6 +40,12 @@ brho.model <- brhoP.gitrBG %>%
          bkgrd.stems.in = bkgrd.n.indiv) %>%
   select(block, plot, sub, bkgrd, dens, phyto, phyto.unique, phyto.n.indiv, phyto.seed.in, phyto.seed.out, bkgrd.stems.in, bkgrd.seed.out, unique.ID)
 
+
+
+# Predict Seed Num ####
+brho_final <- brho_dat %>%
+  mutate(predicted.seed.num = 0.7543 + 951.7297*inflor.g.rounded.percap)
+
 ## what do we do when our bg indiv data do not align with the allometric relationship? How will we calculate bg seed ouput? How are we calculating bg seed in? We have it at the plot level, not the subplot...
 
 ## might be able to get away with stems in seeds out for bg data?

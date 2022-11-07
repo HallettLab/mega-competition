@@ -1,6 +1,7 @@
 ## GITR Allometric Relationship
 ## this script 
     ## 1. checks that phyto & allometry data cover approx the same range
+          ## after this is checked & confirmed to be okay, comment out this part so that we do not load & reload the same phyto data multiple times in later scripts.
     ## 2. tests & plots various allometric relationships
     ## 3. saves the output from the final best model for use later in predicting seed output.
 
@@ -11,7 +12,7 @@ theme_set(theme_bw())
 
 # Read in Data ####
 ## Processing data
-source("data_cleaning/merge_processing_collections_data.R")
+#source("data_cleaning/merge_processing_collections_data.R")
 
 ## Allometry data
 # specify dropbox pathway 
@@ -44,20 +45,20 @@ calcSE<-function(x){
 
 
 # Flower Dat Range ####
-gitr_dat <- all_dat_final %>%
-  filter(phyto == "GITR")
+#gitr_dat <- all_dat_final %>%
+ # filter(phyto == "GITR")
 
-phyto<-ggplot(gitr_dat, aes(x=total.biomass.rounded.percap)) +
-  geom_histogram() +
-  facet_wrap(~treatment)
+#phyto<-ggplot(gitr_dat, aes(x=total.biomass.rounded.percap)) +
+ # geom_histogram() +
+ # facet_wrap(~treatment)
 
-allo<-ggplot(gitr_flower_allo, aes(x=total.biomass.g)) +
-  geom_histogram() +
-  facet_wrap(~treatment) +
-  coord_cartesian(xlim = c(0,4))
+#allo<-ggplot(gitr_flower_allo, aes(x=total.biomass.g)) +
+#  geom_histogram() +
+ # facet_wrap(~treatment) +
+ # coord_cartesian(xlim = c(0,4))
 
 
-ggarrange(phyto, allo, ncol = 1, nrow=2)
+#ggarrange(phyto, allo, ncol = 1, nrow=2)
 
 #ggsave("gitr_allometry_check.png", height = 4, width = 6)
 
@@ -139,3 +140,5 @@ summary(gitr_fallo_rel)
 
 ## save the model outputs
 gitr.allo.output <- gitr_fallo_rel$coefficients
+
+rm(list = c("allo_lead", "date", "drought", "gitr_fallo_rel", "gitr_flower_allo", "gitr_mean_seeds",  "gitr_seed_allo", "gitr_seed_means", "seedtrt"))
