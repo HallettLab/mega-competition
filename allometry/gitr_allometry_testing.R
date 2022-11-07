@@ -139,6 +139,6 @@ summary(gitr_fallo_rel)
 # slightly higher R2 value, use the polynomial model
 
 ## save the model outputs
-gitr.allo.output <- gitr_fallo_rel$coefficients
+GITR.allo.output <- gitr_fallo_rel$coefficients
 
 rm(list = c("allo_lead", "date", "drought", "gitr_fallo_rel", "gitr_flower_allo", "gitr_mean_seeds",  "gitr_seed_allo", "gitr_seed_means", "seedtrt"))

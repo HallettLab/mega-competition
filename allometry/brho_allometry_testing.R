@@ -95,7 +95,7 @@ inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = brho_allo)
 summary(inflorseeds2)
 
 ## save the model outputs
-brho.allo.output <- inflorseeds$coefficients
+BRHO.allo.output <- inflorseeds$coefficients
 
 # Clean Env ####
 rm(list = c("allo_lead", "brho_allo", "date", "inflorseeds", "inflorseeds2"))

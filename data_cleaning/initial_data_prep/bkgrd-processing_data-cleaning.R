@@ -5,6 +5,9 @@
     ## 2. calculate avg. background individual
     ## 3. calculate avg background indiv seed output using allometric relationships
 
+## Relevant Outputs of this script: 
+    ## bg.seeds
+
 # set up env
 library(tidyverse)
 
@@ -38,61 +41,72 @@ bg_indiv[bg_indiv$bkgrd == "",]
 
 bg.ind <- bg_indiv %>%
   filter(plot < 43) %>% ## get rid of inoc subexperiment
-  mutate(avg.ind = ifelse(bkgrd == "LENI", total.stem.length.mm/n.indiv, total.biomass.g/n.indiv)) %>% ## Calc the avg bg indiv
+  mutate(avg.ind = ifelse(bkgrd == "LENI", total.stem.length.mm/n.indiv, 
+                          ifelse(bkgrd == "BRHO", inflor.g/n.indiv, 
+                                 ifelse(bkgrd == "AVBA", glume.num/n.indiv, total.biomass.g/n.indiv)))) %>% ## Calc the avg bg indiv
   select(-date.collect, -initials) %>%
   mutate(treatment = ifelse(block %in% drought, "D", "C")) ## add treatment column
 
-## at some point we may need a different column than the 'avg individual?'
 
-## I think we should calculate the background seed output here, otherwise we will need to repeat this for each phyto species
+# Calc Avg Seed Output ####
+## separate out finished species
+finished <- c("BRHO", "GITR", "AVBA")
 
-
-# Calc Avg seeds out ####
-## GITR ####
-## filter gitr bgs 
-gitr.bg <- bg.ind %>%
-  filter(bkgrd == "GITR")
-
-## multiply avg ind by allo relationship to calc seed output of avg ind
-gitr.bg.SO <- gitr.bg %>%
-  mutate(avg.flower.num = (gitr.allo.output[1] + (gitr.allo.output[2]*avg.ind) + (gitr.allo.output[3]*(avg.ind^2))),
-         avg.seed.num = ifelse(treatment == "D", avg.flower.num*8.701754, avg.flower.num*11.640625))
-
-rm("gitr.bg")
-
-## BRHO ####
+## separate by types of allometric relationships
+bio.to.seeds <- c("BRHO", "MICA", "LENI", "LOMU", "PLER", "THIR-I", "TWIL-I")
+bio.to.flower.to.seeds <- c("ACAM", "ANAR", "GITR")
+seeds <- c("AVBA")
 
 
-## EVENTUALLY: 
-## probably want this in one dataframe
+bg.sp <- unique(bg.ind[bg.ind$bkgrd %in% finished,]$bkgrd)
+
+bg.ind.avg <- data.frame(treatment = NA, block = NA, plot = NA, bkgrd = NA, dens = NA, bg.avg.seed.num = NA)
+
+## for each unique background species
+for (i in 1:length(bg.sp)){
+  
+  ## filter species
+  tmp.sp <- bg.ind[bg.ind$bkgrd == bg.sp[i],]
+  
+  ## filter model results
+  tmp.model <- allo.df[allo.df$species == bg.sp[i],]
+  
+  ## separate by allo-rel type and calc avg seeds out per indiv
+  if (bg.sp[i] %in% bio.to.seeds) {
+    
+    tmp.ind <- tmp.sp %>%
+      mutate(bg.avg.seed.num = (tmp.model[1,2] + ((tmp.model[1,3])*avg.ind) + (tmp.model[1,4]*(avg.ind^2)))) %>%
+      select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
+    
+  }
+  
+  else if (bg.sp[i] %in% bio.to.flower.to.seeds) {
+    
+    tmp.ind <- tmp.sp %>%
+      mutate(avg.flower.num = (tmp.model[1,2] + ((tmp.model[1,3])*avg.ind) + (tmp.model[1,4]*(avg.ind^2))),
+             bg.avg.seed.num = ifelse(treatment == "D", avg.flower.num*8.701754, avg.flower.num*11.640625)) %>%
+      select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
+  ## currently specific to GITR, change later.
+    
+  }
+  
+  else {
+    
+    tmp.ind <- tmp.sp %>%
+      mutate(bg.avg.seed.num = avg.ind*2) %>%
+      select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
+    ## currently specific to AVBA, which has counted glume #
+
+  }
+  
+  bg.ind.avg <- rbind(bg.ind.avg, tmp.ind)
+  
+}
+
+
+bg.seeds <- bg.ind.avg %>%
+  filter(!is.na(block)) ## filter out the one row of NAs
+
 
 # Clean Env ####
-rm("bg_indiv")
-
-# In development ####
-# when all allo rel are complete we can probably do this by for loop?
-
-## 1 rel species ####
-## BRHO, LOMU, TACA, LENI, MICA, PLER etc.
-
-#bg.sp <- unique(bg.ind$bkgrd)
-
-## for each background species, 
-#for (i in 1:length(bg.sp)) {
-
-## filter species
-# tmp <- bg.ind %>%
-#   filter(bkgrd == bg.sp[i])
-
-## get correct allo rel
-
-## calc seed output
-# seedtmp <- tmp %>%
-#  mutate(avg.seed.num = )
-
-
-#}
-
-## 2 rel species ####
-## GITR, ACAM, ANAR
-
+rm("bg_indiv", "bg.ind", "bg.sp", "bio.to.flower.to.seeds", "bio.to.seeds", "BRHO.allo.output", "finished", "GITR.allo.output", "seeds", "temp", "tmp.ind", "tmp.sp", "tmp.model", "sp", "lead")
