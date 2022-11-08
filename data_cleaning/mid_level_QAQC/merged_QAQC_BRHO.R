@@ -38,7 +38,7 @@ for(i in colnames(brho)[45:48]) {
     ## if there were intraphytos that died before collection they would go in this column
 brho$intraphyto <- 0 
 
-## Check Cols for Oddballs ####
+# Check Cols for Oddballs ####
 ## look at infor.g
 ggplot(brho, aes(x=inflor.g)) +
   geom_histogram()
