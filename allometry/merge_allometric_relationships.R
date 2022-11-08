@@ -14,10 +14,11 @@
 ## read in allometric relationships
 source("allometry/gitr_allometry_testing.R")
 source("allometry/brho_allometry_testing.R")
+source("allometry/pler_allometry_testing.R")
 
 # Modify Here w/New Sp ####
 ## make a vector of all completed relationship names
-allo.outputs <- c("GITR.allo.output", "BRHO.allo.output")
+allo.outputs <- c("GITR.allo.output", "BRHO.allo.output", "PLER.allo.output")
 
 # Merge Model Outputs ####
 allo.df <- as.data.frame(matrix(ncol = 4))
