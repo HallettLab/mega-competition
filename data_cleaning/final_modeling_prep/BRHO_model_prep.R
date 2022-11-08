@@ -26,7 +26,7 @@ brho.model <- brhoP.w.BG %>%
          bkgrd.seed.out = bkgrd.n.indiv*bg.avg.seed.num, 
          phyto.seed.in = 3,
          bkgrd.stem.in = bkgrd.n.indiv) %>%
-  select(block, plot, sub, bkgrd, dens, phyto, phyto.unique, phyto.n.indiv, phyto.seed.in, phyto.seed.out, bkgrd.stem.in, bkgrd.seed.out, unique.ID)
+  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique, phyto.n.indiv, phyto.seed.in, phyto.seed.out, bkgrd.stem.in, bkgrd.seed.out, unique.ID)
 
 
 # Outstanding Qs ####
