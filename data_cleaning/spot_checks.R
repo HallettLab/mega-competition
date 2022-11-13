@@ -1,6 +1,6 @@
 # Read in Data ####
 rm(list=ls())
-source("data_cleaning/merge_processing_collections_data.R")
+source("data_cleaning/initial_data_prep/merge_processing_collections_data.R")
 
 # BRHO ####
 ## for spot checks, perhaps select 8 blocks and 5 samples from each?
@@ -27,7 +27,10 @@ for(i in 1:length(blocksamp)) {
 }
 
 brhoSC <- brho_spotcheck %>%
-  select(block, plot, sub, dens, bkgrd, phyto, phyto.n.indiv, inflor.g, seed.num, total.biomass.g, unique.ID)
+  select(block, plot, sub, dens, bkgrd, phyto, phyto.n.indiv, phyto.unique, complete.sample, inflor.g, seed.num, total.biomass.g, scale.ID, unique.ID) %>%
+  mutate(spot.check.complete.sample= NA, spot.check.inflor.g = NA, spot.check.scale = NA, spot.check.notes = NA)
+
+
 write.csv(brhoSC, "brho_spotcheck_list.csv")
 
 
