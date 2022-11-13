@@ -4,7 +4,6 @@
 ## 1. isolate only necessary columns
 ## 2. calc phyto seed output
 
-rm(list = ls())
 # Read in Data ####
 ## read in clean phyto data
 source("data_cleaning/mid_level_QAQC/merged_QAQC_GITR.R")
@@ -23,9 +22,10 @@ gitr.model <- gitrP.w.BG %>%
   mutate(flowers.out = (allo.df[allo.df$species == "GITR",2] + 
                              (allo.df[allo.df$species == "GITR",3]*total.biomass.rounded.percap) +
                              (allo.df[allo.df$species == "GITR",4]*total.biomass.rounded.percap^2))*phyto.n.indiv,
-         phyto.seed.out = ifelse(treatment == "D", flowers.out*8.701754, flowers.out*11.640625),
-         bkgrd.seed.out = bkgrd.n.indiv*bg.avg.seed.num, 
-         phyto.seed.in = 3,
-         bkgrd.stem.in = bkgrd.n.indiv) %>%
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique, phyto.n.indiv, phyto.seed.in, phyto.seed.out, bkgrd.stem.in, bkgrd.seed.out, unique.ID)
+         GITR.seed.out = ifelse(treatment == "D", flowers.out*8.701754, flowers.out*11.640625),
+       #  bkgrd.seed.out = bkgrd.n.indiv*bg.avg.seed.num, 
+         phyto.seed.in = 3)
+#,
+        # bkgrd.stem.in = bkgrd.n.indiv) %>%
+  #select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique, phyto.n.indiv, phyto.seed.in, phyto.seed.out, bkgrd.stem.in, bkgrd.seed.out, unique.ID)
 
