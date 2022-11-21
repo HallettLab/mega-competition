@@ -42,7 +42,7 @@ bg_indiv[bg_indiv$bkgrd == "",]
 bg.ind <- bg_indiv %>%
   filter(plot < 43) %>% ## get rid of inoc subexperiment
   mutate(avg.ind = ifelse(bkgrd == "LENI", total.stem.length.mm/n.indiv, 
-                          ifelse(bkgrd == "BRHO", inflor.g/n.indiv, 
+                          ifelse(bkgrd == "BRHO" | bkgrd == "PLER", inflor.g/n.indiv, 
                                  ifelse(bkgrd == "AVBA", glume.num/n.indiv, total.biomass.g/n.indiv)))) %>% ## Calc the avg bg indiv
   select(-date.collect, -initials) %>%
   mutate(treatment = ifelse(block %in% drought, "D", "C")) ## add treatment column
@@ -50,7 +50,7 @@ bg.ind <- bg_indiv %>%
 
 # Calc Avg Seed Output ####
 ## separate out finished species
-finished <- c("BRHO", "GITR", "AVBA")
+finished <- c("BRHO", "GITR", "AVBA", "PLER")
 
 ## separate by types of allometric relationships
 bio.to.seeds <- c("BRHO", "MICA", "LENI", "LOMU", "PLER", "THIR-I", "TWIL-I")

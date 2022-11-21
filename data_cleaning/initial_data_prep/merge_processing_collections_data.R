@@ -97,7 +97,7 @@ not_unique <- temp_proc %>%
   filter(duplicated(sample.ID))
 ## 7_34_11_PLNO_L_ACAM_NA
 
-proc_dat_clean[proc_dat_clean$block == 7 & proc_dat_clean$plot == 34 & proc_dat_clean$sub == 11,]
+#proc_dat_clean[proc_dat_clean$block == 7 & proc_dat_clean$plot == 34 & proc_dat_clean$sub == 11,]
 ## One duplicate ACAM sample. Unclear if this is two samples without phyto.uniques or if the same sample was weighed twice.
 ## Need to physically check samples for this.
 
@@ -105,10 +105,10 @@ proc_dat_clean[proc_dat_clean$block == 7 & proc_dat_clean$plot == 34 & proc_dat_
 ## use the distinct function to remove one of the values for this sample
 ## later determine which to use and go back to fix it.
 
-proc_dat_distinct <- proc_dat_clean %>%
-  distinct_at(vars(block, plot, sub, bkgrd, dens, phyto, phyto.unique), .keep_all = TRUE)
+#proc_dat_distinct <- proc_dat_clean %>%
+  #distinct_at(vars(block, plot, sub, bkgrd, dens, phyto, phyto.unique), .keep_all = TRUE)
 
-nrow(collectionsC) - nrow(proc_dat_distinct)
+#nrow(collectionsC) - nrow(proc_dat_distinct)
 ## 384 differences between these
 ## 384 processing rejects (not including gopher BRHOs)
 
@@ -121,28 +121,28 @@ unmatched_in_collections <- anti_join(collectionsC, proc_dat_clean, by = c("bloc
 ## 384 observations that are in collections but not the processing data
 ## need to investigate these rows, they should align well with the 386 processing rejects
 
-unmatched_in_collections2 <- anti_join(collectionsC, proc_dat_distinct, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
+#unmatched_in_collections2 <- anti_join(collectionsC, proc_dat_distinct, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 ## yep, still 384
 
 
 ### Unmatched but NOT proc rejects ####
-unmatched_not_reject <- anti_join(unmatched_in_collections, processing_rejects, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
+#unmatched_not_reject <- anti_join(unmatched_in_collections, processing_rejects, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 ## nothing left here
 
 
 ### Proc rejects but NOT unmatched ####
-reject_not_unmatched <- anti_join(processing_rejects, unmatched_in_collections, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
+#reject_not_unmatched <- anti_join(processing_rejects, unmatched_in_collections, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 ## ONLY 2 LEFT AND THESE ARE GOPHER CASUALTIES
 
 
 ## Check rows in proc NOT coll ####
-unmatched_in_processing <- anti_join(proc_dat_clean, collectionsC, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
+#unmatched_in_processing <- anti_join(proc_dat_clean, collectionsC, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 ## NOTHING LEFT HERE!
 
 
 
 # Merge ####
-cen_proc_all <- left_join(proc_dat_distinct, collectionsC, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
+cen_proc_all <- left_join(proc_dat_clean, collectionsC, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 
 ## Checks ####
 ggplot(cen_proc_all, aes(x=phyto.n.indiv.x, y=phyto.n.indiv.y)) +
@@ -177,5 +177,6 @@ rm(list= c("cen_proc_all", "coll_NO_rejects", "collections", "collectionsC", "in
 
 # Save a Copy ####
 #lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_cleaned/"
+lead <- "/Users/carme/Dropbox (University of Oregon)/MegaComp_Stipa_Overlap/Data/"
 
-#write.csv(all_dat_final, paste0(lead, "phyto_merged-prelim-data_20221020.csv"))
+write.csv(all_dat_final, paste0(lead, "phyto_merged-prelim-data_20221110.csv"))

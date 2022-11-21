@@ -1,8 +1,12 @@
-library(googlesheets4)
-library(plyr)
+## PLER Allometric Relationship
+## this script 
+## 1. checks that phyto & allometry data cover approx the same range
+## after this is checked & confirmed to be okay, comment out this part so that we do not load & reload the same phyto data multiple times in later scripts.
+## 2. tests & plots various allometric relationships
+## 3. saves the output from the final best model for use later in predicting seed output.
+
+# set up env
 library(tidyverse)
-library(googledrive)
-library(openxlsx)
 library(ggpubr)
 
 ## create a function to calculate standard error
@@ -80,7 +84,9 @@ bioseeds2 <- lm(seed.num ~ total.biomass.g + I(total.biomass.g^2), data = pler_a
 summary(bioseeds2)
 
 ## save the model outputs
-pler.allo.output <- bioseeds$coefficients
+PLER.allo.output <- bioseeds$coefficients
+# NOTE ####
+## Please put species name in all caps! I use the first 4 letters of this for species name in the merged allo output dataframe and I need them in caps to match the phyto processing & collections data!
 
 # Clean Env ####
 rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2", "bioseeds2", "bioseeds"))

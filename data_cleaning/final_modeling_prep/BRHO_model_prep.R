@@ -5,7 +5,6 @@
     ## 2. calc phyto seed output
 
 
-rm(list = ls())
 # Read in Data ####
 ## read in clean phyto data
 source("data_cleaning/mid_level_QAQC/merged_QAQC_BRHO.R")
@@ -21,12 +20,13 @@ brhoP.w.BG <- left_join(brho, bg.seeds, by = c("treatment", "block", "plot", "bk
 
 ## get BRHO ready for modeling
 brho.model <- brhoP.w.BG %>%
-  mutate(phyto.seed.out = (allo.df[allo.df$species == "BRHO",2] + 
+  mutate(BRHO.seed.out = (allo.df[allo.df$species == "BRHO",2] + 
                              (allo.df[allo.df$species == "BRHO",3]*inflor.g.rounded.percap))*phyto.n.indiv,
-         bkgrd.seed.out = bkgrd.n.indiv*bg.avg.seed.num, 
-         phyto.seed.in = 3,
-         bkgrd.stem.in = bkgrd.n.indiv) %>%
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique, phyto.n.indiv, phyto.seed.in, phyto.seed.out, bkgrd.stem.in, bkgrd.seed.out, unique.ID)
+         #bkgrd.seed.out = bkgrd.n.indiv*bg.avg.seed.num, 
+         BRHO.seed.in = 3,
+         #bkgrd.stem.in = bkgrd.n.indiv
+         ) #%>%
+  #select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique, phyto.n.indiv, phyto.seed.in, phyto.seed.out, bkgrd.stem.in, bkgrd.seed.out, unique.ID)
 
 
 # Outstanding Qs ####
