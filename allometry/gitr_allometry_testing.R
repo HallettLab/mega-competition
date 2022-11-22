@@ -141,4 +141,4 @@ summary(gitr_fallo_rel)
 ## save the model outputs
 GITR.allo.output <- gitr_fallo_rel$coefficients
 
-rm(list = c("allo_lead", "date", "drought", "gitr_fallo_rel", "gitr_flower_allo", "gitr_mean_seeds",  "gitr_seed_allo", "gitr_seed_means", "seedtrt"))
+rm(list = c("allo_lead", "date", "drought", "gitr_fallo_rel", "gitr_flower_allo", "gitr_mean_seeds",  "gitr_seed_allo", "seedtrt"))

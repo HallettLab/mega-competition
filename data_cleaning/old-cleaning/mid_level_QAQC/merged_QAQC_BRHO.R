@@ -3,6 +3,7 @@
 ## the purpose of this script is:
     ## 1. to do species specific QAQC
     ## 2. clean the census data (clean here rather than earlier so that only clean the necessary rows not everything)
+    ## 3. get BRHO data modeling ready so that it can be fed into the compile_split_final script and made into a modeling ready data frame
 
 
 # set up env
@@ -11,6 +12,9 @@ theme_set(theme_bw())
 
 # Read in Data ####
 source("data_cleaning/initial_data_prep/merge_processing_collections_data.R")
+
+## read in allometric relationships
+source("allometry/merge_allometric_relationships.R")
 
 brho  <- all_dat_final %>%
   filter(phyto == "BRHO")
@@ -68,4 +72,23 @@ ggplot(brho, aes(x=other)) +
 
 # Q here ####
 ## are we modeling by per capita or not?
+    ## NO. REMOVE. 
 ## are we doing anything to the other column?
+
+
+
+# Make Phyto DF ####
+brho.phyto <- brho %>%
+  mutate(BRHO.seed.out = (allo.df[allo.df$species == "BRHO",2] + 
+                            (allo.df[allo.df$species == "BRHO",3]*inflor.g.rounded.percap))*phyto.n.indiv,
+         #bkgrd.seed.out = bkgrd.n.indiv*bg.avg.seed.num, 
+         BRHO.seed.in = 3,
+         #bkgrd.stem.in = bkgrd.n.indiv
+  ) %>%
+  select(unique.ID, phyto.n.indiv, brho.seed.in, brho.seed.out)
+
+
+
+# Make Census DF ####
+brho.census <- brho %>%
+  select(unique.ID, phyto.n.indiv, Nbrhood.size, bkgrd.n.indiv, CRCO, ERBO, FIGA, GAMU, HYGL, SIGA, other)

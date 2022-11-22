@@ -1,6 +1,6 @@
 
-source("data_cleaning/final_modeling_prep/BRHO_model_prep.R")
-source("data_cleaning/final_modeling_prep/GITR_model_prep.R")
+source("data_cleaning/mid_level_QAQC/merged_QAQC_BRHO.R")
+source("data_cleaning/mid_level_QAQC/merged_QAQC_GITR.R")
 
 
 colnames(brho.model)

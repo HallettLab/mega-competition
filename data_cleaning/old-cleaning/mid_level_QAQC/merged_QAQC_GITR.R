@@ -3,7 +3,7 @@
 ## the purpose of this script is:
 ## 1. to do species specific QAQC
 ## 2. clean the census data (clean here rather than earlier so that only clean the necessary rows not everything)
-
+## 3. get GITR data modeling ready so that it can be fed into the compile_split_final script and made into a modeling ready data frame
 
 # set up env
 library(tidyverse)
@@ -93,3 +93,14 @@ ggplot(gitr, aes(x=SIGA)) +
 ggplot(gitr, aes(x=other)) +
   geom_histogram()
 
+
+
+# Make Modeling df ####
+## get GITR ready for modeling
+gitr.model <- gitr %>%
+  mutate(flowers.out = (allo.df[allo.df$species == "GITR",2] + 
+                          (allo.df[allo.df$species == "GITR",3]*total.biomass.rounded.percap) +
+                          (allo.df[allo.df$species == "GITR",4]*total.biomass.rounded.percap^2))*phyto.n.indiv,
+         GITR.seed.out = ifelse(treatment == "D", flowers.out*8.701754, flowers.out*11.640625),
+         #  bkgrd.seed.out = bkgrd.n.indiv*bg.avg.seed.num, 
+         phyto.seed.in = 3)

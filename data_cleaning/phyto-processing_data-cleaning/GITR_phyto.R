@@ -1,0 +1,82 @@
+# Load packages ####
+library(tidyverse)
+
+# Read in Data ####
+## phyto-processing data
+source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
+
+## allometry data
+source("allometry/merge_allometric_relationships.R")
+
+
+# Final Cleaning ####
+med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
+
+gitr_final <- gitrC %>%
+  filter(complete.sample == "Y") %>% ## remove incompletes
+  
+  mutate(total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(total.biomass.g, digits = 3), total.biomass.g)) %>% ## round to 3 decimal places
+  
+  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g.rounded, flower.num, scale.ID, process.notes, census.notes, unique.ID) ## select only needed columns
+
+
+# Check for Outliers ####
+## look at inflor.g
+ggplot(gitr_final, aes(x=total.biomass.g.rounded)) +
+  geom_histogram()
+## no missing vals
+
+ggplot(gitr_final, aes(x=phyto.n.indiv)) +
+  geom_histogram()
+
+
+
+# Check Notes ####
+unique(gitr_final$process.notes) ## okay
+
+## create empty data frame
+df <- data.frame()
+
+## loop through all notes searching for "die" or "chang"
+for(i in colnames(gitr_final)[14:15]) {
+  tmp <- dplyr::filter(gitr_final, grepl("die", gitr_final[,i]))
+  df <- rbind(df, tmp)
+}
+
+for(i in colnames(gitr_final)[14:15]) {
+  tmp <- dplyr::filter(gitr_final, grepl("chang", gitr_final[,i]))
+  df <- rbind(df, tmp)
+}
+
+## the phyto change notes are not super descriptive but they all contain 'CORRECTED or RESOLVED' so they are probably okay?
+
+
+# Make Phyto DF ####
+
+## make avg seed numbers into vectors
+seeds.D <- as.numeric(gitr_seed_means[gitr_seed_means$treatment == "D",2])
+seeds.C <- as.numeric(gitr_seed_means[gitr_seed_means$treatment == "C",2])
+
+
+gitr.phyto <- gitr_final %>%
+  mutate(GITR.flowers.out = (allo.df[allo.df$species == "GITR",2] + 
+                            (allo.df[allo.df$species == "GITR",3]*total.biomass.g.rounded) + (allo.df[allo.df$species == "GITR",4]*(total.biomass.g.rounded^2))),
+         ## use tot.bio to flower.num to get flowers out
+         
+         GITR.seed.out = ifelse(treatment == "D",  seeds.D*GITR.flowers.out,  seeds.C*GITR.flowers.out),
+         ## use avg seed num per trt to calculate seeds out
+           
+         GITR.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, 3)) %>%
+        ## calculate the seeds in
+  
+  select(unique.ID, phyto.n.indiv, GITR.seed.in, GITR.seed.out)
+
+
+## check the seed.in numbers
+ggplot(gitr.phyto, aes(x=phyto.n.indiv, y=GITR.seed.in)) +
+  geom_point()
+## looks good!
+
+## check seed.out numbers
+ggplot(gitr.phyto, aes(x=GITR.seed.out)) +
+  geom_histogram()
