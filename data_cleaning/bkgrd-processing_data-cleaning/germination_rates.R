@@ -10,7 +10,17 @@ calcSE<-function(x){
 library(tidyverse)
 
 # Load Data ####
-germ <- read.csv("/users/Marina/Documents/Dropbox/Mega_Competition/Data/Germination/Germination_cleaned/20220218_Germination-Data_full.csv")
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Background-Processing/Background-Processing_entered/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Germination/Germination_cleaned/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Germination/Germination_cleaned/"
+} 
+
+germ <- read.csv(paste0(lead, "20220218_Germination-Data_full.csv"))
+
   
 # Explore Data ####
 
