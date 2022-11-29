@@ -27,6 +27,9 @@ germ <- read.csv(paste0(lead, "20220218_Germination-Data_full.csv"))
 germ2 <- germ %>%
   mutate(species2 = sub("^(.{1,5}).(.*)", "\\1\\2", Species),
          species = sub("^(.{1,2}).(.*)", "\\1\\2", species2)) %>%
+  mutate(species = ifelse(species == "FEPE", "LOMU",
+                          ifelse(species == "ELCA", "TACA", ifelse(species == "TRHI", "THIR-I", 
+                                                                   ifelse(species == "TRWI", "TWIL-I", species))))) %>%
   select(-Species, -species2)
 
 

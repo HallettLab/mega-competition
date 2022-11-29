@@ -17,6 +17,7 @@ plot.seeding <- read.csv(paste0(lead, "20220214_plot-blackgrounds.csv"))
 
 
 plot.dates <- plot.seeding %>%
+  filter(plot < 43) %>%
   mutate(bkgrd = background) %>%
   mutate(year = 2021, ## separate out date info
          month = 11, 
