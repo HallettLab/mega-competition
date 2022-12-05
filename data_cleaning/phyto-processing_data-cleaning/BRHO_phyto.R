@@ -63,19 +63,19 @@ unique(brho_final$process.notes)
 
 # Make Phyto DF ####
 brho.phyto <- brho_final %>%
-  mutate(BRHO.seed.out = (allo.df[allo.df$species == "BRHO",2] + 
+  mutate(phyto.seed.out = (allo.df[allo.df$species == "BRHO",2] + 
                             (allo.df[allo.df$species == "BRHO",3]*inflor.g.rounded)),
          
-         BRHO.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
-         BRHO.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, BRHO.seed.in)) %>%
+         phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
   
-  select(unique.ID, phyto.n.indiv, BRHO.seed.in, BRHO.seed.out, phyto.unique)
+  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
 ## check the seed.in numbers
-ggplot(brho.phyto, aes(x=phyto.n.indiv, y=BRHO.seed.in)) +
+ggplot(brho.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
   geom_point()
   ## looks good!
-ggplot(brho.phyto, aes(x=phyto.unique, y=BRHO.seed.in)) +
+ggplot(brho.phyto, aes(x=phyto.unique, y=phyto.seed.in)) +
   geom_point()
   ## looks like there is a phyto.unique that has 3 seeds in, meaning that 3 phytos were found there. Probably okay, there must have been more seeds than 3 planted in that particular subplot, but since it's split into a phyto.unique we are using the phyto.n.indiv number for this.

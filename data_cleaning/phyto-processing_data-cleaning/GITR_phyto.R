@@ -63,20 +63,21 @@ gitr.phyto <- gitr_final %>%
                             (allo.df[allo.df$species == "GITR",3]*total.biomass.g.rounded) + (allo.df[allo.df$species == "GITR",4]*(total.biomass.g.rounded^2))),
          ## use tot.bio to flower.num to get flowers out
          
-         GITR.seed.out = ifelse(treatment == "D",  seeds.D*GITR.flowers.out,  seeds.C*GITR.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  seeds.D*GITR.flowers.out,  seeds.C*GITR.flowers.out),
          ## use avg seed num per trt to calculate seeds out
            
-         GITR.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, 3)) %>%
+         phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
         ## calculate the seeds in
   
-  select(unique.ID, phyto.n.indiv, GITR.seed.in, GITR.seed.out)
+  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
 ## check the seed.in numbers
-ggplot(gitr.phyto, aes(x=phyto.n.indiv, y=GITR.seed.in)) +
+ggplot(gitr.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
   geom_point()
 ## looks good!
 
 ## check seed.out numbers
-ggplot(gitr.phyto, aes(x=GITR.seed.out)) +
+ggplot(gitr.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
