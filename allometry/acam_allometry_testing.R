@@ -11,10 +11,10 @@ calcSE<-function(x){
 
 # Read in Data ####
 ## Processing data ####
-source("data_cleaning/initial_data_prep/merge_processing_collections_data.R")
+source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
 
-acam_dat <- all_dat_final %>%
-  filter(phyto == "ACAM")
+#acam_dat <- all_dat_final %>%
+ # filter(phyto == "ACAM")
 
 ## Allometry data ####
 
@@ -28,14 +28,17 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
   allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/"
 } 
 
-acam_allo <- read.xlsx(paste0(allo_lead, "20221113_Allometry-Processing.xlsx"), sheet = 1) %>%
+acam_allo <- read.csv(paste0(allo_lead, "Allometry-Processing_ACAM-flowers_20221202.csv")) %>%
   filter(!is.na(flower.num))
+
+acamC2 <- acamC %>%
+  mutate(total.biomass.g.percap = total.biomass.g/phyto.n.indiv)
 
 
 # Flower Dat Range ####
 theme_set(theme_bw())
 
-phyto<-ggplot(acam_dat, aes(x=total.biomass.rounded.percap)) +
+phyto<-ggplot(acamC2, aes(x=total.biomass.g.percap)) +
   geom_histogram() +
   facet_wrap(~treatment) +
   coord_cartesian(xlim = c(0,20))
@@ -49,3 +52,13 @@ allo<-ggplot(acam_allo, aes(x=total.biomass.g)) +
 ggarrange(phyto, allo, ncol = 1, nrow=2)
 
 ggsave("allometry/preliminary_figs/allometric_relationship_fits/acam_allometry_check.png", height = 4, width = 6)
+
+
+ggplot(acam_allo, aes(x=total.biomass.g, y=flower.num, color = treatment)) +
+  geom_point() +
+  geom_smooth(method = lm)
+
+
+
+
+
