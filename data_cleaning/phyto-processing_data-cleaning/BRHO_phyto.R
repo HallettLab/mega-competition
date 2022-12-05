@@ -48,7 +48,17 @@ for(i in colnames(brho_final)[14:15]) {
 
 ## the phyto change notes are not super descriptive but they all contain 'CORRECTED' so they are probably okay?
 
+unique(brho_final$census.notes)
+## potential note of interest: 
+    ## "only one phytometer located & collected'
+unique(brho_final$process.notes)
+## okay
+
+## To-Do####
+
 ## need to look through the collections notes for any modifications that should be made to the seeds.in number - based on phyto.unique, whether it was planted or a recruit
+
+## seeds in will also be influenced by the intra-phyto.
 
 
 # Make Phyto DF ####
