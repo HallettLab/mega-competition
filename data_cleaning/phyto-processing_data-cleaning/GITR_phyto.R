@@ -32,6 +32,7 @@ ggplot(gitr_final, aes(x=phyto.n.indiv)) +
 
 
 # Check Notes ####
+## this might eventually be best in the census script?
 unique(gitr_final$process.notes) ## okay
 
 ## create empty data frame
@@ -48,7 +49,14 @@ for(i in colnames(gitr_final)[14:15]) {
   df <- rbind(df, tmp)
 }
 
-## the phyto change notes are not super descriptive but they all contain 'CORRECTED or RESOLVED' so they are probably okay?
+## phyto change notes: ####
+    ## Unique ID 2605 -> needs an intra-phyto
+    ## Unique ID 5115 -> needs an intra-phyto
+
+
+    ## Unique ID 5015 -> Original phyto number was 1, JD changed to 3 and updated census; ML edited notes in drive master, no intra-phyto changes needed
+    ## Unique ID 11444: Originally phyto number was 1, later changed to 2; ML edited note in drive master, no intra-phyto changes needed
+    ## Unique ID 4940: originally phyto number was 2, JD changed to 3 and is thus correct; edited notes  in drive master
 
 
 # Make Phyto DF ####
@@ -67,8 +75,10 @@ gitr.phyto <- gitr_final %>%
          ## use avg seed num per trt to calculate seeds out
            
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
+         
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
-        ## calculate the seeds in
+        ## then, check for # indiv > 3, use # indiv as seeds.in here also
   
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
@@ -81,3 +91,6 @@ ggplot(gitr.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
 ## check seed.out numbers
 ggplot(gitr.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
+
+#ggplot(gitr.phyto, aes(y=phyto.seed.out, x=bkgrd, color = treatment)) +
+#  geom_boxplot()
