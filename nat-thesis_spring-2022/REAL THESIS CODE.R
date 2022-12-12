@@ -25,16 +25,16 @@ calcSE<-function(x){
 #library(grid)
 #library(gridExtra)
 
-setwd("~/Desktop/Repositories/mega-competition/THESIS/")  
+setwd("~/Desktop/Repositories/mega-competition/nat-thesis_spring-2022/")  
 
 Focal<- read.csv("Focal Individuals.csv")
 Back<- read.csv("Background_Individuals.csv")
 Neighbor<- read.csv("Neighborhood_Counts.csv")
 
 ## CE file paths, please save: 
-#Focal<- read.csv("THESIS/Focal Individuals.csv")
-#Back<- read.csv("THESIS/Background_Individuals.csv")
-#Neighbor<- read.csv("THESIS/Neighborhood_Counts.csv")
+#Focal<- read.csv("nat-thesis_spring-2022/Focal Individuals.csv")
+#Back<- read.csv("nat-thesis_spring-2022/Background_Individuals.csv")
+#Neighbor<- read.csv("nat-thesis_spring-2022/Neighborhood_Counts.csv")
 
 # DATA CLEANING ####
 colnames(Neighbor)
