@@ -36,21 +36,32 @@ ggplot(brho_final, aes(x=phyto.n.indiv)) +
 df <- data.frame()
 
 ## loop through all notes searching for "die" or "chang"
-for(i in colnames(brho_final)[14:15]) {
+for(i in colnames(brho_final)[15:16]) {
   tmp <- dplyr::filter(brho_final, grepl("die", brho_final[,i]))
   df <- rbind(df, tmp)
 }
 
-for(i in colnames(brho_final)[14:15]) {
+for(i in colnames(brho_final)[15:16]) {
   tmp <- dplyr::filter(brho_final, grepl("chang", brho_final[,i]))
   df <- rbind(df, tmp)
 }
 
+unique(df$census.notes)
+
 ## the phyto change notes are not super descriptive but they all contain 'CORRECTED' so they are probably okay?
+## No, should look into a few of these further.
 
 unique(brho_final$census.notes)
 ## potential note of interest: 
     ## "only one phytometer located & collected'
+    ## CORRECTED. seeds already, re-census on 04/20/2022 to include additional phyto. Manuel updated needed.
+    ## Other= ANAR, BRHO phyto with seed head snapped off
+    ## CORRECTED; manually change, changed phyto # Jd
+    ## THIR,one other BRHO in S.12. far enough away that I didn't count it
+    ## Additional phyto collected. NO re-census, phyto within neighborhood.
+    ## CORRECTED. re-census on 4/22/22. two phytos collected. There may be an additional envelop for this subplot.
+
+
 unique(brho_final$process.notes)
 ## okay
 

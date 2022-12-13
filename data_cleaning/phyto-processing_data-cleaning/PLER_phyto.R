@@ -21,8 +21,6 @@ pler_int <- left_join(plerC, unique.key, by = c("block", "plot", "sub", "bkgrd",
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 pler_final <- pler_int %>%
- # filter(complete.sample == "Y") %>% ## remove incompletes
-  
   mutate(inflor.g.rounded = ifelse(scale.ID %in% med_scales, round(inflor.g, digits = 3), inflor.g)) %>% ## round to 3 decimal places
   
   select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, inflor.g.rounded, empty.flower.num, flower.num, seed.num, new.flower.num, scale.ID, process.notes, census.notes, unique.ID) ## select only needed columns
@@ -53,7 +51,8 @@ pler.notes <- pler_final %>%
   filter(!is.na(process.notes), process.notes!= "WEIGH TOTAL BIOMASS", process.notes != "Sample missing")
 
 ## unique.ID 9667 & 8432 need to be removed, missing parts of inflor
-
+pler_final2 <- pler_final %>%
+  filter(unique.ID != 9667, unique.ID != 8432)
 
 
 ## create empty data frame
@@ -71,3 +70,13 @@ for(i in colnames(pler_final)[17:18]) {
 }
 
 
+# Make Phyto DF ####
+pler.phyto <- pler_final2 %>%
+  mutate(phyto.seed.out = ifelse(complete.sample == "N", (new.flower.num*2), 
+                                 (allo.df[allo.df$species == "PLER",2] + 
+                                    (allo.df[allo.df$species == "PLER",3]*inflor.g.rounded))),
+         
+         phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
+  
+  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)

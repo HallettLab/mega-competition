@@ -5,8 +5,8 @@ library(tidyverse)
 ## phyto-processing data
 source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
 
-## allometry data
-source("allometry/merge_allometric_relationships.R")
+## uniqueID key
+source("data_cleaning/unique_key.R")
 
 # Initial Exploration ####
 ggplot(avbaC, aes(x=glume.num)) +
@@ -21,9 +21,19 @@ ggplot(avbaC, aes(x=complete.sample)) +
 avbaC[is.na(avbaC$complete.sample),]
 ## missing 1 sample
 
+unique(avbaC$census.notes)
+unique(avbaC$process.notes)
+
+# avbaC[avbaC$process.notes == "phyto diseaed",] ## this is still marked complete, looks OK
+
 
 # Final Cleaning ####
-avba_final <- avbaC %>%
+## need to add in unique.IDs here
+avba_int <- left_join(avbaC, unique.key, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
+  mutate(unique.ID = unique.ID.y)
+
+
+avba_final <- avba_int %>%
   filter(complete.sample == "Y") %>%
   ## remove incompletes
   
@@ -56,15 +66,22 @@ ggplot(avba_final, aes(x=seed.num)) +
   geom_histogram()
 ## 1 very large sample relative to the others, maybe check this?
 
+ggplot(avba_final, aes(x=phyto.unique)) +
+  geom_bar()
+
+## check the # of phyto uniques to make sure it aligns with the # of seeds.in less than 3
+avbaC[!is.na(avbaC$phyto.unique),]
+
 
 # Make Phyto DF ####
 avba.phyto <- avba_final %>%
-  mutate(AVBA.seed.out = seed.num, 
-         AVBA.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, 3)) %>%
-  select(unique.ID, phyto.n.indiv, AVBA.seed.in, AVBA.seed.out)
+  mutate(phyto.seed.out = seed.num, 
+         phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
+  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
 ## check the seed.in numbers
-ggplot(avba.phyto, aes(x=phyto.n.indiv, y=AVBA.seed.in)) +
+ggplot(avba.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
   geom_point()
 ## looks good!
