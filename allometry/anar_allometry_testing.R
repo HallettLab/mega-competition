@@ -65,6 +65,11 @@ seedtrt <- aov(seed.num ~ Treatment, data = anar_seeds)
 summary(seedtrt)
 TukeyHSD(seedtrt) # no sig diff, use mean seeds
 
+anar_seed_means <- anar_seeds %>%
+  summarise(mean_seeds = mean(seed.num, na.rm = T), SE_seeds = calcSE(seed.num))
+
+anar_seed_means <- cbind(treatment = c("C", "D"), anar_seed_means)
+
 # TotBio - Flower Rel. ####
 ## Combine drought and controls together for biomass-flower relationship
 
@@ -104,5 +109,5 @@ summary(anar_fallo_rel) # r2 = 0.934
 ## save the model outputs
 anar.allo.output <- anar_fallo_rel$coefficients
 
-rm(list = c("allo_lead", "anar_fallo_rel", "anar_allo",  "anar_seeds", "anar_seed_means", "anar_seed_allo", "seedtrt"))
+rm(list = c("allo_lead", "anar_fallo_rel", "anar_allo",  "anar_seeds", "anar_mean_seeds", "anar_seed_allo", "seedtrt"))
 
