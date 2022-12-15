@@ -5,7 +5,7 @@ library(MuMIn)
 library(lmerTest)
 library(cowplot)
 
-setwd("~/Desktop/Repositories/mega-competition/nat-thesis_spring-2022/")  
+setwd("~/Documents/Repositories/mega-competition/nat-thesis_spring-2022") 
 
 Focal<- read.csv("Focal Individuals.csv")
 Back<- read.csv("Background_Individuals.csv")
@@ -34,6 +34,9 @@ colnames(Focal) <- c("Sample.Name", "Species", "Innoculation", "Treatment","Bloc
 Focal_All<-left_join(Neighbor_Clean,Focal,by=c("Block", "Plot", "Treatment", "Sample.Name"))
 #"c"=character vector (list)
 
+twil <- c("TWIL-I", "TWIL-U")
+inoc <- c("TWIL-I", "THIR-I")
+
 Focal_All_Cleaned <- Focal_All %>%
   mutate(Species = ifelse(Sample.Name %in% twil, "TWIL", "THIR"))  %>% 
   mutate(Inoc = ifelse(Sample.Name %in% inoc, "I", "U")) %>% 
@@ -52,6 +55,44 @@ ggplot(summary, aes(x=bkgrd, y=mean.biomass, color=Treatment)) +
   geom_point() +
   geom_errorbar(aes(ymin = mean.biomass-se.biomass, ymax = mean.biomass + se.biomass), width = 0.25) 
 
+Focal_All_Boxplot<-Focal_All_Cleaned %>%
+  filter(Survival != 0)
+
+### Final Figures ####
+
+focals <- ggplot(Focal_All_Boxplot,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
+  geom_boxplot()+
+  theme_bw()+
+  ylab("Focal Biomass (g)") +
+  scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought"))
+focals
+
+focals_inoc <- ggplot(Focal_All_Boxplot,aes(x=Innoculation, y=Adjusted.Biomass, color=Treatment))+
+  geom_boxplot()+
+  theme_bw()+
+  ylab("Focal Biomass (g)")+
+  facet_wrap(~Species)+
+  scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) +
+  theme(legend.position = "none")
+focals_inoc
+
+bgs <- ggplot(Back,aes(x=Species, y=Adjusted.Biomass, color=Treatment))+
+  geom_boxplot()+
+  theme_bw()+
+  ylab("Back Biomass (g)")+
+  scale_color_manual(values = c("#008080", "#ca562c"), labels = c("Ambient", "Drought")) +
+  theme(legend.position = "none") 
+bgs
+
+## Combining all three panels into one figure!
+
+pt2 <- plot_grid(focals_inoc, bgs,
+                 labels=c("B","C"))
+
+pt1 <- plot_grid(focals, 
+                 labels = c("A"))
+
+plot_grid(pt1, pt2, ncol = 1, nrow = 2)
 
 
 #TO DO 
