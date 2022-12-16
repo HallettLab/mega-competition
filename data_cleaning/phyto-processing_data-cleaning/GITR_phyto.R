@@ -59,6 +59,12 @@ for(i in colnames(gitr_final)[14:15]) {
     ## Unique ID 4940: originally phyto number was 2, JD changed to 3 and is thus correct; edited notes  in drive master
 
 
+## Phyto checks; 
+## unique 4514; unique 8670
+gitr_checks <- gitr_final %>%
+  filter(unique.ID == 4514 | unique.ID == 8670)
+
+
 # Make Phyto DF ####
 
 ## make avg seed numbers into vectors

@@ -27,6 +27,7 @@ pler_final <- pler_int %>%
 
 
 
+
 ## check for outliers
 ggplot(pler_final[pler_final$complete.sample == "Y",], aes(x=inflor.g.rounded)) +
   geom_histogram()
@@ -54,6 +55,12 @@ pler.notes <- pler_final %>%
 pler_final2 <- pler_final %>%
   filter(unique.ID != 9667, unique.ID != 8432)
 
+
+# Check specific samples: ####
+checks <- c(2019, 5673, 5873, 10685)
+checks2 <- c(4230, 4430)
+pler_checks <- pler_final2 %>%
+  filter(unique.ID %in% checks2)
 
 ## create empty data frame
 df <- data.frame()
