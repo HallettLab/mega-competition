@@ -16,7 +16,7 @@ date_processing <- 20221018
 
 ## Processing data
 acam <- read.csv(paste0(lead, "ACAM_phyto-processing-redo_20221209.csv"))
-anar <- read.csv(paste0(lead, "ANAR_phyto-processing_", date_processing, ".csv"))
+anar <- read.csv(paste0(lead, "ANAR_phyto-processing-redo_20221213.csv"))
 avba <- read.csv(paste0(lead, "AVBA_phyto-processing_", date_processing, ".csv")) %>%
   mutate(scale.ID = NA)
 brho <- read.csv(paste0(lead, "BRHO_phyto-processing_20221201", ".csv"))
