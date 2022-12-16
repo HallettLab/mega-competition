@@ -14,7 +14,7 @@ source("data_cleaning/unique_key.R")
 # Final Cleaning ####
 ## Check Redo ####
 ## need to add in unique.IDs here
-acam_int <- left_join(acamC, unique.key, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
+acam_int <- left_join(acamC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
   mutate(unique.ID = unique.ID.y)
 
 ## when I added unique.ID in, an extra row appeared. That's odd. Is there a duplicate combo somewhere?
@@ -36,14 +36,19 @@ colnames(acam_int)
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 acam_final <- acam_int %>%
+  
+  select(-complete.sample) %>% ## this is old data and best to remove BEFORE accidentally using it.
+  
   filter(redo.complete == "Y") %>% ## remove incompletes
+  ## make sure to use the redo.complete column, this one is most accurate
   
-  mutate(total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(total.biomass.g, digits = 3), total.biomass.g), 
-         redo.total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(total.biomass.g, digits = 3), total.biomass.g)) %>% ## round to 3 decimal places
+  mutate(final.total.biomass.g = ifelse(!is.na(redo.total.biomass), redo.total.biomass, total.biomass.g)) %>%
+  ## when a sample was reweighed due to roots, use the new value from redo.total.biomass column
   
-  ## need to choose the correct weight from redo.total.biomass and total.biomass.g
+  mutate(total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(final.total.biomass.g, digits = 3), final.total.biomass.g)) %>% ## round to 3 decimal places
+  ## make sure to use the final.total.biomass.g as an input
   
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, redo.complete, total.biomass.g.rounded, flower.num, scale.ID, process.notes, census.notes, unique.ID) ## select only needed columns
+  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, redo.complete, total.biomass.g.rounded, flower.num, scale.ID, redo.notes, completion.notes, process.notes, census.notes, unique.ID) ## select only needed columns
 
 
 # Check for Outliers ####
@@ -54,8 +59,42 @@ ggplot(acam_final, aes(x=total.biomass.g.rounded)) +
 ggplot(acam_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
 
-unique(acam_final$process.notes) ## okay
+unique(acam_final$process.notes)
+## probably not the most up to date column. Ignore all roots present notes. Redo.notes will be better for this.
+## no current issues from these notes.
 
+unique(acam_final$redo.notes)
+## these all look good, notes were recorded when a sample was reweighed
 
+## create empty data frame
+df <- data.frame()
 
+## loop through all notes searching for "die" or "chang"
+for(i in colnames(acam_final)[14:17]) {
+  tmp <- dplyr::filter(acam_final, grepl("die", acam_final[,i]))
+  df <- rbind(df, tmp)
+}
+
+for(i in colnames(acam_final)[14:17]) {
+  tmp <- dplyr::filter(acam_final, grepl("chang", acam_final[,i]))
+  df <- rbind(df, tmp)
+}
+## no notes flagged! nice!
+
+# Make Phyto DF ####
+## ADJUST ALLO LATER ####
+acam.phyto <- acam_final %>%
+  mutate(ACAM.flowers.out = (allo.df[allo.df$species == "ACAM",2] + 
+                               (allo.df[allo.df$species == "ACAM",3]*total.biomass.g.rounded) + (allo.df[allo.df$species == "ACAM",4]*(total.biomass.g.rounded^2))),
+         ## use tot.bio to flower.num to get flowers out
+         
+         phyto.seed.out = ifelse(treatment == "D",  seeds.D*GITR.flowers.out,  seeds.C*GITR.flowers.out),
+         ## use avg seed num per trt to calculate seeds out
+         
+         phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
+         
+         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
+  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
