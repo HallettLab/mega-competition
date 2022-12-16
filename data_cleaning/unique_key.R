@@ -33,9 +33,13 @@ collections.fkC <- collections.fk %>%
          unique.ID = unique) %>% ## standardize column name
   mutate_all(na_if,"") ## make blank values NAs
 
+drought <- c(1, 3, 4, 6, 12, 14)
 ## create a unique-ID key
 unique.key <- collections.fkC %>%
-  select(unique.ID, block, plot, sub, bkgrd, dens, phyto, phyto.unique)
+  mutate(treatment = ifelse(block %in% drought, "D", "C")) %>%
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique)
+
+
 
 
 rm(list = c("date_collections", "collections.fkC", "collections.fk"))

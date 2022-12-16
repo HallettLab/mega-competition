@@ -15,7 +15,7 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 date_processing <- 20221018
 
 ## Processing data
-acam <- read.csv(paste0(lead, "ACAM_phyto-processing_", date_processing, ".csv"))
+acam <- read.csv(paste0(lead, "ACAM_phyto-processing-redo_20221209.csv"))
 anar <- read.csv(paste0(lead, "ANAR_phyto-processing_", date_processing, ".csv"))
 avba <- read.csv(paste0(lead, "AVBA_phyto-processing_", date_processing, ".csv")) %>%
   mutate(scale.ID = NA)
