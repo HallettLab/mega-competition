@@ -61,4 +61,19 @@ TukeyHSD(seedtrt)
 
 ## Use separate means for drought & control since they are significantly different
 
-rm(mael_allo, seedtrt, allo_lead)
+MAEL.allo.output <- data.frame(Species = "MAEL", 
+           intercept = 0, 
+           intercept_pval = NA, 
+           intercept_se = NA, 
+           slope = NA, 
+           slope_pval = NA, 
+           slope_se = NA, 
+           poly = NA, 
+           poly_pval = NA, 
+           poly_se = NA,
+           seeds_C = mael_seed_means[mael_seed_means$treatment == "C",]$mean_seeds,
+           seeds_C_se = mael_seed_means[mael_seed_means$treatment == "C",]$SE_seeds,
+           seeds_D = mael_seed_means[mael_seed_means$treatment == "D",]$mean_seeds,
+           seeds_D_se = mael_seed_means[mael_seed_means$treatment == "D",]$SE_seeds)
+
+rm(mael_allo, seedtrt, allo_lead, mael_seed_means)

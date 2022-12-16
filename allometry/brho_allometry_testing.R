@@ -86,16 +86,29 @@ ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
 
 
 ## Model ####
-inflorseeds <- lm(seed.num~inflor.g, data = brho_allo)
-summary(inflorseeds)
+brho_fallo_rel <- lm(seed.num~inflor.g, data = brho_allo)
+summary(brho_fallo_rel)
 ## slope = 951.7297
 # y = 0.7543 + 951.7297x
 
-inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = brho_allo)
-summary(inflorseeds2)
+# inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = brho_allo)
+# summary(inflorseeds2)
 
 ## save the model outputs
-BRHO.allo.output <- inflorseeds$coefficients
+BRHO.allo.output <- data.frame(Species = "BRHO", 
+           intercept = 0, 
+           intercept_pval = NA, 
+           intercept_se = NA, 
+           slope = brho_fallo_rel$coefficients[2], 
+           slope_pval = summary(brho_fallo_rel)$coefficients[2,4], 
+           slope_se = summary(brho_fallo_rel)$coefficients[2,2], 
+           poly = NA, 
+           poly_pval = NA, 
+           poly_se = NA,
+           seeds_C = NA,
+           seeds_C_se = NA,
+           seeds_D = NA,
+           seeds_D_se = NA)
 
 # Clean Env ####
-rm(list = c("allo_lead", "brho_allo", "date", "inflorseeds", "inflorseeds2"))
+rm(allo_lead, brho_allo, date, brho_fallo_rel)

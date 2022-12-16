@@ -70,23 +70,33 @@ ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ poly(x,2))
 
-ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ log(x))
-
 ## Model ####
 
 bioseeds <- lm(seed.num~total.biomass.g, data = pler_allo)
 summary(bioseeds)
 # y = 3.143 + 346.885x
 
-bioseeds2 <- lm(seed.num ~ total.biomass.g + I(total.biomass.g^2), data = pler_allo)
-summary(bioseeds2)
+# bioseeds2 <- lm(seed.num ~ total.biomass.g + I(total.biomass.g^2), data = pler_allo)
+# summary(bioseeds2)
 
 ## save the model outputs
-PLER.allo.output <- bioseeds$coefficients
 # NOTE ####
 ## Please put species name in all caps! I use the first 4 letters of this for species name in the merged allo output dataframe and I need them in caps to match the phyto processing & collections data!
+
+PLER.allo.output <- data.frame(Species = "PLER", 
+           intercept = 0, 
+           intercept_pval = NA, 
+           intercept_se = NA, 
+           slope = summary(bioseeds)$coefficients[2,1], 
+           slope_pval = summary(bioseeds)$coefficients[2,4], 
+           slope_se = summary(bioseeds)$coefficients[2,2], 
+           poly = NA, 
+           poly_pval = NA, 
+           poly_se = NA,
+           seeds_C = NA,
+           seeds_C_se = NA,
+           seeds_D = NA,
+           seeds_D_se = NA)
 
 # Clean Env ####
 rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2", "bioseeds2", "bioseeds"))

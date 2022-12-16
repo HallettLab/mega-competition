@@ -5,7 +5,6 @@
     ## 2. tests & plots various allometric relationships
     ## 3. saves the output from the final best model for use later in predicting seed output.
 
-rm(list=ls())
 
 library(tidyverse)
 library(ggpubr)
@@ -97,9 +96,22 @@ summary(acam_fallo_rel) # r2 = 0.962
 
 
 ## save the model outputs
-acam.allo.output <- acam_fallo_rel$coefficients
+ACAM.allo.output <- data.frame(Species = "ACAM", 
+           intercept = 0, 
+           intercept_pval = NA, 
+           intercept_se = NA, 
+           slope = acam_fallo_rel$coefficients[2], 
+           slope_pval = summary(acam_fallo_rel)$coefficients[2,4], 
+           slope_se = summary(acam_fallo_rel)$coefficients[2,2], 
+           poly = NA, 
+           poly_pval = NA, 
+           poly_se = NA,
+           seeds_C = acam_seed_means[acam_seed_means$treatment == "C",]$mean_seeds,
+           seeds_C_se = acam_seed_means[acam_seed_means$treatment == "C",]$SE_seeds,
+           seeds_D = acam_seed_means[acam_seed_means$treatment == "D",]$mean_seeds,
+           seeds_D_se = acam_seed_means[acam_seed_means$treatment == "D",]$SE_seeds)
 
-rm(list = c("allo_lead", "acam_fallo_rel", "acam_flower_allo", "acam_mean_seeds",  "acam_seed_allo", "seedtrt"))
+rm(list = c("allo_lead", "acam_fallo_rel", "acam_flower_allo", "acam_mean_seeds",  "acam_seed_allo", "seedtrt", "acam_seed_means"))
 
 
 
