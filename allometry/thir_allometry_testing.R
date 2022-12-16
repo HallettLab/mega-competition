@@ -10,7 +10,7 @@ calcSE<-function(x){
 
 # Read in Data ####
 ## Processing data
-source("data_cleaning/merge_processing_collections_data.R")
+source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
 
 thir_dat <- all_dat_final %>%
   filter(phyto == "THIR-I")
