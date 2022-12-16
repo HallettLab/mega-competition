@@ -2,8 +2,6 @@ library(tidyverse)
 library(ggpubr)
 library(openxlsx)
 
-rm(list=ls())
-
 ## create a function to calculate standard error
 calcSE<-function(x){
   x2<-na.omit(x)
@@ -94,20 +92,33 @@ ggplot(anar_allo, aes(x = total.biomass.g, y = flower.num)) +
 # summary(anar_fallo_rel) # r2 = 0.931
 
 ## test polynomial model
-anar_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = anar_allo)
-summary(anar_fallo_rel) # r2 = 0.934
+# anar_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = anar_allo)
+# summary(anar_fallo_rel) # r2 = 0.934
 
 # Test without outlier
 # anar_fallo_rel <- lm(flower.num ~ total.biomass.g, data = anar_allo[anar_allo$total.biomass.g<5,])
 # summary(anar_fallo_rel) # r2 = 0.774
 # 
 # 
-# anar_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = anar_allo[anar_allo$total.biomass.g<5,])
-# summary(anar_fallo_rel) # r2 = 0.829
-# polynomial is better with and without outlier
+anar_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = anar_allo[anar_allo$total.biomass.g<5,])
+summary(anar_fallo_rel) # r2 = 0.829
+# polynomial is better with and without outlier, calcualte seeds for outlier separately which we already have. so done. 
 
 ## save the model outputs
-anar.allo.output <- anar_fallo_rel$coefficients
+ANAR.allo.output <- data.frame(Species = "ANAR", 
+           intercept = 0, 
+           intercept_pval = NA, 
+           intercept_se = NA, 
+           slope = anar_fallo_rel$coefficients[2], 
+           slope_pval = summary(anar_fallo_rel)$coefficients[2,4], 
+           slope_se = summary(anar_fallo_rel)$coefficients[2,2], 
+           poly = summary(anar_fallo_rel)$coefficients[3,1], 
+           poly_pval = summary(anar_fallo_rel)$coefficients[3,4], 
+           poly_se = summary(anar_fallo_rel)$coefficients[3,2],
+           seeds_C = anar_seed_means[anar_seed_means$treatment == "C",]$mean_seeds,
+           seeds_C_se = anar_seed_means[anar_seed_means$treatment == "C",]$SE_seeds,
+           seeds_D = anar_seed_means[anar_seed_means$treatment == "D",]$mean_seeds,
+           seeds_D_se = anar_seed_means[anar_seed_means$treatment == "D",]$SE_seeds)
 
-rm(list = c("allo_lead", "anar_fallo_rel", "anar_allo",  "anar_seeds", "anar_mean_seeds", "anar_seed_allo", "seedtrt"))
+rm(list = c("allo_lead", "anar_fallo_rel", "anar_allo",  "anar_seeds", "anar_mean_seeds", "seedtrt", "anar_seed_means"))
 
