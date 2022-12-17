@@ -82,13 +82,12 @@ for(i in colnames(acam_final)[14:17]) {
 ## no notes flagged! nice!
 
 # Make Phyto DF ####
-## ADJUST ALLO LATER ####
 acam.phyto <- acam_final %>%
-  mutate(ACAM.flowers.out = (allo.df[allo.df$species == "ACAM",2] + 
-                               (allo.df[allo.df$species == "ACAM",3]*total.biomass.g.rounded) + (allo.df[allo.df$species == "ACAM",4]*(total.biomass.g.rounded^2))),
+  mutate(ACAM.flowers.out = (allo.df[allo.df$Species == "ACAM",2] + ## intercept
+                               (allo.df[allo.df$Species == "ACAM",5]*total.biomass.g.rounded)), ## slope
          ## use tot.bio to flower.num to get flowers out
          
-         phyto.seed.out = ifelse(treatment == "D",  seeds.D*GITR.flowers.out,  seeds.C*GITR.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "ACAM",13]*ACAM.flowers.out,  allo.df[allo.df$Species == "ACAM",11]*ACAM.flowers.out),
          ## use avg seed num per trt to calculate seeds out
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
@@ -98,3 +97,9 @@ acam.phyto <- acam_final %>%
   ## then, check for # indiv > 3, use # indiv as seeds.in here also
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
+ggplot(acam.phyto, aes(x=phyto.seed.out)) +
+  geom_histogram()
+
+
+## clean up env
+rm(list = c("acam_final", "acam_int", "acam_not_unique", "acamC"))
