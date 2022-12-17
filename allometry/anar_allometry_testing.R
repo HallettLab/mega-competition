@@ -80,6 +80,9 @@ ggplot(anar_allo, aes(x = total.biomass.g, y = flower.num)) +
 #   geom_point() +
 #   geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ x)
 
+anar_allo[anar_allo$total.biomass.g > 5,]$flower.num
+## 419 flowers on the largest sample.
+
 ## plot as polynomial
 ggplot(anar_allo, aes(x = total.biomass.g, y = flower.num)) +
   geom_point() +
