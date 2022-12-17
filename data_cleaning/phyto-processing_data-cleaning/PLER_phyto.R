@@ -14,7 +14,7 @@ source("data_cleaning/unique_key.R")
 
 # Final Cleaning ####
 ## need to add in unique.IDs here
-pler_int <- left_join(plerC, unique.key, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
+pler_int <- left_join(plerC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
   mutate(unique.ID = unique.ID.y)
 
 
@@ -27,12 +27,31 @@ pler_final <- pler_int %>%
 
 
 
+# Check Outliers/Missing Vals ####
 
-## check for outliers
-ggplot(pler_final[pler_final$complete.sample == "Y",], aes(x=inflor.g.rounded)) +
+## separate by completion first
+pler_complete <- pler_final %>%
+  filter(complete.sample == "Y")
+
+pler_incomplete <- pler_final %>%
+  filter(complete.sample == "N")
+
+## visualize
+ggplot(pler_complete, aes(x=inflor.g.rounded)) +
   geom_histogram()
+ggplot(pler_incomplete, aes(x=new.flower.num)) +
+  geom_histogram()
+## missing 1 value.
 
-## check phyto.n.indiv
+pler_incomplete[is.na(pler_incomplete$new.flower.num),]
+## looks like this one was already processed correctly, so it was not redone. For this, need to add empty.flower.num and flower.num together and put in new.flower.num column
+##unique.ID 11705
+
+## change 11705 here ####
+pler_final[pler_final$unique.ID == 11705,]$new.flower.num <- pler_final[pler_final$unique.ID == 11705,]$empty.flower.num + pler_final[pler_final$unique.ID == 11705,]$flower.num
+## should be good now.
+
+## Check phyto num 
 ggplot(pler_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
 
@@ -40,27 +59,28 @@ ggplot(pler_final, aes(x=phyto.n.indiv)) +
 ggplot(pler_final[pler_final$complete.sample == "N",], aes(x=seed.num/2, y=new.flower.num)) +
   geom_point() +
   geom_abline(slope = 1)
-  ## 3 rows had missing values
+  ## 2 rows had missing values
+## I think that this has to do with the way that R subsetting the data, it's adding in rows with nothing but NAs. I think all incompletes have a new.flower.num now.
+
 
 # Check Notes ####
 ## this might eventually be best in the census script?
 unique(pler_final$process.notes)
   ## some phyto changes here that need to be double checked
-  ## a few samples will need to be removed - when parts of the inflorescence are missing
+    ## 4230 & 4430 dealt with on 12/14
+    ## should be good now!
+
+  ## a few samples will need to be removed - when parts of the inflorescence are missing - DONE!
 
 pler.notes <- pler_final %>%
   filter(!is.na(process.notes), process.notes!= "WEIGH TOTAL BIOMASS", process.notes != "Sample missing")
 
+## remove 9667 & 8432 ####
 ## unique.ID 9667 & 8432 need to be removed, missing parts of inflor
 pler_final2 <- pler_final %>%
   filter(unique.ID != 9667, unique.ID != 8432)
 
 
-# Check specific samples: ####
-checks <- c(2019, 5673, 5873, 10685)
-checks2 <- c(4230, 4430)
-pler_checks <- pler_final2 %>%
-  filter(unique.ID %in% checks2)
 
 ## create empty data frame
 df <- data.frame()
@@ -76,14 +96,36 @@ for(i in colnames(pler_final)[17:18]) {
   df <- rbind(df, tmp)
 }
 
+## all notes are descriptive enough that we know the correct phyto num.
+
 
 # Make Phyto DF ####
 pler.phyto <- pler_final2 %>%
-  mutate(phyto.seed.out = ifelse(complete.sample == "N", (new.flower.num*2), 
-                                 (allo.df[allo.df$species == "PLER",2] + 
-                                    (allo.df[allo.df$species == "PLER",3]*inflor.g.rounded))),
+  mutate(phyto.seed.out = ifelse(complete.sample == "N", 
+                                 (new.flower.num*2), ## if incomplete, flowersx2 = seeds out
+                                 (allo.df[allo.df$Species == "PLER",2] + 
+                                    (allo.df[allo.df$Species == "PLER",5]*inflor.g.rounded))),
+         ## if complete, use the allo relationship
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
+         
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
+  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+  
+  filter(!is.na(phyto.seed.out)) %>%
+  ## remove 2 missing samples
   
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+
+
+ggplot(pler.phyto, aes(x=phyto.seed.out)) +
+  geom_histogram()
+## 2 rows w/NAs these were missing samples, removed now.
+
+#pler_phyto_check <- pler.phyto %>%
+ # filter(is.na(phyto.seed.out))
+## 2 missing samples
+
+## clean up env
+rm(list = c("pler.notes", "pler_complete", "pler_final", "pler_final2", "pler_incomplete", "pler_int", "pler_phyto_check", "plerC"))
