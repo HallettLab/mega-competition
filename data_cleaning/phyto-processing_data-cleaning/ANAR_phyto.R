@@ -1,0 +1,2 @@
+## removed the 5g sample from teh allometric relationship as this was a big outlier and made the relatinoship fit worse for all other points
+## when calculating seeds out, use the counted flowers for this particular sample
