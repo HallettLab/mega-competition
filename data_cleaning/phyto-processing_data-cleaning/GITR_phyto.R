@@ -66,18 +66,15 @@ gitr_checks <- gitr_final %>%
 
 
 # Make Phyto DF ####
-
-## make avg seed numbers into vectors
-seeds.D <- as.numeric(gitr_seed_means[gitr_seed_means$treatment == "D",2])
-seeds.C <- as.numeric(gitr_seed_means[gitr_seed_means$treatment == "C",2])
-
-
 gitr.phyto <- gitr_final %>%
-  mutate(GITR.flowers.out = (allo.df[allo.df$species == "GITR",2] + 
-                            (allo.df[allo.df$species == "GITR",3]*total.biomass.g.rounded) + (allo.df[allo.df$species == "GITR",4]*(total.biomass.g.rounded^2))),
+  mutate(GITR.flowers.out = (allo.df[allo.df$Species == "GITR",2] + ## intercept 
+                            (allo.df[allo.df$Species == "GITR",5]*total.biomass.g.rounded) + ## slope
+                              (allo.df[allo.df$Species == "GITR",8]*(total.biomass.g.rounded^2))), ## poly
          ## use tot.bio to flower.num to get flowers out
          
-         phyto.seed.out = ifelse(treatment == "D",  seeds.D*GITR.flowers.out,  seeds.C*GITR.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  
+                                 allo.df[allo.df$Species == "GITR",13]*GITR.flowers.out,  ## drought
+                                 allo.df[allo.df$Species == "GITR",11]*GITR.flowers.out), ## control
          ## use avg seed num per trt to calculate seeds out
            
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
@@ -98,5 +95,5 @@ ggplot(gitr.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
 ggplot(gitr.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
-#ggplot(gitr.phyto, aes(y=phyto.seed.out, x=bkgrd, color = treatment)) +
-#  geom_boxplot()
+## clean env 
+rm(list = c("gitr_checks", "gitr_final", "gitrC"))
