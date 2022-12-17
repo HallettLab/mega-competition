@@ -3,10 +3,27 @@ library(tidyverse)
 
 # Read in Data ####
 ## phyto-processing data
-source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
+## specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+} 
+
+avba <- read.csv(paste0(lead, "AVBA_phyto-processing_20221018.csv")) %>%
+  mutate(scale.ID = NA)
+
+## basic cleaning function
+source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 
 ## uniqueID key
 source("data_cleaning/unique_key.R")
+
+# Initial Clean ####
+avbaC <- basic_cleaning_func(avba)
 
 # Initial Exploration ####
 ggplot(avbaC, aes(x=glume.num)) +
@@ -29,7 +46,7 @@ unique(avbaC$process.notes)
 
 # Final Cleaning ####
 ## need to add in unique.IDs here
-avba_int <- left_join(avbaC, unique.key, by = c("block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
+avba_int <- left_join(avbaC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
   mutate(unique.ID = unique.ID.y)
 
 
@@ -85,3 +102,6 @@ avba.phyto <- avba_final %>%
 ggplot(avba.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
   geom_point()
 ## looks good!
+
+## clean up env
+rm(list = c("avba", "avbaC", "avba_final", "avba_int", "df", "tmp"))

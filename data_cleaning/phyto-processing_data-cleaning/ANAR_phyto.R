@@ -6,7 +6,20 @@ library(tidyverse)
 
 # Read in Data ####
 ## phyto-processing data
-source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
+## specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+} 
+
+anar <- read.csv(paste0(lead, "ANAR_phyto-processing-redo_20221213.csv"))
+
+## basic cleaning function
+source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 
 ## allometry data
 source("allometry/merge_allometric_relationships.R")
@@ -14,6 +27,7 @@ source("allometry/merge_allometric_relationships.R")
 ## uniqueID key
 source("data_cleaning/unique_key.R")
 
+anarC <- basic_cleaning_func(anar)
 
 ## need to add in unique.IDs here
 anar_int <- left_join(anarC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
@@ -81,4 +95,4 @@ anar.phyto <- anar_final %>%
 ggplot(anar.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
-rm(list = c("anar_final", "anar_int", "anarC"))
+rm(list = c("anar", "anar_final", "anar_int", "anarC", "df", "tmp"))

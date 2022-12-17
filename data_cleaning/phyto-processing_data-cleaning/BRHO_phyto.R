@@ -3,13 +3,28 @@ library(tidyverse)
 
 # Read in Data ####
 ## phyto-processing data
-source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
+## specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+} 
+
+brho <- read.csv(paste0(lead, "BRHO_phyto-processing_20221201", ".csv"))
+
+## basic cleaning function
+source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 
 ## allometry data
 source("allometry/merge_allometric_relationships.R")
 
 
 # Final Cleaning ####
+brhoC <- basic_cleaning_func(brho)
+
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 brho_final <- brhoC %>%
@@ -92,4 +107,4 @@ ggplot(brho.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
   ## looks like there is a phyto.unique that has 3 seeds in, meaning that 3 phytos were found there. Probably okay, there must have been more seeds than 3 planted in that particular subplot, but since it's split into a phyto.unique we are using the phyto.n.indiv number for this.
 
 ## clean up env
-rm(list = c("brho_final", "brhoC"))
+rm(list = c("brho", "brho_final", "brhoC", "df", "tmp"))

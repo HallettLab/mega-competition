@@ -2,8 +2,21 @@
 library(tidyverse)
 
 # Read in Data ####
-## phyto-processing data
-source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
+##phyto processing data
+## specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+} 
+
+acam <- read.csv(paste0(lead, "ACAM_phyto-processing-redo_20221209.csv"))
+
+## basic cleaning function
+source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 
 ## allometry data
 source("allometry/merge_allometric_relationships.R")
@@ -12,6 +25,8 @@ source("allometry/merge_allometric_relationships.R")
 source("data_cleaning/unique_key.R")
 
 # Final Cleaning ####
+acamC <- basic_cleaning_func(acam)
+
 ## Check Redo ####
 ## need to add in unique.IDs here
 acam_int <- left_join(acamC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
@@ -102,4 +117,4 @@ ggplot(acam.phyto, aes(x=phyto.seed.out)) +
 
 
 ## clean up env
-rm(list = c("acam_final", "acam_int", "acam_not_unique", "acamC"))
+rm(list = c("acam", "acam_final", "acam_int", "acam_not_unique", "acamC", "df", "tmp", "not_unique", "temp_acam"))

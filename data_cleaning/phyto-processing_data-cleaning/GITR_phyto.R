@@ -3,13 +3,29 @@ library(tidyverse)
 
 # Read in Data ####
 ## phyto-processing data
-source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
+## specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+}
+
+gitr <- read.csv(paste0(lead, "GITR_phyto-processing_20221018.csv"))
+
+
+## basic cleaning function
+source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 
 ## allometry data
 source("allometry/merge_allometric_relationships.R")
 
 
 # Final Cleaning ####
+gitrC <- basic_cleaning_func(gitr)
+
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 gitr_final <- gitrC %>%
@@ -96,4 +112,4 @@ ggplot(gitr.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
 ## clean env 
-rm(list = c("gitr_checks", "gitr_final", "gitrC"))
+rm(list = c("gitr", "gitr_checks", "gitr_final", "gitrC", "df", "tmp"))

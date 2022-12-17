@@ -3,7 +3,20 @@ library(tidyverse)
 
 # Read in Data ####
 ## phyto-processing data
-source("data_cleaning/phyto-processing_data-cleaning/basic-cleaning_all-phytos.R")
+## specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+} 
+
+pler <- read.csv(paste0(lead, "PLER_phyto-processing-redo_20221209.csv"))
+
+## basic cleaning function
+source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 
 ## allometry data
 source("allometry/merge_allometric_relationships.R")
@@ -11,13 +24,14 @@ source("allometry/merge_allometric_relationships.R")
 ## uniqueID key
 source("data_cleaning/unique_key.R")
 
+# Basic Cleaning
+plerC <- basic_cleaning_func(pler)
 
-# Final Cleaning ####
 ## need to add in unique.IDs here
 pler_int <- left_join(plerC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
   mutate(unique.ID = unique.ID.y)
 
-
+# Final Cleaning ####
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 pler_final <- pler_int %>%
@@ -128,4 +142,4 @@ ggplot(pler.phyto, aes(x=phyto.seed.out)) +
 ## 2 missing samples
 
 ## clean up env
-rm(list = c("pler.notes", "pler_complete", "pler_final", "pler_final2", "pler_incomplete", "pler_int", "pler_phyto_check", "plerC"))
+rm(list = c("pler", "pler.notes", "pler_complete", "pler_final", "pler_final2", "pler_incomplete", "pler_int", "plerC", "tmp", "df"))
