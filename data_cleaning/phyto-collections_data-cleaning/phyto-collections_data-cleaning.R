@@ -27,8 +27,8 @@ collections$phyto.unique <- as.character(collections$phyto.unique)
 
 # Make Modifications ####
 ## all of the vectors to eventually filter by
-nhood10 <- c("MICA", "PLER", "BRHO", "ANAR", "GITR", "ACAM", "TACA", "LOMU") ## neighborhood size
-nhood18 <- c("LENI", "TWIL-I", "AVBA", "THIR-I", "MAEL") ## neighborhood size
+nhood10 <- c("MICA", "PLER", "BRHO", "ANAR", "GITR", "ACAM", "TACA", "LOMU", "CLPU") ## neighborhood size
+nhood18 <- c("LENI", "TWIL-I", "AVBA", "THIR-I", "MAEL", "AMME", "BRNI", "PLNO", "CESO") ## neighborhood size
 
 #unique(test$phyto.unique)
 
