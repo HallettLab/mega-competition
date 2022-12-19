@@ -24,10 +24,9 @@ source("allometry/merge_allometric_relationships.R")
 ## uniqueID key
 source("data_cleaning/unique_key.R")
 
-# Final Cleaning ####
+# Data Cleaning ####
 acamC <- basic_cleaning_func(acam)
-
-## Check Redo ####
+## Add Unique.IDs ####
 ## need to add in unique.IDs here
 acam_int <- left_join(acamC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
   mutate(unique.ID = unique.ID.y)
@@ -45,9 +44,29 @@ acam_not_unique <- acam_int %>%
   filter(block == 7, plot == 34, sub == 11)
 ## this one sample has 2 unique IDs attached to it. In October, CW found 2 processing rows associated with this sample, but only 1 physical sample. 
 
+## Check Redo ####
 colnames(acam_int)
 
+## explore a few pieces that will change after the final mods
+unique(acam_int$total.biomass.g) ## look at # decimal places
+unique(acam_int$redo.total.biomass) ## look at # decimal places
+ggplot(acam_int, aes(x=redo.complete)) +
+  geom_bar()
+## check how many incomplete samples before removing them
 
+## check redo notes before removing incompletes
+unique(acam_int$redo.notes)
+acam_int[acam_int$redo.notes == "sample OK; incomplete w/o 2nd stem that clearly snapped off but stem remaining is complete w/ lots of foliage attached",]
+    ## called incomplete
+acam_int[acam_int$redo.notes == "removed dirt; borderline completeness",]
+    ## called incomplete
+
+## Make sure samples with redo.notes have a redo.total.biomass value
+acam_notes <- acam_int %>%
+  filter(!is.na(redo.notes), redo.notes != "sample OK", redo.complete == "Y")
+    ## looks good, all complete samples that have a redo note also have a redo weight
+
+## Final Mods ####
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 acam_final <- acam_int %>%
@@ -67,16 +86,20 @@ acam_final <- acam_int %>%
 
 
 # Check for Outliers ####
-## look at inflor.g
+## look at total biomass
 ggplot(acam_final, aes(x=total.biomass.g.rounded)) +
   geom_histogram()
 ## no missing vals
 ggplot(acam_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
 
+# Check Notes ####
 unique(acam_final$process.notes)
 ## probably not the most up to date column. Ignore all roots present notes. Redo.notes will be better for this.
 ## no current issues from these notes.
+
+temp <- acam_final[acam_final$process.notes == "questionablae is complete", ]
+## although process & completion.notes indicate that this sample is not complete, based on the new criteria where we are not as worried about the bottom few inches of stem being bare it is complete.
 
 unique(acam_final$redo.notes)
 ## these all look good, notes were recorded when a sample was reweighed
@@ -117,4 +140,4 @@ ggplot(acam.phyto, aes(x=phyto.seed.out)) +
 
 
 ## clean up env
-rm(list = c("acam", "acam_final", "acam_int", "acam_not_unique", "acamC", "df", "tmp", "not_unique", "temp_acam"))
+rm(list = c("acam", "acam_final", "acam_int", "acam_not_unique", "acamC", "df", "tmp", "not_unique", "temp_acam", "acam_notes", "temp"))

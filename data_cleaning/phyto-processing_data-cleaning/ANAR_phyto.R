@@ -27,12 +27,15 @@ source("allometry/merge_allometric_relationships.R")
 ## uniqueID key
 source("data_cleaning/unique_key.R")
 
+# Clean Data ####
+## Basic cleaning ####
 anarC <- basic_cleaning_func(anar)
 
 ## need to add in unique.IDs here
 anar_int <- left_join(anarC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
   mutate(unique.ID = unique.ID.y)
 
+## Final mods ####
 anar_final <- anar_int %>%
   filter(complete.sample == "Y") %>%
   mutate(census.notes = notes) %>%
@@ -41,7 +44,7 @@ anar_final <- anar_int %>%
 ## select only needed columns
 
 
-## Check 
+# Check Outliers ####
 ggplot(anar_final, aes(x=total.biomass.g)) +
   geom_histogram()
 
