@@ -1,3 +1,7 @@
+## Phyto Collections Data Cleaning
+
+## This script does the initial cleaning of all census data. Inputs: the master collections phytometer data sheet, Outputs: phyto.census - a clean, pared down census designed to store & bkgrd.n.indiv - a pared down df with the num of bkgrd indiv for use in bkgrd_calculations.R
+
 # Load packages ####
 library(openxlsx)
 library(tidyverse)
@@ -19,18 +23,19 @@ date_collections <- 20220927
 
 collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date_collections, "_MASTER_Collections_2-in-progress.xlsx"), sheet = 2)
 
+# Clean Data ####
+## Format Dates ####
 ## make sure the dates read in correctly
 collections$phyto.date.collect <- as.Date(collections$phyto.date.collect, origin = "1899-12-30")
 collections$phyto.date.census <- as.Date(collections$phyto.date.census, origin = "1899-12-30")
 collections$bg.date.census <- as.Date(collections$bg.date.census, origin = "1899-12-30")
 collections$phyto.unique <- as.character(collections$phyto.unique)
 
-# Make Modifications ####
+## Basic Standardization ####
 ## all of the vectors to eventually filter by
 nhood10 <- c("MICA", "PLER", "BRHO", "ANAR", "GITR", "ACAM", "TACA", "LOMU", "CLPU") ## neighborhood size
 nhood18 <- c("LENI", "TWIL-I", "AVBA", "THIR-I", "MAEL", "AMME", "BRNI", "PLNO", "CESO") ## neighborhood size
 
-#unique(test$phyto.unique)
 
 collectionsC <- collections %>%
   mutate(across(where(is.character), str_trim)) %>% ## remove leading & trailing whitespace!!
@@ -40,10 +45,7 @@ collectionsC <- collections %>%
          bkgrd.n.indiv = ifelse(bkgrd == "Control", NA, bkgrd.n.indiv), 
          Nbrhood.size = ifelse(phyto %in% nhood10, 10, ## fill in all vals of neighborhood size
                                ifelse(phyto %in% nhood18, 18, Nbrhood.size))) %>% ## change # of background indiv in controls to NA
-  mutate_all(na_if,"") #%>%
-  #filter(phyto %in% summer_phytos)
-
-## No need to filter summer phytos now, we'll just filter by what we need at any certain point in time.
+  mutate_all(na_if,"")
 
 
 
@@ -81,12 +83,15 @@ plotnotes <- collectionsC %>%
 
 
 
-# Separate Cen Dat ####
-# Pull out census data
+# Separate Data ####
+# Pull out census data for clean data storage
 phyto.census <- collectionsC %>%
   select(unique.ID, phyto.n.indiv, Nbrhood.size, bkgrd.n.indiv, CRCO, ERBO, FIGA, GAMU, HYGL, SIGA, other)
 
+## Pull out bg.n.indiv info with block & plot still attached (for bkgrd_calculations.R)
+bkgrd.n.indiv <- collectionsC %>%
+  select(unique.ID, block, plot, bkgrd, bkgrd.n.indiv)
 
 
-
+# Clean Env ####
 rm(list = c("date_collections", "collections", "notes", "plotnotes", "subnotes", "tmp", "nhood10", "nhood18", "i", "lead"))

@@ -73,10 +73,6 @@ bg.info <- left_join(germ.eval, bg.seeds, by = c("block", "plot", "bkgrd")) %>%
   select(block, plot, bkgrd, germ.calc, bg.avg.seed.num)
 
 ## Merge BG indiv data ####
-## get relevant info from collections dataframe
-bkgrd.n.indiv <- collectionsC %>%
-  select(unique.ID, block, plot, bkgrd, bkgrd.n.indiv)
-
 bkgrd.calc <- left_join(bkgrd.n.indiv, bg.info, by = c("block", "plot", "bkgrd"))
 
 
