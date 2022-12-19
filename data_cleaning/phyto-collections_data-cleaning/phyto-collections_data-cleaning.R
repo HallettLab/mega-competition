@@ -27,8 +27,7 @@ collections$phyto.unique <- as.character(collections$phyto.unique)
 
 # Make Modifications ####
 ## all of the vectors to eventually filter by
-summer_phytos <- c("ACAM", "ANAR", "AVBA", "BRHO", "GITR", "MICA", "LENI", "PLER", "THIR-I", "TWIL-I", "LOMU", "TACA", "MAEL")
-nhood10 <- c("MICA", "PLER", "BRHO", "ANAR", "GITR", "ACAM", "TACA") ## neighborhood size
+nhood10 <- c("MICA", "PLER", "BRHO", "ANAR", "GITR", "ACAM", "TACA", "LOMU") ## neighborhood size
 nhood18 <- c("LENI", "TWIL-I", "AVBA", "THIR-I", "MAEL") ## neighborhood size
 
 #unique(test$phyto.unique)
@@ -41,24 +40,26 @@ collectionsC <- collections %>%
          bkgrd.n.indiv = ifelse(bkgrd == "Control", NA, bkgrd.n.indiv), 
          Nbrhood.size = ifelse(phyto %in% nhood10, 10, ## fill in all vals of neighborhood size
                                ifelse(phyto %in% nhood18, 18, Nbrhood.size))) %>% ## change # of background indiv in controls to NA
-  mutate_all(na_if,"") %>%
-  filter(phyto %in% summer_phytos)
+  mutate_all(na_if,"") #%>%
+  #filter(phyto %in% summer_phytos)
+
+## No need to filter summer phytos now, we'll just filter by what we need at any certain point in time.
 
 
 
 # Check Notes ####
 ## create empty data frame
-df <- data.frame()
+notes <- data.frame()
 
 ## loop through all notes searching for "die" or "chang"
 for(i in colnames(collectionsC)[20:26]) {
   tmp <- dplyr::filter(collectionsC, grepl("die", collectionsC[,i]))
-  df <- rbind(df, tmp)
+  notes <- rbind(notes, tmp)
 }
 
 for(i in colnames(collectionsC)[20:26]) {
   tmp <- dplyr::filter(collectionsC, grepl("chang", collectionsC[,i]))
-  df <- rbind(df, tmp)
+  notes <- rbind(notes, tmp)
 }
 
 subnotes <- collectionsC %>%
@@ -88,4 +89,4 @@ phyto.census <- collectionsC %>%
 
 
 
-rm(list = c("date_collections"))
+rm(list = c("date_collections", "collections", "notes", "plotnotes", "subnotes", "tmp", "nhood10", "nhood18", "i", "lead"))
