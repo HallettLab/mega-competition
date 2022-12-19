@@ -13,4 +13,8 @@ source("data_cleaning/phyto-processing_data-cleaning/MAEL_phyto.R")
 ## the final data frames are brho.phyto and gitr.phyto
 all.phytos <- do.call("rbind", list(brho.phyto, gitr.phyto, pler.phyto, avba.phyto, acam.phyto, anar.phyto, mael.phyto))
     ## add more phytos in as they are ready here.
+
+
+## clean env 
+rm(list = c("acam.phyto", "anar.phyto", "avba.phyto", "basic_cleaning_func", "brho.phyto", "gitr.phyto", "mael.phyto", "pler.phyto" ))
   
