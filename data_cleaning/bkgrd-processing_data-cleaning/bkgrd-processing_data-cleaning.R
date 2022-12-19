@@ -30,36 +30,57 @@ source("allometry/merge_allometric_relationships.R")
 
 
 # Clean Data ####
+
+## Finished Sp ####
+## separate out finished species
+finished <- c("BRHO", "GITR", "AVBA", "PLER", "ACAM", "ANAR", "MAEL")
+
+## Allo Types ####
+## separate by types of allometric relationships
+totbio.to.seeds <- c("MICA", "LOMU", "THIR-I", "TWIL-I", "TACA")
+inflor.bio.to.seeds <- c("BRHO", "PLER")
+stem.to.seeds <- c("LENI")
+bio.to.flower.to.seeds <- c("ACAM", "ANAR", "GITR")
+seeds.per.flower <- c("MAEL", "CESO")
+seeds <- c("AVBA")
+
+## make a vector of drought blocks
 drought <- c(1, 3, 4, 6, 12, 14)
 
-ggplot(bg_indiv, aes(x=n.indiv)) +
-  geom_histogram() +
-  facet_wrap(~bkgrd)
-unique(bg_indiv$bkgrd)
-bg_indiv[bg_indiv$bkgrd == "",]
-
-
-bg.ind <- bg_indiv %>%
+## Make Mods ####
+## clean up bg data
+bg_indivC <- bg_indiv %>%
   filter(plot < 43) %>% ## get rid of inoc subexperiment
-  mutate(avg.ind = ifelse(bkgrd == "LENI", total.stem.length.mm/n.indiv, 
-                          ifelse(bkgrd == "BRHO" | bkgrd == "PLER", inflor.g/n.indiv, 
-                                 ifelse(bkgrd == "AVBA", glume.num/n.indiv, total.biomass.g/n.indiv)))) %>% ## Calc the avg bg indiv
+  mutate(across(where(is.character), str_trim)) %>%
+  mutate_all(na_if,"") %>% ## make blank values NAs
   select(-date.collect, -initials) %>%
   mutate(treatment = ifelse(block %in% drought, "D", "C")) ## add treatment column
 
+## check structure
+str(bg_indivC)
+    ## flower.num is a chr
+unique(bg_indivC$flower.num) ## one value is "F"
 
+### Change Val ####
+bg_indivC[bg_indivC$block == 16 & bg_indivC$plot == 17,]$flower.num <- NA
+## change this flower.num val from "F" to NA
+
+bg_indivC$flower.num <- as.numeric(bg_indivC$flower.num)
+
+
+## Calc Avg Indiv ####
+bg.ind <- bg_indivC %>%
+  mutate(avg.ind = ifelse(bkgrd %in% stem.to.seeds, total.stem.length.mm/n.indiv, 
+                          ifelse(bkgrd %in% inflor.bio.to.seeds, inflor.g/n.indiv, 
+                                 ifelse(bkgrd %in% seeds, glume.num/n.indiv, 
+                                        ifelse(bkgrd %in% seeds.per.flower, flower.num/n.indiv, total.biomass.g/n.indiv))))) ## Calc the avg bg indiv, use the most appropriate measurement for each species
+  
+  
 # Calc Avg Seed Output ####
-## separate out finished species
-finished <- c("BRHO", "GITR", "AVBA", "PLER")
-
-## separate by types of allometric relationships
-bio.to.seeds <- c("BRHO", "MICA", "LENI", "LOMU", "PLER", "THIR-I", "TWIL-I")
-bio.to.flower.to.seeds <- c("ACAM", "ANAR", "GITR")
-seeds <- c("AVBA")
-
-
+## make a vector of finished bg plots
 bg.sp <- unique(bg.ind[bg.ind$bkgrd %in% finished,]$bkgrd)
 
+## make an empty dataframe for the output
 bg.ind.avg <- data.frame(treatment = NA, block = NA, plot = NA, bkgrd = NA, dens = NA, bg.avg.seed.num = NA)
 
 ## for each unique background species
@@ -69,13 +90,13 @@ for (i in 1:length(bg.sp)){
   tmp.sp <- bg.ind[bg.ind$bkgrd == bg.sp[i],]
   
   ## filter model results
-  tmp.model <- allo.df[allo.df$species == bg.sp[i],]
+  tmp.model <- allo.df[allo.df$Species == bg.sp[i],]
   
   ## separate by allo-rel type and calc avg seeds out per indiv
-  if (bg.sp[i] %in% bio.to.seeds) {
+  if (bg.sp[i] %in% totbio.to.seeds | bg.sp[i] %in% inflor.bio.to.seeds | bg.sp[i] %in% stem.to.seeds) {
     
     tmp.ind <- tmp.sp %>%
-      mutate(bg.avg.seed.num = (tmp.model[1,2] + ((tmp.model[1,3])*avg.ind) + (tmp.model[1,4]*(avg.ind^2)))) %>%
+      mutate(bg.avg.seed.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind + (tmp.model$poly*(avg.ind^2))))) %>%
       select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
     
   }
@@ -83,10 +104,17 @@ for (i in 1:length(bg.sp)){
   else if (bg.sp[i] %in% bio.to.flower.to.seeds) {
     
     tmp.ind <- tmp.sp %>%
-      mutate(avg.flower.num = (tmp.model[1,2] + ((tmp.model[1,3])*avg.ind) + (tmp.model[1,4]*(avg.ind^2))),
-             bg.avg.seed.num = ifelse(treatment == "D", avg.flower.num*8.701754, avg.flower.num*11.640625)) %>%
+      mutate(avg.flower.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind) + (tmp.model$poly*(avg.ind^2))),
+             bg.avg.seed.num = ifelse(treatment == "D", avg.flower.num*tmp.model$seeds_D, avg.flower.num*tmp.model$seeds_C)) %>%
       select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
-    ## currently specific to GITR, change later.
+
+  }
+  
+  else if (bg.sp[i] %in% seeds.per.flower) {
+    
+    tmp.ind <- tmp.sp %>%
+      mutate(bg.avg.seed.num = ifelse(treatment == "D", avg.ind*tmp.model$seeds_D, avg.ind*tmp.model$seeds_C)) %>%
+      select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
     
   }
   
@@ -109,4 +137,4 @@ bg.seeds <- bg.ind.avg %>%
 
 
 # Clean Env ####
-rm("bg_indiv", "bg.ind", "bg.sp", "bio.to.flower.to.seeds", "bio.to.seeds", "BRHO.allo.output", "finished", "GITR.allo.output", "seeds", "temp", "tmp.ind", "tmp.sp", "tmp.model", "sp", "lead")
+rm("bg_indiv", "bg.ind", "bg.sp", "bio.to.flower.to.seeds", "finished", "seeds", "tmp.ind", "tmp.sp", "tmp.model", "lead", "totbio.to.seeds", "inflor.bio.to.seeds", "stem.to.seeds", "bg.ind.avg", "bg_indivC")
