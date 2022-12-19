@@ -23,7 +23,7 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 
 germ <- read.csv(paste0(lead, "20220218_Germination-Data_full.csv"))
 
-# Change sp codes ####
+# Change Sp Codes ####
 germ2 <- germ %>%
   mutate(species2 = sub("^(.{1,5}).(.*)", "\\1\\2", Species),
          species = sub("^(.{1,2}).(.*)", "\\1\\2", species2)) %>%
@@ -31,15 +31,17 @@ germ2 <- germ %>%
                           ifelse(species == "ELCA", "TACA", ifelse(species == "TRHI", "THIR-I", 
                                                                    ifelse(species == "TRWI", "TWIL-I", species))))) %>%
   select(-Species, -species2)
-
+## change species from 6 letter codes to 4 letter codes to match all other mega comp dfs
 
   
 # Calc Avg Germ ####
-#Calculate average germination rates per species per treatment
+## Per Treat ####
+#Calculate average germination rates per species per treatment (temp & water potential)
 germ.sum.trt <- germ2 %>%
   group_by(species, Temp, WP) %>%
   summarize(avg.germ = mean(p.germ), se.germ = calcSE(p.germ))
 
+## Per Sp ####
 #Calculate average germination rates per species
 germ.sum.sp <- germ2 %>%
   group_by(species) %>%
@@ -47,8 +49,9 @@ germ.sum.sp <- germ2 %>%
   mutate(Temp = 15, ## "average temp"
          WP = -0.25) ## "average water potential"
 
-germ.sum.sp <- germ.sum.sp[,c(1,4,5,2,3)]
+germ.sum.sp <- germ.sum.sp[,c(1,4,5,2,3)] ## reorder cols
 
+## Combine ####
 germ.sum <- rbind(germ.sum.sp, germ.sum.trt)
 
 
@@ -56,7 +59,7 @@ germ.sum <- rbind(germ.sum.sp, germ.sum.trt)
 ggplot(germ.sum.trt[germ.sum.trt$WP != -0.5,], aes(x = as.factor(Temp), y = avg.germ)) +
   geom_point() +
   geom_errorbar(aes(ymin = avg.germ - se.germ, ymax = avg.germ + se.germ, width = 0.1)) +
-  facet_wrap(~Species)
+  facet_wrap(~species)
 
 
 # Create BG germ DF ####
@@ -75,21 +78,25 @@ species <- unique(germ.sum$species)
 ## create empty data frame
 df <- data.frame()
 
+## loop thru each species
 for (i in 1:length(species)) {
 
-sp <- species[i]
+sp <- species[i] ## separate species
 
-if (sp %in% avgtemp) {
+if (sp %in% avgtemp) { ## if the species isn't affected by temp, use the average germ across water & temp treatments
   
   temp <- germ.sum %>%
     filter(Temp == 15, species == sp)
   
-} else if (sp %in% vartemp) {
+} else if (sp %in% vartemp) { ## if the species germ rate depends on temp
   
   temp <- germ.sum %>%
     filter(WP == -0.5, species == sp)
+ 
+## Q here ####
+  ## I filter out WP = -0.5, should i do this for all? We probably want the same WP and only want to vary the temp for bg calculations...
   
-} else {
+} else { ## for anything else (cold temp species - PLER)
   
   temp <- germ.sum %>%
     filter(species == sp, Temp == 10, WP == -0.5)
@@ -106,4 +113,4 @@ bg.germ <- df %>%
 
 
 
-rm(list = c("germ.sum.sp", "germ.sum.trt", "germ", "df"))
+rm(list = c("avgtemp", "coldtemp", "germ.sum", "germ2", "i", "lead", "sp","species", "temp", "vartemp", "germ.sum.sp", "germ.sum.trt", "germ", "df"))
