@@ -90,8 +90,12 @@ phyto.census <- collectionsC %>%
 
 ## Pull out bg.n.indiv info with block & plot still attached (for bkgrd_calculations.R)
 bkgrd.n.indiv <- collectionsC %>%
-  select(unique.ID, block, plot, bkgrd, bkgrd.n.indiv)
-
+  select(unique.ID, phyto, block, plot, bkgrd, bkgrd.n.indiv) %>%
+  mutate(bkgrd.n.indiv2 = ifelse(bkgrd == phyto, bkgrd.n.indiv + 1, bkgrd.n.indiv)) %>%
+  select(-bkgrd.n.indiv) %>%
+  mutate(bkgrd.n.indiv = bkgrd.n.indiv2) %>%
+  select(-bkgrd.n.indiv2, -phyto)
+## in cases where the background is the same as the phyto (i.e. our intraspecific phytometers), we are adding 1 more individual to the background individual census to account for the phytometer which was not initially included in this census. We are lumping both together in our models.
 
 # Clean Env ####
 rm(list = c("date_collections", "collections", "notes", "plotnotes", "subnotes", "tmp", "nhood10", "nhood18", "i", "lead"))
