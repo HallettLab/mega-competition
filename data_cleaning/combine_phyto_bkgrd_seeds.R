@@ -34,6 +34,15 @@ model.dat <- bg.phyto.seeds2 %>%
 
 model.dat <- model.dat[,c(1:10,29,11:28)]
 
+colnames(model.dat)[12:ncol(model.dat)] <- substr(colnames(model.dat)[12:ncol(model.dat)], 1, 4)
+
+species <- colnames(model.dat)[12:ncol(model.dat)] 
+
+for(i in species){
+  model.dat[model.dat$phyto == i, i] <- model.dat[model.dat$phyto == i,]$phyto.seeds.in.final
+}
+
+model.dat <- model.dat [,-10]
 
 
 ## clean env
