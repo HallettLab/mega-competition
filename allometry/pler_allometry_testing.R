@@ -99,4 +99,4 @@ PLER.allo.output <- data.frame(Species = "PLER",
            seeds_D_se = NA)
 
 # Clean Env ####
-rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2", "bioseeds2", "bioseeds"))
+rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2", "bioseeds"))
