@@ -56,6 +56,8 @@ germ.sum.sp.DC <- germ2 %>% #using this in BH models
   group_by(species, WP) %>%
   summarize(avg.germ = mean(p.germ), se.germ = calcSE(p.germ))
 
+germ.sum.sp.DC$trt <- ifelse(germ.sum.sp.DC$WP == 0, "C", "D")
+
 ## Combine ####
 germ.sum <- rbind(germ.sum.sp, germ.sum.trt) %>%
   filter(WP == 0)
