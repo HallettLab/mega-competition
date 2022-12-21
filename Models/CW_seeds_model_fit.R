@@ -1,11 +1,11 @@
 # Run experimental data with fecundity model
-# use knowledge of species to diagnose species and mdoels - we know how many seeds they produce so we know what we should expect; lambdas might be huge but competition coefficients are equally inflated because they are having proportionally - this works for modeling coexistence and partitioning beacuse the scale is correct even if this individual lmandas or alphas are techincally incorrect
+# use knowledge of species to diagnose species and models - we know how many seeds they produce so we know what we should expect; lambdas might be huge but competition coefficients are equally inflated because they are having proportionally - this works for modeling coexistence and partitioning because the scale is correct even if this individual lambdas or alphas are technically incorrect
 
 # weed term as stem coefficient ; we dont care about seeds out so DONT process
 # look at really weedy plots to get estimates to use as priors for other models
 
 ### Prep ####
-source("/Users/Marina/Documents/USDA-PostDoc/Projects/Mega-Comp/mega-competition/data_cleaning/format_model_data.R")
+source("data_cleaning/format_model_dat.R")
 
 library(rstan)
 options(mc.cores = parallel::detectCores())
@@ -72,8 +72,8 @@ intra_g <- 0.97 #hwat germ rate are we using?
 #intra_s <- ignoring this for now
 
 seeds_brho_c <- stan(file = "Models/eight_species_BH_model_c.stan", data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
-                       iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
-                       init = initials1) # adapt delta controls how quikcly you move through parameter space, closer to one the smaller those steps, so if having convergence issures set closer to one but might also need more iteractions because it slows down fitting process
+                     iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     init = initials1) # adapt delta controls how quikcly you move through parameter space, closer to one the smaller those steps, so if having convergence issures set closer to one but might also need more iteractions because it slows down fitting process
 
 plot(seeds_brho_c)
 print(seeds_brho_c)
@@ -116,8 +116,8 @@ intra_g <- 1
 #intra_s <- ignoring this for now
 
 seeds_brho_d <- stan(file = "Models/eight_species_BH_model_d.stan", data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
-                       iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
-                       init = initials1) # adapt delta controls how quikcly you move through parameter space, closer to one the smaller those steps, so if having convergence issures set closer to one but might also need more iteractions because it slows down fitting process
+                     iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     init = initials1) # adapt delta controls how quikcly you move through parameter space, closer to one the smaller those steps, so if having convergence issures set closer to one but might also need more iteractions because it slows down fitting process
 
 plot(seeds_brho_d)
 print(seeds_brho_d)
@@ -161,8 +161,8 @@ intra_g <- 0.8 #hwat germ rate are we using?
 #intra_s <- ignoring this for now
 
 seeds_pler_c <- stan(file = "Models/eight_species_BH_model_c.stan", data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
-                       iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
-                       init = initials1) 
+                     iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     init = initials1) 
 
 print(seeds_pler_c)
 pairs(seeds_pler_c)
@@ -204,8 +204,8 @@ intra_g <- 0.53 #hwat germ rate are we using?
 #intra_s <- ignoring this for now
 
 seeds_pler_d <- stan(file = "Models/eight_species_BH_model_c.stan", data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
-                       iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
-                       init = initials1) 
+                     iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     init = initials1) 
 
 plot(seeds_pler_d)
 print(seeds_pler_d)
