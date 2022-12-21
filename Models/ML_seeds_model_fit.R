@@ -4,6 +4,7 @@
 # weed term as stem coefficient ; we dont care about seeds out so DONT process
 # look at really weedy plots to get estimates to use as priors for other models
 
+### Prep ####
 source("/Users/Marina/Documents/USDA-PostDoc/Projects/Mega-Comp/mega-competition/data_cleaning/combine_phyto_bkgrd_seeds.R")
 
 library(rstan)
@@ -163,7 +164,6 @@ seeds_pler_c <- stan(file = "Models/eight_species_BH_model_c.stan", data = c("N"
                        iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                        init = initials1) 
 
-plot(seeds_pler_c)
 print(seeds_pler_c)
 pairs(seeds_pler_c)
 stan_dens(seeds_pler_c)
@@ -207,10 +207,9 @@ seeds_pler_d <- stan(file = "Models/eight_species_BH_model_c.stan", data = c("N"
                        iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                        init = initials1) 
 
-plot(seeds_pler_c)
-print(seeds_pler_c)
-pairs(seeds_pler_c)
-stan_dens(seeds_pler_c)
+plot(seeds_pler_d)
+print(seeds_pler_d)
+stan_dens(seeds_pler_d)
 
-save(seeds_pler_c, file = "Models/Posteriors/seeds_pler_d_posteriors.rdata")
+save(seeds_pler_d, file = "Models/Posteriors/seeds_pler_d_posteriors.rdata")
 
