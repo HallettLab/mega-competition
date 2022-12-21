@@ -36,6 +36,8 @@ collections$phyto.unique <- as.character(collections$phyto.unique)
 nhood10 <- c("MICA", "PLER", "BRHO", "ANAR", "GITR", "ACAM", "TACA", "LOMU", "CLPU") ## neighborhood size
 nhood18 <- c("LENI", "TWIL-I", "AVBA", "THIR-I", "MAEL", "AMME", "BRNI", "PLNO", "CESO") ## neighborhood size
 
+#collections[collections$unique == 3928,]
+## checking a MAEL phyto that was double planted but still nothing survived in this subplot.
 
 collectionsC <- collections %>%
   mutate(across(where(is.character), str_trim)) %>% ## remove leading & trailing whitespace!!
@@ -90,8 +92,8 @@ phyto.census <- collectionsC %>%
 
 ## Pull out bg.n.indiv info with block & plot still attached (for bkgrd_calculations.R)
 bkgrd.n.indiv <- collectionsC %>%
-  select(unique.ID, phyto, block, plot, bkgrd, bkgrd.n.indiv) %>%
-  mutate(bkgrd.n.indiv2 = ifelse(bkgrd == phyto, bkgrd.n.indiv + 1, bkgrd.n.indiv)) %>%
+  select(unique.ID, phyto, block, plot, bkgrd, bkgrd.n.indiv) %>% ## select needed cols
+  mutate(bkgrd.n.indiv2 = ifelse(bkgrd == phyto, bkgrd.n.indiv + 1, bkgrd.n.indiv)) %>% ## add intraspecific phyto to the bg stem count
   select(-bkgrd.n.indiv) %>%
   mutate(bkgrd.n.indiv = bkgrd.n.indiv2) %>%
   select(-bkgrd.n.indiv2, -phyto)

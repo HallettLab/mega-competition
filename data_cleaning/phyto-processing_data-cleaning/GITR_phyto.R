@@ -77,8 +77,8 @@ for(i in colnames(gitr_final)[14:15]) {
 
 ## Phyto checks; 
 ## unique 4514; unique 8670
-gitr_checks <- gitr_final %>%
-  filter(unique.ID == 4514 | unique.ID == 8670)
+#gitr_checks <- gitr_final %>%
+ # filter(unique.ID == 4514 | unique.ID == 8670)
 
 
 # Make Phyto DF ####
@@ -89,8 +89,8 @@ gitr.phyto <- gitr_final %>%
          ## use tot.bio to flower.num to get flowers out
          
          phyto.seed.out = ifelse(treatment == "D",  
-                                 allo.df[allo.df$Species == "GITR",13]*GITR.flowers.out,  ## drought
-                                 allo.df[allo.df$Species == "GITR",11]*GITR.flowers.out), ## control
+                                 allo.df[allo.df$Species == "GITR",13]*GITR.flowers.out,  ## drought seeds
+                                 allo.df[allo.df$Species == "GITR",11]*GITR.flowers.out), ## control seeds
          ## use avg seed num per trt to calculate seeds out
            
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
@@ -112,4 +112,4 @@ ggplot(gitr.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
 ## clean env 
-rm(list = c("gitr", "gitr_checks", "gitr_final", "gitrC", "df", "tmp"))
+rm(list = c("gitr", "gitr_final", "gitrC", "df", "tmp"))

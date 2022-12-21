@@ -28,6 +28,7 @@ avbaC <- basic_cleaning_func(avba)
 # Initial Exploration ####
 ggplot(avbaC, aes(x=glume.num)) +
   geom_histogram()
+## missing 1 value
 
 ggplot(avbaC, aes(x=seed.num)) +
   geom_histogram()
@@ -92,9 +93,13 @@ avbaC[!is.na(avbaC$phyto.unique),]
 
 # Make Phyto DF ####
 avba.phyto <- avba_final %>%
-  mutate(phyto.seed.out = seed.num, 
+  mutate(phyto.seed.out = seed.num, ## seeds already counted
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
+         
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
+  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+  
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 

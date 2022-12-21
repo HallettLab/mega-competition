@@ -1,3 +1,5 @@
+## The purpose of this script is to define a function that will standardize & clean up the phyto-processing data. It deals with common issues like capitalization in several columns, leading/trailing white spaces, blank spaces, etc.
+
 # Set up env
 library(tidyverse)
 
@@ -18,7 +20,7 @@ basic_cleaning_func <- function(phyto_data, ...) {
     
     mutate_all(na_if,"") %>% ## make blank values NAs
     
-    filter(plot < 43, bkgrd != "VIVI")
+    filter(plot < 43, bkgrd != "VIVI") ## get rid of trifolium sub experiment and VIVI plots that were not used at all.
   
   return(temp)
   

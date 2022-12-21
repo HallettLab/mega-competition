@@ -35,6 +35,8 @@ anarC <- basic_cleaning_func(anar)
 anar_int <- left_join(anarC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
   mutate(unique.ID = unique.ID.y)
 
+#anar_int[anar_int$unique.ID == 3934, ]
+
 ## Final mods ####
 anar_final <- anar_int %>%
   filter(complete.sample == "Y") %>%
@@ -51,8 +53,11 @@ ggplot(anar_final, aes(x=total.biomass.g)) +
 ggplot(anar_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
 
+# Check Notes ####
 unique(anar_final$process.notes)
-## seems okay
+## 2 notes that indicate a phyto might be missing but they made it through the data cleaning...
+t <- anar_final[anar_final$process.notes == "missing, could be mislabeled", ]
+t2 <- anar_final[anar_final$process.notes == "Phyto missing 8/26", ]
 
 
 ## create empty data frame
@@ -73,6 +78,10 @@ unique(df$census.notes)
 ## 12-23-18 is showing up twice on the notes df. Not sure why. Oh probably shows up in both for loops
 ## lots of notes but all thankfully show phyto # changes!! 
 
+# Seeds in checks ####
+#anar_final[anar_final$unique.ID == 3934, ] ## this sample not complete
+anar_final[anar_final$unique.ID == 8138, ] ## this sample had 4 seeds in. If the planted phytos grew, need to replace the seeds in # for this.
+
 # Make Phyto DF ####
 anar.phyto <- anar_final %>%
   mutate(ANAR.flowers.out = (allo.df[allo.df$Species == "ANAR",2] + ## intercept
@@ -80,7 +89,6 @@ anar.phyto <- anar_final %>%
          ## use tot.bio to flower.num to get flowers out
          
          ANAR.flowers.out = ifelse(total.biomass.g > 5, 419, ANAR.flowers.out), ## for the largest sample, put in flower # manually as this didn't work well with the allometric relationship
-         
          
          phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "ANAR",13]*ANAR.flowers.out,  allo.df[allo.df$Species == "ANAR",11]*ANAR.flowers.out),
          ## use avg seed num per trt to calculate seeds out
@@ -98,4 +106,4 @@ anar.phyto <- anar_final %>%
 ggplot(anar.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
-rm(list = c("anar", "anar_final", "anar_int", "anarC", "df", "tmp"))
+rm(list = c("anar", "anar_final", "anar_int", "anarC", "df", "tmp", "t", "t2"))

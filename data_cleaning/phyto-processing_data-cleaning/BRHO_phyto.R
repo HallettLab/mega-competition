@@ -23,7 +23,7 @@ source("allometry/merge_allometric_relationships.R")
 
 
 # Final Cleaning ####
-brhoC <- basic_cleaning_func(brho)
+brhoC <- basic_cleaning_func(brho) ## basic cleaning/standardization
 
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
@@ -64,36 +64,38 @@ for(i in colnames(brho_final)[15:16]) {
 unique(df$census.notes)
 
 ## the phyto change notes are not super descriptive but they all contain 'CORRECTED' so they are probably okay?
-## No, should look into a few of these further.
+  ## No, should look into a few of these further.
 
 unique(brho_final$census.notes)
-## potential note of interest: 
-    ## "only one phytometer located & collected'
-    ## CORRECTED. seeds already, re-census on 04/20/2022 to include additional phyto. Manuel updated needed.
-    ## Other= ANAR, BRHO phyto with seed head snapped off
-    ## CORRECTED; manually change, changed phyto # Jd
-    ## THIR,one other BRHO in S.12. far enough away that I didn't count it
-    ## Additional phyto collected. NO re-census, phyto within neighborhood.
-    ## CORRECTED. re-census on 4/22/22. two phytos collected. There may be an additional envelop for this subplot.
+## potential notes of interest: 
 
+## already dealt with
+    ## "only one phytometer located & collected' ## ok
+    ## CORRECTED. seeds already, re-census on 04/20/2022 to include additional phyto. Manuel updated needed. ## added to data_cleaning_checks
+    ## THIR,one other BRHO in S.12. far enough away that I didn't count it ## not really much to be done here
+    ## Additional phyto collected. NO re-census, phyto within neighborhood. ## added to data_cleaning_checks
+    ## CORRECTED. re-census on 4/22/22. two phytos collected. There may be an additional envelop for this subplot. ## added to data_cleaning_checks
+
+
+#t <- brho_final[brho_final$census.notes == "only one phytometer located & collected",] ##phyto.n.indiv = 1 
+
+#t <- brho_final[brho_final$census.notes == "CORRECTED. re-census on 4/22/22. two phytos collected. There may be an additional envelop for this subplot.",]
 
 unique(brho_final$process.notes)
 ## okay
 
-## To-Do####
-
-## need to look through the collections notes for any modifications that should be made to the seeds.in number - based on phyto.unique, whether it was planted or a recruit
-
-## seeds in will also be influenced by the intra-phyto.
-
 
 # Make Phyto DF ####
 brho.phyto <- brho_final %>%
-  mutate(phyto.seed.out = (allo.df[allo.df$Species == "BRHO",2] + 
-                            (allo.df[allo.df$Species == "BRHO",5]*inflor.g.rounded)),
+  mutate(phyto.seed.out = (allo.df[allo.df$Species == "BRHO",2] + ## intercept
+                            (allo.df[allo.df$Species == "BRHO",5]*inflor.g.rounded)), ## slope
+         ## calc seed out from inflor weight & allo relationship
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
+         
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
+  ## then, check for # indiv > 3, use # indiv as seeds.in here also
   
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 

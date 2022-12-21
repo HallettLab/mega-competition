@@ -26,23 +26,26 @@ bg.phyto.seeds2 <- bg.phyto.seeds2[,c(1, 8:11,13,2,7,12, 3:6)]
 
 # Format for Models ####
 model.dat <- bg.phyto.seeds2 %>%
-  mutate(phyto.seeds.in.final = ifelse(bkgrd == phyto, bg.seeds.in, phyto.seed.in)) %>%
-  mutate(bkgrd.names.in = paste0(bkgrd, ".seeds.in")) %>% 
-  pivot_wider(names_from = "bkgrd.names.in", values_from = "bg.seeds.in", values_fill = 0) %>% ## seeds in for each background as a separate col
+  mutate(phyto.seeds.in.final = ifelse(bkgrd == phyto, bg.seeds.in, phyto.seed.in)) %>% ## if bg & phyto are the same, use bg.seeds in
+  mutate(bkgrd.names.in = bkgrd) %>% ## make an extra bkgrd column bc will need 2
+  pivot_wider(names_from = "bkgrd.names.in", values_from = "bg.seeds.in", values_fill = 0) %>% ## seeds in for each background sp as a separate col
   mutate(phyto.seeds.out.final = ifelse(bkgrd == phyto, phyto.seed.out + bg.seeds.out, phyto.seed.out)) %>% ## for intra phytos, add phyto & bg seeds out values
-  select(-Control.seeds.in, -NA.seeds.in, -phyto.seed.in, -phyto.seed.out, -bg.seeds.out)
+  select(-Control, -`NA`, -phyto.seed.in, -phyto.seed.out, -bg.seeds.out) ## drop extraneous cols
 
-model.dat <- model.dat[,c(1:10,29,11:28)]
+model.dat <- model.dat[,c(1:10,29,11:28)] ## reorder
 
-colnames(model.dat)[12:ncol(model.dat)] <- substr(colnames(model.dat)[12:ncol(model.dat)], 1, 4)
+## extraneous now- this change bg colnames back to sp names, but changed that above
+#colnames(model.dat)[12:ncol(model.dat)] <- substr(colnames(model.dat)[12:ncol(model.dat)], 1, 4)
 
+## create a vector of species names
 species <- colnames(model.dat)[12:ncol(model.dat)] 
 
+## for each species, when it is the phyto, fill in the appropriate seeds.in col with the values from phyto.seeds.in.final
 for(i in species){
   model.dat[model.dat$phyto == i, i] <- model.dat[model.dat$phyto == i,]$phyto.seeds.in.final
 }
 
-model.dat <- model.dat [,-10]
+model.dat <- model.dat [,-10] ## get rid of phyto.seeds.in.final column
 
 
 ## clean env

@@ -27,6 +27,8 @@ source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_seeding_dates.R")
 
 # Final Cleaning ####
 maelC <- basic_cleaning_func(mael)
+#maelC[maelC$unique.ID == 3928,]
+
 
 mael_final <- maelC %>%
   filter(complete.sample == "Y") %>%
@@ -74,6 +76,9 @@ plot.dates[plot.dates$block == 14,]
 ## join planting dates DF with mael_final
 mael_final_dates <- left_join(mael_final, plot.dates, by = c("block", "plot", "bkgrd"))
 
+#mael_final_dates[mael_final_dates$unique.ID == 3928,]
+
+
 
 # Make Final DF ####
 mael.phyto <- mael_final_dates %>%
@@ -102,6 +107,8 @@ mael.phyto <- mael_final_dates %>%
 
 ggplot(mael.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
+
+
 
 
 ## clean env
