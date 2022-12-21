@@ -51,6 +51,10 @@ germ.sum.sp <- germ2 %>%
 
 germ.sum.sp <- germ.sum.sp[,c(1,4,5,2,3)] ## reorder cols
 
+germ.sum.sp.DC <- germ2 %>% #using this in BH models
+  group_by(species, WP) %>%
+  summarize(avg.germ = mean(p.germ), se.germ = calcSE(p.germ))
+
 ## Combine ####
 germ.sum <- rbind(germ.sum.sp, germ.sum.trt)
 
