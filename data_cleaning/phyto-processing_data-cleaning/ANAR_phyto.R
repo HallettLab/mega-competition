@@ -1,6 +1,9 @@
 ## removed the 5g sample from the allometric relationship as this was a big outlier and made the relatinoship fit worse for all other points
 ## when calculating seeds out, use the counted flowers for this particular sample
 
+
+## Still need to adjust seeds in based on whether a sample was planted or a recruit
+
 # Load packages ####
 library(tidyverse)
 
@@ -55,9 +58,10 @@ ggplot(anar_final, aes(x=phyto.n.indiv)) +
 
 # Check Notes ####
 unique(anar_final$process.notes)
-## 2 notes that indicate a phyto might be missing but they made it through the data cleaning...
-t <- anar_final[anar_final$process.notes == "missing, could be mislabeled", ]
-t2 <- anar_final[anar_final$process.notes == "Phyto missing 8/26", ]
+## 2 notes that indicate a phyto might be missing but they made it through the data cleaning
+## these are added to the data_cleaning_checks sheet now
+#t <- anar_final[anar_final$process.notes == "missing, could be mislabeled", ]
+#t2 <- anar_final[anar_final$process.notes == "Phyto missing 8/26", ]
 
 
 ## create empty data frame
@@ -85,7 +89,8 @@ anar_final[anar_final$unique.ID == 8138, ] ## this sample had 4 seeds in. If the
 # Make Phyto DF ####
 anar.phyto <- anar_final %>%
   mutate(ANAR.flowers.out = (allo.df[allo.df$Species == "ANAR",2] + ## intercept
-                               (allo.df[allo.df$Species == "ANAR",5]*total.biomass.g)), ## slope
+                               (allo.df[allo.df$Species == "ANAR",5]*total.biomass.g) + ## slope
+                               (allo.df[allo.df$Species == "ANAR",8]*total.biomass.g^2)), ## poly
          ## use tot.bio to flower.num to get flowers out
          
          ANAR.flowers.out = ifelse(total.biomass.g > 5, 419, ANAR.flowers.out), ## for the largest sample, put in flower # manually as this didn't work well with the allometric relationship
@@ -106,4 +111,4 @@ anar.phyto <- anar_final %>%
 ggplot(anar.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
-rm(list = c("anar", "anar_final", "anar_int", "anarC", "df", "tmp", "t", "t2"))
+rm(list = c("anar", "anar_final", "anar_int", "anarC", "df", "tmp"))

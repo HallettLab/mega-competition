@@ -1,3 +1,5 @@
+## the purpose of this script is to create a key of unique.ID to treatment, block, plot, sub info for easy storage and use later on.
+
 # Load packages ####
 library(openxlsx)
 library(tidyverse)
@@ -28,18 +30,18 @@ collections.fk$phyto.unique <- as.character(collections.fk$phyto.unique)
 # Make Modifications ####
 collections.fkC <- collections.fk %>%
   mutate(across(where(is.character), str_trim)) %>% ## remove leading & trailing whitespace!!
-  filter(plot < 43, bkgrd != "VIVI") %>%
+  filter(plot < 43, bkgrd != "VIVI") %>% ## take out trifolium sub-exp & unsampled VIVI backgrounds
   mutate(phyto.unique = toupper(phyto.unique), ## capitalize all values
          unique.ID = unique) %>% ## standardize column name
   mutate_all(na_if,"") ## make blank values NAs
 
-drought <- c(1, 3, 4, 6, 12, 14)
+drought <- c(1, 3, 4, 6, 12, 14) ## create a treatment vector
+
 ## create a unique-ID key
 unique.key <- collections.fkC %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C")) %>%
-  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique)
+  mutate(treatment = ifelse(block %in% drought, "D", "C")) %>% ## add a treatment column
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique) ## retain only necessary columns
 
 
-
-
+## clean up env
 rm(list = c("date_collections", "collections.fkC", "collections.fk"))

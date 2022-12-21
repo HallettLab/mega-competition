@@ -37,6 +37,7 @@ mael_final <- maelC %>%
   select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, total.biomass.g, flower.num, scale.ID, process.notes, census.notes, collect.notes, background.notes, unique.ID)
 ## select only needed columns
 
+# Check outliers ####
 ggplot(mael_final, aes(x=flower.num)) +
   geom_histogram()
 ## one sample is quite a bit larger than the rest.
@@ -47,6 +48,7 @@ ggplot(mael_final, aes(x=phyto.n.indiv)) +
 ## check these samples to see if this is the case (assuming we can tell. If only flowers were collected we won't be able to)
 ## we planted 10 seeds in most subplots, so it is possible.
 
+# Check Notes ####
 unique(mael_final$process.notes)
 ## looks okay
 

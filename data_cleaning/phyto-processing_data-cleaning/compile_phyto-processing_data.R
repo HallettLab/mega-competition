@@ -1,3 +1,5 @@
+## the purpose of this script is to combine all clean phyto seeds in/out data and create a df that is ready to be combined with bg seeds in/out
+
 ## Set up env
 library(tidyverse)
 
@@ -10,7 +12,7 @@ source("data_cleaning/phyto-processing_data-cleaning/ACAM_phyto.R")
 source("data_cleaning/phyto-processing_data-cleaning/ANAR_phyto.R")
 source("data_cleaning/phyto-processing_data-cleaning/MAEL_phyto.R")
 
-## the final data frames are brho.phyto and gitr.phyto
+## merge all final phyto seeds in/seeds out dfs together
 all.phytos <- do.call("rbind", list(brho.phyto, gitr.phyto, pler.phyto, avba.phyto, acam.phyto, anar.phyto, mael.phyto))
     ## add more phytos in as they are ready here.
 

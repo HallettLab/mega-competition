@@ -116,8 +116,8 @@ for(i in colnames(pler_final)[17:18]) {
 pler.phyto <- pler_final2 %>%
   mutate(phyto.seed.out = ifelse(complete.sample == "N", 
                                  (new.flower.num*2), ## if incomplete, flowersx2 = seeds out
-                                 (allo.df[allo.df$Species == "PLER",2] + 
-                                    (allo.df[allo.df$Species == "PLER",5]*inflor.g.rounded))),
+                                 (allo.df[allo.df$Species == "PLER",2] + ## intercept
+                                    (allo.df[allo.df$Species == "PLER",5]*inflor.g.rounded))), ## slope
          ## if complete, use the allo relationship
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),

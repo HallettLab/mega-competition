@@ -26,22 +26,23 @@ source("data_cleaning/unique_key.R")
 
 # Data Cleaning ####
 acamC <- basic_cleaning_func(acam)
+
 ## Add Unique.IDs ####
-## need to add in unique.IDs here
 acam_int <- left_join(acamC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
-  mutate(unique.ID = unique.ID.y)
+  mutate(unique.ID = unique.ID.y) %>% 
+  filter(unique.ID != 6022) ## get rid of the duplicate unique.ID that never existed (see below for details)
 
 ## when I added unique.ID in, an extra row appeared. That's odd. Is there a duplicate combo somewhere?
 
 ## Make one ID column and filter for duplicates in this
-temp_acam <- acam_int %>%
-  mutate(sample.ID = paste(block, plot, sub, bkgrd, dens, phyto, phyto.unique, sep = "_"))
+#temp_acam <- acam_int %>%
+ # mutate(sample.ID = paste(block, plot, sub, bkgrd, dens, phyto, phyto.unique, sep = "_"))
 
-not_unique <- temp_acam %>%
-  filter(duplicated(sample.ID))
+#not_unique <- temp_acam %>%
+ # filter(duplicated(sample.ID))
 ## 7_34_11_PLNO_L_ACAM_NA
-acam_not_unique <- acam_int %>%
-  filter(block == 7, plot == 34, sub == 11)
+#acam_not_unique <- acam_int %>%
+ # filter(block == 7, plot == 34, sub == 11)
 ## this one sample has 2 unique IDs attached to it. In October, CW found 2 processing rows associated with this sample, but only 1 physical sample. 
 
 ## Check Redo ####
@@ -56,10 +57,10 @@ ggplot(acam_int, aes(x=redo.complete)) +
 
 ## check redo notes before removing incompletes
 unique(acam_int$redo.notes)
-acam_int[acam_int$redo.notes == "sample OK; incomplete w/o 2nd stem that clearly snapped off but stem remaining is complete w/ lots of foliage attached",]
-    ## called incomplete
-acam_int[acam_int$redo.notes == "removed dirt; borderline completeness",]
-    ## called incomplete
+#acam_int[acam_int$redo.notes == "sample OK; incomplete w/o 2nd stem that clearly snapped off but stem remaining is complete w/ lots of foliage attached",]
+    ## called incomplete, good
+#acam_int[acam_int$redo.notes == "removed dirt; borderline completeness",]
+    ## called incomplete, good
 
 ## Make sure samples with redo.notes have a redo.total.biomass value
 acam_notes <- acam_int %>%
@@ -98,7 +99,7 @@ unique(acam_final$process.notes)
 ## probably not the most up to date column. Ignore all roots present notes. Redo.notes will be better for this.
 ## no current issues from these notes.
 
-temp <- acam_final[acam_final$process.notes == "questionablae is complete", ]
+#temp <- acam_final[acam_final$process.notes == "questionablae is complete", ]
 ## although process & completion.notes indicate that this sample is not complete, based on the new criteria where we are not as worried about the bottom few inches of stem being bare it is complete.
 
 unique(acam_final$redo.notes)
@@ -140,4 +141,4 @@ ggplot(acam.phyto, aes(x=phyto.seed.out)) +
 
 
 ## clean up env
-rm(list = c("acam", "acam_final", "acam_int", "acam_not_unique", "acamC", "df", "tmp", "not_unique", "temp_acam", "acam_notes", "temp"))
+rm(list = c("acam", "acam_final", "acam_int", "acamC", "df", "tmp", "acam_notes"))

@@ -57,10 +57,17 @@ germ.sum.sp.DC <- germ2 %>% #using this in BH models
 
 ## Combine ####
 germ.sum <- rbind(germ.sum.sp, germ.sum.trt)
-
+unique(germ.sum$WP)
 
 # Explore Data ####
 ggplot(germ.sum.trt[germ.sum.trt$WP != -0.5,], aes(x = as.factor(Temp), y = avg.germ)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = avg.germ - se.germ, ymax = avg.germ + se.germ, width = 0.1)) +
+  facet_wrap(~species)
+## NOTE: ####
+## this was the original figure. Do we want to exclude this WP from calcs for background rates? 
+
+ggplot(germ.sum.trt[germ.sum.trt$WP == -0.5,], aes(x = as.factor(Temp), y = avg.germ)) +
   geom_point() +
   geom_errorbar(aes(ymin = avg.germ - se.germ, ymax = avg.germ + se.germ, width = 0.1)) +
   facet_wrap(~species)
