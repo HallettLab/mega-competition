@@ -44,10 +44,11 @@ germ.sum.trt <- germ2 %>%
 ## Per Sp ####
 #Calculate average germination rates per species
 germ.sum.sp <- germ2 %>%
+  filter(WP == 0) %>%
   group_by(species) %>%
   summarize(avg.germ = mean(p.germ), se.germ = calcSE(p.germ)) %>%
   mutate(Temp = 15, ## "average temp"
-         WP = -0.25) ## "average water potential"
+         WP = 0) ## "average water potential"
 
 germ.sum.sp <- germ.sum.sp[,c(1,4,5,2,3)] ## reorder cols
 
@@ -56,7 +57,8 @@ germ.sum.sp.DC <- germ2 %>% #using this in BH models
   summarize(avg.germ = mean(p.germ), se.germ = calcSE(p.germ))
 
 ## Combine ####
-germ.sum <- rbind(germ.sum.sp, germ.sum.trt)
+germ.sum <- rbind(germ.sum.sp, germ.sum.trt) %>%
+  filter(WP == 0)
 unique(germ.sum$WP)
 
 # Explore Data ####
@@ -64,14 +66,13 @@ ggplot(germ.sum.trt[germ.sum.trt$WP != -0.5,], aes(x = as.factor(Temp), y = avg.
   geom_point() +
   geom_errorbar(aes(ymin = avg.germ - se.germ, ymax = avg.germ + se.germ, width = 0.1)) +
   facet_wrap(~species)
-## NOTE: ####
-## this was the original figure. Do we want to exclude this WP from calcs for background rates? 
 
 ggplot(germ.sum.trt[germ.sum.trt$WP == -0.5,], aes(x = as.factor(Temp), y = avg.germ)) +
   geom_point() +
   geom_errorbar(aes(ymin = avg.germ - se.germ, ymax = avg.germ + se.germ, width = 0.1)) +
   facet_wrap(~species)
 
+## 0 is the 'wettest WP'
 
 # Create BG germ DF ####
 ## Germ by temperature
@@ -102,15 +103,12 @@ if (sp %in% avgtemp) { ## if the species isn't affected by temp, use the average
 } else if (sp %in% vartemp) { ## if the species germ rate depends on temp
   
   temp <- germ.sum %>%
-    filter(WP == -0.5, species == sp)
- 
-## Q here ####
-  ## I filter out WP = -0.5, should i do this for all? We probably want the same WP and only want to vary the temp for bg calculations...
+    filter(Temp != 15, species == sp)
   
 } else { ## for anything else (cold temp species - PLER)
   
   temp <- germ.sum %>%
-    filter(species == sp, Temp == 10, WP == -0.5)
+    filter(species == sp, Temp == 10, WP == 0)
   
 }
   
