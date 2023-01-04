@@ -30,6 +30,7 @@ source("allometry/merge_allometric_relationships.R")
 ## uniqueID key
 source("data_cleaning/unique_key.R")
 
+
 # Clean Data ####
 ## Basic cleaning ####
 anarC <- basic_cleaning_func(anar)
@@ -86,6 +87,11 @@ unique(df$census.notes)
 #anar_final[anar_final$unique.ID == 3934, ] ## this sample not complete
 anar_final[anar_final$unique.ID == 8138, ] ## this sample had 4 seeds in. If the planted phytos grew, need to replace the seeds in # for this.
 
+
+## Not Planted ####
+## these are indiv identified as not planted based on collection notes. Full list available in data-cleaning_checks spreadsheet
+not_planted <- c(1069, 11869, 11871, 1369, 11872, 11873, 11874, 1618, 1803, 1828, 11880, 11881, 11882, 2086, 11884, 2311, 11890, 2336, 2361, 2561, 2586, 11895, 11896, 11897, 11898, 11899, 11900, 11901, 11902, 2811, 11904, 2836, 11905, 11906, 11907, 11711, 2986, 11908, 11840, 11842, 3684, 11788, 11789, 3734, 11581, 11848, 4084, 4195, 11909, 4470, 4545, 11911, 4996, 11912, 5071, 11913, 11854, 5298, 5323, 5398, 5473, 5548, 5699, 5824, 11856, 11857, 11915, 11916, 7337, 8113, 11865, 11819, 10113, 10188, 10611, 10711, 11801)
+
 # Make Phyto DF ####
 anar.phyto <- anar_final %>%
   mutate(ANAR.flowers.out = (allo.df[allo.df$Species == "ANAR",2] + ## intercept
@@ -101,8 +107,16 @@ anar.phyto <- anar_final %>%
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
          
-         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
-  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in),
+         ## then, check for # indiv > 3, use # indiv as seeds.in here also
+         
+         phyto.seed.in = ifelse(phyto.unique %in% not_planted, phyto.n.indiv/0.3, phyto.seed.in)
+         ## if the phyto was not a planted indiv, calculate seeds in by: phyto.n.indiv/germ.rate
+         ## choosing to use the warm temp, wet germ rate here as weedy ANAR seeds were present in the seedbank and must have experienced the warm, wet germination conditions that they preferentially germinate at
+         
+         ) %>%
+  
+  
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 ## still need lots of phyto.seed.in updates likely
