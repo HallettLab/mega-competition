@@ -91,8 +91,11 @@ mael.phyto <- mael_final_dates %>%
          phyto.seed.in = ifelse(date > "2021-11-09", 10, 3),
          ## if date is later than 11/9 use 10 seeds in, if before 3 seeds in
          
-         phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, phyto.seed.in),
-         ## for phyto uniques, use the # indiv as the seeds.in - not perfect where there were 10 seeds in...
+         phyto.seed.in = ifelse(!is.na(phyto.unique) & date > "2021-11-09", 5, phyto.seed.in),
+         ## for phyto uniques planted with 10 seeds (after 11/9), split the difference and say 5 seeds in for each
+         
+         phyto.seed.in = ifelse(!is.na(phyto.unique) & date < "2021-11-09", phyto.n.indiv, phyto.seed.in),
+        # for phyto uniques planted with 3 seeds (before 11/9), use the # indiv as the seeds.in
          
          phyto.seed.in = ifelse(date < "2021-11-09" & phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
   ## then, check for # indiv > 3, use # indiv as seeds.in here also
@@ -104,14 +107,8 @@ mael.phyto <- mael_final_dates %>%
 #phyto.uniques.mael <- mael.phyto %>%
  # filter(!is.na(phyto.unique))
 
-# NOT DONE ####
-## still not sure what to do for phyto.uniques when 10 seeds were put in a sub plot.
-
 ggplot(mael.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
-
-
-
 
 ## clean env
 rm(list = c("mael", "maelC", "plot.dates", "tmp", "df", "mael_final", "mael_final_dates"))
