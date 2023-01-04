@@ -4,7 +4,7 @@
 # weed term as stem coefficient ; we dont care about seeds out so DONT process
 # look at really weedy plots to get estimates to use as priors for other models
 
-### Prep ####
+# Prep ####
 source("data_cleaning/format_model_dat.R")
 
 library(rstan)
@@ -37,8 +37,8 @@ initials <- list(lambda=250,
 
 initials1<- list(initials, initials, initials, initials) 
 
-### BRHO ####
-#### control ####
+# BRHO ####
+## control ####
 
 dat <- subset(model.dat, phyto == "BRHO")
 dat <- subset(dat, treatment == "C")
@@ -80,9 +80,9 @@ print(seeds_brho_c)
 pairs(seeds_brho_c)
 stan_dens(seeds_brho_c)
 
-save(seeds_brho_c, file = "Models/Posteriors/seeds_brho_c_posteriors.rdata")
+save(seeds_brho_c, file = "Models/Posteriors/seeds_brho_c_posteriorsCW.rdata")
 
-#### drought ####
+## drought ####
 
 dat <- subset(model.dat, phyto == "BRHO")
 dat <- subset(dat, treatment == "D")
@@ -116,7 +116,7 @@ intra_g <- 1
 #intra_s <- ignoring this for now
 
 seeds_brho_d <- stan(file = "Models/eight_species_BH_model_d.stan", data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
-                     iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                      init = initials1) # adapt delta controls how quikcly you move through parameter space, closer to one the smaller those steps, so if having convergence issures set closer to one but might also need more iteractions because it slows down fitting process
 
 plot(seeds_brho_d)
@@ -124,10 +124,10 @@ print(seeds_brho_d)
 pairs(seeds_brho_d)
 stan_dens(seeds_brho_d)
 
-save(seeds_brho_d, file = "Models/Posteriors/seeds_brho_d_posteriors.rdata")
+save(seeds_brho_d, file = "Models/Posteriors/seeds_brho_d_posteriorsCW.rdata")
 
-### PLER ####
-#### control ####
+# PLER ####
+## control ####
 
 dat <- subset(model.dat, phyto == "PLER")
 dat <- subset(dat, treatment == "C")
@@ -168,9 +168,9 @@ print(seeds_pler_c)
 pairs(seeds_pler_c)
 stan_dens(seeds_pler_c)
 
-save(seeds_pler_c, file = "Models/Posteriors/seeds_pler_c_posteriors.rdata")
+save(seeds_pler_c, file = "Models/Posteriors/seeds_pler_c_posteriorsCW.rdata")
 
-#### drought ####
+## drought ####
 
 dat <- subset(model.dat, phyto == "PLER")
 dat <- subset(dat, treatment == "D")
@@ -212,4 +212,95 @@ print(seeds_pler_d)
 stan_dens(seeds_pler_d)
 
 save(seeds_pler_d, file = "Models/Posteriors/seeds_pler_d_posteriors.rdata")
+
+
+# GITR ####
+## control ####
+dat <- subset(model.dat, phyto == "GITR")
+dat <- subset(dat, treatment == "C")
+
+Fecundity <- as.integer(round(dat$phyto.seeds.out.final))
+
+pler <- as.integer(dat$PLER)
+anar <- as.integer(dat$ANAR)
+acam <- as.integer(dat$ACAM)
+brni <- as.integer(dat$BRNI)
+clpu <- as.integer(dat$CLPU)
+brho <- as.integer(dat$BRHO)
+gitr <- as.integer(dat$GITR)
+amme <- as.integer(dat$AMME)
+plno <- as.integer(dat$PLNO)
+thir <- as.integer(dat$THIR)
+mica <- as.integer(dat$MICA)
+ceso <- as.integer(dat$CESO)
+twil <- as.integer(dat$TWIL)
+lomu <- as.integer(dat$LOMU)
+taca <- as.integer(dat$TACA)
+mael <- as.integer(dat$MAEL)
+leni <- as.integer(dat$LENI)
+avba <- as.integer(dat$AVBA)
+
+N <- as.integer(length(Fecundity))
+
+intra <- gitr
+
+intra_g <- 0.98 #hwat germ rate are we using?
+#intra_s <- ignoring this for now
+
+seeds_gitr_c <- stan(file = "Models/eight_species_BH_model_c.stan", data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
+                     iter = 1000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     init = initials1) # adapt delta controls how quikcly you move through parameter space, closer to one the smaller those steps, so if having convergence issures set closer to one but might also need more iteractions because it slows down fitting process
+
+plot(seeds_gitr_c)
+print(seeds_gitr_c)
+pairs(seeds_gitr_c)
+stan_dens(seeds_gitr_c)
+
+save(seeds_gitr_c, file = "Models/Posteriors/seeds_gitr_c_posteriorsCW.rdata")
+
+## drought ####
+dat <- subset(model.dat, phyto == "GITR")
+dat <- subset(dat, treatment == "D")
+
+Fecundity <- as.integer(round(dat$phyto.seeds.out.final))
+
+pler <- as.integer(dat$PLER)
+anar <- as.integer(dat$ANAR)
+acam <- as.integer(dat$ACAM)
+brni <- as.integer(dat$BRNI)
+clpu <- as.integer(dat$CLPU)
+brho <- as.integer(dat$BRHO)
+gitr <- as.integer(dat$GITR)
+amme <- as.integer(dat$AMME)
+plno <- as.integer(dat$PLNO)
+thir <- as.integer(dat$THIR)
+mica <- as.integer(dat$MICA)
+ceso <- as.integer(dat$CESO)
+twil <- as.integer(dat$TWIL)
+lomu <- as.integer(dat$LOMU)
+taca <- as.integer(dat$TACA)
+mael <- as.integer(dat$MAEL)
+leni <- as.integer(dat$LENI)
+avba <- as.integer(dat$AVBA)
+
+N <- as.integer(length(Fecundity))
+
+intra <- gitr
+
+intra_g <- 0.91 #hwat germ rate are we using?
+#intra_s <- ignoring this for now
+
+seeds_gitr_d <- stan(file = "Models/eight_species_BH_model_c.stan", data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
+                     iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     init = initials1) 
+## running this at 1000 iterations got the following warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+#Running the chains for more iterations may help. See
+#https://mc-stan.org/misc/warnings.html#bulk-ess 
+## Will use 5000 iterations going fwd
+
+plot(seeds_gitr_d)
+print(seeds_gitr_d)
+stan_dens(seeds_gitr_d)
+
+save(seeds_gitr_d, file = "Models/Posteriors/seeds_gitr_d_posteriors.rdata")
 
