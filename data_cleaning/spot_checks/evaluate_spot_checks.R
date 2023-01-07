@@ -29,11 +29,31 @@ brho.sc.2 <- read.csv(paste0(lead, "brho_spotcheck_list_OLD.csv")) %>%
 ## gitr
 gitr.sc <- read.csv(paste0(lead, "gitr_spotcheck_list.csv"))
 
+## mica
+mica.sc <- read.csv(paste0(lead, "mica_spotcheck_list.csv"))
+
+## thir
+thir.sc <- read.csv(paste0(lead, "thir_spotcheck_list.csv"))
+
+## lomu
+lomu.sc <- read.csv(paste0(lead, "lomu_spotcheck_list.csv"))
+
+
+
+## we have decided that if samples are consistently off by 1 SE of the mean then it should be looked into further
 
 # BRHO ####
 ## need to find difference b/w orig measurement and spot check measurement
 brhocheck <- brho.sc %>%
-  mutate(measure.diff = inflor.g - spot.check.inflor.g)
+  mutate(measure.diff = inflor.g - spot.check.inflor.g, 
+        # mean.inflor = mean(inflor.g),
+         SEofmean = calcSE(inflor.g)) ## calc SE of mean
+
+## SE vs. measure diff ####
+ggplot(brhocheck, aes(x=block, y=measure.diff)) +
+  geom_point() +
+  geom_hline(yintercept = unique(brhocheck$SEofmean))
+## one concerning sample
 
 brhocheck$block <- as.factor(brhocheck$block)
 ## then check for the biggest differences
@@ -88,7 +108,16 @@ brho.changes <- brhocheck %>%
 gitrcheck <- gitr.sc %>%
   mutate(measure.diff = abs(total.biomass.g - spot.check.total.biomass.g),
          completion.match = ifelse(complete.sample == spot.check.complete.sample, "Y", "N"), 
-         rel.measure.diff = measure.diff/total.biomass.g)
+         rel.measure.diff = measure.diff/total.biomass.g, 
+         SEofmean = calcSE(total.biomass.g))
+
+## SE vs. measure diff ####
+ggplot(gitrcheck, aes(x=block, y=measure.diff)) +
+  geom_point() +
+  geom_hline(yintercept = unique(gitrcheck$SEofmean))
+
+
+
 
 ggplot(gitrcheck, aes(x=measure.diff)) +
   geom_histogram() +
@@ -131,10 +160,10 @@ ggsave("data_cleaning/spot_checks/spot_check_figs/gitr_mean_diff_blocks.png", wi
 
 ## Separate Redos ####
 gitr.redos <- gitrcheck %>%
-  filter(measure.diff > 0.01)
+  filter(measure.diff > 0.05)
 
 ## some of these do need changes, many were removing dirt or background flowers
-
+## fixed unique IDs 8670 and 4514
 
 
 ## GITR Allo Relationship: 
@@ -155,9 +184,52 @@ gitr.redos <- gitrcheck %>%
 
 
 
+# MICA ####
+## need to find difference b/w orig measurement and spot check measurement
+micacheck <- mica.sc %>%
+  mutate(measure.diff = abs(total.biomass.g - spot.check.total.biomass.g),
+         completion.match = ifelse(complete.sample == spot.check.complete.sample, "Y", "N"), 
+         rel.measure.diff = measure.diff/total.biomass.g, 
+         SEofmean = calcSE(total.biomass.g)) %>%
+  mutate_all(na_if,"") ## make blank values NAs
+
+## SE vs. measure diff ####
+ggplot(micacheck, aes(x=block, y=measure.diff)) +
+  geom_point() +
+  geom_hline(yintercept = unique(micacheck$SEofmean))
+
+## no measure diffs larger than one SE
+## there are a few that indicate contaminates were removed. Change these.
+
+mica.redos <- micacheck %>%
+  filter(!is.na(spot.check.notes))
 
 
+# THIR ####
+thircheck <- thir.sc %>%
+  mutate(measure.diff = abs(total.biomass.g - spot.check.total.biomass.g),
+         completion.match = ifelse(complete.sample == spot.check.complete.sample, "Y", "N"), 
+         rel.measure.diff = measure.diff/total.biomass.g, 
+         SEofmean = calcSE(total.biomass.g))
 
 
+## SE vs. measure diff ####
+ggplot(thircheck, aes(x=block, y=measure.diff)) +
+  geom_point() +
+  geom_hline(yintercept = unique(thircheck$SEofmean))
+
+unique(thircheck$spot.check.notes)
+
+## thir was redone so this should all be fixed now?
+## wait, the redo might not have captured samples that were changed during the spotcheck phase
+
+thir.uncertain <- thircheck %>%
+  filter(spot.check.notes != "")
+## 5567 OK
+## the rest were changed in the phyto processing data on 1/6/23
+## 6337 has a TINC and it looks like it was processed with the TINC during the redo. Needs to be redone again.
+
+
+thir.uncertain$unique.ID
 
 
