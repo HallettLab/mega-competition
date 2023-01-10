@@ -39,6 +39,10 @@ anarC <- basic_cleaning_func(anar)
 anar_int <- left_join(anarC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
   mutate(unique.ID = unique.ID.y)
 
+## 4-6-2 does not have a unique ID
+#unique.key[unique.key$block == 4 & unique.key$plot == 6 & unique.key$sub == 2,]
+  ## 1/10/23 downloaded the newest version of collections data onto dropbox. This should fix the issue.
+
 #anar_int[anar_int$unique.ID == 3934, ]
 
 ## Final mods ####
