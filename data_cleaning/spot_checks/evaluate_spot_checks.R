@@ -232,4 +232,27 @@ thir.uncertain <- thircheck %>%
 
 thir.uncertain$unique.ID
 
+# LOMU ####
+## need to find difference b/w orig measurement and spot check measurement
+lomucheck <- lomu.sc %>%
+  mutate(measure.diff = abs(total.biomass.g - spot.check.total.biomass.g),
+         completion.match = ifelse(complete.sample == spot.check.complete.sample, "Y", "N"), 
+         rel.measure.diff = measure.diff/total.biomass.g, 
+         SEofmean = calcSE(total.biomass.g)) %>%
+  mutate_all(na_if,"") ## make blank values NAs
+
+## SE vs. measure diff ####
+ggplot(lomucheck, aes(x=block, y=measure.diff)) +
+  geom_point() +
+  geom_hline(yintercept = unique(lomucheck$SEofmean))
+
+
+lomu.redos <- lomucheck %>%
+  filter(!is.na(spot.check.notes))
+
+ggplot(lomu.redos, aes(x=block, y=measure.diff)) +
+  geom_point() +
+  geom_hline(yintercept = unique(lomu.redos$SEofmean))
+
+## there are enough notes about roots for blocks processed by MW that certain blocks of this species should also be redone
 
