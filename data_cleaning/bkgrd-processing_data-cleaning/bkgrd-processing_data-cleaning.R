@@ -81,7 +81,7 @@ bg.ind <- bg_indivC %>%
 bg.sp <- unique(bg.ind[bg.ind$bkgrd %in% finished,]$bkgrd)
 
 ## make an empty dataframe for the output
-bg.ind.avg <- data.frame(treatment = NA, block = NA, plot = NA, bkgrd = NA, dens = NA, bg.avg.seed.num = NA)
+bg.ind.avg <- data.frame(treatment = c(), block = c(), plot = c(), bkgrd = c(), dens = c(), bg.avg.seed.num = c())
 
 ## for each unique background species
 for (i in 1:length(bg.sp)){
@@ -130,10 +130,6 @@ for (i in 1:length(bg.sp)){
   bg.ind.avg <- rbind(bg.ind.avg, tmp.ind)
   
 }
-
-
-bg.seeds <- bg.ind.avg %>%
-  filter(!is.na(block)) ## filter out the one row of NAs
 
 
 # Clean Env ####
