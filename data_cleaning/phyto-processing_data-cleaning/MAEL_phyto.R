@@ -25,6 +25,9 @@ source("allometry/merge_allometric_relationships.R")
 ## background seeding dates
 source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_seeding_dates.R")
 
+## uniqueID key
+source("data_cleaning/unique_key.R")
+
 # Final Cleaning ####
 maelC <- basic_cleaning_func(mael)
 #maelC[maelC$unique.ID == 3928,]
@@ -32,6 +35,9 @@ maelC <- basic_cleaning_func(mael)
 
 mael_final <- maelC %>%
   filter(complete.sample == "Y") %>%
+  
+  left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
+  
   mutate(census.notes = notes) %>%
   
   select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, total.biomass.g, flower.num, scale.ID, process.notes, census.notes, collect.notes, background.notes, unique.ID)

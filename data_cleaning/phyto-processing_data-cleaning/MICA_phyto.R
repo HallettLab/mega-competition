@@ -29,8 +29,7 @@ source("data_cleaning/unique_key.R")
 micaC <- basic_cleaning_func(mica)
 
 ## need to add in unique.IDs here
-mica_int <- left_join(micaC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
-  mutate(unique.ID = unique.ID.y)
+mica_int <- left_join(micaC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 
 ## Follow up on spot checks ####
 mica_int[mica_int$unique.ID == 8028,]

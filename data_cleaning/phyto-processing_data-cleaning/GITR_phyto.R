@@ -22,6 +22,8 @@ source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 ## allometry data
 source("allometry/merge_allometric_relationships.R")
 
+## uniqueID key
+source("data_cleaning/unique_key.R")
 
 # Final Cleaning ####
 gitrC <- basic_cleaning_func(gitr)
@@ -29,7 +31,10 @@ gitrC <- basic_cleaning_func(gitr)
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 gitr_final <- gitrC %>%
+  
   filter(complete.sample == "Y") %>% ## remove incompletes
+  
+  left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   
   mutate(total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(total.biomass.g, digits = 3), total.biomass.g)) %>% ## round to 3 decimal places
   

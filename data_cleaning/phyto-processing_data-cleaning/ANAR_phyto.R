@@ -36,8 +36,7 @@ source("data_cleaning/unique_key.R")
 anarC <- basic_cleaning_func(anar)
 
 ## need to add in unique.IDs here
-anar_int <- left_join(anarC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
-  mutate(unique.ID = unique.ID.y)
+anar_int <- left_join(anarC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 
 ## 4-6-2 does not have a unique ID
 #unique.key[unique.key$block == 4 & unique.key$plot == 6 & unique.key$sub == 2,]
