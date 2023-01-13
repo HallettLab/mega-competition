@@ -131,6 +131,7 @@ for (i in 1:length(bg.sp)){
   
 }
 
+bg.seeds <- bg.ind.avg
 
 # Clean Env ####
 rm("bg_indiv", "bg.ind", "bg.sp", "bio.to.flower.to.seeds", "finished", "seeds", "tmp.ind", "tmp.sp", "tmp.model", "lead", "totbio.to.seeds", "inflor.bio.to.seeds", "stem.to.seeds", "bg.ind.avg", "bg_indivC")
