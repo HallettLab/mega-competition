@@ -28,8 +28,7 @@ source("data_cleaning/unique_key.R")
 plerC <- basic_cleaning_func(pler)
 
 ## need to add in unique.IDs here
-pler_int <- left_join(plerC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
-  mutate(unique.ID = unique.ID.y)
+pler_int <- left_join(plerC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 
 # Final Cleaning ####
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded

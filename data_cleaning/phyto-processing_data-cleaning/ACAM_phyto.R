@@ -28,8 +28,7 @@ source("data_cleaning/unique_key.R")
 acamC <- basic_cleaning_func(acam)
 
 ## Add Unique.IDs ####
-acam_int <- left_join(acamC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
-  mutate(unique.ID = unique.ID.y) %>% 
+acam_int <- left_join(acamC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   filter(unique.ID != 6022) ## get rid of the duplicate unique.ID that never existed (see below for details)
 
 ## when I added unique.ID in, an extra row appeared. That's odd. Is there a duplicate combo somewhere?

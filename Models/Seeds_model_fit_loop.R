@@ -41,6 +41,9 @@ trt <- c("C","D")
 model.output <- list()
 warnings <- list()
 
+# This is placeholder until we figure out what to do about ANAR backgrounds that either have 0 stems or where germ estimates were zero (but clearly they werent)
+model.dat[!is.finite(model.dat$ANAR),]$ANAR <- mean(model.dat[is.finite(model.dat$ANAR) & model.dat$bkgrd == "ANAR",]$ANAR, na.rm = T)
+
 for(i in species){
   for(j in trt){
     dat <- subset(model.dat, phyto == i)
@@ -81,7 +84,8 @@ for(i in species){
                            iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                            init = initials1) 
     
-    model.output[[paste0("seeds_",i,"_",j)]] %>%
-      save(file = paste0("Models/Posteriors/seeds_",i,"_",j,"_posteriors.rdata"))
+    tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
+    
+    save(tmp, file = paste0("Models/Posteriors/seeds_",i,"_",j,"_posteriors.rdata"))
   }
 }

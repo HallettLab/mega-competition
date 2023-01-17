@@ -47,8 +47,7 @@ unique(avbaC$process.notes)
 
 # Final Cleaning ####
 ## need to add in unique.IDs here
-avba_int <- left_join(avbaC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>%
-  mutate(unique.ID = unique.ID.y)
+avba_int <- left_join(avbaC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
 
 
 avba_final <- avba_int %>%

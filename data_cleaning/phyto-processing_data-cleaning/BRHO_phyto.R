@@ -21,6 +21,8 @@ source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 ## allometry data
 source("allometry/merge_allometric_relationships.R")
 
+## uniqueID key
+source("data_cleaning/unique_key.R")
 
 # Final Cleaning ####
 brhoC <- basic_cleaning_func(brho) ## basic cleaning/standardization
@@ -29,6 +31,8 @@ med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 brho_final <- brhoC %>%
   filter(complete.sample == "Y") %>% ## remove incompletes
+  
+  left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   
   mutate(inflor.g.rounded = ifelse(scale.ID %in% med_scales, round(inflor.g, digits = 3), inflor.g)) %>% ## round to 3 decimal places
   

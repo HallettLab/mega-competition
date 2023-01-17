@@ -30,7 +30,7 @@ model.dat <- bg.phyto.seeds2 %>%
   mutate(bkgrd.names.in = bkgrd) %>% ## make an extra bkgrd column bc will need 2
   pivot_wider(names_from = "bkgrd.names.in", values_from = "bg.seeds.in", values_fill = 0) %>% ## seeds in for each background sp as a separate col
   mutate(phyto.seeds.out.final = ifelse(bkgrd == phyto, phyto.seed.out + bg.seeds.out, phyto.seed.out)) %>% ## for intra phytos, add phyto & bg seeds out values
-  select(-Control, -`NA`, -phyto.seed.in, -phyto.seed.out, -bg.seeds.out) ## drop extraneous cols
+  select(-Control, -phyto.seed.in, -phyto.seed.out, -bg.seeds.out) ## drop extraneous cols
 
 model.dat <- model.dat[,c(1:10,29,11:28)] ## reorder
 

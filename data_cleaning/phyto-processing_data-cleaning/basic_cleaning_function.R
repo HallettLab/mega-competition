@@ -11,7 +11,6 @@ basic_cleaning_func <- function(phyto_data, ...) {
   
   temp <- phyto_data %>%
     mutate(complete.sample = complete., ## change column names
-           unique.ID = unique,
            treatment = ifelse(block %in% drought, "D", "C")) %>%  ## add a treatment column
     
     mutate(across(where(is.character), str_trim)) %>% ## remove leading & trailing whitespace!!
