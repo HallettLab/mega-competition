@@ -23,7 +23,7 @@ source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_seeding_dates.R")
 
 ## Dates & Germ Rates ####
 
-## First, combine plot seeding dates & germ info to quickly eval which germ rate to use for each plot
+## First, combine plot seeding dates & germ info to eval which germ rate to use for each plot
 dates.germ <- left_join(plot.dates, bg.germ, by = c("bkgrd")) %>%
   mutate(bp.combo = paste(block, plot, sep = "_"))
 
@@ -44,7 +44,7 @@ for(i in 1:length(block.plots)) {
   if(unique(tmp.plot$bkgrd == "ANAR") | unique(tmp.plot$bkgrd == "BRNI") | unique(tmp.plot$bkgrd == "CLPU")) {
     
     ## if it's temp sensitive check the planting date of a plot
-    if (unique(tmp.plot$date) < "2021-11-10") { ## if planted 11/9 or before
+    if (unique(tmp.plot$date) < "2021-11-10") { ## if planted on 11/9 or before
       tmp.germ <- tmp.plot %>%
         filter(Temp == 20) %>% ## use warm germ rate
         mutate(germ.calc = avg.germ)
