@@ -10,17 +10,24 @@ calcSE<-function(x){
 
 # Read in Data ####
 ## Processing data
-source("data_cleaning/merge_processing_collections_data.R")
+#source("data_cleaning/merge_processing_collections_data.R")
 
 allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/" # Carmen's file path
-#date <- 20221019
+date <- 20230123
 
 ## Allometry data
-#leni_allo <- read.csv(paste0(allo_lead, "LENI_allometry-processing_", date, ".csv")) ## use when relationship is more finalized
+leni_allo <- read.csv(paste0(allo_lead, "LENI_allometry-processing_", date, ".csv")) ## use when relationship is more finalized
 
-drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vector
-leni_allo <- read.xlsx(paste0(allo_lead, "20220901_Allometry.xlsx"), sheet = 14) %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"))
+
+leni_no_dup <- leni_allo %>%
+  mutate(unique = toupper(unique)) %>%
+  group_by(block, plot, sub, unique, treatment) %>%
+  summarise(total.stem.length.mm.uni = unique(total.stem.length.mm),
+            pod.num.uni = unique(pod.num),
+            seed.num.uni = unique(seed.num))
+
+## save this and work from this
+write.csv(leni_no_dup, paste0(allo_lead, "LENI_allometry-processing_no-dup_20230123.csv"))
 
 
 # Dat Range ####
