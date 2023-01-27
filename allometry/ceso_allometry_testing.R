@@ -50,8 +50,6 @@ ggplot(ceso_seed_means, aes(x=treatment, y=mean_seeds)) +
   ylab("Avg Seeds per Flower") + xlab("Treatment")
 
 
-
-
 ## do an anova to test whether seeds/flower is different in control vs. drought
 seedtrt <- aov(seeds.num ~ treatment, data = ceso_allo)
 
@@ -63,3 +61,20 @@ TukeyHSD(seedtrt)
 # Q here ####
 ## should we use different C and D estimates since they are only marginally significantly different? 
 ## do we need more samples?
+
+CESO.allo.output <- data.frame(Species = "CESO", 
+                               intercept = 0, 
+                               intercept_pval = NA, 
+                               intercept_se = NA, 
+                               slope = NA, 
+                               slope_pval = NA, 
+                               slope_se = NA, 
+                               poly = NA, 
+                               poly_pval = NA, 
+                               poly_se = NA,
+                               seeds_C = ceso_seed_means[ceso_seed_means$treatment == "C",]$mean_seeds,
+                               seeds_C_se = ceso_seed_means[ceso_seed_means$treatment == "C",]$SE_seeds,
+                               seeds_D = ceso_seed_means[ceso_seed_means$treatment == "D",]$mean_seeds,
+                               seeds_D_se = ceso_seed_means[ceso_seed_means$treatment == "D",]$SE_seeds)
+
+rm(ceso_allo, seedtrt, allo_lead, ceso_seed_means)
