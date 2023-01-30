@@ -54,7 +54,7 @@ ggplot(thir_final, aes(x=total.biomass.g.rounded)) +
   geom_histogram()
 ## no missing values
 
-## look at total biomass
+## look at phyto.n.indiv
 ggplot(thir_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
 ## some 4 phyto samples

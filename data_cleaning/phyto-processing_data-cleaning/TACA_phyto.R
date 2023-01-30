@@ -84,7 +84,7 @@ for(i in colnames(taca_final)[15:16]) {
 
 
 # Make Phyto DF ####
-taca.phyto <- brho_final %>%
+taca.phyto <- taca_final %>%
   mutate(phyto.seed.out = (allo.df[allo.df$Species == "TACA",2] + ## intercept
                              (allo.df[allo.df$Species == "TACA",5]*inflor.g.rounded)), ## slope
          ## calc seed out from biomass weight & allo relationship
