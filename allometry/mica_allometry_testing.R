@@ -1,9 +1,8 @@
-library(googlesheets4)
-library(plyr)
+## MICA Allometry Testing
+
+## set up env
 library(tidyverse)
-library(googledrive)
-library(openxlsx)
-library(ggpubr)
+theme_set(theme_bw())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -12,35 +11,55 @@ calcSE<-function(x){
 }
 
 # Read in Data ####
-## Processing data
-source("data_cleaning/merge_processing_collections_data.R")
-
-allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/" # Carmen's file path
-
-## Allometry data
-drought <- c(1, 3, 4, 6, 12, 14) ## create treatment vector
-mica_allo <- read.xlsx(paste0(allo_lead, "20220901_Allometry.xlsx"), sheet = 17) %>%
-  mutate(treatment = ifelse(block %in% drought, "D", "C"),
-         seed.num = seeds.num)
-
-
-# Dat Range ####
-theme_set(theme_bw())
-
-mica_dat <- all_dat_final %>%
-  filter(phyto == "MICA")
-
-phyto<-ggplot(mica_dat, aes(x=total.biomass.rounded.percap)) +
-  geom_histogram() +
-  facet_wrap(~treatment)
-
-allo<-ggplot(mica_allo, aes(x=total.biomass.g)) +
-  geom_histogram() +
-  facet_wrap(~treatment) +
-  coord_cartesian(xlim = c(0,2))
+# specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/")){
+  # Carmen
+  allo_lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/"
+  
+} else {
+  # Marina
+  allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/"
+} 
 
 
-ggarrange(phyto, allo, ncol = 1, nrow=2)
+mica_allo <- read.csv(paste0(allo_lead, "MICA_allometry-processing_20230118.csv")) 
 
-ggsave("allometry/preliminary_figs/allometric_relationship_fits/mica_allometry_check.png", height = 4, width = 6)
+# Visualize ####
+## Linear ####
+ggplot(mica_allo, aes(x=total.biomass.g, y=seeds.num, color = treatment)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+## relationships look very similar b/w treats! 
 
+
+## Polynomial ####
+## plot as polynomial
+ggplot(mica_allo, aes(x = total.biomass.g, y = seeds.num)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
+## visually this looks pretty good!
+
+
+# Model ####
+mica_allo_rel_lin <- lm(seeds.num ~ total.biomass.g, data = mica_allo)
+summary(mica_allo_rel_lin) # r2 = 0.9694
+
+mica_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = mica_allo)
+summary(mica_allo_rel_pol) # r2 = 0.981
+
+
+## save the model outputs
+MICA.allo.output <- data.frame(Species = "MICA", 
+                               intercept = 0, 
+                               intercept_pval = NA, 
+                               intercept_se = NA, 
+                               slope = mica_allo_rel_pol$coefficients[2], 
+                               slope_pval = summary(mica_allo_rel_pol)$coefficients[2,4], 
+                               slope_se = summary(mica_allo_rel_pol)$coefficients[2,2], 
+                               poly = summary(mica_allo_rel_pol)$coefficients[3], 
+                               poly_pval = summary(mica_allo_rel_pol)$coefficients[3,4], 
+                               poly_se = summary(mica_allo_rel_pol)$coefficients[3, 2],
+                               seeds_C = NA,
+                               seeds_C_se = NA,
+                               seeds_D = NA,
+                               seeds_D_se = NA)

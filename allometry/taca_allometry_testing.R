@@ -41,8 +41,12 @@ seedtrt <- aov(seeds.num ~ treatment, data = taca_allo)
 summary(seedtrt)
 TukeyHSD(seedtrt) # no difference between treatments
 
+## is this a better way to test if there are slope differences?
+seedtrt2 <- lm(seeds.num ~ total.biomass.g + treatment, data = taca_allo)
+summary(seedtrt2)
+
 ## Phyto data
-taca_phyto <- read.csv(paste0(allo_lead, "TACA_phyto-processing_20221108.csv"))
+#taca_phyto <- read.csv(paste0(allo_lead, "TACA_phyto-processing_20221108.csv"))
 
 
 ## visualize ####
@@ -57,12 +61,12 @@ ggplot(taca_allo[taca_allo$total.biomass.g<20,], aes(x = total.biomass.g, y = se
 
 ## model ####
 ## test linear model first
-taca_allo_rel <- lm(seeds.num ~ total.biomass.g, data = taca_allo)
-summary(taca_allo_rel) # r2 = 0.9731
+taca_allo_rel_lin <- lm(seeds.num ~ total.biomass.g, data = taca_allo)
+summary(taca_allo_rel_lin) # r2 = 0.9731
 
 ## test polynomial model
-taca_allo_rel <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo)
-summary(taca_allo_rel) # r2 = 0.9973
+taca_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo)
+summary(taca_allo_rel_pol) # r2 = 0.9973
 
 # what about without outliers?
 ## test linear model first
@@ -72,3 +76,21 @@ summary(taca_allo_rel) # r2 = 0.957
 ## test polynomial model
 taca_allo_rel <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo[taca_allo$total.biomass.g<20,])
 summary(taca_allo_rel) # r2 = 0.9668
+
+
+## save the model outputs
+TACA.allo.output <- data.frame(Species = "TACA", 
+                               intercept = 0, 
+                               intercept_pval = NA, 
+                               intercept_se = NA, 
+                               slope = taca_allo_rel_pol$coefficients[2], 
+                               slope_pval = summary(taca_allo_rel_pol)$coefficients[2,4], 
+                               slope_se = summary(taca_allo_rel_pol)$coefficients[2,2], 
+                               poly = summary(taca_allo_rel_pol)$coefficients[3], 
+                               poly_pval = summary(taca_allo_rel_pol)$coefficients[3,4], 
+                               poly_se = summary(taca_allo_rel_pol)$coefficients[3, 2],
+                               seeds_C = NA,
+                               seeds_C_se = NA,
+                               seeds_D = NA,
+                               seeds_D_se = NA)
+
