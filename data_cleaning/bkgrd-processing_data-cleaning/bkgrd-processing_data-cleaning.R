@@ -23,7 +23,7 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 } 
 
 ## Background Data
-bg_indiv <- read.csv(paste0(lead, "bkgrd-processing_20221221.csv"))
+bg_indiv <- read.csv(paste0(lead, "bkgrd-processing_20230131.csv"))
 
 ## Allometric Relationships
 source("allometry/merge_allometric_relationships.R")
