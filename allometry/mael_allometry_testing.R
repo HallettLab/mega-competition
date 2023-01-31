@@ -74,6 +74,10 @@ MAEL.allo.output <- data.frame(Species = "MAEL",
            seeds_C = mael_seed_means[mael_seed_means$treatment == "C",]$mean_seeds,
            seeds_C_se = mael_seed_means[mael_seed_means$treatment == "C",]$SE_seeds,
            seeds_D = mael_seed_means[mael_seed_means$treatment == "D",]$mean_seeds,
-           seeds_D_se = mael_seed_means[mael_seed_means$treatment == "D",]$SE_seeds)
+           seeds_D_se = mael_seed_means[mael_seed_means$treatment == "D",]$SE_seeds, 
+           viability_C = NA,
+           viability_C_se = NA,
+           viability_D = NA,
+           viability_D_se = NA)
 
 rm(mael_allo, seedtrt, allo_lead, mael_seed_means)

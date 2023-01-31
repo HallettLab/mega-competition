@@ -92,5 +92,9 @@ TACA.allo.output <- data.frame(Species = "TACA",
                                seeds_C = NA,
                                seeds_C_se = NA,
                                seeds_D = NA,
-                               seeds_D_se = NA)
+                               seeds_D_se = NA, 
+                               viability_C = NA,
+                               viability_C_se = NA,
+                               viability_D = NA,
+                               viability_D_se = NA)
 
