@@ -47,7 +47,7 @@ summary(mica_allo_rel_lin) # r2 = 0.9694
 mica_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = mica_allo)
 summary(mica_allo_rel_pol) # r2 = 0.981
 
-
+# Save Output ####
 ## save the model outputs
 MICA.allo.output <- data.frame(Species = "MICA", 
                                intercept = 0, 
@@ -67,3 +67,6 @@ MICA.allo.output <- data.frame(Species = "MICA",
                                viability_C_se = NA,
                                viability_D = NA,
                                viability_D_se = NA)
+
+## clean env
+rm(list = c("mica_allo", "mica_allo_rel_lin", "mica_allo_rel_pol", "allo_lead"))
