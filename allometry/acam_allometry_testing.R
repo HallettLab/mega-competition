@@ -1,14 +1,5 @@
-## ACAM Allometric Relationship
-## this script 
-    ## 1. checks that phyto & allometry data cover approx the same range
-          ## after this is checked & confirmed to be okay, comment out this part so that we do not load & reload the same phyto data multiple times in later scripts.
-    ## 2. tests & plots various allometric relationships
-    ## 3. saves the output from the final best model for use later in predicting seed output.
-
-
+## ACAM Allometry
 library(tidyverse)
-library(ggpubr)
-library(openxlsx)
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -16,7 +7,7 @@ calcSE<-function(x){
   sd(x2)/sqrt(length(x2))
 }
 
-
+# Read in Data ####
 # specify dropbox pathway 
 if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Allometry/Allometry_entered/")){
   # Carmen
@@ -31,11 +22,8 @@ acam_flower_allo <- read.csv(paste0(allo_lead, "ACAM-flowers_allometry-processin
 
 acam_seed_allo <- read.csv(paste0(allo_lead, "ACAM-seeds_allometry-processing_20221213.csv"))
 
-ggplot(acam_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
-  geom_point() +
-  geom_smooth(method = lm)
-
-# Seed Distrib ####
+# Seeds per Flower ####
+## Seed Distrib ####
 ggplot(acam_seed_allo, aes(x=seed.num)) +
   geom_histogram()
 
@@ -49,7 +37,7 @@ nrow(acam_seed_allo[acam_seed_allo$treatment == "D",]) ## 36
 nrow(acam_seed_allo[acam_seed_allo$treatment == "C",]) ## 36
 
 
-# Calc Seeds/Flower ####
+## Calc Seeds per Flower ####
 ## calc overall mean
 acam_mean_seeds <- mean(acam_seed_allo$seed.num, na.rm = T)
 acam_mean_seeds ## 1.29
@@ -63,7 +51,9 @@ acam_seed_means <- acam_seed_allo %>%
 ggplot(acam_seed_means, aes(x=treatment, y = mean_seeds)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = mean_seeds - SE_seeds, ymax = mean_seeds + SE_seeds), width = 0.25) +
-  ylab("Mean Seeds per Flower") + xlab ("Treatment")
+  ylab("ACAM Mean Seeds per Flower") + xlab ("Treatment")
+
+#ggsave("ACAM_seeds_per_flower.png", width = 3, height = 3)
 
 ## use an anova to test signif differences b/w categories
 seedtrt <- aov(seed.num ~ treatment, data = acam_seed_allo)
@@ -71,13 +61,17 @@ seedtrt <- aov(seed.num ~ treatment, data = acam_seed_allo)
 summary(seedtrt)
 TukeyHSD(seedtrt) # they differ but this seems to be because of empty pods
 
-# TotBio - Flower Rel. ####
+
+# TotBio - Flower ####
 ## Combine drought and controls together for biomass-flower relationship
 
-## visualize ####
+## Visualize ####
 ggplot(acam_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
   geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ x)
+  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ x) +
+  ylab("ACAM flower number") + xlab("Total AG Bio (g)")
+
+#ggsave("acam_flower_linear.png", width = 3, height = 3)
 
 ## plot as polynomial
 ggplot(acam_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
@@ -85,7 +79,7 @@ ggplot(acam_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
   geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ poly(x, 2))
 
 
-## model ####
+## Model ####
 ## test linear model first
 acam_fallo_rel <- lm(flower.num ~ total.biomass.g, data = acam_flower_allo)
 summary(acam_fallo_rel) # r2 = 0.962
@@ -95,6 +89,7 @@ summary(acam_fallo_rel) # r2 = 0.962
 # summary(acam_fallo_rel) # r2 = 0.963
 
 
+# Save Output ####
 ## save the model outputs
 ACAM.allo.output <- data.frame(Species = "ACAM", 
            intercept = 0, 
@@ -115,8 +110,5 @@ ACAM.allo.output <- data.frame(Species = "ACAM",
            viability_D = NA,
            viability_D_se = NA)
 
+## clean up env
 rm(list = c("allo_lead", "acam_fallo_rel", "acam_flower_allo", "acam_mean_seeds",  "acam_seed_allo", "seedtrt", "acam_seed_means"))
-
-
-
-
