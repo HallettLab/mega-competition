@@ -23,6 +23,9 @@ source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 ## allometry data
 source("allometry/merge_allometric_relationships.R")
 
+## unique ID key 
+source("data_cleaning/unique_key.R")
+
 
 
 # Final Cleaning ####
@@ -31,13 +34,15 @@ cesoC <- basic_cleaning_func(ceso)
 
 ceso_final <- cesoC %>%
   filter(!is.na(flower.num)) %>% ## get rid of missing sample
+  ## we weren't able to assess whether a sample was complete, so we can't filter by this
   
   left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   
   select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, flower.num, process.notes, collect.notes, unique.ID)
 ## select only needed columns
 
-# Check outliers ####
+
+# Check Data ####
 ggplot(ceso_final, aes(x=flower.num)) +
   geom_histogram()
 ## one sample is missing a flower number, removed above.
@@ -76,7 +81,7 @@ ceso.phyto <- ceso_final %>%
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
          
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
-  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+        ## then, check for # indiv > 3, use # indiv as seeds.in here also
   
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 

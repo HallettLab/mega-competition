@@ -1,5 +1,6 @@
 # Load packages ####
 library(tidyverse)
+theme_set(theme_bw())
 
 # Read in Data ####
 ## phyto-processing data
@@ -28,15 +29,14 @@ source("data_cleaning/unique_key.R")
 # Data Cleaning ####
 thirC <- basic_cleaning_func(thir)
 
-## Add Unique.IDs ####
-thir_int <- left_join(thirC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
-
-colnames(thir_int)
 
 ## Final Mods ####
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
-thir_final <- thir_int %>%
+thir_final <- thirC %>%
+  
+  ## add unique IDs in
+  left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   
   filter(complete.sample == "Y") %>% ## remove incompletes
 
@@ -64,6 +64,8 @@ unique(thir_final$process.notes)
 # NOTE: ####
     ## still need to check samples with TINC and make sure this is added as a weed, NOT used as a phyto.
 
+
+
 ## create empty data frame
 df <- data.frame()
 
@@ -81,15 +83,14 @@ for(i in colnames(thir_final)[14:15]) {
 
 
 # Make Phyto Dataframe ####
-# NOTE: ####
-    ## UPDATE THIS ONCE THIR allo rel finalized and put in merged df
 thir.phyto <- thir_final %>%
   mutate(THIR.flowers.out = (allo.df[allo.df$Species == "THIR",2] + ## intercept
                                (allo.df[allo.df$Species == "THIR",5]*total.biomass.g.rounded)), ## slope
          ## use tot.bio to flower.num to get flowers out
          
-         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "THIR",13]*THIR.flowers.out,  allo.df[allo.df$Species == "THIR",11]*THIR.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "THIR",17]*THIR.flowers.out,  allo.df[allo.df$Species == "THIR",15]*THIR.flowers.out),
          ## use viability to calculate the total seeds out
+         ## viability col is proportion of viable flowers, so multiplying total flowers by the proportion viable should give us the viable flowers which is equivalent to viable seed # as there is always 1 seed/flower.
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
@@ -99,11 +100,11 @@ thir.phyto <- thir_final %>%
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 # NOTE: ####
-    ## there are probably several instances hwere the phyto collected was a recruit. We should check all collection notes for this possibility.
+    ## there are probably several instances where the phyto collected was a recruit. We should check all collection notes for this possibility.
 
 ggplot(thir.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
 
 ## clean up env
-rm(list = c("thir", "thir_final", "thir_int", "thirC", "df", "tmp"))
+rm(list = c("thir", "thir_final", "thirC", "df", "tmp"))

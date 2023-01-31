@@ -1,5 +1,6 @@
 # Load packages ####
 library(tidyverse)
+theme_set(theme_bw())
 
 # Read in Data ####
 ## phyto-processing data
@@ -28,9 +29,6 @@ source("data_cleaning/unique_key.R")
 # Basic Cleaning ####
 micaC <- basic_cleaning_func(mica)
 
-## need to add in unique.IDs here
-mica_int <- left_join(micaC, unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique"))
-
 ## Follow up on spot checks ####
 #mica_int[mica_int$unique.ID == 8028,]
 ## 12-31-8
@@ -39,12 +37,16 @@ mica_int <- left_join(micaC, unique.key, by = c("treatment", "block", "plot", "s
 
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
-mica_final <- mica_int %>%
+mica_final <- micaC %>%
   filter(complete.sample == "Y") %>% ## remove incompletes
+  
+  left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
+  ## add in unique ID numbers
   
   mutate(total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(total.biomass.g, digits = 3), total.biomass.g)) %>% ## round to 3 decimal places
   
   select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g.rounded, total.biomass.g, seed.num, scale.ID, process.notes, census.notes, unique.ID) 
+
 
 # Check Data ####
 ## look at total biomass
@@ -54,6 +56,8 @@ ggplot(mica_final, aes(x=total.biomass.g.rounded)) +
 
 check <- mica_final %>%
   filter(is.na(total.biomass.g.rounded))
+## already in our data cleaning checks - will follow up on
+
 
 ## look at phyto.n.indiv
 ggplot(mica_final, aes(x=phyto.n.indiv)) +
@@ -61,7 +65,7 @@ ggplot(mica_final, aes(x=phyto.n.indiv)) +
 
 # Check Notes ####
 unique(mica_final$process.notes)
-
+## looks good
 
 ## create empty data frame
 df <- data.frame()
@@ -81,14 +85,15 @@ for(i in colnames(mica_final)[15:16]) {
 # Make Phyto DF ####
 mica.phyto <- mica_final %>%
   mutate(phyto.seed.out = (allo.df[allo.df$Species == "MICA",2] + ## intercept
-                             (allo.df[allo.df$Species == "MICA",5]*inflor.g.rounded)), ## slope
+                             (allo.df[allo.df$Species == "MICA",5]*total.biomass.g.rounded) + ## slope
+                             (allo.df[allo.df$Species == "MICA",8]*(total.biomass.g.rounded^2))), ## poly
          ## calc seed out from biomass weight & allo relationship
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
          
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
-  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+        ## then, check for # indiv > 3, use # indiv as seeds.in here also
   
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
@@ -98,4 +103,4 @@ ggplot(mica.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
   geom_point()
 
 ## clean up env
-rm(list = c("mica", "mica_final", "micaC", "mica_int", "df", "tmp"))
+rm(list = c("mica", "mica_final", "micaC", "df", "tmp", "check"))
