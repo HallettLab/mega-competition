@@ -38,6 +38,9 @@ thir_final <- thirC %>%
   ## add unique IDs in
   left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   
+  mutate(phyto == "THIR") %>%
+  ## get rid of the 'I'
+  
   filter(complete.sample == "Y") %>% ## remove incompletes
 
   mutate(final.total.biomass.g = ifelse(!is.na(redo.total.biomass.g), redo.total.biomass.g, total.biomass.g)) %>%

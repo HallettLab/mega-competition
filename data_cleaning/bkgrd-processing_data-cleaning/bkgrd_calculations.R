@@ -8,7 +8,7 @@
 source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd-processing_data-cleaning.R")
 
 ## germination data
-source("data_cleaning/bkgrd-processing_data-cleaning/germination_rates.R")
+source("data_cleaning/germination_data-cleaning/germination_rates.R")
 
 ## collections data (for bkgrd.n.indiv)
 source("data_cleaning/phyto-collections_data-cleaning/phyto-collections_data-cleaning.R")
