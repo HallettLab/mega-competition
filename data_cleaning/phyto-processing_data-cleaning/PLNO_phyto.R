@@ -61,12 +61,12 @@ unique(plno_final$process.notes)
 df <- data.frame()
 
 ## loop through all notes searching for "die" or "chang"
-for(i in colnames(plno_final)[15:16]) {
+for(i in colnames(plno_final)[13:15]) {
   tmp <- dplyr::filter(plno_final, grepl("die", plno_final[,i]))
   df <- rbind(df, tmp)
 }
 
-for(i in colnames(plno_final)[15:16]) {
+for(i in colnames(plno_final)[13:15]) {
   tmp <- dplyr::filter(plno_final, grepl("chang", plno_final[,i]))
   df <- rbind(df, tmp)
 }
