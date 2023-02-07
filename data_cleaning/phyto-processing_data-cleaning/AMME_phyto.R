@@ -74,3 +74,27 @@ for(i in colnames(amme_final)[13:14]) {
 
 
 # Make Phyto DF ####
+amme.phyto <- amme_final %>%
+  mutate(amme.flowers.out = (allo.df[allo.df$Species == "AMME",2] + ## intercept
+                               (allo.df[allo.df$Species == "AMME",5]*total.biomass.g)), ## slope
+         ## calc seed out from biomass weight & allo relationship
+         
+         phyto.seed.out = ifelse(treatment == "D",  
+                                 allo.df[allo.df$Species == "AMME",13]*amme.flowers.out,  ## drought seeds
+                                 allo.df[allo.df$Species == "AMME",11]*amme.flowers.out), ## control seeds
+         
+         phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
+         ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
+         
+         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
+  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+  
+  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+
+
+## check the seed.in numbers
+ggplot(amme.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
+  geom_point()
+
+## clean up env
+rm(list = c("amme", "amme_final", "ammeC", "df", "tmp"))

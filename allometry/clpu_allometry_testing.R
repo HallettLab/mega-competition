@@ -1,4 +1,4 @@
-## LOMU allometry testing
+## MICA Allometry Testing
 
 ## set up env
 library(tidyverse)
@@ -22,46 +22,42 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 } 
 
 
-lomu_allo <- read.csv(paste0(allo_lead, "LOMU_allometry-processing_20230202.csv")) 
-
+clpu_allo <- read.csv(paste0(allo_lead, "CLPU_allometry-processing_20230206.csv")) 
 
 # Visualize ####
 ## Linear ####
-ggplot(lomu_allo, aes(x=total.biomass.g, y=seeds.num, color = treatment)) +
+ggplot(clpu_allo, aes(x=total.biomass.g, y=seeds.num, color = treatment)) +
   geom_point() +
   geom_smooth(method = "lm")
 ## relationships look very similar b/w treats! 
-ggplot(lomu_allo, aes(x=total.biomass.g, y=seeds.num)) +
-  geom_point() +
-  geom_smooth(method = "lm")
+
 
 ## Polynomial ####
 ## plot as polynomial
-ggplot(lomu_allo, aes(x = total.biomass.g, y = seeds.num)) +
+ggplot(clpu_allo, aes(x = total.biomass.g, y = seeds.num)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
 
+
 # Model ####
-lomu_allo_rel_lin <- lm(seeds.num ~ total.biomass.g, data = lomu_allo)
-summary(lomu_allo_rel_lin) # r2 = 0.9517
+clpu_allo_rel_lin <- lm(seeds.num ~ total.biomass.g, data = clpu_allo)
+summary(clpu_allo_rel_lin) # r2 = 0.9776
 
-lomu_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = lomu_allo)
-summary(lomu_allo_rel_pol) # r2 = 0.9575
-
-## polynomial is slightly better.
+clpu_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = clpu_allo)
+summary(clpu_allo_rel_pol) # r2 = 0.9782
 
 # Save Output ####
 ## save the model outputs
-LOMU.allo.output <- data.frame(Species = "LOMU", 
+CLPU.allo.output <- data.frame(Species = "CLPU", 
                                intercept = 0, 
                                intercept_pval = NA, 
                                intercept_se = NA, 
-                               slope = lomu_allo_rel_pol$coefficients[2], 
-                               slope_pval = summary(lomu_allo_rel_pol)$coefficients[2,4], 
-                               slope_se = summary(lomu_allo_rel_pol)$coefficients[2,2], 
-                               poly = summary(lomu_allo_rel_pol)$coefficients[3], 
-                               poly_pval = summary(lomu_allo_rel_pol)$coefficients[3,4], 
-                               poly_se = summary(lomu_allo_rel_pol)$coefficients[3, 2],
+                               slope = clpu_allo_rel_pol$coefficients[2], 
+                               slope_pval = summary(clpu_allo_rel_pol)$coefficients[2,4], 
+                               slope_se = summary(clpu_allo_rel_pol)$coefficients[2,2], 
+                               poly = summary(clpu_allo_rel_pol)$coefficients[3], 
+                               poly_pval = summary(clpu_allo_rel_pol)$coefficients[3,4], 
+                               poly_se = summary(clpu_allo_rel_pol)$coefficients[3, 2],
                                seeds_C = NA,
                                seeds_C_se = NA,
                                seeds_D = NA,
@@ -72,4 +68,4 @@ LOMU.allo.output <- data.frame(Species = "LOMU",
                                viability_D_se = NA)
 
 ## clean env
-rm(list = c("lomu_allo", "lomu_allo_rel_lin", "lomu_allo_rel_pol", "allo_lead"))
+rm(list = c("clpu_allo", "clpu_allo_rel_lin", "clpu_allo_rel_pol", "allo_lead"))

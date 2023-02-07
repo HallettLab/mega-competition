@@ -1,5 +1,4 @@
 library(tidyverse)
-library(ggpubr)
 theme_set(theme_bw())
 
 ## create a function to calculate standard error
@@ -19,9 +18,36 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
   allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/"
 } 
 
-thir_flowers_allo <- read.csv(paste0(allo_lead, "THIR-flowers_allometry-processing_20230119.csv"))
+
+## Allometry data
+thir_flowers_allo <- read.csv(paste0(allo_lead, "THIR-flowers_allometry-processing_20230119.csv")) %>%
+  mutate(allo.total.biomass.g = total.biomass.g)
 
 thir_viability_allo <- read.csv(paste0(allo_lead, "THIR-viability_allometry-processing_20230119.csv"))
+
+
+## Phyto data
+## specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
+} 
+
+thir_phyto <- read.csv(paste0(lead, "THIR_phyto-processing-redo_20230124.csv")) %>%
+  mutate(final.total.biomass.g = ifelse(!is.na(redo.total.biomass.g), redo.total.biomass.g, total.biomass.g))
+
+# Cleaning ####
+## Check that weights match redo.weights
+thir_combined <- left_join(thir_flowers_allo, thir_phyto, by = c("block", "plot", "sub", "phyto.unique"))
+
+ggplot(thir_combined, aes(x=final.total.biomass.g, y=allo.total.biomass.g)) +
+  geom_point() +
+  geom_abline(slope = 1)
+## looks good
 
 
 # Bio-Flower Rel. ####
@@ -110,4 +136,4 @@ THIR.allo.output <- data.frame(Species = "THIR",
                                viability_D = mean_viability[,1],
                                viability_D_se = mean_viability[,2])
 
-rm(list = c("mean_viability", "viability_test", "viability_sum", "thir_viability_allo", "thir_flowers_allo", "thir_fallo_pol2", "thir_fallo_pol", "thir_fallo_lin", "thir_fallo_lin2"))
+rm(list = c("mean_viability", "viability_test", "viability_sum", "thir_viability_allo", "thir_flowers_allo", "thir_fallo_pol2", "thir_fallo_pol", "thir_fallo_lin", "thir_fallo_lin2", "thir_combined", "thir_phyto"))

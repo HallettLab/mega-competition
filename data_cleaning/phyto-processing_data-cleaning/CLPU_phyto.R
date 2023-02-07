@@ -13,7 +13,7 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
   lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
 } 
 
-lomu <- read.csv(paste0(lead, "LOMU_phyto-processing-redo_20230206.csv"))
+clpu <- read.csv(paste0(lead, "CLPU_phyto-processing_20230206.csv"))
 
 ## basic cleaning function
 source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
@@ -25,82 +25,37 @@ source("allometry/merge_allometric_relationships.R")
 source("data_cleaning/unique_key.R")
 
 
-# Check Redo ####
-#colnames(lomu)
-#str(lomu)
-#unique(lomu$redo.total.biomass) ## someone wrote missing in this column
-
-
-#lomu.redo <- lomu %>%
- # filter(redo.total.biomass != "", redo.total.biomass != "missing")
-
-#lomu.redo$redo.total.biomass <- as.numeric(lomu.redo$redo.total.biomass)
-  
-#lomu.redo <- lomu.redo %>%
- # mutate(redo.diff = redo.total.biomass - total.biomass.g)
-
-#ggplot(lomu.redo, aes(x=redo.diff)) +
- # geom_histogram() +
-  #geom_vline(xintercept = 0)
-
-#concerns <- lomu.redo %>%
- # filter(redo.diff > 0)
-
-#MWblocks <- c(6, 7, 12, 14, 15)
-
-#lomu.needs.redo <- lomu %>%
- # filter(block %in% MWblocks, redo.total.biomass == "")
-  
 # Data Cleaning ####
-lomuC <- basic_cleaning_func(lomu)
-
-## someone wrote "missing in the redo.total.biomass column
-lomuC[lomuC$block == 14 & lomuC$plot == 21 & lomuC$sub == 2, ]$redo.total.biomass <- NA
-lomuC[lomuC$block == 14 & lomuC$plot == 21 & lomuC$sub == 2, ]$redo.notes <- "sample missing"
-
-lomuC$redo.total.biomass <- as.numeric(lomuC$redo.total.biomass)
+clpuC <- basic_cleaning_func(clpu)
 
 
 ## Final Mods ####
-#med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
-
-lomu_final <- lomuC %>%
+clpu_final <- clpuC %>%
   
   ## add unique IDs in
   left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   
   filter(complete.sample == "Y") %>% ## remove incompletes
   
-  mutate(final.total.biomass.g = ifelse(!is.na(redo.total.biomass), redo.total.biomass, total.biomass.g)) %>%
-  ## when a sample was reweighed, use the new value from redo.total.biomass column
-  
-  #mutate(total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(final.total.biomass.g, digits = 3), final.total.biomass.g)) %>% ## round to 3 decimal places
-  ## make sure to use the final.total.biomass.g as an input
-  ## don't need to round, no scale A here
-  
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, final.total.biomass.g, scale.ID, redo.scale.ID, process.notes, census.notes, redo.notes, unique.ID) ## select only needed columns
+  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, total.biomass.g, scale.ID, process.notes, census.notes, unique.ID) ## select only needed columns
 
 
 
 # Check Data ####
 ## look at total biomass
-ggplot(lomu_final, aes(x=final.total.biomass.g)) +
+ggplot(clpu_final, aes(x=total.biomass.g)) +
   geom_histogram()
 ## no missing values
 
 ## look at phyto.n.indiv
-ggplot(lomu_final, aes(x=phyto.n.indiv)) +
+ggplot(clpu_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
 ## some 4 phyto samples
 
 # Check Notes ####
-unique(lomu_final$process.notes)
+unique(clpu_final$process.notes)
 ## all seem good. There are likely phyto # changes that have not carried over to the phyto collections data sheet and will need to be made there.
 
-unique(lomu_final$redo.notes)
-## "2 copies of this sample, pulled aside"                                           
-## "2 copies of this sample, pulled aside, removed the roots from the small envelope"
-## "sample missing"
 
 ## create empty data frame
 df <- data.frame()
@@ -121,7 +76,7 @@ for(i in colnames(lomu_final)[14:15]) {
 # Make Phyto Dataframe ####
 lomu.phyto <- lomu_final %>%
   mutate(phyto.seed.out = (allo.df[allo.df$Species == "LOMU",2] + ## intercept
-                               (allo.df[allo.df$Species == "LOMU",5]*total.biomass.g.rounded) ## slope
+                             (allo.df[allo.df$Species == "LOMU",5]*total.biomass.g.rounded) ## slope
                            (allo.df[allo.df$Species == "LOMU",8]*(total.biomass.g.rounded^2))), ## poly
          ## use tot.bio to seed.num
          
