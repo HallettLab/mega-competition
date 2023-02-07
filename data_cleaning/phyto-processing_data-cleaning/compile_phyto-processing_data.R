@@ -19,11 +19,12 @@ source("data_cleaning/phyto-processing_data-cleaning/PLER_phyto.R")
 source("data_cleaning/phyto-processing_data-cleaning/PLNO_phyto.R")
 source("data_cleaning/phyto-processing_data-cleaning/TACA_phyto.R")
 source("data_cleaning/phyto-processing_data-cleaning/THIR_phyto.R")
+source("data_cleaning/phyto-processing_data-cleaning/TWIL_phyto.R")
 
 ## merge all final phyto seeds in/seeds out dfs together
-all.phytos <- do.call("rbind", list(acam.phyto, anar.phyto, amme.phyto, avba.phyto, brho.phyto, ceso.phyto, clpu.phyto, gitr.phyto, lomu.phyto, mael.phyto, mica.phyto, pler.phyto, plno.phyto, taca.phyto, thir.phyto))
+all.phytos <- do.call("rbind", list(acam.phyto, anar.phyto, amme.phyto, avba.phyto, brho.phyto, ceso.phyto, clpu.phyto, gitr.phyto, lomu.phyto, mael.phyto, mica.phyto, pler.phyto, plno.phyto, taca.phyto, thir.phyto, twil.phyto))
     ## add more phytos in as they are ready here.
 
 
 ## clean env 
-rm(list = c("acam.phyto", "anar.phyto", "amme.phyto", "avba.phyto", "basic_cleaning_func", "brho.phyto", "ceso.phyto", "clpu.phyto", "gitr.phyto", "lomu.phyto", "mael.phyto", "mica.phyto", "pler.phyto", "plno.phyto", "taca.phyto", "thir.phyto"))
+rm(list = c("acam.phyto", "anar.phyto", "amme.phyto", "avba.phyto", "basic_cleaning_func", "brho.phyto", "ceso.phyto", "clpu.phyto", "gitr.phyto", "lomu.phyto", "mael.phyto", "mica.phyto", "pler.phyto", "plno.phyto", "taca.phyto", "thir.phyto", "twil.phyto"))
