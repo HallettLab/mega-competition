@@ -28,6 +28,12 @@ source("data_cleaning/unique_key.R")
 # Final Cleaning ####
 gitrC <- basic_cleaning_func(gitr)
 
+## Checks ####
+gitrC[gitrC$unique == 4514,]$process.notes <- "biomass updated based on spot check"
+gitrC[gitrC$unique == 8670,]$process.notes <- "biomass updated based on spot check"
+gitrC[gitrC$unique == 8670,]$total.biomass.g <- 3.452
+gitrC[gitrC$unique == 8670,]$process.notes <- "biomass updated based on spot check"
+
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 gitr_final <- gitrC %>%

@@ -94,6 +94,8 @@ brho.changes <- brhocheck %>%
 952*0.016 ## = 15.232 seeds off
 ## will leave this one for now.
 
+
+## Verify Changes Made ####
 ## 3-15-13 B changed on 12/1/2022 by CW
     ## this is NOT an allo sample, no need to worry about that.
 
@@ -162,8 +164,10 @@ ggsave("data_cleaning/spot_checks/spot_check_figs/gitr_mean_diff_blocks.png", wi
 gitr.redos <- gitrcheck %>%
   filter(measure.diff > 0.05)
 
+## Verify Changes Made ####
 ## some of these do need changes, many were removing dirt or background flowers
-## fixed unique IDs 8670 and 4514
+## fixed unique IDs 8670, 6740, and 4514
+## verified that these were not used in allo
 
 
 ## GITR Allo Relationship: 
@@ -204,6 +208,7 @@ ggplot(micacheck, aes(x=block, y=measure.diff)) +
 mica.redos <- micacheck %>%
   filter(!is.na(spot.check.notes))
 
+## Verify Changes Made ####
 ## MICA 12-31-8 updated
 ## MICA 3-41-24 updated
 ## should be good to go now.
