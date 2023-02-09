@@ -235,9 +235,13 @@ unique(thircheck$spot.check.notes)
 
 thir.uncertain <- thircheck %>%
   filter(spot.check.notes != "")
+
+## Verify Changes Made ####
 ## 5567 OK
 ## the rest were changed in the phyto processing data on 1/6/23
 ## 6337 has a TINC and it looks like it was processed with the TINC during the redo. Needs to be redone again.
+    ## this was addressed now 2/7/23
+## all good and double checked that new weights are present.
 
 
 thir.uncertain$unique.ID

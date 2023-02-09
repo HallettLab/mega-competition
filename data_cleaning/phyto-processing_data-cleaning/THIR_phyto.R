@@ -29,6 +29,39 @@ source("data_cleaning/unique_key.R")
 # Data Cleaning ####
 thirC <- basic_cleaning_func(thir)
 
+## Check Samples ####
+#thir_final[thir_final$unique.ID == 9790,]
+#thir_final[thir_final$unique.ID == 6337,]
+#thir_final[thir_final$unique.ID == 7439,]
+#thir_final[thir_final$unique.ID == 9415,]
+#thir_final[thir_final$unique.ID == 10498,]
+#thir_final[thir_final$unique.ID == 6337,]
+
+## Check Spot Checks ####
+#thir_final[thir_final$unique.ID == 1356,] ## good
+#thir_final[thir_final$unique.ID == 1877,] ## good
+#thir_final[thir_final$unique.ID == 1927,] ## good
+#thir_final[thir_final$unique.ID == 5242,] ## good
+#thir_final[thir_final$unique.ID == 5443,] ## good
+#thir_final[thir_final$unique.ID == 5567,] ## good
+#thir_final[thir_final$unique.ID == 5793,] ## good
+#thir_final[thir_final$unique.ID == 5968,] ## good
+#thir_final[thir_final$unique.ID == 6337,] ## good
+#thir_final[thir_final$unique.ID == 8651,] ## good
+#thir_final[thir_final$unique.ID == 11589,] ## good
+
+## Check Redo ####
+## make sure columns missed by the basic cleaning function are okay!
+#str(thirC)
+#ggplot(thirC, aes(x=redo.total.biomass.g)) +
+ # geom_histogram()
+## there's a 17g redo weight? This seems odd...
+## there's also several at 10.
+## these are not making it through the final modifications
+
+#thirC[!is.na(thirC$redo.total.biomass.g) & thirC$redo.total.biomass.g > 9,]
+## okay, they are all incomplete.
+
 
 ## Final Mods ####
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
@@ -64,8 +97,9 @@ ggplot(thir_final, aes(x=phyto.n.indiv)) +
 
 # Check Notes ####
 unique(thir_final$process.notes)
-# NOTE: ####
+# NOTE: 
     ## still need to check samples with TINC and make sure this is added as a weed, NOT used as a phyto.
+    ## Done now!
 
 
 
