@@ -50,34 +50,64 @@ ggplot(clpu_final, aes(x=total.biomass.g)) +
 ## look at phyto.n.indiv
 ggplot(clpu_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
-## some 4 phyto samples
 
 # Check Notes ####
 unique(clpu_final$process.notes)
 ## all seem good. There are likely phyto # changes that have not carried over to the phyto collections data sheet and will need to be made there.
-
+    ## "changed to two phytos, few leaves"   
+    ## "added row to spreadsheet (not previously listed); few leaves"
 
 ## create empty data frame
 df <- data.frame()
 
 ## loop through all notes searching for "die" or "chang"
-for(i in colnames(lomu_final)[14:15]) {
-  tmp <- dplyr::filter(lomu_final, grepl("die", lomu_final[,i]))
+for(i in colnames(clpu_final)[13:14]) {
+  tmp <- dplyr::filter(clpu_final, grepl("die", clpu_final[,i]))
   df <- rbind(df, tmp)
 }
 
-for(i in colnames(lomu_final)[14:15]) {
-  tmp <- dplyr::filter(lomu_final, grepl("chang", lomu_final[,i]))
+for(i in colnames(clpu_final)[13:14]) {
+  tmp <- dplyr::filter(clpu_final, grepl("chang", clpu_final[,i]))
   df <- rbind(df, tmp)
 }
 
+# Check Uniques ####
+unique(clpu_final$unique.ID)
+na.check <- clpu_final %>%
+  filter(is.na(unique.ID))
+## 7 samples do NOT have phyto.uniques. Only one says it was added to the spreadsheet during processing.
+    ## added one is 14-36-16 and in collections we have a note saying it died before collection, but someone must have collected it and forgotten to record this.
+
+## ohh, these are ones that had their subplot changed during processing
+
+## Add uniques back in ####
+## fix sub plot so it matches collections data again
+clpu_final[clpu_final$block == 1 & clpu_final$plot == 5,]$sub <- 22
+clpu_final[clpu_final$block == 1 & clpu_final$plot == 5,]$unique.ID <- 122
+
+clpu_final[clpu_final$block == 4 & clpu_final$plot == 13 & clpu_final$phyto.unique == "C",]$sub <- 15
+clpu_final[clpu_final$block == 4 & clpu_final$plot == 13 & clpu_final$phyto.unique == "C",]$unique.ID <- 11962
+
+clpu_final[clpu_final$block == 5 & clpu_final$plot == 1,]$sub <- 20
+clpu_final[clpu_final$block == 5 & clpu_final$plot == 1,]$unique.ID <- 3146
+
+clpu_final[clpu_final$block == 5 & clpu_final$plot == 10,]$sub <- 20
+clpu_final[clpu_final$block == 5 & clpu_final$plot == 10 & clpu_final$phyto.unique == "B",]$unique.ID <- 11875
+
+clpu_final[clpu_final$block == 8 & clpu_final$plot == 27,]$sub <- 24
+clpu_final[clpu_final$block == 8 & clpu_final$plot == 27,]$unique.ID <- 6902
+
+clpu_final[clpu_final$block == 12 & clpu_final$plot == 19,]$sub <- 17
+clpu_final[clpu_final$block == 12 & clpu_final$plot == 19,]$unique.ID <- 7761
+
+clpu_final[clpu_final$block == 14 & clpu_final$plot == 36,]$unique.ID <- 9227
 
 
 # Make Phyto Dataframe ####
-lomu.phyto <- lomu_final %>%
-  mutate(phyto.seed.out = (allo.df[allo.df$Species == "LOMU",2] + ## intercept
-                             (allo.df[allo.df$Species == "LOMU",5]*total.biomass.g.rounded) ## slope
-                           (allo.df[allo.df$Species == "LOMU",8]*(total.biomass.g.rounded^2))), ## poly
+clpu.phyto <- clpu_final %>%
+  mutate(phyto.seed.out = allo.df[allo.df$Species == "CLPU",2] + ## intercept
+           (allo.df[allo.df$Species == "CLPU",5]*total.biomass.g) + ## slope 
+           (allo.df[allo.df$Species == "CLPU", 8]*(total.biomass.g^2)), ## poly
          ## use tot.bio to seed.num
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
@@ -90,9 +120,9 @@ lomu.phyto <- lomu_final %>%
 # NOTE: ####
 ## there are probably several instances where the phyto collected was a recruit. We should check all collection notes for this possibility.
 
-ggplot(lomu.phyto, aes(x=phyto.seed.out)) +
+ggplot(clpu.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
 
 ## clean up env
-rm(list = c("lomu", "lomu_final", "lomuC", "df", "tmp"))
+rm(list = c("clpu", "clpu_final", "clpuC", "df", "tmp"))
