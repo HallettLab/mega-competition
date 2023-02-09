@@ -48,7 +48,8 @@ ggplot(brho_final, aes(x=inflor.g.rounded)) +
 ggplot(brho_final, aes(x=phyto.n.indiv)) +
     geom_histogram()
 
-
+# Check unique.IDs ####
+#is.na(unique(brho_final$unique.ID)) ## looks good
 
 # Check Notes ####
 ## create empty data frame

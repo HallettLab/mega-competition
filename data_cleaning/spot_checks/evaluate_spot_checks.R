@@ -95,7 +95,7 @@ brho.changes <- brhocheck %>%
 ## will leave this one for now.
 
 ## 3-15-13 B changed on 12/1/2022 by CW
-
+    ## this is NOT an allo sample, no need to worry about that.
 
 
 
