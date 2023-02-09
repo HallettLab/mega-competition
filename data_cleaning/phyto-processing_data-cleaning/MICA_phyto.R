@@ -30,9 +30,9 @@ source("data_cleaning/unique_key.R")
 micaC <- basic_cleaning_func(mica)
 
 ## Follow up on spot checks ####
-#mica_int[mica_int$unique.ID == 8028,]
+#mica_final[mica_final$unique.ID == 8028,]
 ## 12-31-8
-#mica_int[mica_int$unique.ID == 2042,]
+#mica_final[mica_final$unique.ID == 2042,]
 ## 3-41-24
 #mica_final[mica_final$unique.ID == 7502,]
 #mica_final[mica_final$unique.ID == 9130,]
@@ -106,4 +106,4 @@ ggplot(mica.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
   geom_point()
 
 ## clean up env
-rm(list = c("mica", "mica_final", "micaC", "df", "tmp", "check"))
+rm(list = c("mica", "mica_final", "micaC", "df", "tmp"))

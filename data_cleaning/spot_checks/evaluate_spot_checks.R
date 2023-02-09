@@ -204,6 +204,11 @@ ggplot(micacheck, aes(x=block, y=measure.diff)) +
 mica.redos <- micacheck %>%
   filter(!is.na(spot.check.notes))
 
+## MICA 12-31-8 updated
+## MICA 3-41-24 updated
+## should be good to go now.
+## neither of these samples are used for allo
+
 
 # THIR ####
 thircheck <- thir.sc %>%
