@@ -55,14 +55,19 @@ ggplot(twil_combined, aes(x=final.total.biomass.g, y=allo.total.biomass)) +
   geom_point() +
   geom_abline(slope = 1)
 ## one point is off the 1:1 line 
+    ## corrected this now, looks good
 
 twil_mismatch <- twil_combined %>%
   filter(final.total.biomass.g != allo.total.biomass) %>%
   select(block, plot, sub, allo.total.biomass, final.total.biomass.g, redo.total.biomass.g, total.biomass.g)
 
 ## 14-30-11 has a decently large mismatch: it was one of the original allometry samples and weighed at 0.131. During phyto processing it was weighed as 0.0083. It may have lost biomass during allo processing or one scale is off. Either way, need to reweigh.
+    ## Fixed
 
 ## the other 4 samples are off by slight amounts that are likely due to use of diff scales.
+
+## 14-36-11 is just big enough of a diff that we should use the redo.total.biomass for this one. 
+twil_flowers_allo[twil_flowers_allo$block == 14 & twil_flowers_allo$plot == 36,]$total.biomass.g <- 0.251
 
 
 # Bio-Flower Rel. ####

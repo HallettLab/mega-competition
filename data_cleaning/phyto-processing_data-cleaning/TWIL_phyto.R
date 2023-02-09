@@ -30,6 +30,32 @@ source("data_cleaning/unique_key.R")
 # Data Cleaning ####
 twilC <- basic_cleaning_func(twil)
 
+## Check Redo Cols ####
+## these columns would not be error checked by the basic cleaning function - follow up and make sure that all looks okay here.
+#str(twilC)
+#unique(twilC$majority.seeds.present) ## looks good
+#twilC[is.na(twilC$majority.seeds.present),]
+## 3 samples are missing, but there are 2 others that are unclear.
+    ## missing: 10102,  968, and one that doesn't have a unique.ID sample 6-5-8 (odd) - okay after looking into it the unique.ID is 4276. It must have just gotten deleted? Joining it with the unique key fixes this issue.
+    ## samples 5365 and 5991 were just marked incomplete and majority.seeds.present wasn't filled out
+    ## these should all get excluded when we filter for redo.complete == "Y
+
+#unique(twilC$redo.complete)
+## one value was entered as missing here
+#twilC[is.na(twilC$redo.complete),]
+## 2 missing samples show up here.
+
+## Follow up- Collections Notes ####
+#twilC[twilC$unique == 6091,]
+#twilC[twilC$unique == 6166,] ## this is a veg sample that was collected too early by mistake. Would have gone on to produce flowers likely. 
+#twilC[twilC$unique == 6402,] 
+#twilC[twilC$unique == 7103,] 
+#twilC[twilC$unique == 8347,] ## this sample may have been double planted with 6 TWIL rather than 3. 
+    ## since the actual phyto # is 2, leave seeds.in as is (3)
+#twilC[twilC$unique == 8547,] ## these phytometers might be spillover from adjacent TWIL background
+    ## need to adjust this seeds.in value to # phyto.n.indiv (2)
+    ## change made below 2/9/23
+
 
 ## Final Mods ####
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
@@ -68,8 +94,30 @@ ggplot(twil_final, aes(x=phyto.n.indiv)) +
 ## check flower.num (calc for indiv w/o seeds present)
 ggplot(twil_final, aes(x=flower.num)) +
   geom_histogram()
+## 97 rows missing values - so there should be at least 97 samples with seeds present
+
+nrow(twil_final[twil_final$majority.seeds.present == "Y",]) ## 100
+nrow(twil_final[twil_final$majority.seeds.present == "N",]) ## 63
+nrow(twil_final[twil_final$majority.seeds.present == "veg",]) ## 12
+
 
 ## lots of samples without many seeds, decent amount of vegetative samples also.
+ggplot(twil_final, aes(x=majority.seeds.present)) +
+  geom_bar()
+
+ggplot(twil_final[twil_final$majority.seeds.present == "N",], aes(x=flower.num)) +
+  geom_histogram()
+## no missing values, meaning everything that didn't have the majority of seeds had flowers counted. Good.
+
+ggplot(twil_final[twil_final$majority.seeds.present == "Y",], aes(x=flower.num)) +
+  geom_histogram()
+## several with seeds present had flower.num counted, but that's okay
+
+ggplot(twil_final[twil_final$majority.seeds.present == "veg",], aes(x=flower.num)) +
+  geom_histogram()
+ggplot(twil_final[twil_final$majority.seeds.present == "veg",], aes(x=total.biomass.g.rounded)) +
+  geom_histogram()
+## no missing values, everything veg has a weight at least. that's good.
 ggplot(twil_final, aes(x=majority.seeds.present)) +
   geom_bar()
 
@@ -80,6 +128,7 @@ unique(twil_final$process.notes)
 
 unique(twil_final$redo.notes)
 ## 0.037 present in one... was this meant to be here?
+## a few of the notes were about reweighing because the orig biomass did not reflect sample size. I believe that in the original data, some of the block 14 plots (20's - 30's) got scrambled. The redo weights should have fixed this problem, CW went back and reweighed a few more on 2/8/2023 and feel good about things now.
 
 note_check <- twilC %>%
   filter(redo.notes == "0.037")
@@ -95,9 +144,7 @@ twil.phyto <- twil_final %>%
                                    allo.df[allo.df$Species == "TWIL",2] + ## intercept
                                      (allo.df[allo.df$Species == "TWIL",5]*total.biomass.g.rounded) + ## slope 
                                    (allo.df[allo.df$Species == "TWIL", 8]*(total.biomass.g.rounded^2)), flower.num),
-         ## if most seeds present, use biomass-flower rel. otherwise use flower.num count
-         
-         #TWIL.flowers.out = ifelse(majority.seeds.present == "veg", ),
+         ## if most seeds present, use biomass-flower rel. otherwise use flower.num count; need to make a decision still on how to treat vegetative samples, currently we are treating them as if they would potentially produce seeds at some point.
          
          
          viable.flowers.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "TWIL",17]*TWIL.flowers.out,  allo.df[allo.df$Species == "TWIL",15]*TWIL.flowers.out),
@@ -109,8 +156,13 @@ twil.phyto <- twil_final %>%
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
          
-         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
-  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+         phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in),
+         ## then, check for # indiv > 3, use # indiv as seeds.in here also
+         phyto.seed.in = ifelse(unique.ID == 8547, phyto.n.indiv, phyto.seed.in)
+         ## this phyto was a recruit, use phyto.n.indiv as seeds.in
+         
+         ) %>%
+  
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
