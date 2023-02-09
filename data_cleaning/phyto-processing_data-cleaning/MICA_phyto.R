@@ -34,6 +34,9 @@ micaC <- basic_cleaning_func(mica)
 ## 12-31-8
 #mica_int[mica_int$unique.ID == 2042,]
 ## 3-41-24
+#mica_final[mica_final$unique.ID == 7502,]
+#mica_final[mica_final$unique.ID == 9130,]
+#mica_final[mica_final$unique.ID == 10722,]
 
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
@@ -52,10 +55,10 @@ mica_final <- micaC %>%
 ## look at total biomass
 ggplot(mica_final, aes(x=total.biomass.g.rounded)) +
   geom_histogram()
-## 1 row removed
+## no rows removed
 
-check <- mica_final %>%
-  filter(is.na(total.biomass.g.rounded))
+#check <- mica_final %>%
+  #filter(is.na(total.biomass.g.rounded))
 ## already in our data cleaning checks - will follow up on
 
 
