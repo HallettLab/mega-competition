@@ -43,6 +43,13 @@ anar_int <- left_join(anarC, unique.key, by = c("treatment", "block", "plot", "s
   ## 1/10/23 downloaded the newest version of collections data onto dropbox. This should fix the issue.
 
 #anar_int[anar_int$unique.ID == 3934, ]
+#anar_int[anar_int$unique.ID == 10761, ]
+#anar_int[anar_int$unique.ID == 11620, ]
+#anar_int[anar_int$unique.ID == 11803, ]
+#anar_int[anar_int$unique.ID == 8238, ]
+#anar_int[anar_int$unique.ID == 8790, ]
+#anar_int[anar_int$unique.ID == 9040, ]
+
 
 ## Final mods ####
 anar_final <- anar_int %>%

@@ -51,6 +51,14 @@ ggplot(clpu_final, aes(x=total.biomass.g)) +
 ggplot(clpu_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
 
+clpu_final[clpu_final$unique.ID == 1319,]
+## this one does not have a counterpart in collections data for some reason.
+## sample 3-12-2
+
+## okay, there are two rows in collections data. There must have been a phyto.unique here originally? Odd that there are no notes about anything here.
+## need to resolve this!!
+
+
 # Check Notes ####
 unique(clpu_final$process.notes)
 ## all seem good. There are likely phyto # changes that have not carried over to the phyto collections data sheet and will need to be made there.
