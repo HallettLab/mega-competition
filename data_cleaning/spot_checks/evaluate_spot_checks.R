@@ -262,7 +262,7 @@ ggplot(lomucheck, aes(x=block, y=measure.diff)) +
 
 
 lomu.redos <- lomucheck %>%
-  filter(!is.na(spot.check.notes))
+  filter(!is.na(spot.check.notes) | measure.diff > 0.19)
 
 ggplot(lomu.redos, aes(x=block, y=measure.diff)) +
   geom_point() +
@@ -270,3 +270,6 @@ ggplot(lomu.redos, aes(x=block, y=measure.diff)) +
 
 ## there are enough notes about roots for blocks processed by MW that certain blocks of this species should also be redone
 
+## Verify Changes Made ####
+## updated weights in LOMU phyto script where necessary! 
+## one sample still to follow up on, but this is in data cleaning checks and should be taken care of eventually.

@@ -13,7 +13,7 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
   lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
 } 
 
-lomu <- read.csv(paste0(lead, "LOMU_phyto-processing-redo_20230206.csv"))
+lomu <- read.csv(paste0(lead, "LOMU_phyto-processing-redo_20230206.csv")) 
 
 ## basic cleaning function
 source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
@@ -24,12 +24,14 @@ source("allometry/merge_allometric_relationships.R")
 ## uniqueID key
 source("data_cleaning/unique_key.R")
 
-
-# Check Redo ####
+# Data Cleaning ####
+## Check Redo ####
 #colnames(lomu)
 #str(lomu)
 #unique(lomu$redo.total.biomass) ## someone wrote missing in this column
 
+redone <- lomu %>%
+  filter(redo.total.biomass != "")
 
 #lomu.redo <- lomu %>%
  # filter(redo.total.biomass != "", redo.total.biomass != "missing")
@@ -50,8 +52,8 @@ source("data_cleaning/unique_key.R")
 
 #lomu.needs.redo <- lomu %>%
  # filter(block %in% MWblocks, redo.total.biomass == "")
-  
-# Data Cleaning ####
+
+## Final Cleaning
 lomuC <- basic_cleaning_func(lomu)
 
 ## someone wrote "missing in the redo.total.biomass column
@@ -60,6 +62,23 @@ lomuC[lomuC$block == 14 & lomuC$plot == 21 & lomuC$sub == 2, ]$redo.notes <- "sa
 
 lomuC$redo.total.biomass <- as.numeric(lomuC$redo.total.biomass)
 
+## Check Spot Check ####
+## made all updates to the raw data sheet, that's why all of these are commented out now (CW 2/9/23)
+#lomuC[lomuC$unique == 7778,] ## good
+#lomuC[lomuC$unique == 2604,]$redo.total.biomass <- 0.503
+#lomuC[lomuC$unique == 11971,]$redo.total.biomass <- 0.454
+#lomuC[lomuC$unique == 2429,]$redo.total.biomass <- 0.500
+#lomuC[lomuC$unique == 7478,] ## good
+#lomuC[lomuC$unique == 8863,] ## good
+#lomuC[lomuC$unique == 11967,]$redo.total.biomass <- 0.840 ## seems like it could have lost bio b/w spot check and redo, so using the spot check value here.
+#lomuC[lomuC$unique == 4335,]$redo.total.biomass <- 2.537 ## seems like it could have lost bio b/w spot check and redo, so using the spot check value here.
+#lomuC[lomuC$unique == 8104,] ## good
+#lomuC[lomuC$unique == 8229,] ## good
+lomuC[lomuC$unique == 1016,] ## off by a lot, no notes though; look into this further
+#lomuC[lomuC$unique == 8388,]$redo.total.biomass <- 1.248 ## seems like it could have lost bio b/w spot check and redo, so using the spot check value here.
+#lomuC[lomuC$unique == 9038,] ## good
+#lomuC[lomuC$unique == 5086,] ## good
+#lomuC[lomuC$unique == 8838,] ## missing in both places.
 
 ## Final Mods ####
 #med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
@@ -106,24 +125,27 @@ unique(lomu_final$redo.notes)
 df <- data.frame()
 
 ## loop through all notes searching for "die" or "chang"
-for(i in colnames(lomu_final)[14:15]) {
+for(i in colnames(lomu_final)[14:16]) {
   tmp <- dplyr::filter(lomu_final, grepl("die", lomu_final[,i]))
   df <- rbind(df, tmp)
 }
 
-for(i in colnames(lomu_final)[14:15]) {
+for(i in colnames(lomu_final)[14:16]) {
   tmp <- dplyr::filter(lomu_final, grepl("chang", lomu_final[,i]))
   df <- rbind(df, tmp)
 }
 
-
+# NOTE ####
+## LOTS of change notes to follow up on. phew! look thru later.
 
 # Make Phyto Dataframe ####
 lomu.phyto <- lomu_final %>%
   mutate(phyto.seed.out = (allo.df[allo.df$Species == "LOMU",2] + ## intercept
-                               (allo.df[allo.df$Species == "LOMU",5]*total.biomass.g.rounded) ## slope
-                           (allo.df[allo.df$Species == "LOMU",8]*(total.biomass.g.rounded^2))), ## poly
+                             (allo.df[allo.df$Species == "LOMU",5]*final.total.biomass.g) + ## slope
+                             (allo.df[allo.df$Species == "LOMU",8]*(final.total.biomass.g^2))), ## poly
          ## use tot.bio to seed.num
+         
+         
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
@@ -140,4 +162,4 @@ ggplot(lomu.phyto, aes(x=phyto.seed.out)) +
 
 
 ## clean up env
-rm(list = c("lomu", "lomu_final", "lomuC", "df", "tmp"))
+rm(list = c("lomu", "lomuC", "df", "tmp", "redone"))
