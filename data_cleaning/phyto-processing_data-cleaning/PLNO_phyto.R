@@ -51,6 +51,9 @@ ggplot(plno_final, aes(x=total.biomass.g)) +
 ggplot(plno_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
 
+ggplot(plno_final, aes(x=unique.ID)) +
+  geom_histogram()
+## none missing
 
 # Check Notes ####
 unique(plno_final$process.notes)
