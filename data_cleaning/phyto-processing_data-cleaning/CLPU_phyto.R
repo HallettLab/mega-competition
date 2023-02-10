@@ -133,4 +133,4 @@ ggplot(clpu.phyto, aes(x=phyto.seed.out)) +
 
 
 ## clean up env
-rm(list = c("clpu", "clpu_final", "clpuC", "df", "tmp"))
+rm(list = c("clpu", "clpu_final", "clpuC", "df", "tmp", "na.check"))

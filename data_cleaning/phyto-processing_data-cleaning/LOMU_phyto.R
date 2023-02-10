@@ -162,4 +162,4 @@ ggplot(lomu.phyto, aes(x=phyto.seed.out)) +
 
 
 ## clean up env
-rm(list = c("lomu", "lomuC", "df", "tmp", "redone"))
+rm(list = c("lomu", "lomuC", "df", "tmp", "redone", "lomu_final"))

@@ -124,4 +124,4 @@ LOMU.allo.output <- data.frame(Species = "LOMU",
                                viability_D_se = NA)
 
 ## clean env
-rm(list = c("lomu_allo", "lomu_allo_rel_lin", "lomu_allo_rel_pol", "allo_lead"))
+rm(list = c("lomu_allo", "lomu_allo_rel_lin", "lomu_allo_rel_pol", "allo_lead", "lomu_alloC", "lomu_combined", "lomu_phyto", "lomu_phytoC", "lomu_phytoC2", "mismatch"))

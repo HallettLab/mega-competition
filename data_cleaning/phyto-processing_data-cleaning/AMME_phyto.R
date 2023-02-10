@@ -31,6 +31,10 @@ source("data_cleaning/unique_key.R")
 # Clean Data ####
 ammeC <- basic_cleaning_func(amme)
 
+## Fix Subplots ####
+## these were changed during processing and this messed up joining with unique.IDs
+ammeC[ammeC$block == 7 & ammeC$plot == 28 & ammeC$sub == 18,]$sub <- 17
+ammeC[ammeC$block == 16 & ammeC$plot == 42 & ammeC$sub == 22,]$sub <- 19
 
 amme_final <- ammeC %>%
   filter(complete.sample == "Y") %>% ## remove incompletes
@@ -50,6 +54,16 @@ ggplot(amme_final, aes(x=total.biomass.g)) +
 
 ggplot(amme_final, aes(x=phyto.n.indiv)) +
   geom_histogram()
+
+ggplot(amme_final, aes(x=unique.ID)) +
+  geom_histogram()
+## 2 missing unique.IDs
+    ## fixed this now.
+
+#amme.na.check <- amme_final %>%
+ # filter(is.na(unique.ID))
+## subplots were changed and this is why the unique.IDs are missing
+
 
 
 # Check Notes ####
