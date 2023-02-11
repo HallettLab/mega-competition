@@ -58,6 +58,9 @@ clpu_final[clpu_final$unique.ID == 1319,]
 ## okay, there are two rows in collections data. There must have been a phyto.unique here originally? Odd that there are no notes about anything here.
 ## need to resolve this!!
 
+## we will remove this sample, since we can't tell which unique ID and census it should be associated with
+    ## done
+
 
 # Check Notes ####
 unique(clpu_final$process.notes)
@@ -113,6 +116,7 @@ clpu_final[clpu_final$block == 14 & clpu_final$plot == 36,]$unique.ID <- 9227
 
 # Make Phyto Dataframe ####
 clpu.phyto <- clpu_final %>%
+  filter(unique.ID != 1319) %>% ## remove sample
   mutate(phyto.seed.out = allo.df[allo.df$Species == "CLPU",2] + ## intercept
            (allo.df[allo.df$Species == "CLPU",5]*total.biomass.g) + ## slope 
            (allo.df[allo.df$Species == "CLPU", 8]*(total.biomass.g^2)), ## poly
@@ -130,7 +134,8 @@ clpu.phyto <- clpu_final %>%
 
 ggplot(clpu.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
-
+ggplot(clpu.phyto, aes(x=unique.ID)) +
+  geom_histogram()
 
 ## clean up env
 rm(list = c("clpu", "clpu_final", "clpuC", "df", "tmp", "na.check"))
