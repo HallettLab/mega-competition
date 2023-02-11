@@ -8,10 +8,22 @@ source("data_cleaning/phyto-processing_data-cleaning/compile_phyto-processing_da
 source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_calculations.R")
 
 
+# change THIR and TWIL names in germ data  #
+germ.sum.sp.DC <- germ.sum.sp.DC %>% 
+  mutate(species = ifelse(species == "THIR-I", "THIR", species), 
+         species = ifelse(species == "TWIL-I", "TWIL", species))
+
+
 # Join Data ####
 ## join phyto & bkgrd data
 bg.phyto.seeds <- left_join(all.phytos, bkgrd.seeds, by = "unique.ID") %>%
   select(-phyto.n.indiv)
+
+unique.key <- unique.key %>% 
+  mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
+         bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
+         phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
+         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
 
 ## join with unique.ID key to get block, plot, etc info
     ## also, adjust trifolium names to take out the annoying "-I"

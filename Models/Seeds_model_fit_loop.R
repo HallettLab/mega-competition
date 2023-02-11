@@ -45,6 +45,9 @@ warnings <- list()
 # This is placeholder until we figure out what to do about ANAR backgrounds that either have 0 stems or where germ estimates were zero (but clearly they werent)
 model.dat[!is.finite(model.dat$ANAR),]$ANAR <- mean(model.dat[is.finite(model.dat$ANAR) & model.dat$bkgrd == "ANAR",]$ANAR, na.rm = T)
 
+# 5462 doesnt have background CESO data, temp fix here
+model.dat <- filter(model.dat, unique.ID != 5462)
+
 for(i in species){
   for(j in trt){
     dat <- subset(model.dat, phyto == i)
@@ -90,3 +93,7 @@ for(i in species){
     save(tmp, file = paste0("Models/Posteriors/seeds_",i,"_",j,"_posteriors.rdata"))
   }
 }
+
+
+
+

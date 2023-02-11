@@ -78,7 +78,6 @@ bg_indivC[bg_indivC$block == 16 & bg_indivC$plot == 17,]$flower.num <- NA
 bg_indivC[bg_indivC$block == 7 & bg_indivC$plot == 11,]$flower.num <- NA
 ## change this flower.num val from "F" to NA
 
-bg_indivC[bg_indivC$block == 7 & bg_indivC$plot == 11,]$flower.num <- NA
 bg_indivC[bg_indivC$block == 7 & bg_indivC$plot == 11,]$process.notes <- "missing"
 
 bg_indivC$flower.num <- as.numeric(bg_indivC$flower.num)
@@ -103,7 +102,7 @@ bg.sp <- unique(bg.ind[bg.ind$bkgrd != "BRNI" & bg.ind$bkgrd != "LENI",]$bkgrd)
 ## separate totbio to something relationships
 totbio.to.flowers.to.seeds <- c("ACAM", "ANAR", "GITR", "PLNO", "AMME")
 totbio.to.seeds <- c("CLPU", "MICA", "LOMU", "TACA", "BRNI")
-totbio.to.flowers.to.viability.to.seeds <- c("THIR", "TWIL")
+totbio.to.flowers.to.viability <- c("THIR", "TWIL")
 
 
 ## make an empty dataframe for the output

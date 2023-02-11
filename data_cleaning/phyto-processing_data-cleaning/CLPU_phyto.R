@@ -26,6 +26,7 @@ source("data_cleaning/unique_key.R")
 
 
 # Data Cleaning ####
+clpu[clpu$phyto == "CPLU",]$phyto <- "CLPU"
 clpuC <- basic_cleaning_func(clpu)
 
 

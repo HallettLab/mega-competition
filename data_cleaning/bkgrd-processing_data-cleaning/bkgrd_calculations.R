@@ -66,11 +66,20 @@ for(i in 1:length(block.plots)) {
       
   }
   
+germ.eval <- germ.eval %>% 
+  mutate(species = ifelse(species == "THIR-I", "THIR", species), 
+         bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
+         species = ifelse(species == "TWIL-I", "TWIL", species), 
+         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
 
 ## Merge avg seed data ####
 ## merge the avg germ rates with the avg seed per indiv data
 bg.info <- left_join(germ.eval, bg.seeds, by = c("block", "plot", "bkgrd")) %>%
   select(block, plot, bkgrd, germ.calc, bg.avg.seed.num)
+
+bkgrd.n.indiv <- bkgrd.n.indiv %>% 
+  mutate(bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
+         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
 
 ## Merge BG indiv data ####
 bkgrd.calc <- left_join(bkgrd.n.indiv, bg.info, by = c("block", "plot", "bkgrd"))
