@@ -26,11 +26,13 @@ source("allometry/merge_allometric_relationships.R")
 ## unique ID key 
 source("data_cleaning/unique_key.R")
 
-
+#unique(ceso$flower.num)
 
 # Final Cleaning ####
 cesoC <- basic_cleaning_func(ceso)
+str(cesoC)
 
+#unique(cesoC$flower.num)
 
 ceso_final <- cesoC %>%
   filter(!is.na(flower.num)) %>% ## get rid of missing sample
