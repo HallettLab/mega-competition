@@ -67,6 +67,7 @@ unique(bg_indivC$flower.num) ## one value is "F"
 
 ### Change Values ####
 bg_indivC[bg_indivC$block == 16 & bg_indivC$plot == 17,]$flower.num <- NA
+bg_indivC[bg_indivC$block == 7 & bg_indivC$plot == 11,]$flower.num <- NA
 ## change this flower.num val from "F" to NA
 
 bg_indivC[bg_indivC$block == 7 & bg_indivC$plot == 11,]$flower.num <- NA
@@ -158,4 +159,4 @@ for (i in 1:length(bg.sp)){
 bg.seeds <- bg.ind.avg
 
 # Clean Env ####
-rm("bg_indiv", "bg.ind", "bg.sp", "bio.to.flower.to.seeds", "finished", "seeds", "tmp.ind", "tmp.sp", "tmp.model", "lead", "totbio.to.seeds", "inflor.bio.to.seeds", "stem.to.seeds", "bg.ind.avg", "bg_indivC")
+rm("bg_indiv", "bg.ind", "bg.sp", "finished", "seeds", "tmp.ind", "tmp.sp", "tmp.model", "totbio.to.seeds", "inflor.bio.to.seeds", "stem.to.seeds", "bg.ind.avg", "bg_indivC")
