@@ -34,7 +34,8 @@ initials <- list(lambda=250,
 
 initials1<- list(initials, initials, initials, initials) 
 
-species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL")
+species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", 
+             "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
 
 trt <- c("C","D")
 
