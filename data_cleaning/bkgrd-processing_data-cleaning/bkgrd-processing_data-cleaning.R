@@ -23,26 +23,34 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 } 
 
 ## Background Data
-bg_indiv <- read.csv(paste0(lead, "bkgrd-processing_20230131.csv")) %>%
+bg_indiv <- read.csv(paste0(lead, "bkgrd-processing_20230211.csv")) %>%
   mutate(bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd),
          bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd)) %>%
   ## fix species abbreviations to remove inoc sub-experiment
-  filter(bkgrd != "THIR-U", bkgrd != "TWIL-U")
-  ## remove inoc sub-experiment phytos
+  filter(bkgrd != "THIR-U", bkgrd != "TWIL-U", bkgrd != "")
+  ## remove inoc sub-experiment phytos and blank rows
 
 ## Allometric Relationships
 source("allometry/merge_allometric_relationships.R")
 
 
 # Clean Data ####
+#unique(bg_indiv$bkgrd)
+#ggplot(bg_indiv, aes(x=bkgrd)) +
+ # geom_bar()
+
+#blank.check <- bg_indiv %>%
+ # filter(bkgrd == "") ## 3 blank rows with nothing at all.
+
 
 ## Finished Sp ####
 ## separate out finished species
-finished <- c("ACAM", "ANAR", "AVBA", "BRHO", "CESO", "GITR", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR")
+#finished <- c("ACAM", "ANAR", "AVBA", "BRHO", "CESO", "GITR", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR")
+## all backgrounds are finished
 
 ## Allo Types ####
 ## separate by types of allometric relationships
-totbio.to.something <- c("ACAM", "ANAR", "GITR", "TWIL", "PLNO", "AMME", "MICA", "LOMU", "TACA", "CLPU", "THIR")
+totbio.to.something <- c("ACAM", "ANAR", "BRNI", "GITR", "TWIL", "PLNO", "AMME", "MICA", "LOMU", "TACA", "CLPU", "THIR")
 inflor.bio.to.seeds <- c("BRHO", "PLER")
 stem.to.seeds <- c("LENI")
 seeds.per.flower <- c("MAEL", "CESO")
@@ -87,12 +95,14 @@ bg.ind <- bg_indivC %>%
   
 # Calc Avg Seed Output ####
 ## make a vector of finished bg plots
-bg.sp <- unique(bg.ind[bg.ind$bkgrd %in% finished,]$bkgrd)
+#bg.sp <- unique(bg.ind[bg.ind$bkgrd %in% finished,]$bkgrd)
+bg.sp <- unique(bg.ind[bg.ind$bkgrd != "BRNI" & bg.ind$bkgrd != "LENI",]$bkgrd)
+
 
 ## separate totbio to something relationships
 totbio.to.flowers.to.seeds <- c("ACAM", "ANAR", "GITR", "PLNO", "AMME")
-totbio.to.seeds <- c("CLPU", "MICA", "LOMU", "TACA")
-totbio.to.flowers.to.viability <- c("THIR")
+totbio.to.seeds <- c("CLPU", "MICA", "LOMU", "TACA", "BRNI")
+totbio.to.flowers.to.viability.to.seeds <- c("THIR", "TWIL")
 
 
 ## make an empty dataframe for the output
@@ -129,7 +139,8 @@ for (i in 1:length(bg.sp)){
     
     tmp.ind <- tmp.sp %>%
       mutate(avg.flower.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind) + (tmp.model$poly*(avg.ind^2))),
-             bg.avg.seed.num = ifelse(treatment == "D", avg.flower.num*tmp.model$viability_D, avg.flower.num*tmp.model$viability_C)) %>%
+             avg.via.num = ifelse(treatment == "D", avg.flower.num*tmp.model$viability_D, avg.flower.num*tmp.model$viability_C),
+             bg.avg.seed.num = ifelse(treatment == "D", avg.via.num*tmp.model$seeds_D, avg.via.num*tmp.model$seeds_C)) %>%
       select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
     
   }
@@ -158,4 +169,4 @@ for (i in 1:length(bg.sp)){
 bg.seeds <- bg.ind.avg
 
 # Clean Env ####
-rm("bg_indiv", "bg.ind", "bg.sp", "bio.to.flower.to.seeds", "finished", "seeds", "tmp.ind", "tmp.sp", "tmp.model", "lead", "totbio.to.seeds", "inflor.bio.to.seeds", "stem.to.seeds", "bg.ind.avg", "bg_indivC")
+rm("bg_indiv", "bg.ind", "bg.sp", "seeds", "tmp.ind", "tmp.sp", "tmp.model", "totbio.to.seeds", "inflor.bio.to.seeds", "stem.to.seeds", "bg.ind.avg", "bg_indivC")
