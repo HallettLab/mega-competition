@@ -32,7 +32,7 @@ model.dat <- bg.phyto.seeds2 %>%
   mutate(phyto.seeds.out.final = ifelse(bkgrd == phyto, phyto.seed.out + bg.seeds.out, phyto.seed.out)) %>% ## for intra phytos, add phyto & bg seeds out values
   select(-Control, -phyto.seed.in, -phyto.seed.out, -bg.seeds.out) ## drop extraneous cols
 
-model.dat <- model.dat[,c(1:10,29,11:28)] ## reorder
+model.dat <- model.dat[,c(1:10,30,11:29)] ## reorder
 
 ## extraneous now- this change bg colnames back to sp names, but changed that above
 #colnames(model.dat)[12:ncol(model.dat)] <- substr(colnames(model.dat)[12:ncol(model.dat)], 1, 4)
@@ -49,4 +49,4 @@ model.dat <- model.dat [,-10] ## get rid of phyto.seeds.in.final column
 
 
 ## clean env
-rm(list = c("all.phytos", "allo.df", "bg.phyto.seeds", "bg.phyto.seeds2", "bkgrd.seeds", "block.plots", "calcSE", "collectionsC", "drought", "i", "lead", "med_scales", "phyto.census", "plot.dates", "seeds.per.flower", "tmp.germ", "tmp.plot", "unique.key"))
+rm(list = c("all.phytos", "allo.df", "bg.phyto.seeds", "bg.phyto.seeds2", "bkgrd.seeds", "block.plots", "calcSE", "collectionsC", "drought", "i", "lead", "phyto.census", "plot.dates", "seeds.per.flower", "tmp.germ", "tmp.plot", "unique.key"))
