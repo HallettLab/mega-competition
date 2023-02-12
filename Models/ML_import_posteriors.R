@@ -23,6 +23,8 @@ for(i in species){
   }
 }
 
+
+
 ### Extract and inspect distributions ####
 # unlist each of the species/rainfall combinations
 posteriors2 <- data.frame()
@@ -53,4 +55,4 @@ ggplot(posteriors2, aes(x = alpha_brho, fill = treatment, line = treatment)) +
   geom_density() + 
   facet_wrap(~species, ncol = 3, scales = "free")
 
-
+rm(params, tmp, tmp2, tmp3, i, j)

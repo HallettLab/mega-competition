@@ -169,5 +169,5 @@ for (i in 1:length(bg.sp)){
 bg.seeds <- bg.ind.avg
 
 # Clean Env ####
-rm("bg_indiv", "bg.ind", "bg.sp", "seeds", "tmp.ind", "tmp.sp", "tmp.model", "totbio.to.seeds", "inflor.bio.to.seeds", "stem.to.seeds", "bg.ind.avg", "bg_indivC")
+rm(bg_indiv, bg.ind, bg.sp, seeds, tmp.ind, tmp.sp, tmp.model, totbio.to.seeds, inflor.bio.to.seeds, stem.to.seeds, bg.ind.avg, bg_indivC, drought, i, seeds.per.flower, totbio.to.flowers.to.seeds, totbio.to.flowers.to.viability, totbio.to.something, basic_cleaning_func)
 

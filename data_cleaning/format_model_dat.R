@@ -61,4 +61,4 @@ model.dat <- model.dat [,-10] ## get rid of phyto.seeds.in.final column
 
 
 ## clean env
-rm(list = c("all.phytos", "allo.df", "bg.phyto.seeds", "bg.phyto.seeds2", "bkgrd.seeds", "block.plots", "calcSE", "collectionsC", "drought", "i", "lead", "phyto.census", "plot.dates", "seeds.per.flower", "tmp.germ", "tmp.plot", "unique.key"))
+rm(all.phytos, allo.df, bg.phyto.seeds, bg.phyto.seeds2, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key)
