@@ -30,31 +30,42 @@ data{
 parameters{
   //real<lower = 0> lambda;
   real<lower = 0, upper = 10000> lambda;
-  real alpha_pler;
-  real alpha_anar;
-  real alpha_acam;
-  real alpha_brni;
-  real alpha_clpu;
-  real alpha_brho;
-  real alpha_gitr;
-  real alpha_amme;
-  real alpha_plno;
-  real alpha_thir;
-  real alpha_mica;
-  real alpha_ceso;
-  real alpha_twil;
-  real alpha_lomu;
-  real alpha_taca;
-  real alpha_mael;
-  real alpha_leni;
-  real alpha_avba;
-
-  //real<lower = 0>  alpha_avfa;
-  //real<lower = 0>  alpha_brho;
-  //real<lower = 0>  alpha_esca;
-  //real<lower = 0>  alpha_laca;
-  //real<lower = 0>  alpha_trhi;
-  //real<lower = 0>  alpha_vumy;
+  real<lower = 0> alpha_pler;
+  real<lower = 0> alpha_anar;
+  real<lower = 0> alpha_acam;
+  real<lower = 0> alpha_brni;
+  real<lower = 0> alpha_clpu;
+  real<lower = 0> alpha_brho;
+  real<lower = 0> alpha_gitr;
+  real<lower = 0> alpha_amme;
+  real<lower = 0> alpha_plno;
+  real<lower = 0> alpha_thir;
+  real<lower = 0> alpha_mica;
+  real<lower = 0> alpha_ceso;
+  real<lower = 0> alpha_twil;
+  real<lower = 0> alpha_lomu;
+  real<lower = 0> alpha_taca;
+  real<lower = 0> alpha_mael;
+  real<lower = 0> alpha_leni;
+  real<lower = 0> alpha_avba;
+  // real alpha_pler;
+  // real alpha_anar;
+  // real alpha_acam;
+  // real alpha_brni;
+  // real alpha_clpu;
+  // real alpha_brho;
+  // real alpha_gitr;
+  // real alpha_amme;
+  // real alpha_plno;
+  // real alpha_thir;
+  // real alpha_mica;
+  // real alpha_ceso;
+  // real alpha_twil;
+  // real alpha_lomu;
+  // real alpha_taca;
+  // real alpha_mael;
+  // real alpha_leni;
+  // real alpha_avba;
 
 }
 
@@ -63,24 +74,42 @@ model{
   vector[N] F_hat;
 
   // set priors
-  alpha_pler ~ normal(0, 1);
-  alpha_anar ~ normal(0, 1);
-  alpha_acam ~ normal(0, 1);
-  alpha_brni ~ normal(0, 1);
-  alpha_clpu ~ normal(0, 1);
-  alpha_brho ~ normal(0, 1);
-  alpha_gitr ~ normal(0, 1);
-  alpha_amme ~ normal(0, 1);
-  alpha_plno ~ normal(0, 1);
-  alpha_thir ~ normal(0, 1);
-  alpha_mica ~ normal(0, 1);
-  alpha_ceso ~ normal(0, 1);
-  alpha_twil ~ normal(0, 1);
-  alpha_lomu ~ normal(0, 1);
-  alpha_taca ~ normal(0, 1);
-  alpha_mael ~ normal(0, 1);
-  alpha_leni ~ normal(0, 1);
-  alpha_avba ~ normal(0, 1);
+  // alpha_pler ~ normal(0, 1);
+  // alpha_anar ~ normal(0, 1);
+  // alpha_acam ~ normal(0, 1);
+  // alpha_brni ~ normal(0, 1);
+  // alpha_clpu ~ normal(0, 1);
+  // alpha_brho ~ normal(0, 1);
+  // alpha_gitr ~ normal(0, 1);
+  // alpha_amme ~ normal(0, 1);
+  // alpha_plno ~ normal(0, 1);
+  // alpha_thir ~ normal(0, 1);
+  // alpha_mica ~ normal(0, 1);
+  // alpha_ceso ~ normal(0, 1);
+  // alpha_twil ~ normal(0, 1);
+  // alpha_lomu ~ normal(0, 1);
+  // alpha_taca ~ normal(0, 1);
+  // alpha_mael ~ normal(0, 1);
+  // alpha_leni ~ normal(0, 1);
+  // alpha_avba ~ normal(0, 1);
+  alpha_pler ~ gamma(0.001, 0.001);
+  alpha_anar ~ gamma(0.001, 0.001);
+  alpha_acam ~ gamma(0.001, 0.001);
+  alpha_brni ~ gamma(0.001, 0.001);
+  alpha_clpu ~ gamma(0.001, 0.001);
+  alpha_brho ~ gamma(0.001, 0.001);
+  alpha_gitr ~ gamma(0.001, 0.001);
+  alpha_amme ~ gamma(0.001, 0.001);
+  alpha_plno ~ gamma(0.001, 0.001);
+  alpha_thir ~ gamma(0.001, 0.001);
+  alpha_mica ~ gamma(0.001, 0.001);
+  alpha_ceso ~ gamma(0.001, 0.001);
+  alpha_twil ~ gamma(0.001, 0.001);
+  alpha_lomu ~ gamma(0.001, 0.001);
+  alpha_taca ~ gamma(0.001, 0.001);
+  alpha_mael ~ gamma(0.001, 0.001);
+  alpha_leni ~ gamma(0.001, 0.001);
+  alpha_avba ~ gamma(0.001, 0.001);
   lambda ~ gamma(0.001, 0.001);
 
   // implement the biological model (control, germ rates taken from mean of temps, but using corresponding WP)
@@ -108,4 +137,6 @@ model{
 
   // calculate the likelihood
   Fecundity ~ poisson(F_hat);
+  
 }
+

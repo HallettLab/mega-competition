@@ -21,7 +21,7 @@ source("Models/ML_import_posteriors.R")
 # }
 
 run.to.equilibrium <- function(germ, lambda, alpha_intra, Nt) {
-  Ntp1 <- (1-germ)*Nt + germ*lambda*Nt/(1+ alpha_intra * Nt)
+  Ntp1 <- (1-germ)*Nt + germ*lambda*Nt/(1 + alpha_intra * Nt)
   return(Ntp1)
 
 }
@@ -85,24 +85,24 @@ time <- 200
 runs <- 200
 
 N <- array(NA, c(options, runs, time))
-N[,,1] <- 100
+N[,,1] <- 100 # start with 100 individuals in every case
 
-for (x in 1:options) {
-  datset <- posteriors[[x]]
-  intra <- all_intra[[x]]
-  
-  post_length <- length(datset$lambda)
-  
-  all_intras <- datset[[intra]]
-  
-  for (t in 1:(time-1)) {
-    posts <- sample(post_length, runs, replace=TRUE)
-    lambda <- datset$lambda[posts]
-    alpha_intra <- all_intras[posts]
-    N[x, ,t+1] <- run.to.equilibrium(germ = datset$germ, 
-                                     lambda = lambda, 
-                                     alpha_intra = alpha_intra, 
-                                     Nt = N[x, ,t])
+
+for(i in 1:length(names(posteriors))) {
+    datset <- posteriors[[i]]
+    intra <- paste0("alpha_", tolower(substr(names(posteriors)[i], 1, 4)))
+    
+    post_length <- length(datset$lambda)
+    all_intras <- datset[[intra]]
+    
+    for(t in 1:(time-1)) {
+      posts <- sample(post_length, runs, replace=TRUE)
+      lambda <- datset$lambda[posts]
+      alpha_intra <- all_intras[posts]
+      N[i, ,t+1] <- run.to.equilibrium(germ = datset$germ, 
+                                       lambda = lambda, 
+                                       alpha_intra = alpha_intra, 
+                                       Nt = N[i, ,t]) 
   }
 }
 
@@ -117,9 +117,16 @@ residents_wet <-  data.frame(N[1,,200], N[3,,200], N[5,,200], N[7,,200], N[9,,20
 
 names(residents_wet) <- species
 
+# obtaining negative population values for AMME_C and TWIL_D and MAEL_D, removing these species for now
+rm <- c("MAEL", "AMME", "TWIL")
+
+residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm]
+residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
+
+#update species list
+species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "CLPU", "TACA", "LOMU", "THIR", "CESO", "MICA", "PLNO")
 
 # Invade into residents ####
-# really should just make this a loop...
 reps <- 200
 
 tmp <- list()
@@ -148,37 +155,25 @@ for(i in species) {
   }
 }
 
-
 # Put together ####
-## dry ####
-#invasion_dry <- unlist(tmp)
+invasion_dry <- list()
+invasion_wet <- list()
 
-invasion_dry <- data.frame(as.vector(avfa_into_brho_dry), as.vector(avfa_into_vumy_dry), as.vector(avfa_into_laca_dry), as.vector(avfa_into_esca_dry), as.vector(avfa_into_trhi_dry),
-                           as.vector(brho_into_avfa_dry), as.vector(brho_into_vumy_dry), as.vector(brho_into_laca_dry), as.vector(brho_into_esca_dry), as.vector(brho_into_trhi_dry),
-                           as.vector(vumy_into_avfa_dry), as.vector(vumy_into_brho_dry), as.vector(vumy_into_laca_dry), as.vector(vumy_into_esca_dry), as.vector(vumy_into_trhi_dry),
-                           as.vector(laca_into_avfa_dry), as.vector(laca_into_brho_dry), as.vector(laca_into_vumy_dry), as.vector(laca_into_esca_dry), as.vector(laca_into_trhi_dry),
-                           as.vector(esca_into_avfa_dry), as.vector(esca_into_brho_dry), as.vector(esca_into_vumy_dry), as.vector(esca_into_laca_dry), as.vector(esca_into_trhi_dry),
-                           as.vector(trhi_into_avfa_dry), as.vector(trhi_into_brho_dry), as.vector(trhi_into_vumy_dry), as.vector(trhi_into_laca_dry), as.vector(trhi_into_esca_dry))
-names(invasion_dry) <- c("avfa_into_brho", "avfa_into_vumy", "avfa_into_laca", "avfa_into_esca", "avfa_into_trhi",
-                         "brho_into_avfa", "brho_into_vumy", "brho_into_laca", "brho_into_esca", "brho_into_trhi",
-                         "vumy_into_avfa", "vumy_into_brho", "vumy_into_laca", "vumy_into_esca", "vumy_into_trhi",
-                         "laca_into_avfa", "laca_into_brho", "laca_into_vumy", "laca_into_esca", "laca_into_trhi",
-                         "esca_into_avfa", "esca_into_brho", "esca_into_vumy", "esca_into_laca", "esca_into_trhi",
-                         "trhi_into_avfa", "trhi_into_brho", "trhi_into_vumy", "trhi_into_laca", "trhi_into_esca")
+for(i in names(tmp)){
+  if(str_sub(names(tmp[i]), start = -1) == "C"){
+    tmp2 <- as.vector(tmp[[i]])
+    invasion_dry[[i]] <- tmp2
+  }
+  
+  else {
+    tmp3 <- as.vector(tmp[[i]])
+    invasion_wet[[i]] <- tmp3
+  }
+}
 
-## wet ####
-invasion_wet <- data.frame(as.vector(avfa_into_brho_wet), as.vector(avfa_into_vumy_wet), as.vector(avfa_into_laca_wet), as.vector(avfa_into_esca_wet), as.vector(avfa_into_trhi_wet),
-                           as.vector(brho_into_avfa_wet), as.vector(brho_into_vumy_wet), as.vector(brho_into_laca_wet), as.vector(brho_into_esca_wet), as.vector(brho_into_trhi_wet),
-                           as.vector(vumy_into_avfa_wet), as.vector(vumy_into_brho_wet), as.vector(vumy_into_laca_wet), as.vector(vumy_into_esca_wet), as.vector(vumy_into_trhi_wet),
-                           as.vector(laca_into_avfa_wet), as.vector(laca_into_brho_wet), as.vector(laca_into_vumy_wet), as.vector(laca_into_esca_wet), as.vector(laca_into_trhi_wet),
-                           as.vector(esca_into_avfa_wet), as.vector(esca_into_brho_wet), as.vector(esca_into_vumy_wet), as.vector(esca_into_laca_wet), as.vector(esca_into_trhi_wet),
-                           as.vector(trhi_into_avfa_wet), as.vector(trhi_into_brho_wet), as.vector(trhi_into_vumy_wet), as.vector(trhi_into_laca_wet), as.vector(trhi_into_esca_wet))
-names(invasion_wet) <- c("avfa_into_brho", "avfa_into_vumy", "avfa_into_laca", "avfa_into_esca", "avfa_into_trhi",
-                         "brho_into_avfa", "brho_into_vumy", "brho_into_laca", "brho_into_esca", "brho_into_trhi",
-                         "vumy_into_avfa", "vumy_into_brho", "vumy_into_laca", "vumy_into_esca", "vumy_into_trhi",
-                         "laca_into_avfa", "laca_into_brho", "laca_into_vumy", "laca_into_esca", "laca_into_trhi",
-                         "esca_into_avfa", "esca_into_brho", "esca_into_vumy", "esca_into_laca", "esca_into_trhi",
-                         "trhi_into_avfa", "trhi_into_brho", "trhi_into_vumy", "trhi_into_laca", "trhi_into_esca")
+invasion_dry <- data.frame(invasion_dry)
+invasion_wet <- data.frame(invasion_wet)
+
 
 # mean abundances ####
 equil_abund <- as.data.frame(rbind(apply(residents_dry, 2, mean),
@@ -186,7 +181,7 @@ equil_abund <- as.data.frame(rbind(apply(residents_dry, 2, mean),
 equil_abund$trt <- c("dry","wet")
 
 equil_abund <- equil_abund %>%
-  pivot_longer(cols = avfa:trhi, names_to = "species", values_to = "abundance")
+  pivot_longer(cols = PLER:PLNO, names_to = "species", values_to = "abundance")
   
 
 rm(list=setdiff(ls(), c("invasion_dry", "invasion_wet","equil_abund","params")))
@@ -199,61 +194,43 @@ dry_means <- invasion_dry %>%
 wet_means <- invasion_wet %>% 
   summarise_all(list(mean))
 
+colnames(wet_means) <- str_sub(names(wet_means), start = 1, end = 14)
+colnames(dry_means) <- str_sub(names(dry_means), start = 1, end = 14)
+
 invasion_means <- rbind(dry_means, wet_means)
 invasion_means$trt <- c("dry","wet")
 
 invasion_means <- invasion_means %>%
- pivot_longer(cols = avfa_into_brho:trhi_into_esca, 
+ pivot_longer(cols = PLER_into_BRHO:PLNO_into_MICA, 
               names_to = "invasion", values_to = "growth")
 
-invasion_means$pair <- NA
-invasion_means$pair[grepl("avfa", invasion_means$invasion) & grepl("brho", invasion_means$invasion)] <- "avfa_brho"
-invasion_means$pair[grepl("avfa", invasion_means$invasion) & grepl("vumy", invasion_means$invasion)] <- "avfa_vumy"
-invasion_means$pair[grepl("avfa", invasion_means$invasion) & grepl("laca", invasion_means$invasion)] <- "avfa_laca"
-invasion_means$pair[grepl("avfa", invasion_means$invasion) & grepl("esca", invasion_means$invasion)] <- "avfa_esca"
-invasion_means$pair[grepl("avfa", invasion_means$invasion) & grepl("trhi", invasion_means$invasion)] <- "avfa_trhi"
+invasion_means$invader <- str_sub(invasion_means$invasion, start = 1, end = 4)
+invasion_means$resident <- str_sub(invasion_means$invasion, start = 11, end = 14)
 
-invasion_means$pair[grepl("brho", invasion_means$invasion) & grepl("vumy", invasion_means$invasion)] <- "brho_vumy"
-invasion_means$pair[grepl("brho", invasion_means$invasion) & grepl("laca", invasion_means$invasion)] <- "brho_laca"
-invasion_means$pair[grepl("brho", invasion_means$invasion) & grepl("esca", invasion_means$invasion)] <- "brho_esca"
-invasion_means$pair[grepl("brho", invasion_means$invasion) & grepl("trhi", invasion_means$invasion)] <- "brho_trhi"
-
-invasion_means$pair[grepl("vumy", invasion_means$invasion) & grepl("laca", invasion_means$invasion)] <- "vumy_laca"
-invasion_means$pair[grepl("vumy", invasion_means$invasion) & grepl("esca", invasion_means$invasion)] <- "vumy_esca"
-invasion_means$pair[grepl("vumy", invasion_means$invasion) & grepl("trhi", invasion_means$invasion)] <- "vumy_trhi"
-
-invasion_means$pair[grepl("laca", invasion_means$invasion) & grepl("esca", invasion_means$invasion)] <- "laca_esca"
-invasion_means$pair[grepl("laca", invasion_means$invasion) & grepl("trhi", invasion_means$invasion)] <- "laca_trhi"
-
-invasion_means$pair[grepl("esca", invasion_means$invasion) & grepl("trhi", invasion_means$invasion)] <- "esca_trhi"
-
-invasion_means$plot <- c(0.5, 0.5, 0.5, 0.5, 0.5, 
-                         1.3, 0.5, 0.5, 0.5, 0.5,
-                         1.3, 1.3, 0.5, 0.5, 0.5,
-                         1.3, 1.3, 1.3, 0.5, 0.5,
-                         1.3, 1.3, 1.3, 1.3, 0.5,
-                         1.3, 1.3, 1.3, 1.3, 1.3,
-                         0.7, 0.7, 0.7, 0.7, 0.7,
-                         1.5, 0.7, 0.7, 0.7, 0.7,
-                         1.5, 1.5, 0.7, 0.7, 0.7,
-                         1.5, 1.5, 1.5, 0.7, 0.7,
-                         1.5, 1.5, 1.5, 1.5, 0.7,
-                         1.5, 1.5, 1.5, 1.5, 1.5)
-
-invasion_means$pair <- factor(invasion_means$pair, 
-                              levels = c("avfa_brho", "avfa_esca", "avfa_laca", "avfa_vumy", "avfa_trhi",
-                                         "brho_esca", "brho_laca", "brho_vumy", "brho_trhi",
-                                         "vumy_esca", "vumy_laca","vumy_trhi",
-                                         "laca_esca", "laca_trhi",
-                                         "esca_trhi"))
-
-pdf("./Competition/Figures/Invader_LDGR_plots.pdf", height = 6, width = 8)
-ggplot(invasion_means, aes(x = plot, y = growth, color = factor(trt))) + 
+ggplot(invasion_means, aes(x = resident, y = growth, col = trt, group = trt)) + 
   geom_point(size = 3) + 
-  geom_hline(yintercept = 0, linetype = "dashed") + ylim(-6.5,6) + ylab("Invader Log LDGR") + xlab("Invader-Resident") + 
-  facet_wrap(~pair) + 
-  scale_x_continuous(breaks = c(0.6, 1.4), labels = c("1-2", "2-1"), limits = c(.2,1.8)) +
-  labs(color = "Fall Treatment") + 
-  scale_color_manual(values = c("#f4a261", "#2a9d8f")) + 
-  theme_bw()
-dev.off()
+  facet_wrap(~invader, ncol = 3, scales = "free") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+trait <- read.csv("/users/Marina/Documents/Dropbox/Mega_Competition/Data/Traits/Megacomp_adult-traits.csv")
+
+invasion_means <- merge(invasion_means, trait[,c(2,3,6)], by.x = "invader", by.y = "code_4")
+
+names(invasion_means)[6] <- "invader.nativity"
+names(invasion_means)[7] <- "invader.growth_form"
+
+invasion_means <- merge(invasion_means, trait[,c(2,3,6)], by.x = "resident", by.y = "code_4")
+
+names(invasion_means)[8] <- "resident.nativity"
+names(invasion_means)[9] <- "resident.growth_form"
+
+invasion_means$invader.fungroup <- paste(invasion_means$invader.nativity, invasion_means$invader.growth_form, sep = " ")
+
+invasion_means$resident.fungroup <- paste(invasion_means$resident.nativity, invasion_means$resident.growth_form, sep = " ")
+
+# is AVBA the weird one?
+# ggplot(invasion_means[invasion_means$resident != "AVBA" | invasion_means$invader != "AVBA",], aes(x = resident.fungroup, y = growth, by = trt, fill = trt)) + 
+#   geom_boxplot() + 
+#   facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
+#   geom_hline(yintercept = 0, linetype = "dashed")
+# nope
