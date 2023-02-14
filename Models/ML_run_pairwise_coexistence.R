@@ -27,7 +27,7 @@ run.to.equilibrium <- function(germ, lambda, alpha_intra, Nt) {
 }
 
 run.invader <- function(germ, lambda, alpha_inter, resid_abund, invader_abund) {
-  Ntp1 <- (1-germ)*invader_abund + germ*lambda*invader_abund/(1+ alpha_inter * resid_abund)
+  Ntp1 <- (1-germ)*invader_abund + germ*lambda*invader_abund/(1 + alpha_inter * resid_abund)
   LDGR <- log(Ntp1/invader_abund)
   return(LDGR)
 
@@ -77,13 +77,7 @@ run.invader <- function(germ, lambda, alpha_inter, resid_abund, invader_abund) {
 # all_datset <- list(anar_D, acam_D, brni_D, clpu_D, brho_D, gitr_D, amme_D, plno_D, thir_D, mica_D, ceso_D, twil_D, lomu_D, taca_D, mael_D, leni_D, avba_D, pler_C, anar_C, acam_C, brni_C, clpu_C, brho_C, gitr_C, amme_C, plno_C, thir_C, mica_C, ceso_C, twil_C, lomu_C, taca_C, mael_C, leni_C, avba_C) 
 
 # need to add BRNI and LENI when ready; also fix, dont like how sketchy this is
-all_intra <- c("alpha_pler", "alpha_anar", "alpha_acam", "alpha_clpu", 
-               "alpha_brho", "alpha_gitr", "alpha_amme", "alpha_plno", "alpha_thir", 
-               "alpha_mica", "alpha_ceso", "alpha_twil", "alpha_lomu", "alpha_taca",
-               "alpha_mael", "alpha_avba", "alpha_pler", "alpha_anar", "alpha_acam", "alpha_clpu", 
-               "alpha_brho", "alpha_gitr", "alpha_amme", "alpha_plno", "alpha_thir", 
-               "alpha_mica", "alpha_ceso", "alpha_twil", "alpha_lomu", "alpha_taca",
-               "alpha_mael", "alpha_avba")
+all_intra <- c("alpha_pler", "alpha_pler", "alpha_anar", "alpha_anar", "alpha_acam", "alpha_acam", "alpha_clpu", "alpha_clpu", "alpha_brho", "alpha_brho", "alpha_gitr", "alpha_gitr", "alpha_amme", "alpha_amme", "alpha_plno", "alpha_plno", "alpha_thir", "alpha_thir", "alpha_mica", "alpha_mica", "alpha_ceso", "alpha_ceso", "alpha_twil", "alpha_twil", "alpha_lomu", "alpha_lomu", "alpha_taca",  "alpha_taca", "alpha_mael", "alpha_mael", "alpha_avba", "alpha_avba")
 
 options <- length(all_intra)
 
@@ -105,429 +99,60 @@ for (x in 1:options) {
     posts <- sample(post_length, runs, replace=TRUE)
     lambda <- datset$lambda[posts]
     alpha_intra <- all_intras[posts]
-    N[x, ,t+1] <- run.to.equilibrium(germ=datset$germ, 
-                                     lambda=lambda, alpha_intra=alpha_intra, Nt=N[x, ,t])
+    N[x, ,t+1] <- run.to.equilibrium(germ = datset$germ, 
+                                     lambda = lambda, 
+                                     alpha_intra = alpha_intra, 
+                                     Nt = N[x, ,t])
   }
 }
 
-species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", 
-             "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
+species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
 
 # make into dry versus wet conditions dataframes, this is kinda sketchy, should redo so we know whats happening
-residents_dry <-  data.frame(N[1,,200], N[2,,200], N[3,,200], N[4,,200], N[5,,200], N[6,,200], N[7,,200], N[8,,200], N[9,,200], N[10,,200], N[11,,200], N[12,,200], N[13,,200], N[14,,200], N[15,,200], N[16,,200])
+residents_dry <-  data.frame(N[2,,200], N[4,,200], N[6,,200], N[8,,200], N[10,,200], N[12,,200], N[14,,200], N[16,,200], N[18,,200], N[20,,200], N[22,,200], N[24,,200], N[26,,200], N[28,,200], N[30,,200], N[32,,200])
 
 names(residents_dry) <- species
 
-residents_wet <-  data.frame(N[17,,200], N[18,,200], N[19,,200], N[20,,200], N[21,,200], N[22,,200], N[23,,200], N[24,,200], N[25,,200], N[26,,200], N[27,,200], N[28,,200], N[29,,200], N[30,,200], N[31,,200], N[32,,200])
+residents_wet <-  data.frame(N[1,,200], N[3,,200], N[5,,200], N[7,,200], N[9,,200], N[11,,200], N[13,,200], N[15,,200], N[17,,200], N[19,,200], N[21,,200], N[23,,200], N[25,,200], N[27,,200], N[29,,200], N[31,,200])
 
 names(residents_wet) <- species
 
 
 # Invade into residents ####
 # really should just make this a loop...
-## dry ####
 reps <- 200
-avfa_into_brho_dry <- matrix(NA, reps, runs)
-avfa_into_vumy_dry <- matrix(NA, reps, runs)
-avfa_into_laca_dry <- matrix(NA, reps, runs)
-avfa_into_esca_dry <- matrix(NA, reps, runs)
-avfa_into_trhi_dry <- matrix(NA, reps, runs)
 
-brho_into_avfa_dry <- matrix(NA, reps, runs)
-brho_into_vumy_dry <- matrix(NA, reps, runs)
-brho_into_laca_dry <- matrix(NA, reps, runs)
-brho_into_esca_dry <- matrix(NA, reps, runs)
-brho_into_trhi_dry <- matrix(NA, reps, runs)
+tmp <- list()
 
-vumy_into_avfa_dry <- matrix(NA, reps, runs)
-vumy_into_brho_dry <- matrix(NA, reps, runs)
-vumy_into_laca_dry <- matrix(NA, reps, runs)
-vumy_into_esca_dry <- matrix(NA, reps, runs)
-vumy_into_trhi_dry <- matrix(NA, reps, runs)
-
-laca_into_avfa_dry <- matrix(NA, reps, runs)
-laca_into_brho_dry <- matrix(NA, reps, runs)
-laca_into_vumy_dry <- matrix(NA, reps, runs)
-laca_into_esca_dry <- matrix(NA, reps, runs)
-laca_into_trhi_dry <- matrix(NA, reps, runs)
-
-esca_into_avfa_dry <- matrix(NA, reps, runs)
-esca_into_brho_dry <- matrix(NA, reps, runs)
-esca_into_laca_dry <- matrix(NA, reps, runs)
-esca_into_vumy_dry <- matrix(NA, reps, runs)
-esca_into_trhi_dry <- matrix(NA, reps, runs)
-
-trhi_into_avfa_dry <- matrix(NA, reps, runs)
-trhi_into_brho_dry <- matrix(NA, reps, runs)
-trhi_into_laca_dry <- matrix(NA, reps, runs)
-trhi_into_vumy_dry <- matrix(NA, reps, runs)
-trhi_into_esca_dry <- matrix(NA, reps, runs)
-
-invader_abund <- 1
-
-### AVBA invades ####
-post_length <- length(avfa_dry$lambda)
-for (r in 1:reps) {
-  
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  avfa_into_brho_dry[r,] <- run.invader(surv=avfa_dry$surv, germ= avfa_dry$germ, 
-                                        lambda=avfa_dry$lambda[posts], alpha_inter=avfa_dry$alpha_brho[posts],
-                                        resid_abund=residents_dry$brho, invader_abund=invader_abund)
-  
-  avfa_into_vumy_dry[r,] <- run.invader(surv=avfa_dry$surv, germ= avfa_dry$germ, 
-                                        lambda=avfa_dry$lambda[posts], alpha_inter=avfa_dry$alpha_vumy[posts],
-                                        resid_abund=residents_dry$vumy, invader_abund=invader_abund)
-  
-  avfa_into_laca_dry[r,] <- run.invader(surv=avfa_dry$surv, germ= avfa_dry$germ, 
-                                        lambda=avfa_dry$lambda[posts], alpha_inter=avfa_dry$alpha_laca[posts],
-                                        resid_abund=residents_dry$laca, invader_abund=invader_abund)
-  
-  avfa_into_esca_dry[r,] <- run.invader(surv=avfa_dry$surv, germ= avfa_dry$germ, 
-                                        lambda=avfa_dry$lambda[posts], alpha_inter=avfa_dry$alpha_esca[posts],
-                                        resid_abund=residents_dry$esca, invader_abund=invader_abund)
-  
-  avfa_into_trhi_dry[r,] <- run.invader(surv=avfa_dry$surv, germ= avfa_dry$germ, 
-                                        lambda=avfa_dry$lambda[posts], alpha_inter=avfa_dry$alpha_trhi[posts],
-                                        resid_abund=residents_dry$trhi, invader_abund=invader_abund)
+# i = invader, j = resident
+for(i in species) {
+    for(j in species) {
+        if(i != j) {
+          for(k in trt){
+            tmp[[paste0(i, "_into_", j, "_", k)]] <- matrix(NA, reps, runs)
+            invader_abund <- 1
+            post_length <- length(posteriors[[paste0(i,"_", k)]]$lambda)
+        
+            for(r in 1:reps) {
+              posts <- sample(post_length, runs, replace=TRUE)
+              
+              tmp[[paste0(i, "_into_", j, "_", k)]][r,] <- run.invader(#surv = avfa_dry$surv, 
+                                                germ = posteriors[[paste0(i,"_", k)]]$germ, 
+                                                lambda = posteriors[[paste0(i,"_", k)]]$lambda[posts], 
+                                                alpha_inter = unlist(posteriors[[paste0(i,"_", k)]][paste0("alpha_", tolower(j))], use.names = F)[posts],
+                                                resid_abund = residents_dry[,j], 
+                                                invader_abund = invader_abund)
+        }
+      }
+    }
+  }
 }
 
-### BRHO invades ####
-post_length <- length(brho_dry$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  brho_into_avfa_dry[r,] <- run.invader(surv=brho_dry$surv, germ= brho_dry$germ, 
-                                        lambda=brho_dry$lambda[posts], alpha_inter=brho_dry$alpha_avfa[posts],
-                                        resid_abund=residents_dry$avfa, invader_abund=invader_abund)
-  
-  brho_into_vumy_dry[r,] <- run.invader(surv=brho_dry$surv, germ= brho_dry$germ, 
-                                        lambda=brho_dry$lambda[posts], alpha_inter=brho_dry$alpha_vumy[posts],
-                                        resid_abund=residents_dry$vumy, invader_abund=invader_abund)
-  
-  brho_into_laca_dry[r,] <- run.invader(surv=brho_dry$surv, germ= brho_dry$germ, 
-                                        lambda=brho_dry$lambda[posts], alpha_inter=brho_dry$alpha_laca[posts],
-                                        resid_abund=residents_dry$laca, invader_abund=invader_abund)
-  
-  brho_into_esca_dry[r,] <- run.invader(surv=brho_dry$surv, germ= brho_dry$germ, 
-                                        lambda=brho_dry$lambda[posts], alpha_inter=brho_dry$alpha_esca[posts],
-                                        resid_abund=residents_dry$esca, invader_abund=invader_abund)
-  
-  brho_into_trhi_dry[r,] <- run.invader(surv=brho_dry$surv, germ= brho_dry$germ, 
-                                        lambda=brho_dry$lambda[posts], alpha_inter=brho_dry$alpha_trhi[posts],
-                                        resid_abund=residents_dry$trhi, invader_abund=invader_abund)
-  
-}
-
-### VUMY invades ####
-post_length <- length(vumy_dry$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  vumy_into_avfa_dry[r,] <- run.invader(surv=vumy_dry$surv, germ= vumy_dry$germ, 
-                                        lambda=vumy_dry$lambda[posts], alpha_inter=vumy_dry$alpha_avfa[posts],
-                                        resid_abund=residents_dry$avfa, invader_abund=invader_abund)
-  
-  vumy_into_brho_dry[r,] <- run.invader(surv=vumy_dry$surv, germ= vumy_dry$germ, 
-                                        lambda=vumy_dry$lambda[posts], alpha_inter=vumy_dry$alpha_brho[posts],
-                                        resid_abund=residents_dry$brho, invader_abund=invader_abund)
-  
-  vumy_into_laca_dry[r,] <- run.invader(surv=vumy_dry$surv, germ= vumy_dry$germ, 
-                                        lambda=vumy_dry$lambda[posts], alpha_inter=vumy_dry$alpha_laca[posts],
-                                        resid_abund=residents_dry$laca, invader_abund=invader_abund)
-  
-  vumy_into_esca_dry[r,] <- run.invader(surv=vumy_dry$surv, germ= vumy_dry$germ, 
-                                        lambda=vumy_dry$lambda[posts], alpha_inter=vumy_dry$alpha_esca[posts],
-                                        resid_abund=residents_dry$esca, invader_abund=invader_abund)
-  
-  vumy_into_trhi_dry[r,] <- run.invader(surv=vumy_dry$surv, germ= vumy_dry$germ, 
-                                        lambda=vumy_dry$lambda[posts], alpha_inter=vumy_dry$alpha_trhi[posts],
-                                        resid_abund=residents_dry$trhi, invader_abund=invader_abund)
-  
-}
-
-### LACA invades ####
-post_length <- length(laca_dry$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  laca_into_avfa_dry[r,] <- run.invader(surv=laca_dry$surv, germ= laca_dry$germ, 
-                                        lambda=laca_dry$lambda[posts], alpha_inter=laca_dry$alpha_avfa[posts],
-                                        resid_abund=residents_dry$avfa, invader_abund=invader_abund)
-  
-  laca_into_brho_dry[r,] <- run.invader(surv=laca_dry$surv, germ= laca_dry$germ, 
-                                        lambda=laca_dry$lambda[posts], alpha_inter=laca_dry$alpha_brho[posts],
-                                        resid_abund=residents_dry$brho, invader_abund=invader_abund)
-  
-  laca_into_vumy_dry[r,] <- run.invader(surv=laca_dry$surv, germ= laca_dry$germ, 
-                                        lambda=laca_dry$lambda[posts], alpha_inter=laca_dry$alpha_vumy[posts],
-                                        resid_abund=residents_dry$vumy, invader_abund=invader_abund)
-  
-  laca_into_esca_dry[r,] <- run.invader(surv=laca_dry$surv, germ= laca_dry$germ, 
-                                        lambda=laca_dry$lambda[posts], alpha_inter=laca_dry$alpha_esca[posts],
-                                        resid_abund=residents_dry$esca, invader_abund=invader_abund)
-  
-  laca_into_trhi_dry[r,] <- run.invader(surv=laca_dry$surv, germ= laca_dry$germ, 
-                                        lambda=laca_dry$lambda[posts], alpha_inter=laca_dry$alpha_trhi[posts],
-                                        resid_abund=residents_dry$trhi, invader_abund=invader_abund)
-  
-}
-
-### ESCA invades ####
-post_length <- length(esca_dry$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  esca_into_avfa_dry[r,] <- run.invader(surv=esca_dry$surv, germ= esca_dry$germ, 
-                                        lambda=esca_dry$lambda[posts], alpha_inter=esca_dry$alpha_avfa[posts],
-                                        resid_abund=residents_dry$avfa, invader_abund=invader_abund)
-  
-  esca_into_brho_dry[r,] <- run.invader(surv=esca_dry$surv, germ= esca_dry$germ, 
-                                        lambda=esca_dry$lambda[posts], alpha_inter=esca_dry$alpha_brho[posts],
-                                        resid_abund=residents_dry$brho, invader_abund=invader_abund)
-  
-  esca_into_vumy_dry[r,] <- run.invader(surv=esca_dry$surv, germ= esca_dry$germ, 
-                                        lambda=esca_dry$lambda[posts], alpha_inter=esca_dry$alpha_vumy[posts],
-                                        resid_abund=residents_dry$vumy, invader_abund=invader_abund)
-  
-  esca_into_laca_dry[r,] <- run.invader(surv=esca_dry$surv, germ= esca_dry$germ, 
-                                        lambda=esca_dry$lambda[posts], alpha_inter=esca_dry$alpha_laca[posts],
-                                        resid_abund=residents_dry$laca, invader_abund=invader_abund)
-  
-  esca_into_trhi_dry[r,] <- run.invader(surv=esca_dry$surv, germ= esca_dry$germ, 
-                                        lambda=esca_dry$lambda[posts], alpha_inter=esca_dry$alpha_trhi[posts],
-                                        resid_abund=residents_dry$trhi, invader_abund=invader_abund)
-  
-}
-
-### TRHI invades ####
-post_length <- length(trhi_dry$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  trhi_into_avfa_dry[r,] <- run.invader(surv=trhi_dry$surv, germ= trhi_dry$germ, 
-                                        lambda=trhi_dry$lambda[posts], alpha_inter=trhi_dry$alpha_avfa[posts],
-                                        resid_abund=residents_dry$avfa, invader_abund=invader_abund)
-  
-  trhi_into_brho_dry[r,] <- run.invader(surv=trhi_dry$surv, germ= trhi_dry$germ, 
-                                        lambda=trhi_dry$lambda[posts], alpha_inter=trhi_dry$alpha_brho[posts],
-                                        resid_abund=residents_dry$brho, invader_abund=invader_abund)
-  
-  trhi_into_vumy_dry[r,] <- run.invader(surv=trhi_dry$surv, germ= trhi_dry$germ, 
-                                        lambda=trhi_dry$lambda[posts], alpha_inter=trhi_dry$alpha_vumy[posts],
-                                        resid_abund=residents_dry$vumy, invader_abund=invader_abund)
-  
-  trhi_into_laca_dry[r,] <- run.invader(surv=trhi_dry$surv, germ= trhi_dry$germ, 
-                                        lambda=trhi_dry$lambda[posts], alpha_inter=trhi_dry$alpha_laca[posts],
-                                        resid_abund=residents_dry$laca, invader_abund=invader_abund)
-  
-  trhi_into_esca_dry[r,] <- run.invader(surv=trhi_dry$surv, germ= trhi_dry$germ, 
-                                        lambda=trhi_dry$lambda[posts], alpha_inter=trhi_dry$alpha_esca[posts],
-                                        resid_abund=residents_dry$esca, invader_abund=invader_abund)
-  
-}
-
-## wet ####
-reps <- 200
-avfa_into_brho_wet <- matrix(NA, reps, runs)
-avfa_into_vumy_wet <- matrix(NA, reps, runs)
-avfa_into_laca_wet <- matrix(NA, reps, runs)
-avfa_into_esca_wet <- matrix(NA, reps, runs)
-avfa_into_trhi_wet <- matrix(NA, reps, runs)
-
-brho_into_avfa_wet <- matrix(NA, reps, runs)
-brho_into_vumy_wet <- matrix(NA, reps, runs)
-brho_into_laca_wet <- matrix(NA, reps, runs)
-brho_into_esca_wet <- matrix(NA, reps, runs)
-brho_into_trhi_wet <- matrix(NA, reps, runs)
-
-vumy_into_avfa_wet <- matrix(NA, reps, runs)
-vumy_into_brho_wet <- matrix(NA, reps, runs)
-vumy_into_laca_wet <- matrix(NA, reps, runs)
-vumy_into_esca_wet <- matrix(NA, reps, runs)
-vumy_into_trhi_wet <- matrix(NA, reps, runs)
-
-laca_into_avfa_wet <- matrix(NA, reps, runs)
-laca_into_brho_wet <- matrix(NA, reps, runs)
-laca_into_vumy_wet <- matrix(NA, reps, runs)
-laca_into_esca_wet <- matrix(NA, reps, runs)
-laca_into_trhi_wet <- matrix(NA, reps, runs)
-
-esca_into_avfa_wet <- matrix(NA, reps, runs)
-esca_into_brho_wet <- matrix(NA, reps, runs)
-esca_into_laca_wet <- matrix(NA, reps, runs)
-esca_into_vumy_wet <- matrix(NA, reps, runs)
-esca_into_trhi_wet <- matrix(NA, reps, runs)
-
-trhi_into_avfa_wet <- matrix(NA, reps, runs)
-trhi_into_brho_wet <- matrix(NA, reps, runs)
-trhi_into_laca_wet <- matrix(NA, reps, runs)
-trhi_into_vumy_wet <- matrix(NA, reps, runs)
-trhi_into_esca_wet <- matrix(NA, reps, runs)
-
-
-invader_abund <- 1
-
-### AVBA invades ####
-post_length <- length(avfa_wet$lambda)
-for (r in 1:reps) {
-  
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  avfa_into_brho_wet[r,] <- run.invader(surv=avfa_wet$surv, germ= avfa_wet$germ, 
-                                        lambda=avfa_wet$lambda[posts], alpha_inter=avfa_wet$alpha_brho[posts],
-                                        resid_abund=residents_wet$brho, invader_abund=invader_abund)
-  
-  avfa_into_vumy_wet[r,] <- run.invader(surv=avfa_wet$surv, germ= avfa_wet$germ, 
-                                        lambda=avfa_wet$lambda[posts], alpha_inter=avfa_wet$alpha_vumy[posts],
-                                        resid_abund=residents_wet$vumy, invader_abund=invader_abund)
-  
-  avfa_into_laca_wet[r,] <- run.invader(surv=avfa_wet$surv, germ= avfa_wet$germ, 
-                                        lambda=avfa_wet$lambda[posts], alpha_inter=avfa_wet$alpha_laca[posts],
-                                        resid_abund=residents_wet$laca, invader_abund=invader_abund)
-  
-  avfa_into_esca_wet[r,] <- run.invader(surv=avfa_wet$surv, germ= avfa_wet$germ, 
-                                        lambda=avfa_wet$lambda[posts], alpha_inter=avfa_wet$alpha_esca[posts],
-                                        resid_abund=residents_wet$esca, invader_abund=invader_abund)
-  
-  avfa_into_trhi_wet[r,] <- run.invader(surv=avfa_wet$surv, germ= avfa_wet$germ, 
-                                        lambda=avfa_wet$lambda[posts], alpha_inter=avfa_wet$alpha_trhi[posts],
-                                        resid_abund=residents_wet$trhi, invader_abund=invader_abund)
-}
-
-### BRHO invades ####
-post_length <- length(brho_wet$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  brho_into_avfa_wet[r,] <- run.invader(surv=brho_wet$surv, germ= brho_wet$germ, 
-                                        lambda=brho_wet$lambda[posts], alpha_inter=brho_wet$alpha_avfa[posts],
-                                        resid_abund=residents_wet$avfa, invader_abund=invader_abund)
-  
-  brho_into_vumy_wet[r,] <- run.invader(surv=brho_wet$surv, germ= brho_wet$germ, 
-                                        lambda=brho_wet$lambda[posts], alpha_inter=brho_wet$alpha_vumy[posts],
-                                        resid_abund=residents_wet$vumy, invader_abund=invader_abund)
-  
-  brho_into_laca_wet[r,] <- run.invader(surv=brho_wet$surv, germ= brho_wet$germ, 
-                                        lambda=brho_wet$lambda[posts], alpha_inter=brho_wet$alpha_laca[posts],
-                                        resid_abund=residents_wet$laca, invader_abund=invader_abund)
-  
-  brho_into_esca_wet[r,] <- run.invader(surv=brho_wet$surv, germ= brho_wet$germ, 
-                                        lambda=brho_wet$lambda[posts], alpha_inter=brho_wet$alpha_esca[posts],
-                                        resid_abund=residents_wet$esca, invader_abund=invader_abund)
-  
-  brho_into_trhi_wet[r,] <- run.invader(surv=brho_wet$surv, germ= brho_wet$germ, 
-                                        lambda=brho_wet$lambda[posts], alpha_inter=brho_wet$alpha_trhi[posts],
-                                        resid_abund=residents_wet$trhi, invader_abund=invader_abund)
-}
-
-### VUMY invades ####
-post_length <- length(vumy_wet$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  vumy_into_avfa_wet[r,] <- run.invader(surv=vumy_wet$surv, germ= vumy_wet$germ, 
-                                        lambda=vumy_wet$lambda[posts], alpha_inter=vumy_wet$alpha_avfa[posts],
-                                        resid_abund=residents_wet$avfa, invader_abund=invader_abund)
-  
-  vumy_into_brho_wet[r,] <- run.invader(surv=vumy_wet$surv, germ= vumy_wet$germ, 
-                                        lambda=vumy_wet$lambda[posts], alpha_inter=vumy_wet$alpha_brho[posts],
-                                        resid_abund=residents_wet$brho, invader_abund=invader_abund)
-  
-  vumy_into_laca_wet[r,] <- run.invader(surv=vumy_wet$surv, germ= vumy_wet$germ, 
-                                        lambda=vumy_wet$lambda[posts], alpha_inter=vumy_wet$alpha_laca[posts],
-                                        resid_abund=residents_wet$laca, invader_abund=invader_abund)
-  
-  vumy_into_esca_wet[r,] <- run.invader(surv=vumy_wet$surv, germ= vumy_wet$germ, 
-                                        lambda=vumy_wet$lambda[posts], alpha_inter=vumy_wet$alpha_esca[posts],
-                                        resid_abund=residents_wet$esca, invader_abund=invader_abund)
-  
-  vumy_into_trhi_wet[r,] <- run.invader(surv=vumy_wet$surv, germ= vumy_wet$germ, 
-                                        lambda=vumy_wet$lambda[posts], alpha_inter=vumy_wet$alpha_trhi[posts],
-                                        resid_abund=residents_wet$trhi, invader_abund=invader_abund)
-}
-
-### LACA invades ####
-post_length <- length(laca_wet$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  laca_into_avfa_wet[r,] <- run.invader(surv=laca_wet$surv, germ= laca_wet$germ, 
-                                        lambda=laca_wet$lambda[posts], alpha_inter=laca_wet$alpha_avfa[posts],
-                                        resid_abund=residents_wet$avfa, invader_abund=invader_abund)
-  
-  laca_into_brho_wet[r,] <- run.invader(surv=laca_wet$surv, germ= laca_wet$germ, 
-                                        lambda=laca_wet$lambda[posts], alpha_inter=laca_wet$alpha_brho[posts],
-                                        resid_abund=residents_wet$brho, invader_abund=invader_abund)
-  
-  laca_into_vumy_wet[r,] <- run.invader(surv=laca_wet$surv, germ= laca_wet$germ, 
-                                        lambda=laca_wet$lambda[posts], alpha_inter=laca_wet$alpha_vumy[posts],
-                                        resid_abund=residents_wet$vumy, invader_abund=invader_abund)
-  
-  laca_into_esca_wet[r,] <- run.invader(surv=laca_wet$surv, germ= laca_wet$germ, 
-                                        lambda=laca_wet$lambda[posts], alpha_inter=laca_wet$alpha_esca[posts],
-                                        resid_abund=residents_wet$esca, invader_abund=invader_abund)
-  
-  laca_into_trhi_wet[r,] <- run.invader(surv=laca_wet$surv, germ= laca_wet$germ, 
-                                        lambda=laca_wet$lambda[posts], alpha_inter=laca_wet$alpha_trhi[posts],
-                                        resid_abund=residents_wet$trhi, invader_abund=invader_abund)
-}
-
-### ESCA invades ####
-post_length <- length(esca_wet$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  esca_into_avfa_wet[r,] <- run.invader(surv=esca_wet$surv, germ= esca_wet$germ, 
-                                        lambda=esca_wet$lambda[posts], alpha_inter=esca_wet$alpha_avfa[posts],
-                                        resid_abund=residents_wet$avfa, invader_abund=invader_abund)
-  
-  esca_into_brho_wet[r,] <- run.invader(surv=esca_wet$surv, germ= esca_wet$germ, 
-                                        lambda=esca_wet$lambda[posts], alpha_inter=esca_wet$alpha_brho[posts],
-                                        resid_abund=residents_wet$brho, invader_abund=invader_abund)
-  
-  esca_into_vumy_wet[r,] <- run.invader(surv=esca_wet$surv, germ= esca_wet$germ, 
-                                        lambda=esca_wet$lambda[posts], alpha_inter=esca_wet$alpha_vumy[posts],
-                                        resid_abund=residents_wet$vumy, invader_abund=invader_abund)
-  
-  esca_into_laca_wet[r,] <- run.invader(surv=esca_wet$surv, germ= esca_wet$germ, 
-                                        lambda=esca_wet$lambda[posts], alpha_inter=esca_wet$alpha_laca[posts],
-                                        resid_abund=residents_wet$laca, invader_abund=invader_abund)
-  
-  esca_into_trhi_wet[r,] <- run.invader(surv=esca_wet$surv, germ= esca_wet$germ, 
-                                        lambda=esca_wet$lambda[posts], alpha_inter=esca_wet$alpha_trhi[posts],
-                                        resid_abund=residents_wet$trhi, invader_abund=invader_abund)
-}
-
-### TRHI invades ####
-post_length <- length(trhi_wet$lambda)
-for (r in 1:reps) {
-  posts <- sample(post_length, runs, replace=TRUE)
-  
-  trhi_into_avfa_wet[r,] <- run.invader(surv=trhi_wet$surv, germ= trhi_wet$germ, 
-                                        lambda=trhi_wet$lambda[posts], alpha_inter=trhi_wet$alpha_avfa[posts],
-                                        resid_abund=residents_wet$avfa, invader_abund=invader_abund)
-  
-  trhi_into_brho_wet[r,] <- run.invader(surv=trhi_wet$surv, germ= trhi_wet$germ, 
-                                        lambda=trhi_wet$lambda[posts], alpha_inter=trhi_wet$alpha_brho[posts],
-                                        resid_abund=residents_wet$brho, invader_abund=invader_abund)
-  
-  trhi_into_vumy_wet[r,] <- run.invader(surv=trhi_wet$surv, germ= trhi_wet$germ, 
-                                        lambda=trhi_wet$lambda[posts], alpha_inter=trhi_wet$alpha_vumy[posts],
-                                        resid_abund=residents_wet$vumy, invader_abund=invader_abund)
-  
-  trhi_into_laca_wet[r,] <- run.invader(surv=trhi_wet$surv, germ= trhi_wet$germ, 
-                                        lambda=trhi_wet$lambda[posts], alpha_inter=trhi_wet$alpha_laca[posts],
-                                        resid_abund=residents_wet$laca, invader_abund=invader_abund)
-  
-  trhi_into_esca_wet[r,] <- run.invader(surv=trhi_wet$surv, germ= trhi_wet$germ, 
-                                        lambda=trhi_wet$lambda[posts], alpha_inter=trhi_wet$alpha_esca[posts],
-                                        resid_abund=residents_wet$esca, invader_abund=invader_abund)
-  
-}
 
 # Put together ####
 ## dry ####
+#invasion_dry <- unlist(tmp)
+
 invasion_dry <- data.frame(as.vector(avfa_into_brho_dry), as.vector(avfa_into_vumy_dry), as.vector(avfa_into_laca_dry), as.vector(avfa_into_esca_dry), as.vector(avfa_into_trhi_dry),
                            as.vector(brho_into_avfa_dry), as.vector(brho_into_vumy_dry), as.vector(brho_into_laca_dry), as.vector(brho_into_esca_dry), as.vector(brho_into_trhi_dry),
                            as.vector(vumy_into_avfa_dry), as.vector(vumy_into_brho_dry), as.vector(vumy_into_laca_dry), as.vector(vumy_into_esca_dry), as.vector(vumy_into_trhi_dry),

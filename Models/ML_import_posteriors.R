@@ -15,14 +15,13 @@ for(i in species){
   for(j in trt){
     load(paste0("Models/Posteriors/seeds_", i, "_", j, "_posteriors.rdata"))
     tmp2 <- rstan::extract(tmp)
-    posteriors[[paste0(i,"_",j)]] <- tmp2
+    posteriors[[paste0(i,"_",j)]] <- tmp2[-20]
     tmp3 <- as.data.frame(lapply(tmp2, mean))[-20]
     tmp3$species <- i
     tmp3$treatment <- j
     params <-rbind(params,tmp3)
   }
 }
-
 
 
 ### Extract and inspect distributions ####
@@ -32,8 +31,7 @@ posteriors2 <- data.frame()
 for(i in species){
   for(j in trt){
     tmp <- as_tibble(do.call("cbind", posteriors[[paste0(i,"_",j)]])) %>%
-      mutate(species = i, treatment = j) %>%
-      select(-lp__)
+      mutate(species = i, treatment = j)
     posteriors2 <- rbind(posteriors2, tmp) 
   }
 }
