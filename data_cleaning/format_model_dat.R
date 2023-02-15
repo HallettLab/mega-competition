@@ -100,12 +100,15 @@ for (i in 1:length(species)) {
 with.controls <- rbind(all.phytos.info, repeated.controls) %>%
   filter(bkgrd != "Control")
 
-
+unique.id.controls <- sort(unique(repeated.controls$unique.ID))
+## make a vector of control unique.IDs
 
 # Join Data ####
 ## join phyto & bkgrd data
 bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkgrd")) %>%
-  select(-phyto.n.indiv)
+  select(-phyto.n.indiv) %>%
+  mutate(bg.seeds.in = ifelse(is.na(bg.seeds.in) & unique.ID %in% unique.id.controls, 0, bg.seeds.in),
+         bg.seeds.out = ifelse(is.na(bg.seeds.out) & unique.ID %in% unique.id.controls, 0, bg.seeds.out))
 
 
 
