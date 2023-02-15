@@ -13,38 +13,122 @@ germ.sum.sp.DC <- germ.sum.sp.DC %>%
   mutate(species = ifelse(species == "THIR-I", "THIR", species), 
          species = ifelse(species == "TWIL-I", "TWIL", species))
 
-
-# Join Data ####
-## join phyto & bkgrd data
-bg.phyto.seeds <- left_join(all.phytos, bkgrd.seeds, by = "unique.ID") %>%
-  select(-phyto.n.indiv)
-
+# change THIR and TWIL names in unique ID key
 unique.key <- unique.key %>% 
   mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
          bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
          phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
          bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
 
+# Replicate Control Rows ####
+all.phytos.info <- left_join(all.phytos, unique.key, by = c("unique.ID", "phyto")) %>%
+  mutate(bkgrd = ifelse(bkgrd == "ERBO", "Control", bkgrd))
+## set ERBO backgrounds as controls
+
+
+blocks <- unique(all.phytos.info$block) 
+species <- unique(all.phytos.info$phyto)
+bkgrds <- unique(all.phytos.info$bkgrd)
+
+## make column of backgrounds to join w/replicated control lines later
+bkgrd.df <- as.data.frame(bkgrds[bkgrds != "Control"])
+colnames(bkgrd.df) <- "bkgrd"
+
+## store outputs
+repeated.controls <- data.frame()
+
+
+
+## loop through each species
+for (i in 1:length(species)) {
+  
+  tmp.sp <- species[i] ## select phyto species
+  
+  all.blocks <- data.frame() ## make dataframe to store all blocks for one species
+  
+  ## loop through each block
+  for (j in 1:length(blocks)) {
+    
+    tmp.block <- blocks[j] ## select the block
+    
+    tmp.controls <- all.phytos.info %>% ## filter to controls of particular species
+      filter(phyto == tmp.sp,
+             bkgrd == "Control",
+             block == tmp.block)
+    
+    ## if there are controls in a particular block, replicate each row 18x and add in a unique background for each
+    if (nrow(tmp.controls) > 0 ) {
+      
+      control.reps <- unique(tmp.controls$unique.ID) ## make vector of each rep in the block
+      
+      ## create df to store output of all reps within a block
+      all.reps <- data.frame()
+      
+      ## loop through each control sample in one block
+      for (k in 1:length(control.reps)) {
+        
+        tmp.rep <- control.reps[k] ## select rep
+        
+        tmp.repeated.reps <- tmp.controls %>%
+          filter(unique.ID == tmp.rep) %>% ## filter to correct rep
+          slice(rep(1:n(), each = 18)) %>% ## repeat each row 18 times
+          select(-bkgrd) %>% ## get rid of old bg column
+          mutate(bkgrd = bkgrd.df[,1], ## add in 18 unique backgrounds
+                 dens = "none") ## fill out density column as 'none'
+        
+        ## store all reps together
+        all.reps <- rbind(all.reps, tmp.repeated.reps)
+      }
+      
+      
+    ## if there isn't a control in a particular block, just make a blank df to combine
+    } else {
+      
+      all.reps <- data.frame()
+      
+    }
+    
+    ## add all reps in a block into one block wide df
+    all.blocks <- rbind(all.blocks, all.reps)
+    
+  }
+  
+  ## add all blocks of a species into the repeated controls df
+  repeated.controls <- rbind(repeated.controls, all.blocks)
+}
+
+with.controls <- rbind(all.phytos.info, repeated.controls) %>%
+  filter(bkgrd != "Control")
+
+
+
+# Join Data ####
+## join phyto & bkgrd data
+bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkgrd")) %>%
+  select(-phyto.n.indiv)
+
+
+
 ## join with unique.ID key to get block, plot, etc info
     ## also, adjust trifolium names to take out the annoying "-I"
-bg.phyto.seeds2 <- left_join(bg.phyto.seeds, unique.key, by = c("unique.ID", "phyto", "bkgrd")) %>%
-  mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
-         bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
-         phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
-         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
+#bg.phyto.seeds2 <- left_join(bg.phyto.seeds, unique.key, by = c("unique.ID", "phyto", "bkgrd")) %>%
+ # mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
+  #       bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
+   #      phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
+    #     bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
 
 ## reorder columns
-bg.phyto.seeds2 <- bg.phyto.seeds2[,c(1, 8:11,13,2,7,12, 3:6)] 
+bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
 # Format for Models ####
-model.dat <- bg.phyto.seeds2 %>%
+model.dat <- bg.phyto.seeds %>%
   mutate(phyto.seeds.in.final = ifelse(bkgrd == phyto, bg.seeds.in, phyto.seed.in)) %>% ## if bg & phyto are the same, use bg.seeds in
   mutate(bkgrd.names.in = bkgrd) %>% ## make an extra bkgrd column bc will need 2
   pivot_wider(names_from = "bkgrd.names.in", values_from = "bg.seeds.in", values_fill = 0) %>% ## seeds in for each background sp as a separate col
   mutate(phyto.seeds.out.final = ifelse(bkgrd == phyto, phyto.seed.out + bg.seeds.out, phyto.seed.out)) %>% ## for intra phytos, add phyto & bg seeds out values
-  select(-Control, -phyto.seed.in, -phyto.seed.out, -bg.seeds.out) ## drop extraneous cols
+  select(-phyto.seed.in, -phyto.seed.out, -bg.seeds.out) ## drop extraneous cols
 
-model.dat <- model.dat[,c(1:10,30,11:29)] ## reorder
+model.dat <- model.dat[,c(1:10,29,11:28)] ## reorder
 
 ## extraneous now- this change bg colnames back to sp names, but changed that above
 #colnames(model.dat)[12:ncol(model.dat)] <- substr(colnames(model.dat)[12:ncol(model.dat)], 1, 4)
@@ -60,5 +144,17 @@ for(i in species){
 model.dat <- model.dat [,-10] ## get rid of phyto.seeds.in.final column
 
 
+ok.reps <- model.dat %>%
+  filter(dens != "none") %>%
+  group_by(treatment, phyto, bkgrd) %>%
+  summarise(reps = n()) %>%
+  mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
+  filter(reps > 2)
+
+model.dat.filtered <- model.dat %>%
+  mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
+  filter(combos %in% ok.reps$combos)
+
+
 ## clean env
-rm(all.phytos, allo.df, bg.phyto.seeds, bg.phyto.seeds2, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key)
+rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key)
