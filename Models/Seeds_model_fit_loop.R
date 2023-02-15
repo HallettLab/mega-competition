@@ -4,6 +4,8 @@
 
 source("/Users/Marina/Documents/USDA-PostDoc/Projects/Mega-Comp/mega-competition/data_cleaning/format_model_dat.R")
 
+source("data_cleaning/format_model_dat.R")
+
 library(rstan)
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
