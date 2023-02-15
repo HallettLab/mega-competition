@@ -2,8 +2,6 @@
 
 # Prep #
 
-source("/Users/Marina/Documents/USDA-PostDoc/Projects/Mega-Comp/mega-competition/data_cleaning/format_model_dat.R")
-
 source("data_cleaning/format_model_dat.R")
 
 library(rstan)
@@ -36,8 +34,7 @@ initials <- list(lambda=250,
 
 initials1<- list(initials, initials, initials, initials) 
 
-species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", 
-             "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
+species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
 
 trt <- c("C","D")
 
@@ -45,10 +42,15 @@ model.output <- list()
 warnings <- list()
 
 # This is placeholder until we figure out what to do about ANAR backgrounds that either have 0 stems or where germ estimates were zero (but clearly they werent)
-model.dat[!is.finite(model.dat$ANAR),]$ANAR <- mean(model.dat[is.finite(model.dat$ANAR) & model.dat$bkgrd == "ANAR",]$ANAR, na.rm = T)
+model.dat.filtered[!is.finite(model.dat.filtered$ANAR),]$ANAR <- mean(model.dat.filtered[is.finite(model.dat.filtered$ANAR) & model.dat.filtered$bkgrd == "ANAR",]$ANAR, na.rm = T)
 
 # 5462 doesnt have background CESO data, temp fix here
-model.dat <- filter(model.dat, unique.ID != 5462)
+model.dat <- filter(model.dat.filtered, unique.ID != 5462)
+
+# really should fix format.dat script but lazy right now
+model.dat <- model.dat[!(model.dat$dens == "none" & model.dat$phyto == model.dat$bkgrd),]
+
+model.dat[, 11:28][is.na(model.dat[, 11:28])] <- 0
 
 for(i in species){
   for(j in trt){

@@ -14,7 +14,7 @@ plots <- list()
 
 for(i in species){
   for(j in trt){
-    load(paste0("Models/Posteriors/normal_bounded/seeds_", i, "_", j, "_posteriors.rdata"))
+    load(paste0("Models/Posteriors/seeds_", i, "_", j, "_posteriors.rdata"))
     tmp2 <- rstan::extract(tmp)
     plots[[paste0(i, "_", j)]] <- traceplot(tmp, pars = names(tmp2[-20]))
     posteriors[[paste0(i,"_",j)]] <- tmp2[-20]

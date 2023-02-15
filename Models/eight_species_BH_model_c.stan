@@ -74,45 +74,46 @@ model{
   vector[N] F_hat;
 
   // set priors
-  // alpha_pler ~ normal(0, 1);
-  // alpha_anar ~ normal(0, 1);
-  // alpha_acam ~ normal(0, 1);
-  // alpha_brni ~ normal(0, 1);
-  // alpha_clpu ~ normal(0, 1);
-  // alpha_brho ~ normal(0, 1);
-  // alpha_gitr ~ normal(0, 1);
-  // alpha_amme ~ normal(0, 1);
-  // alpha_plno ~ normal(0, 1);
-  // alpha_thir ~ normal(0, 1);
-  // alpha_mica ~ normal(0, 1);
-  // alpha_ceso ~ normal(0, 1);
-  // alpha_twil ~ normal(0, 1);
-  // alpha_lomu ~ normal(0, 1);
-  // alpha_taca ~ normal(0, 1);
-  // alpha_mael ~ normal(0, 1);
-  // alpha_leni ~ normal(0, 1);
-  // alpha_avba ~ normal(0, 1);
-  alpha_pler ~ gamma(0.001, 0.001);
-  alpha_anar ~ gamma(0.001, 0.001);
-  alpha_acam ~ gamma(0.001, 0.001);
-  alpha_brni ~ gamma(0.001, 0.001);
-  alpha_clpu ~ gamma(0.001, 0.001);
-  alpha_brho ~ gamma(0.001, 0.001);
-  alpha_gitr ~ gamma(0.001, 0.001);
-  alpha_amme ~ gamma(0.001, 0.001);
-  alpha_plno ~ gamma(0.001, 0.001);
-  alpha_thir ~ gamma(0.001, 0.001);
-  alpha_mica ~ gamma(0.001, 0.001);
-  alpha_ceso ~ gamma(0.001, 0.001);
-  alpha_twil ~ gamma(0.001, 0.001);
-  alpha_lomu ~ gamma(0.001, 0.001);
-  alpha_taca ~ gamma(0.001, 0.001);
-  alpha_mael ~ gamma(0.001, 0.001);
-  alpha_leni ~ gamma(0.001, 0.001);
-  alpha_avba ~ gamma(0.001, 0.001);
+  alpha_pler ~ normal(0, 1);
+  alpha_anar ~ normal(0, 1);
+  alpha_acam ~ normal(0, 1);
+  alpha_brni ~ normal(0, 1);
+  alpha_clpu ~ normal(0, 1);
+  alpha_brho ~ normal(0, 1);
+  alpha_gitr ~ normal(0, 1);
+  alpha_amme ~ normal(0, 1);
+  alpha_plno ~ normal(0, 1);
+  alpha_thir ~ normal(0, 1);
+  alpha_mica ~ normal(0, 1);
+  alpha_ceso ~ normal(0, 1);
+  alpha_twil ~ normal(0, 1);
+  alpha_lomu ~ normal(0, 1);
+  alpha_taca ~ normal(0, 1);
+  alpha_mael ~ normal(0, 1);
+  alpha_leni ~ normal(0, 1);
+  alpha_avba ~ normal(0, 1);
+  // alpha_pler ~ gamma(0.001, 0.001);
+  // alpha_anar ~ gamma(0.001, 0.001);
+  // alpha_acam ~ gamma(0.001, 0.001);
+  // alpha_brni ~ gamma(0.001, 0.001);
+  // alpha_clpu ~ gamma(0.001, 0.001);
+  // alpha_brho ~ gamma(0.001, 0.001);
+  // alpha_gitr ~ gamma(0.001, 0.001);
+  // alpha_amme ~ gamma(0.001, 0.001);
+  // alpha_plno ~ gamma(0.001, 0.001);
+  // alpha_thir ~ gamma(0.001, 0.001);
+  // alpha_mica ~ gamma(0.001, 0.001);
+  // alpha_ceso ~ gamma(0.001, 0.001);
+  // alpha_twil ~ gamma(0.001, 0.001);
+  // alpha_lomu ~ gamma(0.001, 0.001);
+  // alpha_taca ~ gamma(0.001, 0.001);
+  // alpha_mael ~ gamma(0.001, 0.001);
+  // alpha_leni ~ gamma(0.001, 0.001);
+  // alpha_avba ~ gamma(0.001, 0.001);
   lambda ~ gamma(0.001, 0.001);
 
   // implement the biological model (control, germ rates taken from mean of temps, but using corresponding WP)
+  // this models F (seed production) and so does not include seed survival from the seed back (see equations 3 and 4 from Kraft et al. 2015)
   for(i in 1:N){
     F_hat[i] = lambda*intra[i]*intra_g / (1 + 
     alpha_pler*pler[i]*0.8 + 

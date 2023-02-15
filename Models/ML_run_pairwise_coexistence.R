@@ -228,9 +228,10 @@ invasion_means$invader.fungroup <- paste(invasion_means$invader.nativity, invasi
 
 invasion_means$resident.fungroup <- paste(invasion_means$resident.nativity, invasion_means$resident.growth_form, sep = " ")
 
-# is AVBA the weird one?
-# ggplot(invasion_means[invasion_means$resident != "AVBA" | invasion_means$invader != "AVBA",], aes(x = resident.fungroup, y = growth, by = trt, fill = trt)) + 
-#   geom_boxplot() + 
-#   facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
-#   geom_hline(yintercept = 0, linetype = "dashed")
-# nope
+invasion_means <- filter(invasion_means, invader != "AVBA")
+invasion_means <- filter(invasion_means, resident != "AVBA")
+
+ggplot(invasion_means, aes(x = resident.fungroup, y = growth, fill = trt)) +
+  geom_boxplot() +
+  facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
+  geom_hline(yintercept = 0, linetype = "dashed")
