@@ -95,6 +95,6 @@ for(i in species){
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/Posteriors/ML_normal_bounded/seeds_",i,"_",j,"_posteriors.rdata"))
+    save(tmp, file = paste0("Models/ML/Posteriors/seeds_",i,"_",j,"_posteriors.rdata"))
   }
 }
