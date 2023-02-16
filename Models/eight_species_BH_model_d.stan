@@ -66,13 +66,11 @@ parameters{
   // real alpha_mael;
   // real alpha_leni;
   // real alpha_avba;
-
 }
 
 model{
   // create a vector of predictions
   vector[N] F_hat;
-
   // set priors
   alpha_pler ~ normal(0, 1);
   alpha_anar ~ normal(0, 1);
@@ -92,7 +90,6 @@ model{
   alpha_mael ~ normal(0, 1);
   alpha_leni ~ normal(0, 1);
   alpha_avba ~ normal(0, 1);
-  
   // alpha_pler ~ gamma(0.001, 0.001);
   // alpha_anar ~ gamma(0.001, 0.001);
   // alpha_acam ~ gamma(0.001, 0.001);
@@ -116,7 +113,6 @@ model{
 
   // implement the biological model (drought, germ rates taken from mean of temps, but using corresponding WP)
   for(i in 1:N){
-    
     F_hat[i] = lambda*intra[i]*intra_g / (1 + 
     alpha_pler*pler[i]*0.53 + 
     alpha_anar*anar[i]*0.07 + 

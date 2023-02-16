@@ -26,7 +26,6 @@ data{
   vector[N] avba;
 }
 
-
 parameters{
   //real<lower = 0> lambda;
   real<lower = 0, upper = 10000> lambda;
@@ -72,7 +71,6 @@ parameters{
 model{
   // create a vector of predictions
   vector[N] F_hat;
-
   // set priors
   alpha_pler ~ normal(0, 1);
   alpha_anar ~ normal(0, 1);

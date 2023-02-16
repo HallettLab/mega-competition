@@ -34,7 +34,8 @@ initials <- list(lambda=250,
 
 initials1<- list(initials, initials, initials, initials) 
 
-species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
+species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", 
+             "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
 
 trt <- c("C","D")
 
@@ -42,15 +43,13 @@ model.output <- list()
 warnings <- list()
 
 # This is placeholder until we figure out what to do about ANAR backgrounds that either have 0 stems or where germ estimates were zero (but clearly they werent)
-model.dat.filtered[!is.finite(model.dat.filtered$ANAR),]$ANAR <- mean(model.dat.filtered[is.finite(model.dat.filtered$ANAR) & model.dat.filtered$bkgrd == "ANAR",]$ANAR, na.rm = T)
+model.dat <- model.dat.filtered
+model.dat[!is.finite(model.dat$ANAR),]$ANAR <- mean(model.dat[is.finite(model.dat$ANAR) & model.dat$bkgrd == "ANAR",]$ANAR, na.rm = T)
 
-# 5462 doesnt have background CESO data, temp fix here
-model.dat <- filter(model.dat.filtered, unique.ID != 5462)
+model.dat <- model.dat[model.dat$unique.ID != 5462,] #remove missing CESO background
 
-# really should fix format.dat script but lazy right now
-model.dat <- model.dat[!(model.dat$dens == "none" & model.dat$phyto == model.dat$bkgrd),]
-
-model.dat[, 11:28][is.na(model.dat[, 11:28])] <- 0
+# replacing 0s with small number for now
+model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
 
 for(i in species){
   for(j in trt){
@@ -88,7 +87,7 @@ for(i in species){
     print(i)
     print(j)
     
-    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/eight_species_BH_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
+    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/eight_species_BH_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael", "avba", "brni", "leni"),
                            iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                            init = initials1) 
     
@@ -97,7 +96,3 @@ for(i in species){
     save(tmp, file = paste0("Models/Posteriors/seeds_",i,"_",j,"_posteriors.rdata"))
   }
 }
-
-
-
-
