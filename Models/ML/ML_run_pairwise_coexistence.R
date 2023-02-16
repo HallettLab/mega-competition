@@ -134,14 +134,13 @@ residents_dry <- residents_dry[,-1]
 ## dry: TWIL, CESO, PLNO
 ## wet: TWIL, THIR, AMME, ACAM
 
-# obtaining negative population values for AMME_C and TWIL_D and MAEL_D, removing these species for now
-# rm <- c("MAEL", "AMME", "TWIL")
-# 
-# residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm]
-# residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
-# 
-# #update species list
-# species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "CLPU", "TACA", "LOMU", "THIR", "CESO", "MICA", "PLNO")
+rm <- c("TWIL", "CESO", "PLNO", "THIR", "AMME", "ACAM")
+
+residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm]
+residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
+
+#update species list
+species <- species[!(species %in% rm)]
 
 # Invade into residents ####
 reps <- 200
@@ -198,10 +197,10 @@ equil_abund <- as.data.frame(rbind(apply(residents_dry, 2, mean),
 equil_abund$trt <- c("dry","wet")
 
 equil_abund <- equil_abund %>%
-  pivot_longer(cols = PLER:PLNO, names_to = "species", values_to = "abundance")
+  pivot_longer(cols = PLER:MICA, names_to = "species", values_to = "abundance")
   
 
-rm(list=setdiff(ls(), c("invasion_dry", "invasion_wet","equil_abund","params")))
+#rm(list=setdiff(ls(), c("invasion_dry", "invasion_wet","equil_abund","params")))
 
 # plot ####
 
@@ -218,7 +217,7 @@ invasion_means <- rbind(dry_means, wet_means)
 invasion_means$trt <- c("dry","wet")
 
 invasion_means <- invasion_means %>%
- pivot_longer(cols = PLER_into_BRHO:PLNO_into_AMME, 
+ pivot_longer(cols = PLER_into_BRHO:MICA_into_LOMU, 
               names_to = "invasion", values_to = "growth")
 
 invasion_means$invader <- str_sub(invasion_means$invasion, start = 1, end = 4)
@@ -245,10 +244,18 @@ invasion_means$invader.fungroup <- paste(invasion_means$invader.nativity, invasi
 
 invasion_means$resident.fungroup <- paste(invasion_means$resident.nativity, invasion_means$resident.growth_form, sep = " ")
 
-invasion_means <- filter(invasion_means, invader != "AVBA")
-invasion_means <- filter(invasion_means, resident != "AVBA")
-
 ggplot(invasion_means, aes(x = resident.fungroup, y = growth, fill = trt)) +
   geom_boxplot() +
+  facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+invasion_means_summary <- invasion_means %>%
+  group_by(trt, invader.fungroup, resident.fungroup) %>%
+  summarize(ldgr.mean = mean(growth),
+            ldgr.se = calcSE(growth))
+
+ggplot(invasion_means_summary, aes(x = resident.fungroup, y = ldgr.mean, col = trt, group = trt)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = ldgr.mean - ldgr.se, ymax = ldgr.mean + ldgr.se, width = 0.2)) +
   facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
   geom_hline(yintercept = 0, linetype = "dashed")
