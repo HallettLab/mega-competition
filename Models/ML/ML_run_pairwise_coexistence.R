@@ -1,7 +1,7 @@
 # run coexistence models for dry versus wet
 # survival isn't in these models for now
 
-source("Models/ML_import_posteriors.R")
+source("Models/ML/ML_import_posteriors.R")
 #source("data_cleaning/format_model_dat.R") # for germ data
 
 
@@ -81,12 +81,15 @@ all_intra <- c("alpha_pler", "alpha_pler", "alpha_anar", "alpha_anar", "alpha_ac
 
 options <- length(all_intra)
 
-time <- 200
+time <- 300
 runs <- 200
 
 N <- array(NA, c(options, runs, time))
 N[,,1] <- 100 # start with 100 individuals in every case
 
+residents_dry <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
+
+residents_wet <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
 
 for(i in 1:length(names(posteriors))) {
     datset <- posteriors[[i]]
@@ -103,28 +106,42 @@ for(i in 1:length(names(posteriors))) {
                                        lambda = lambda, 
                                        alpha_intra = alpha_intra, 
                                        Nt = N[i, ,t]) 
-  }
+      
+    }
+    
+    if(str_sub(names(posteriors)[i], start = -1) == "D"){
+
+      tmp.df <- data.frame(N[i,,300])
+      names(tmp.df) <- substr(names(posteriors)[i], 1, 4)
+      residents_dry <-  cbind(residents_dry,  tmp.df)
+      
+    }
+
+    else{
+      
+      tmp.df <- data.frame(N[i,,300])
+      names(tmp.df) <- substr(names(posteriors)[i], 1, 4)
+      residents_wet <-  cbind(residents_wet,  tmp.df)
+
+    }
 }
 
-species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
+# This was sloppily done by Marina, remove first column
+residents_wet <- residents_wet[,-1]
+residents_dry <- residents_dry[,-1]
 
-# make into dry versus wet conditions dataframes, this is kinda sketchy, should redo so we know whats happening
-residents_dry <-  data.frame(N[2,,200], N[4,,200], N[6,,200], N[8,,200], N[10,,200], N[12,,200], N[14,,200], N[16,,200], N[18,,200], N[20,,200], N[22,,200], N[24,,200], N[26,,200], N[28,,200], N[30,,200], N[32,,200])
-
-names(residents_dry) <- species
-
-residents_wet <-  data.frame(N[1,,200], N[3,,200], N[5,,200], N[7,,200], N[9,,200], N[11,,200], N[13,,200], N[15,,200], N[17,,200], N[19,,200], N[21,,200], N[23,,200], N[25,,200], N[27,,200], N[29,,200], N[31,,200])
-
-names(residents_wet) <- species
+# species having a hard time reaching equilibrium
+## dry: TWIL, CESO, PLNO
+## wet: TWIL, THIR, AMME, ACAM
 
 # obtaining negative population values for AMME_C and TWIL_D and MAEL_D, removing these species for now
-rm <- c("MAEL", "AMME", "TWIL")
-
-residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm]
-residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
-
-#update species list
-species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "CLPU", "TACA", "LOMU", "THIR", "CESO", "MICA", "PLNO")
+# rm <- c("MAEL", "AMME", "TWIL")
+# 
+# residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm]
+# residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
+# 
+# #update species list
+# species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "CLPU", "TACA", "LOMU", "THIR", "CESO", "MICA", "PLNO")
 
 # Invade into residents ####
 reps <- 200
@@ -201,7 +218,7 @@ invasion_means <- rbind(dry_means, wet_means)
 invasion_means$trt <- c("dry","wet")
 
 invasion_means <- invasion_means %>%
- pivot_longer(cols = PLER_into_BRHO:PLNO_into_MICA, 
+ pivot_longer(cols = PLER_into_BRHO:PLNO_into_AMME, 
               names_to = "invasion", values_to = "growth")
 
 invasion_means$invader <- str_sub(invasion_means$invasion, start = 1, end = 4)
