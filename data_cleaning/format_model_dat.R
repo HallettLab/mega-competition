@@ -124,37 +124,38 @@ bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkg
 bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
 # Format for Models ####
-model.dat <- bg.phyto.seeds %>%
-  mutate(phyto.seeds.in.final = ifelse(bkgrd == phyto, bg.seeds.in, phyto.seed.in)) %>% ## if bg & phyto are the same, use bg.seeds in
+model.dat.init <- bg.phyto.seeds %>%
+  mutate(phyto.seeds.in.final = ifelse(bkgrd == phyto & dens != "none", bg.seeds.in, phyto.seed.in)) %>% ## if bg & phyto are the same, use bg.seeds in; intraspecific control phytos are a specific case - for these we need to use the phyto seeds in
+  
   mutate(bkgrd.names.in = bkgrd) %>% ## make an extra bkgrd column bc will need 2
   pivot_wider(names_from = "bkgrd.names.in", values_from = "bg.seeds.in", values_fill = 0) %>% ## seeds in for each background sp as a separate col
   mutate(phyto.seeds.out.final = ifelse(bkgrd == phyto, phyto.seed.out + bg.seeds.out, phyto.seed.out)) %>% ## for intra phytos, add phyto & bg seeds out values
   select(-phyto.seed.in, -phyto.seed.out, -bg.seeds.out) ## drop extraneous cols
 
-model.dat <- model.dat[,c(1:10,29,11:28)] ## reorder
+model.dat.init <- model.dat.init[,c(1:10,29,11:28)] ## reorder
 
 ## extraneous now- this change bg colnames back to sp names, but changed that above
 #colnames(model.dat)[12:ncol(model.dat)] <- substr(colnames(model.dat)[12:ncol(model.dat)], 1, 4)
 
 ## create a vector of species names
-species <- colnames(model.dat)[12:ncol(model.dat)] 
+species <- colnames(model.dat.init)[12:ncol(model.dat.init)] 
 
 ## for each species, when it is the phyto, fill in the appropriate seeds.in col with the values from phyto.seeds.in.final
 for(i in species){
-  model.dat[model.dat$phyto == i, i] <- model.dat[model.dat$phyto == i,]$phyto.seeds.in.final
+  model.dat.init[model.dat.init$phyto == i, i] <- model.dat.init[model.dat.init$phyto == i,]$phyto.seeds.in.final
 }
 
-model.dat <- model.dat [,-10] ## get rid of phyto.seeds.in.final column
+model.dat.init <- model.dat.init [,-10] ## get rid of phyto.seeds.in.final column
 
 
-ok.reps <- model.dat %>%
+ok.reps <- model.dat.init %>%
   filter(dens != "none") %>%
   group_by(treatment, phyto, bkgrd) %>%
   summarise(reps = n()) %>%
   mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
   filter(reps > 2)
 
-model.dat.filtered <- model.dat %>%
+model.dat.filtered <- model.dat.init %>%
   mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
   filter(combos %in% ok.reps$combos)
 
