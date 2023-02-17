@@ -21,13 +21,13 @@ source("Models/ML/ML_import_posteriors.R")
 # }
 
 run.to.equilibrium <- function(germ, lambda, alpha_intra, Nt) {
-  Ntp1 <- (1-germ)*Nt + germ*lambda*Nt/(1 + alpha_intra * Nt)
+  Ntp1 <- (1-germ)*Nt + germ*lambda*Nt/(1 + alpha_intra * Nt * germ)
   return(Ntp1)
 
 }
 
-run.invader <- function(germ, lambda, alpha_inter, resid_abund, invader_abund) {
-  Ntp1 <- (1-germ)*invader_abund + germ*lambda*invader_abund/(1 + alpha_inter * resid_abund)
+run.invader <- function(germ.inv, germ.res, lambda, alpha_inter, resid_abund, invader_abund) {
+  Ntp1 <- (1-germ.inv)*invader_abund + germ.inv*lambda*invader_abund/(1 + alpha_inter * resid_abund * germ.res)
   LDGR <- log(Ntp1/invader_abund)
   return(LDGR)
 
@@ -134,7 +134,15 @@ residents_dry <- residents_dry[,-1]
 ## dry: TWIL, CESO, PLNO
 ## wet: TWIL, THIR, AMME, ACAM
 
-rm <- c("TWIL", "CESO", "PLNO", "THIR", "AMME", "ACAM")
+# species that facilitate themselves/have negative population abundances
+## dry: MAEL (-0.26), TWIL (-0.15), CESO (-0.006), PLNO (-0.07)
+## AMME doesnt facilitate itself, but it's alpha is so big (~10) that it makes the estimate abundance 0
+
+## wet: ACAM (-0.1), TWIL (-0.003), THIR (-0.08), AMME
+
+# removing AVBA too because it is resulting in NaNs for LDGR and had such poor germ/abundance anyway
+rm <- c("TWIL", "CESO", "PLNO", "THIR", "AMME", "ACAM", "MAEL", "AVBA") 
+
 
 residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm]
 residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
@@ -160,7 +168,8 @@ for(i in species) {
               posts <- sample(post_length, runs, replace=TRUE)
               
               tmp[[paste0(i, "_into_", j, "_", k)]][r,] <- run.invader(#surv = avfa_dry$surv, 
-                                                germ = posteriors[[paste0(i,"_", k)]]$germ, 
+                                                germ.inv = posteriors[[paste0(i,"_", k)]]$germ, 
+                                                germ.res = posteriors[[paste0(j,"_", k)]]$germ,
                                                 lambda = posteriors[[paste0(i,"_", k)]]$lambda[posts], 
                                                 alpha_inter = unlist(posteriors[[paste0(i,"_", k)]][paste0("alpha_", tolower(j))], use.names = F)[posts],
                                                 resid_abund = residents_dry[,j], 
@@ -249,9 +258,14 @@ ggplot(invasion_means, aes(x = resident.fungroup, y = growth, fill = trt)) +
   facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
   geom_hline(yintercept = 0, linetype = "dashed")
 
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
+
 invasion_means_summary <- invasion_means %>%
   group_by(trt, invader.fungroup, resident.fungroup) %>%
-  summarize(ldgr.mean = mean(growth),
+  summarize(ldgr.mean = mean(growth, na.rm = T),
             ldgr.se = calcSE(growth))
 
 ggplot(invasion_means_summary, aes(x = resident.fungroup, y = ldgr.mean, col = trt, group = trt)) +

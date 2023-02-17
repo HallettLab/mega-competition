@@ -34,10 +34,9 @@ initials <- list(lambda=250,
 
 initials1<- list(initials, initials, initials, initials) 
 
-# species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL",
-#              "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
+species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL",
+             "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
 
-species <- c("CESO", "MAEL", "TWIL")
 
 trt <- c("C","D")
 
@@ -89,12 +88,12 @@ for(i in species){
     print(i)
     print(j)
     
-    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/eight_species_BH_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael", "avba", "brni", "leni"),
+    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/ML/species_BH_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael", "avba", "brni", "leni"),
                            iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                            init = initials1) 
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/ML/Posteriors/seeds_",i,"_",j,"_posteriors.rdata"))
+    save(tmp, file = paste0("Models/ML/Posteriors-normal-unbounded/seeds_",i,"_",j,"_posteriors.rdata"))
   }
 }
