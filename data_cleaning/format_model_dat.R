@@ -111,15 +111,6 @@ bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkg
          bg.seeds.out = ifelse(is.na(bg.seeds.out) & unique.ID %in% unique.id.controls, 0, bg.seeds.out))
 
 
-
-## join with unique.ID key to get block, plot, etc info
-    ## also, adjust trifolium names to take out the annoying "-I"
-#bg.phyto.seeds2 <- left_join(bg.phyto.seeds, unique.key, by = c("unique.ID", "phyto", "bkgrd")) %>%
- # mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
-  #       bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
-   #      phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
-    #     bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
-
 ## reorder columns
 bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
@@ -159,6 +150,12 @@ model.dat.filtered <- model.dat.init %>%
   mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
   filter(combos %in% ok.reps$combos)
 
+# Make Lambda Priors df ####
+lambda_priors <- all.phytos.info %>%
+  filter(bkgrd == "Control") %>%
+  group_by(phyto) %>%
+  summarise(max_seeds_ctrl = max(phyto.seed.out), 
+            sd_seeds = sd(phyto.seed.out))
 
 ## clean env
 rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, ok.reps, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps)
