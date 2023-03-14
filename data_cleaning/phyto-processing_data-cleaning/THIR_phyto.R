@@ -71,7 +71,7 @@ thir_final <- thirC %>%
   ## add unique IDs in
   left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   
-  mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto)) %>%
+  #mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto)) %>%
   ## get rid of the 'I'
   
   filter(complete.sample == "Y") %>% ## remove incompletes
