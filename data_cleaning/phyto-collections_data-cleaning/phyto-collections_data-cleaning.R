@@ -23,6 +23,7 @@ date_collections <- 20230210
 
 collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date_collections, "_MASTER_Collections.xlsx"), sheet = 2)
 
+
 # Clean Data ####
 ## Format Dates ####
 ## make sure the dates read in correctly
@@ -49,7 +50,12 @@ collectionsC <- collections %>%
                                ifelse(phyto %in% nhood18, 18, Nbrhood.size))) %>% ## change # of background indiv in controls to NA
   mutate_all(na_if,"")
 
+### create brho data for Larissa ####
+#brho_collections <- collectionsC %>%
+ # filter(phyto == "BRHO") %>%
+  #select(-(phyto.date.census:phyto.date.collect), -bg.date.census, -unique, -plot.notes, -sub.notes)
 
+#write.csv(brho_collections, "brho_census_data.csv")
 
 # Check Notes ####
 ## create empty data frame
