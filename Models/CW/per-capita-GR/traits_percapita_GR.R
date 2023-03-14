@@ -4,22 +4,12 @@ library(stats)
 
 # Read in Data ####
 ## per-capita growth rates
-source("models/per-capita-GR/percapita_GR.R")
+source("models/CW/per-capita-GR/percapita_GR.R")
 
-## traits data
-## specify dropbox pathway 
-if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Traits/")){
-  # Carmen
-  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Traits/"
-  
-} else {
-  # Marina
-  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Traits/"
-} 
+## traits
+source("data_cleaning/trait_data-cleaning/adult_traits/adult_traits_cleaning.R")
 
-traits <- read.csv(paste0(lead, "Megacomp_adult-traits.csv")) %>%
-  mutate(phyto = code_4, 
-         bkgrd = code_4) 
+
 
 percap.with.traits <- left_join(percap.growth, traits, by = "phyto") %>%
   mutate(phyto.nativity = nativity,
