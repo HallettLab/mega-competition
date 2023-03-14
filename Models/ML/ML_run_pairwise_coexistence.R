@@ -273,3 +273,19 @@ ggplot(invasion_means_summary, aes(x = resident.fungroup, y = ldgr.mean, col = t
   geom_errorbar(aes(ymin = ldgr.mean - ldgr.se, ymax = ldgr.mean + ldgr.se, width = 0.2)) +
   facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
   geom_hline(yintercept = 0, linetype = "dashed")
+
+
+adults.pca <- c("Height_cm", "SLA_cm2.g", "LWC", "CN")
+  
+pca <- prcomp(trait[, adults.pca], scale = T)
+summary(pca)
+
+trait <- cbind(trait, pca$x[,1:4])
+
+invasion_means <- merge(invasion_means, trait[,c("code_4", "Height_cm", "SLA_cm2.g", "LWC", "CN", "PC1", "PC2")], by.x = "invader", by.y = "code_4")
+
+ggplot(invasion_means, aes(x = SLA_cm2.g, y = growth, col = trt, group = trt)) +
+  geom_point()  +
+  geom_smooth(method = "lm") + 
+  facet_wrap(~resident, scales = "free") + 
+  geom_hline(yintercept = 0, linetype = "dashed")
