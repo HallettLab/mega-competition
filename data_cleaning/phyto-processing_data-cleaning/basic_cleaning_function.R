@@ -17,6 +17,11 @@ basic_cleaning_func <- function(phyto_data, ...) {
     
     mutate(across(c(phyto.unique,scale.ID,complete.sample), toupper)) %>% ## capitalize all vals 
     
+    mutate(bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
+           bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd), 
+           phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
+           phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto)) %>%
+    
     mutate_all(na_if,"") %>% ## make blank values NAs
     
     filter(plot < 43, bkgrd != "VIVI") ## get rid of trifolium sub experiment and VIVI plots that were not used at all.

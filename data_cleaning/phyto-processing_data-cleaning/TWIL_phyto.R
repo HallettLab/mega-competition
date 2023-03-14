@@ -65,7 +65,7 @@ twil_final <- twilC %>%
   ## add unique IDs in
   left_join(unique.key, by = c("treatment", "block", "plot", "sub", "bkgrd", "dens", "phyto", "phyto.unique")) %>% 
   
-  mutate(phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto)) %>%
+  #mutate(phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto)) %>%
   ## get rid of the 'I'
   
   filter(redo.complete == "Y") %>% ## remove incompletes

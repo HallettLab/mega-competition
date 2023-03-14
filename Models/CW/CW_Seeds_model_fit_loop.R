@@ -50,6 +50,9 @@ model.dat <- filter(model.dat.filtered, unique.ID != 5462)
 # really should fix format.dat script but lazy right now
 #model.dat <- model.dat[!(model.dat$dens == "none" & model.dat$phyto == model.dat$bkgrd),]
 
+# replacing 0s with small number for now
+model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
+
 #model.dat[, 11:28][is.na(model.dat[, 11:28])] <- 0
 model.dat <- model.dat %>%
   select(-combos)
@@ -90,13 +93,13 @@ for(i in species){
     print(i)
     print(j)
     
-    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/eight_species_BH_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
+    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/eight_species_BH_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
                            iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                            init = initials1) 
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/Posteriors/seeds_",i,"_",j,"_posteriors.rdata"))
+    save(tmp, file = paste0("Models/CW/posteriors/seeds_",i,"_",j,"_posteriors.rdata"))
   }
 }
 

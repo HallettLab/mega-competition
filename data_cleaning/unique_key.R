@@ -40,6 +40,10 @@ drought <- c(1, 3, 4, 6, 12, 14) ## create a treatment vector
 ## create a unique-ID key
 unique.key <- collections.fkC %>%
   mutate(treatment = ifelse(block %in% drought, "D", "C")) %>% ## add a treatment column
+  mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto),
+         phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
+         bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd),
+         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd)) %>%
   select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.unique) ## retain only necessary columns
 
 

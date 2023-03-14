@@ -1,24 +1,25 @@
 ## This script combines phyto and background seeds in/out and gets data in a model ready format! 
 
 # Read in Data ####
-## phyto seeds in/out
+## phyto seeds in/out ####
 source("data_cleaning/phyto-processing_data-cleaning/compile_phyto-processing_data.R")
 
-## bkgrd seeds in/out
+## bkgrd seeds in/out ####
 source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_calculations.R")
 
 
 # change THIR and TWIL names in germ data  #
-germ.sum.sp.DC <- germ.sum.sp.DC %>% 
-  mutate(species = ifelse(species == "THIR-I", "THIR", species), 
-         species = ifelse(species == "TWIL-I", "TWIL", species))
+#germ.sum.sp.DC <- germ.sum.sp.DC %>% 
+ # mutate(species = ifelse(species == "THIR-I", "THIR", species), 
+      #   species = ifelse(species == "TWIL-I", "TWIL", species))
 
 # change THIR and TWIL names in unique ID key
-unique.key <- unique.key %>% 
-  mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
-         bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
-         phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
-         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
+#unique.key <- unique.key %>% 
+ # mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
+     #    bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
+      #   phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
+      #   bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
+
 
 # Replicate Control Rows ####
 all.phytos.info <- left_join(all.phytos, unique.key, by = c("unique.ID", "phyto")) %>%
@@ -29,6 +30,7 @@ all.phytos.info <- left_join(all.phytos, unique.key, by = c("unique.ID", "phyto"
 blocks <- unique(all.phytos.info$block) 
 species <- unique(all.phytos.info$phyto)
 bkgrds <- unique(all.phytos.info$bkgrd)
+
 
 ## make column of backgrounds to join w/replicated control lines later
 bkgrd.df <- as.data.frame(bkgrds[bkgrds != "Control"])
@@ -104,26 +106,23 @@ unique.id.controls <- sort(unique(repeated.controls$unique.ID))
 ## make a vector of control unique.IDs
 
 # Join Data ####
-## join phyto & bkgrd data
+## join phyto & bkgrd data ####
 bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkgrd")) %>%
   select(-phyto.n.indiv) %>%
   mutate(bg.seeds.in = ifelse(is.na(bg.seeds.in) & unique.ID %in% unique.id.controls, 0, bg.seeds.in),
          bg.seeds.out = ifelse(is.na(bg.seeds.out) & unique.ID %in% unique.id.controls, 0, bg.seeds.out))
 
-
-
-## join with unique.ID key to get block, plot, etc info
-    ## also, adjust trifolium names to take out the annoying "-I"
-#bg.phyto.seeds2 <- left_join(bg.phyto.seeds, unique.key, by = c("unique.ID", "phyto", "bkgrd")) %>%
- # mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
-  #       bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
-   #      phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
-    #     bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
+## join weed census ####
+#bg.phyto.seeds.weeds <- left_join(bg.phyto.seeds, phyto.census[,c(1,5:10)], by = "unique.ID")
 
 ## reorder columns
 bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
+check <- bg.phyto.seeds %>%
+  filter(is.na(bg.seeds.in))
+
 # Format for Models ####
+## pivot wider ####
 model.dat.init <- bg.phyto.seeds %>%
   mutate(phyto.seeds.in.final = ifelse(bkgrd == phyto & dens != "none", bg.seeds.in, phyto.seed.in)) %>% ## if bg & phyto are the same, use bg.seeds in; intraspecific control phytos are a specific case - for these we need to use the phyto seeds in
   
@@ -134,9 +133,7 @@ model.dat.init <- bg.phyto.seeds %>%
 
 model.dat.init <- model.dat.init[,c(1:10,29,11:28)] ## reorder
 
-## extraneous now- this change bg colnames back to sp names, but changed that above
-#colnames(model.dat)[12:ncol(model.dat)] <- substr(colnames(model.dat)[12:ncol(model.dat)], 1, 4)
-
+## fill in phyto.seeds.in ####
 ## create a vector of species names
 species <- colnames(model.dat.init)[12:ncol(model.dat.init)] 
 
@@ -147,7 +144,7 @@ for(i in species){
 
 model.dat.init <- model.dat.init [,-10] ## get rid of phyto.seeds.in.final column
 
-
+## filter by rep num ####
 ok.reps <- model.dat.init %>%
   filter(dens != "none") %>%
   group_by(treatment, phyto, bkgrd) %>%
@@ -155,10 +152,17 @@ ok.reps <- model.dat.init %>%
   mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
   filter(reps > 2)
 
-model.dat.filtered <- model.dat.init %>%
+### add in weed census ####
+model.dat.filtered <- left_join(model.dat.init, phyto.census[,c(1,5:10)], by = "unique.ID") %>%
   mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
   filter(combos %in% ok.reps$combos)
 
+# Make Lambda Priors df ####
+lambda_priors <- all.phytos.info %>%
+  filter(bkgrd == "Control") %>%
+  group_by(phyto) %>%
+  summarise(max_seeds_ctrl = max(phyto.seed.out), 
+            sd_seeds = sd(phyto.seed.out))
 
 ## clean env
 rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, ok.reps, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps)

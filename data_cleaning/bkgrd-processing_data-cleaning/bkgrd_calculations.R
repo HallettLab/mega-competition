@@ -22,9 +22,12 @@ source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_seeding_dates.R")
 # Combine DFs ####
 
 ## Dates & Germ Rates ####
+plot.dates2 <- plot.dates %>%
+  mutate(bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd),
+         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
 
 ## First, combine plot seeding dates & germ info to eval which germ rate to use for each plot
-dates.germ <- left_join(plot.dates, bg.germ, by = c("bkgrd")) %>%
+dates.germ <- left_join(plot.dates2, bg.germ, by = c("bkgrd")) %>%
   mutate(bp.combo = paste(block, plot, sep = "_"))
 
 ## create a vector of unique block-plot combos

@@ -28,8 +28,8 @@ germ2 <- germ %>%
   mutate(species2 = sub("^(.{1,5}).(.*)", "\\1\\2", Species),
          species = sub("^(.{1,2}).(.*)", "\\1\\2", species2)) %>%
   mutate(species = ifelse(species == "FEPE", "LOMU",
-                          ifelse(species == "ELCA", "TACA", ifelse(species == "TRHI", "THIR-I", 
-                                                                   ifelse(species == "TRWI", "TWIL-I", species))))) %>%
+                          ifelse(species == "ELCA", "TACA", ifelse(species == "TRHI", "THIR", 
+                                                                   ifelse(species == "TRWI", "TWIL", species))))) %>%
   select(-Species, -species2)
 ## change species from 6 letter codes to 4 letter codes to match all other mega comp dfs
 

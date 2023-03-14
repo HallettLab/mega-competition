@@ -85,7 +85,9 @@ ggplot(twil_flowers_allo, aes(x=total.biomass.g, y=total.flower.num, color = tre
 ### polynomial ####
 ggplot(twil_flowers_allo, aes(x = total.biomass.g, y = total.flower.num)) +
   geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
+  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2)) +
+  ggtitle("TWIL poly")
+#ggsave("allometry/preliminary_figs/TWIL_flowers_poly.png", width = 4, height = 2.5)
 
 ggplot(twil_flowers_allo, aes(x = total.biomass.g, y = total.flower.num, color = treatment)) +
   geom_point() +
@@ -114,14 +116,31 @@ mean_viability <- twil_viability_allo %>%
 ## visualize ####
 ggplot(twil_viability_sum, aes(x=treatment, y=mean.via)) +
   geom_point(size = 3) +
-  geom_errorbar(aes(ymin = mean.via - se.via, ymax = mean.via + se.via), width = 0.25)
+  geom_errorbar(aes(ymin = mean.via - se.via, ymax = mean.via + se.via), width = 0.25) +
+  ggtitle("TWIL")
 ## error bars are overlapping a lot, probably not a significant difference here
+
+ggsave("allometry/preliminary_figs/twil_mean_via.png", width = 3, height = 2)
 
 ## test ####
 viability_test <- aov(viability~treatment, data = twil_viability_allo)
 summary(viability_test)
 ## not significantly different, use an overall mean 
 
+## check viability-bio rel ####
+viability_bio <- merge(twil_viability_allo, twil_flowers_allo[,6:9], by.x="flower.rep", by.y = "rep")
+
+ggplot(viability_bio, aes(x=total.biomass.g, y=viability)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("TWIL") +
+  ylab("prop viable flowers")
+
+#ggsave("allometry/preliminary_figs/twil_via_bio.png", width = 4, height = 2.5)
+
+vb.model <- lm(viability~total.biomass.g, data = viability_bio)
+summary(vb.model)
+## marginally significant
 
 # Seeds ####
 twil_seed_means <- twil_seeds_allo %>%
@@ -134,8 +153,12 @@ seed_overall_mean <- twil_seeds_allo %>%
 ## visualize ####
 ggplot(twil_seed_means, aes(x=treatment, y=mean.seeds)) +
   geom_point(size = 3) +
-  geom_errorbar(aes(ymin = mean.seeds - se.seeds, ymax = mean.seeds + se.seeds), width = 0.25)
+  geom_errorbar(aes(ymin = mean.seeds - se.seeds, ymax = mean.seeds + se.seeds), width = 0.25) +
+  ggtitle("TWIL") +
+  ylab("mean.seeds.per.flower")
 ## same mean
+
+ggsave("allometry/preliminary_figs/twil_seed_means.png", width = 3, height = 2)
 
 ## test ####
 seed_test <- aov(seeds.per.flower~treatment, data = twil_seeds_allo)
@@ -143,7 +166,7 @@ summary(seed_test)
 ## not significantly different, use an overall mean 
 
 
-
+# Save output ####
 ## save the model outputs
 TWIL.allo.output <- data.frame(Species = "TWIL", 
                                intercept = 0, 
@@ -167,5 +190,6 @@ TWIL.allo.output <- data.frame(Species = "TWIL",
                                viability_D = mean_viability[,1],
                                viability_D_se = mean_viability[,2])
 
-rm(list = c("allo_lead", "calcSE", "lead", "mean_viability", "seed_overall_mean", "seed_test", "twil_allo_phytos", "twil_combined", "twil_fallo_lin", "twil_fallo_pol", "twil_flowers_allo", "twil_mismatch", "twil_phyto", "twil_seed_means", "twil_seeds_allo", "twil_viability_allo", "twil_viability_sum", "viability_test"))
 
+## clean environment 
+rm(list = c("allo_lead", "calcSE", "lead", "mean_viability", "seed_overall_mean", "seed_test", "twil_allo_phytos", "twil_combined", "twil_fallo_lin", "twil_fallo_pol", "twil_flowers_allo", "twil_mismatch", "twil_phyto", "twil_seed_means", "twil_seeds_allo", "twil_viability_allo", "twil_viability_sum", "viability_test", "viability_bio", "vb.model"))
