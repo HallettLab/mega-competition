@@ -1,38 +1,37 @@
+## set up env
 library(ggpubr)
 library(ggfortify)
 library(stats)
 
+theme_set(theme_bw())
+
+# read in data ####
+## model outputs
 source("Models/CW/CW_import_posteriors.R")
 
-lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Traits/"
+## traits
+source("data_cleaning/trait_data-cleaning/adult_traits/adult_traits_cleaning.R")
 
-trait <- read.csv(paste0(lead, "Megacomp_adult-traits.csv"))
+# Explore All Interactions ####
 
-posteriors2.sum <- posteriors2 %>%
-  group_by(species, treatment) %>%
-  summarize(lambda.scaled.mean = mean(scaled),
-            lambda.scaled.se = calcSE(scaled))
-
-ggplot(posteriors2.sum[posteriors2.sum$species != "CLPU",], aes(x=species, y=lambda.scaled.mean, color = treatment)) +
-  geom_point()
-
-
-posteriors_long <- posteriors2 %>%
-  pivot_longer(2:19, names_to = "alpha_name", values_to = "alpha_value")
-  
-
-
-
+## Create summary data frame of posterior values
 posteriors_long_sum <- posteriors_long %>%
   group_by(treatment, species, alpha_name) %>%
   summarise(mean_alpha = mean(alpha_value), se_alpha = calcSE(alpha_value))
 
+## mean interaction coeff for each focal species
 ggplot(posteriors_long_sum, aes(x=alpha_name, y=mean_alpha, color = treatment)) +
   geom_point() +
-  facet_wrap(~species) +
-  geom_errorbar(aes(ymin = mean_alpha-se_alpha, ymax = mean_alpha + se_alpha))
+  facet_wrap(~species, ncol = 3) +
+  geom_errorbar(aes(ymin = mean_alpha-se_alpha, ymax = mean_alpha + se_alpha)) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_color_manual(values = c("#003366", "#FFA630"))
+
+#ggsave("models/CW/preliminary_figures/model_posteriors_updated_lambdas/mean_interaction_coeff_all_sp.png", width = 8, height = 7)
   
-  
+
+
+# Dial into Facilitation ####
 facilitation <- posteriors_long_sum %>%
   filter(mean_alpha < -0.05)
 
@@ -41,7 +40,8 @@ ggplot(facilitation[facilitation$alpha_name != "alpha_avba",], aes(x=alpha_name,
   theme(axis.text.x = element_text(angle = 90)) +
   geom_errorbar(aes(ymin = mean_alpha-se_alpha, ymax = mean_alpha + se_alpha), width = 0.25) +
   facet_wrap(~treatment) +
-  geom_hline(yintercept = 0, linetype = "dashed")
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme(axis.text.x = element_text(angle = 90))
 
 
 
@@ -167,7 +167,7 @@ ggplot(interaction.w.pca, aes(x=PC2, y=mean_alpha)) +
 
 mean_interaction <- all_alphas_resident_traits %>%
   group_by(alpha_name, treatment, invader.FG) %>%
-  summarise(overall_alpha = mean(mean_alpha), se_overall_alpha = calcSE(mean_alpha))
+  summarise(overall_alpha = mean(mean_alpha), se_overall_alpha = calcSE(mean_alpha)) 
 
 ggplot(mean_interaction[mean_interaction$alpha_name != "alpha_avba",], aes(x=alpha_name, y=overall_alpha, color = invader.FG)) +
   geom_point() +
