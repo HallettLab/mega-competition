@@ -2,10 +2,16 @@
 # survival isn't in these models for now
 
 source("Models/CW/CW_import_posteriors.R")
-#source("data_cleaning/format_model_dat.R") # for germ data
+
+## for germ data
+source("data_cleaning/germination_data-cleaning/germination_rates.R")
+
+germ.rates <- germ.sum.sp.DC %>%
+  mutate(species = ifelse(species == "TWIL-I", "TWIL", species), 
+         species = ifelse(species == "THIR-I", "THIR", species))
 
 
-# Set up ####
+# Set up Models ####
 # this includes seed survival, comment out for now
 # run.to.equilibrium <- function(surv, germ, lambda, alpha_intra, Nt) {
 #   Ntp1 <- (1-germ)*surv*Nt + germ*lambda*Nt/(1+ alpha_intra * Nt)
@@ -20,6 +26,8 @@ source("Models/CW/CW_import_posteriors.R")
 # 
 # }
 
+
+## run resident species to equilibrium in isolation
 run.to.equilibrium <- function(germ, lambda, alpha_intra, Nt) {
   Ntp1 <- (1-germ)*Nt + germ*lambda*Nt/(1 + alpha_intra * germ*Nt)
   return(Ntp1)
@@ -28,6 +36,7 @@ run.to.equilibrium <- function(germ, lambda, alpha_intra, Nt) {
 ## added germination term to the competitive effect reducing lambda - don't know why this wasn't included initially- seems important.
 
 
+## invasion growth rate
 run.invader <- function(germ, lambda, alpha_inter, resid_abund, invader_abund) {
   Ntp1 <- (1-germ)*invader_abund + germ*lambda*invader_abund/(1 + alpha_inter * resid_abund)
   LDGR <- log(Ntp1/invader_abund)
@@ -35,51 +44,57 @@ run.invader <- function(germ, lambda, alpha_inter, resid_abund, invader_abund) {
   
 }
 
-# germ rates dry
+    ## need to look at the invasion growth rate formula - Lauren's code does not take the log of Ntp1/invader_abund.
+    ## Andrew's code does 
+    ## is there a difference in approach?
 
-posteriors[["PLER_D"]]$germ <- 0.53
-posteriors[["ANAR_D"]]$germ <- 0.07
-posteriors[["ACAM_D"]]$germ <- 0.52
-#posteriors[["BRNI_D"]]$germ <- 0.39
-posteriors[["CLPU_D"]]$germ <- 0.04
-posteriors[["BRHO_D"]]$germ <- 1
-posteriors[["GITR_D"]]$germ <- 0.91
-posteriors[["AMME_D"]]$germ <- 0.14
-posteriors[["PLNO_D"]]$germ <- 0.35
-posteriors[["THIR_D"]]$germ <- 0.38
-posteriors[["MICA_D"]]$germ <- 0.13
-posteriors[["CESO_D"]]$germ <- 0.74
-posteriors[["TWIL_D"]]$germ <- 0.02
-posteriors[["LOMU_D"]]$germ <- 0.87
-posteriors[["TACA_D"]]$germ <- 0.86
-posteriors[["MAEL_D"]]$germ <- 0.18
-#posteriors[["LENI_D"]]$germ <- 0.3
-posteriors[["AVBA_D"]]$germ <- 0.88
+# Set Germ Rates ####
+# germ rates dry
+posteriors[["PLER_D"]]$germ <- germ.rates[germ.rates$species == "PLER" & germ.rates$trt == "D",]$avg.germ
+posteriors[["ANAR_D"]]$germ <- germ.rates[germ.rates$species == "ANAR" & germ.rates$trt == "D",]$avg.germ
+posteriors[["ACAM_D"]]$germ <- germ.rates[germ.rates$species == "ACAM" & germ.rates$trt == "D",]$avg.germ
+#posteriors[["BRNI_D"]]$germ <- germ.rates[germ.rates$species == "BRNI" & germ.rates$trt == "D",]$avg.germ
+posteriors[["CLPU_D"]]$germ <- germ.rates[germ.rates$species == "CLPU" & germ.rates$trt == "D",]$avg.germ
+posteriors[["BRHO_D"]]$germ <- germ.rates[germ.rates$species == "BRHO" & germ.rates$trt == "D",]$avg.germ
+posteriors[["GITR_D"]]$germ <- germ.rates[germ.rates$species == "GITR" & germ.rates$trt == "D",]$avg.germ
+posteriors[["AMME_D"]]$germ <- germ.rates[germ.rates$species == "AMME" & germ.rates$trt == "D",]$avg.germ
+posteriors[["PLNO_D"]]$germ <- germ.rates[germ.rates$species == "PLNO" & germ.rates$trt == "D",]$avg.germ
+posteriors[["THIR_D"]]$germ <- germ.rates[germ.rates$species == "THIR" & germ.rates$trt == "D",]$avg.germ
+posteriors[["MICA_D"]]$germ <- germ.rates[germ.rates$species == "MICA" & germ.rates$trt == "D",]$avg.germ
+posteriors[["CESO_D"]]$germ <- germ.rates[germ.rates$species == "CESO" & germ.rates$trt == "D",]$avg.germ
+posteriors[["TWIL_D"]]$germ <- germ.rates[germ.rates$species == "TWIL" & germ.rates$trt == "D",]$avg.germ
+posteriors[["LOMU_D"]]$germ <- germ.rates[germ.rates$species == "LOMU" & germ.rates$trt == "D",]$avg.germ
+posteriors[["TACA_D"]]$germ <- germ.rates[germ.rates$species == "TACA" & germ.rates$trt == "D",]$avg.germ
+posteriors[["MAEL_D"]]$germ <- germ.rates[germ.rates$species == "MAEL" & germ.rates$trt == "D",]$avg.germ
+#posteriors[["LENI_D"]]$germ <- germ.rates[germ.rates$species == "LENI" & germ.rates$trt == "D",]$avg.germ
+posteriors[["AVBA_D"]]$germ <- germ.rates[germ.rates$species == "AVBA" & germ.rates$trt == "D",]$avg.germ
 
 # germ rates wet
-posteriors[["PLER_C"]]$germ <- 0.8
-posteriors[["ANAR_C"]]$germ <- 0.15
-posteriors[["ACAM_C"]]$germ <- 0.66
-#posteriors[["BRNI_C"]]$germ <- 0.69
-posteriors[["CLPU_C"]]$germ <- 0.37
-posteriors[["BRHO_C"]]$germ <- 0.97
-posteriors[["GITR_C"]]$germ <- 0.98
-posteriors[["AMME_C"]]$germ <- 0.88
-posteriors[["PLNO_C"]]$germ <- 0.66
-posteriors[["THIR_C"]]$germ <- 0.79
-posteriors[["MICA_C"]]$germ <- 0.72
-posteriors[["CESO_C"]]$germ <- 0.92
-posteriors[["TWIL_C"]]$germ <- 0.44
-posteriors[["LOMU_C"]]$germ <- 0.96
-posteriors[["TACA_C"]]$germ <- 0.87
-posteriors[["MAEL_C"]]$germ <- 0.59
-#posteriors[["LENI_C"]]$germ <- 0.85
-posteriors[["AVBA_C"]]$germ <- 0.96
+posteriors[["PLER_C"]]$germ <- germ.rates[germ.rates$species == "PLER" & germ.rates$trt == "C",]$avg.germ
+posteriors[["ANAR_C"]]$germ <- germ.rates[germ.rates$species == "ANAR" & germ.rates$trt == "C",]$avg.germ
+posteriors[["ACAM_C"]]$germ <- germ.rates[germ.rates$species == "ACAM" & germ.rates$trt == "C",]$avg.germ
+#posteriors[["BRNI_C"]]$germ <- germ.rates[germ.rates$species == "BRNI" & germ.rates$trt == "C",]$avg.germ
+posteriors[["CLPU_C"]]$germ <- germ.rates[germ.rates$species == "CLPU" & germ.rates$trt == "C",]$avg.germ
+posteriors[["BRHO_C"]]$germ <- germ.rates[germ.rates$species == "BRHO" & germ.rates$trt == "C",]$avg.germ
+posteriors[["GITR_C"]]$germ <- germ.rates[germ.rates$species == "GITR" & germ.rates$trt == "C",]$avg.germ
+posteriors[["AMME_C"]]$germ <- germ.rates[germ.rates$species == "AMME" & germ.rates$trt == "C",]$avg.germ
+posteriors[["PLNO_C"]]$germ <- germ.rates[germ.rates$species == "PLNO" & germ.rates$trt == "C",]$avg.germ
+posteriors[["THIR_C"]]$germ <- germ.rates[germ.rates$species == "THIR" & germ.rates$trt == "C",]$avg.germ
+posteriors[["MICA_C"]]$germ <- germ.rates[germ.rates$species == "MICA" & germ.rates$trt == "C",]$avg.germ
+posteriors[["CESO_C"]]$germ <- germ.rates[germ.rates$species == "CESO" & germ.rates$trt == "C",]$avg.germ
+posteriors[["TWIL_C"]]$germ <- germ.rates[germ.rates$species == "TWIL" & germ.rates$trt == "C",]$avg.germ
+posteriors[["LOMU_C"]]$germ <- germ.rates[germ.rates$species == "LOMU" & germ.rates$trt == "C",]$avg.germ
+posteriors[["TACA_C"]]$germ <- germ.rates[germ.rates$species == "TACA" & germ.rates$trt == "C",]$avg.germ
+posteriors[["MAEL_C"]]$germ <- germ.rates[germ.rates$species == "MAEL" & germ.rates$trt == "C",]$avg.germ
+#posteriors[["LENI_C"]]$germ <- germ.rates[germ.rates$species == "LENI" & germ.rates$trt == "C",]$avg.germ
+posteriors[["AVBA_C"]]$germ <- germ.rates[germ.rates$species == "AVBA" & germ.rates$trt == "C",]$avg.germ
 
 # all_datset <- list(anar_D, acam_D, brni_D, clpu_D, brho_D, gitr_D, amme_D, plno_D, thir_D, mica_D, ceso_D, twil_D, lomu_D, taca_D, mael_D, leni_D, avba_D, pler_C, anar_C, acam_C, brni_C, clpu_C, brho_C, gitr_C, amme_C, plno_C, thir_C, mica_C, ceso_C, twil_C, lomu_C, taca_C, mael_C, leni_C, avba_C) 
 
 # need to add BRNI and LENI when ready; also fix, dont like how sketchy this is
-all_intra <- c("alpha_pler", "alpha_pler", "alpha_anar", "alpha_anar", "alpha_acam", "alpha_acam", "alpha_clpu", "alpha_clpu", "alpha_brho", "alpha_brho", "alpha_gitr", "alpha_gitr", "alpha_amme", "alpha_amme", "alpha_plno", "alpha_plno", "alpha_thir", "alpha_thir", "alpha_mica", "alpha_mica", "alpha_ceso", "alpha_ceso", "alpha_twil", "alpha_twil", "alpha_lomu", "alpha_lomu", "alpha_taca",  "alpha_taca", "alpha_mael", "alpha_mael", "alpha_avba", "alpha_avba")
+all_intra <- c("alpha_pler", "alpha_pler", "alpha_anar", "alpha_anar", "alpha_acam", "alpha_acam", "alpha_brho", "alpha_brho", "alpha_gitr", "alpha_gitr", "alpha_amme", "alpha_amme", "alpha_plno", "alpha_plno", "alpha_thir", "alpha_thir", "alpha_mica", "alpha_mica", "alpha_ceso", "alpha_ceso", "alpha_twil", "alpha_twil", "alpha_lomu", "alpha_lomu", "alpha_taca",  "alpha_taca", "alpha_mael", "alpha_mael", "alpha_avba", "alpha_avba")
+
+#"alpha_clpu", "alpha_clpu", 
 
 options <- length(all_intra)
 
@@ -88,11 +103,21 @@ runs <- 200
 
 N <- array(NA, c(options, runs, time))
 N[,,1] <- 100 # start with 100 individuals in every case
+  ## Is this the resident starting with 100 individuals?
 
+test <- data.frame(coeff = all_intra) %>%
+  mutate(runs = 200,
+         time = 300, 
+         initial_abund = 100)
+
+
+## create output dataframes - 200 rows, one for each run
 residents_dry <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
 
 residents_wet <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
 
+
+## loop through each species and treatment
 for(i in 1:length(names(posteriors))) {
   datset <- posteriors[[i]]
   intra <- paste0("alpha_", tolower(substr(names(posteriors)[i], 1, 4)))
@@ -133,9 +158,10 @@ residents_wet <- residents_wet[,-1]
 residents_dry <- residents_dry[,-1]
 
 
-# species having a hard time reaching equilibrium
-## dry: TWIL, CESO, PLNO
+# species with negative abundances
+## dry: TWIL, CESO, PLNO, MAEL
 ## wet: TWIL, THIR, AMME, ACAM
+
 
 rm <- c("TWIL", "CESO", "PLNO", "THIR", "AMME", "ACAM")
 
@@ -153,7 +179,8 @@ residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
 # species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "CLPU", "TACA", "LOMU", "THIR", "CESO", "MICA", "PLNO")
 
 #update species list
-species <- species[!(species %in% rm)]
+#species <- species[!(species %in% rm)]
+species <- colnames(residents_dry)
 
 # Invade into residents ####
 reps <- 200
@@ -244,7 +271,10 @@ ggplot(invasion_means, aes(x = resident, y = growth, col = trt, group = trt)) +
 ggplot(invasion_means[invasion_means$resident != "AVBA",], aes(x = resident, y = growth, col = trt, group = trt)) + 
   geom_point(size = 3) + 
   facet_wrap(~invader, ncol = 3, scales = "free") +
-  geom_hline(yintercept = 0, linetype = "dashed")
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme(axis.text.x = element_text(angle = 45))
+
+ggsave("prelim_GRWR.png", width = 8, height = 7)
 
 lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Traits/"
 
@@ -267,7 +297,11 @@ invasion_means$resident.fungroup <- paste(invasion_means$resident.nativity, inva
 ggplot(invasion_means, aes(x = resident.fungroup, y = growth, fill = trt)) +
   geom_boxplot() +
   facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
-  geom_hline(yintercept = 0, linetype = "dashed")
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme(axis.text.x = element_text(angle = 45))
+  
+
+ggsave("grwr.by.fg.png", width = 5, height = 3)
 
 invasion_means_summary <- invasion_means %>%
   group_by(trt, invader.fungroup, resident.fungroup) %>%
