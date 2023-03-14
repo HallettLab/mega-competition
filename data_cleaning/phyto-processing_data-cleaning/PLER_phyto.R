@@ -61,7 +61,7 @@ pler_incomplete[is.na(pler_incomplete$new.flower.num),]
 ##unique.ID 11705
 
 ## change 11705 here ####
-pler_final[pler_final$unique.ID == 11705,]$new.flower.num <- pler_final[pler_final$unique.ID == 11705,]$empty.flower.num + pler_final[pler_final$unique.ID == 11705,]$flower.num
+pler_final[pler_final$unique.ID == 11705 & pler_final$block == 3 & pler_final$plot == 40,]$new.flower.num <- pler_final[pler_final$unique.ID == 11705 & pler_final$block == 3 & pler_final$plot == 40,]$empty.flower.num + pler_final[pler_final$unique.ID == 11705 & pler_final$block == 3 & pler_final$plot == 40,]$flower.num
 ## should be good now.
 
 ## Check phyto num 
