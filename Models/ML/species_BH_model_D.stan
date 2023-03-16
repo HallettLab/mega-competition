@@ -5,7 +5,8 @@ data{
   int Fecundity[N];
   vector[N] intra;
   real intra_g;
-  //real intra_s; //ignoring this for now until we process the data
+  real mean_ctrl_seeds; 
+  real sd_ctrl_seeds;
   vector[N] pler;
   vector[N] anar;
   vector[N] acam;
@@ -108,10 +109,11 @@ model{
   // alpha_mael ~ gamma(0.001, 0.001);
   // alpha_leni ~ gamma(0.001, 0.001);
   // alpha_avba ~ gamma(0.001, 0.001);
-  lambda ~ gamma(0.001, 0.001);
+  lambda ~ normal(mean_ctrl_seeds, sd_ctrl_seeds);
   
 
   // implement the biological model (drought, germ rates taken from mean of temps, but using corresponding WP)
+ // this models F (seed production) and so does not include seed survival from the seed bank (see equations 3 and 4 from Kraft et al. 2015)
   for(i in 1:N){
     F_hat[i] = lambda*intra[i]*intra_g / (1 + 
     alpha_pler*pler[i]*0.53 + 
