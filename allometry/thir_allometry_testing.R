@@ -116,24 +116,32 @@ summary(viability_test)
 
 
 
-## save the model outputs
+# Save Outputs ####
 THIR.allo.output <- data.frame(Species = "THIR", 
                                intercept = 0, 
                                intercept_pval = NA, 
                                intercept_se = NA, 
+                               
                                slope = thir_fallo_lin$coefficients[2], 
                                slope_pval = summary(thir_fallo_lin)$coefficients[2,4], 
                                slope_se = summary(thir_fallo_lin)$coefficients[2,2], 
+                               
                                poly = NA, 
                                poly_pval = NA, 
                                poly_se = NA,
+                               
                                seeds_C = 1,
                                seeds_C_se = NA,
                                seeds_D = 1,
                                seeds_D_se = NA,
+                               
                                viability_C = mean_viability[,1],
                                viability_C_se = mean_viability[,2],
                                viability_D = mean_viability[,1],
-                               viability_D_se = mean_viability[,2])
+                               viability_D_se = mean_viability[,2],
+                               
+                               viability_slope = NA,
+                               viability_slope_pval = NA,
+                               viability_slope_se = NA)
 
 rm(list = c("mean_viability", "viability_test", "viability_sum", "thir_viability_allo", "thir_flowers_allo", "thir_fallo_pol2", "thir_fallo_pol", "thir_fallo_lin", "thir_fallo_lin2", "thir_combined", "thir_phyto"))

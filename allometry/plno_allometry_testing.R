@@ -88,6 +88,8 @@ plno_seeds <- aov(seeds.num~treatment, data = plno_seeds_allo)
 summary(plno_seeds)
 ## significant effect of treatment, use separate numbers
 
+
+# Save Output ####
 ## save the model outputs
 PLNO.allo.output <- data.frame(Species = "PLNO", 
                                intercept = 0, 
@@ -98,6 +100,7 @@ PLNO.allo.output <- data.frame(Species = "PLNO",
                                slope = plno_allo_pol$coefficients[2], 
                                slope_pval = summary(plno_allo_pol)$coefficients[2,4], 
                                slope_se = summary(plno_allo_pol)$coefficients[2,2], 
+                               
                                poly = summary(plno_allo_pol)$coefficients[3], 
                                poly_pval = summary(plno_allo_pol)$coefficients[3,4], 
                                poly_se = summary(plno_allo_pol)$coefficients[3, 2],
@@ -111,7 +114,11 @@ PLNO.allo.output <- data.frame(Species = "PLNO",
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA)
+                               viability_D_se = NA,
+                               
+                               viability_slope = NA,
+                               viability_slope_pval = NA,
+                               viability_slope_se = NA)
 
 
 rm(list = c("allo_lead", "plno_flowers_allo", "plno_seed_means", "plno_seeds_allo",  "plno_allo_lin", "plno_allo_lin2", "plno_allo_pol", "plno_allo_pol2", "plno_seeds"))

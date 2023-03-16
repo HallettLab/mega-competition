@@ -66,19 +66,27 @@ CESO.allo.output <- data.frame(Species = "CESO",
                                intercept = 0, 
                                intercept_pval = NA, 
                                intercept_se = NA, 
+                               
                                slope = NA, 
                                slope_pval = NA, 
                                slope_se = NA, 
+                               
                                poly = NA, 
                                poly_pval = NA, 
                                poly_se = NA,
+                               
                                seeds_C = ceso_seed_means[ceso_seed_means$treatment == "C",]$mean_seeds,
                                seeds_C_se = ceso_seed_means[ceso_seed_means$treatment == "C",]$SE_seeds,
                                seeds_D = ceso_seed_means[ceso_seed_means$treatment == "D",]$mean_seeds,
                                seeds_D_se = ceso_seed_means[ceso_seed_means$treatment == "D",]$SE_seeds,
+                               
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA)
+                               viability_D_se = NA,
+                               
+                               viability_slope = NA,
+                               viability_slope_pval = NA,
+                               viability_slope_se = NA)
 
 rm(ceso_allo, seedtrt, allo_lead, ceso_seed_means)

@@ -6,8 +6,6 @@
     ## 3. saves the output from the final best model for use later in predicting seed output.
 
 library(tidyverse)
-library(ggpubr)
-library(openxlsx)
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -78,25 +76,33 @@ taca_allo_rel <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = t
 summary(taca_allo_rel) # r2 = 0.9668
 
 
-## save the model outputs
+# Save Outputs ####
 TACA.allo.output <- data.frame(Species = "TACA", 
                                intercept = 0, 
                                intercept_pval = NA, 
                                intercept_se = NA, 
+                               
                                slope = taca_allo_rel_pol$coefficients[2], 
                                slope_pval = summary(taca_allo_rel_pol)$coefficients[2,4], 
                                slope_se = summary(taca_allo_rel_pol)$coefficients[2,2], 
+                               
                                poly = summary(taca_allo_rel_pol)$coefficients[3], 
                                poly_pval = summary(taca_allo_rel_pol)$coefficients[3,4], 
                                poly_se = summary(taca_allo_rel_pol)$coefficients[3, 2],
+                               
                                seeds_C = NA,
                                seeds_C_se = NA,
                                seeds_D = NA,
                                seeds_D_se = NA, 
+                               
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA)
+                               viability_D_se = NA,
+                               
+                               viability_slope = NA,
+                               viability_slope_pval = NA,
+                               viability_slope_se = NA)
 
 # Clean Env ####
 rm(list = c("allo_lead", "taca_allo", "taca_allo_rel", "taca_allo_rel_lin", "taca_allo_rel_pol", "seedtrt", "seedtrt2"))

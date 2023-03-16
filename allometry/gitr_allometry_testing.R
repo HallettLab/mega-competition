@@ -138,24 +138,33 @@ summary(gitr_fallo_rel)
 # y = 0.3267 + 77.6127x - 7.1135x^2
 # slightly higher R2 value, use the polynomial model
 
+# Save Output ####
 ## save the model outputs
 GITR.allo.output <- data.frame(Species = "GITR", 
            intercept = 0, 
            intercept_pval = NA, 
            intercept_se = NA, 
+           
            slope = gitr_fallo_rel$coefficients[2], 
            slope_pval = summary(gitr_fallo_rel)$coefficients[2,4], 
            slope_se = summary(gitr_fallo_rel)$coefficients[2,2], 
+           
            poly = summary(gitr_fallo_rel)$coefficients[3,1], 
            poly_pval = summary(gitr_fallo_rel)$coefficients[3,4], 
            poly_se = summary(gitr_fallo_rel)$coefficients[3,2],
+           
            seeds_C = gitr_seed_means[gitr_seed_means$treatment == "C",]$mean_seeds,
            seeds_C_se = gitr_seed_means[gitr_seed_means$treatment == "C",]$SE_seeds,
            seeds_D = gitr_seed_means[gitr_seed_means$treatment == "D",]$mean_seeds,
            seeds_D_se = gitr_seed_means[gitr_seed_means$treatment == "D",]$SE_seeds,
+           
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA)
+           viability_D_se = NA,
+           
+           viability_slope = NA,
+           viability_slope_pval = NA,
+           viability_slope_se = NA)
 
 rm(list = c("allo_lead", "date", "drought", "gitr_fallo_rel", "gitr_flower_allo", "gitr_mean_seeds",  "gitr_seed_allo", "seedtrt", "gitr_seed_means"))

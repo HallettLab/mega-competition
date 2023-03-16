@@ -53,20 +53,28 @@ MICA.allo.output <- data.frame(Species = "MICA",
                                intercept = 0, 
                                intercept_pval = NA, 
                                intercept_se = NA, 
+                               
                                slope = mica_allo_rel_pol$coefficients[2], 
                                slope_pval = summary(mica_allo_rel_pol)$coefficients[2,4], 
                                slope_se = summary(mica_allo_rel_pol)$coefficients[2,2], 
+                               
                                poly = summary(mica_allo_rel_pol)$coefficients[3], 
                                poly_pval = summary(mica_allo_rel_pol)$coefficients[3,4], 
                                poly_se = summary(mica_allo_rel_pol)$coefficients[3, 2],
+                               
                                seeds_C = NA,
                                seeds_C_se = NA,
                                seeds_D = NA,
                                seeds_D_se = NA, 
+                               
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA)
+                               viability_D_se = NA,
+                               
+                               viability_slope = NA,
+                               viability_slope_pval = NA,
+                               viability_slope_se = NA)
 
 ## clean env
 rm(list = c("mica_allo", "mica_allo_rel_lin", "mica_allo_rel_pol", "allo_lead"))

@@ -94,25 +94,34 @@ summary(brho_fallo_rel)
 # inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = brho_allo)
 # summary(inflorseeds2)
 
+# Save Output ####
 ## save the model outputs
 BRHO.allo.output <- data.frame(Species = "BRHO", 
            intercept = 0, 
            intercept_pval = NA, 
            intercept_se = NA, 
+           
            slope = brho_fallo_rel$coefficients[2], 
            slope_pval = summary(brho_fallo_rel)$coefficients[2,4], 
            slope_se = summary(brho_fallo_rel)$coefficients[2,2], 
+           
            poly = NA, 
            poly_pval = NA, 
            poly_se = NA,
+           
            seeds_C = NA,
            seeds_C_se = NA,
            seeds_D = NA,
            seeds_D_se = NA, 
+           
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA)
+           viability_D_se = NA,
+           
+           viability_slope = NA,
+           viability_slope_pval = NA,
+           viability_slope_se = NA)
 
 # Clean Env ####
 rm(allo_lead, brho_allo, date, brho_fallo_rel)

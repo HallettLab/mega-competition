@@ -188,7 +188,11 @@ TWIL.allo.output <- data.frame(Species = "TWIL",
                                viability_C = mean_viability[,1],
                                viability_C_se = mean_viability[,2],
                                viability_D = mean_viability[,1],
-                               viability_D_se = mean_viability[,2])
+                               viability_D_se = mean_viability[,2],
+                               
+                               viability_slope = NA,
+                               viability_slope_pval = NA,
+                               viability_slope_se = NA)
 
 
 ## clean environment 

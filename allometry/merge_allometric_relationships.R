@@ -16,9 +16,11 @@ source("allometry/acam_allometry_testing.R")
 source("allometry/amme_allometry_testing.R")
 source("allometry/anar_allometry_testing.R")
 source("allometry/brho_allometry_testing.R")
+source("allometry/brni_allometry_testing.R")
 source("allometry/ceso_allometry_testing.R")
 source("allometry/clpu_allometry_testing.R")
 source("allometry/gitr_allometry_testing.R")
+source("allometry/leni_allometry_testing.R")
 source("allometry/lomu_allometry_testing.R")
 source("allometry/mael_allometry_testing.R")
 source("allometry/mica_allometry_testing.R")
@@ -29,9 +31,9 @@ source("allometry/thir_allometry_testing.R")
 source("allometry/twil_allometry_testing.R")
 
 ## merge all together
-allo.df <- do.call("rbind", list(ACAM.allo.output, ANAR.allo.output, AMME.allo.output, BRHO.allo.output, CESO.allo.output, CLPU.allo.output, GITR.allo.output, LOMU.allo.output, MAEL.allo.output, MICA.allo.output, PLER.allo.output, PLNO.allo.output, TACA.allo.output, THIR.allo.output, TWIL.allo.output)) %>%
+allo.df <- do.call("rbind", list(ACAM.allo.output, ANAR.allo.output, AMME.allo.output, BRHO.allo.output, BRNI.allo.output, CESO.allo.output, CLPU.allo.output, GITR.allo.output, LENI.allo.output, LOMU.allo.output, MAEL.allo.output, MICA.allo.output, PLER.allo.output, PLNO.allo.output, TACA.allo.output, THIR.allo.output, TWIL.allo.output)) %>%
   mutate(poly = ifelse(is.na(poly), 0, poly)) ## change NAs to 0s, will work better in later calculations.
 
 
 ## clean up env
-rm(list = c("ACAM.allo.output", "ANAR.allo.output", "AMME.allo.output", "BRHO.allo.output", "CESO.allo.output", "CLPU.allo.output", "GITR.allo.output", "LOMU.allo.output", "MAEL.allo.output", "MICA.allo.output", "PLER.allo.output", "PLNO.allo.output", "TACA.allo.output", "THIR.allo.output", "TWIL.allo.output"))
+rm(list = c("ACAM.allo.output", "ANAR.allo.output", "AMME.allo.output", "BRHO.allo.output", "BRNI.allo.output", "CESO.allo.output", "CLPU.allo.output", "GITR.allo.output", "LENI.allo.output", "LOMU.allo.output", "MAEL.allo.output", "MICA.allo.output", "PLER.allo.output", "PLNO.allo.output", "TACA.allo.output", "THIR.allo.output", "TWIL.allo.output"))

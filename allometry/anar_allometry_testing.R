@@ -123,24 +123,33 @@ anar_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data =
 summary(anar_fallo_rel) # r2 = 0.829
 # polynomial is better with and without outlier, calculate seeds for outlier separately which we already have. so done. 
 
+# Save Output ####
 ## save the model outputs
 ANAR.allo.output <- data.frame(Species = "ANAR", 
            intercept = 0, 
            intercept_pval = NA, 
            intercept_se = NA, 
+           
            slope = anar_fallo_rel$coefficients[2], 
            slope_pval = summary(anar_fallo_rel)$coefficients[2,4], 
            slope_se = summary(anar_fallo_rel)$coefficients[2,2], 
+           
            poly = summary(anar_fallo_rel)$coefficients[3,1], 
            poly_pval = summary(anar_fallo_rel)$coefficients[3,4], 
            poly_se = summary(anar_fallo_rel)$coefficients[3,2],
+           
            seeds_C = anar_seed_means[anar_seed_means$treatment == "C",]$mean_seeds,
            seeds_C_se = anar_seed_means[anar_seed_means$treatment == "C",]$SE_seeds,
            seeds_D = anar_seed_means[anar_seed_means$treatment == "D",]$mean_seeds,
            seeds_D_se = anar_seed_means[anar_seed_means$treatment == "D",]$SE_seeds,
+           
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA)
+           viability_D_se = NA,
+           
+           viability_slope = NA,
+           viability_slope_pval = NA,
+           viability_slope_se = NA)
 
 rm(list = c("allo_lead", "anar_fallo_rel", "anar_allo",  "anar_seeds", "anar_mean_seeds", "seedtrt", "anar_seed_means"))

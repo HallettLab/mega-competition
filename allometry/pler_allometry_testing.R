@@ -79,28 +79,35 @@ summary(bioseeds)
 # bioseeds2 <- lm(seed.num ~ total.biomass.g + I(total.biomass.g^2), data = pler_allo)
 # summary(bioseeds2)
 
-## save the model outputs
-# NOTE ####
-## Please put species name in all caps! I use the first 4 letters of this for species name in the merged allo output dataframe and I need them in caps to match the phyto processing & collections data!
 
+# Save Output ####
+## save the model outputs
 PLER.allo.output <- data.frame(Species = "PLER", 
            intercept = 0, 
            intercept_pval = NA, 
            intercept_se = NA, 
+           
            slope = summary(bioseeds)$coefficients[2,1], 
            slope_pval = summary(bioseeds)$coefficients[2,4], 
            slope_se = summary(bioseeds)$coefficients[2,2], 
+           
            poly = NA, 
            poly_pval = NA, 
            poly_se = NA,
+           
            seeds_C = NA,
            seeds_C_se = NA,
            seeds_D = NA,
            seeds_D_se = NA, 
+           
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA)
+           viability_D_se = NA,
+           
+           viability_slope = NA,
+           viability_slope_pval = NA,
+           viability_slope_se = NA)
 
 # Clean Env ####
 rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2", "bioseeds"))
