@@ -14,7 +14,7 @@ plots <- list()
 
 for(i in species){
   for(j in trt){
-    load(paste0("Models/ML/Posteriors/seeds_", i, "_", j, "_posteriors.rdata"))
+    load(paste0("Models/ML/Posteriors-normal-unbounded//seeds_", i, "_", j, "_posteriors.rdata"))
     print(tmp)
     tmp2 <- rstan::extract(tmp)
     plots[[paste0(i, "_", j)]] <- traceplot(tmp, pars = names(tmp2[-20]))
@@ -41,9 +41,15 @@ for(i in species){
 
 
 # inspect dens plots
-# species having a hard time reaching equilibrium
+# species having a hard time reaching equilibrium with bounded normal
 ## dry: TWIL, CESO, PLNO
 ## wet: TWIL, THIR, AMME, ACAM
+
+# species that facilitate themselves
+## dry: MAEL (-0.26), TWIL (-0.15), CESO (-0.006), PLNO (-0.07)
+## AMME doesnt facilitate itself, but it's alpha is so big (~10) that it makes the estimate abundance 0
+
+## wet: ACAM (-0.1), TWIL (-0.003), THIR (-0.08), AMME
 ggplot(posteriors2, aes(x = lambda, fill = treatment, line = treatment)) + 
   geom_density() + 
   facet_wrap(~species, ncol = 3, scales = "free")

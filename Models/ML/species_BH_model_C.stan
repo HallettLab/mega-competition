@@ -5,7 +5,8 @@ data{
   int Fecundity[N];
   vector[N] intra;
   real intra_g;
-  //real intra_s; //ignoring this for now until we process the data
+  real mean_ctrl_seeds; 
+  real sd_ctrl_seeds;
   vector[N] pler;
   vector[N] anar;
   vector[N] acam;
@@ -29,42 +30,42 @@ data{
 parameters{
   //real<lower = 0> lambda;
   real<lower = 0, upper = 10000> lambda;
-  real<lower = 0> alpha_pler;
-  real<lower = 0> alpha_anar;
-  real<lower = 0> alpha_acam;
-  real<lower = 0> alpha_brni;
-  real<lower = 0> alpha_clpu;
-  real<lower = 0> alpha_brho;
-  real<lower = 0> alpha_gitr;
-  real<lower = 0> alpha_amme;
-  real<lower = 0> alpha_plno;
-  real<lower = 0> alpha_thir;
-  real<lower = 0> alpha_mica;
-  real<lower = 0> alpha_ceso;
-  real<lower = 0> alpha_twil;
-  real<lower = 0> alpha_lomu;
-  real<lower = 0> alpha_taca;
-  real<lower = 0> alpha_mael;
-  real<lower = 0> alpha_leni;
-  real<lower = 0> alpha_avba;
-  // real alpha_pler;
-  // real alpha_anar;
-  // real alpha_acam;
-  // real alpha_brni;
-  // real alpha_clpu;
-  // real alpha_brho;
-  // real alpha_gitr;
-  // real alpha_amme;
-  // real alpha_plno;
-  // real alpha_thir;
-  // real alpha_mica;
-  // real alpha_ceso;
-  // real alpha_twil;
-  // real alpha_lomu;
-  // real alpha_taca;
-  // real alpha_mael;
-  // real alpha_leni;
-  // real alpha_avba;
+  // real<lower = 0> alpha_pler;
+  // real<lower = 0> alpha_anar;
+  // real<lower = 0> alpha_acam;
+  // real<lower = 0> alpha_brni;
+  // real<lower = 0> alpha_clpu;
+  // real<lower = 0> alpha_brho;
+  // real<lower = 0> alpha_gitr;
+  // real<lower = 0> alpha_amme;
+  // real<lower = 0> alpha_plno;
+  // real<lower = 0> alpha_thir;
+  // real<lower = 0> alpha_mica;
+  // real<lower = 0> alpha_ceso;
+  // real<lower = 0> alpha_twil;
+  // real<lower = 0> alpha_lomu;
+  // real<lower = 0> alpha_taca;
+  // real<lower = 0> alpha_mael;
+  // real<lower = 0> alpha_leni;
+  // real<lower = 0> alpha_avba;
+  real alpha_pler;
+  real alpha_anar;
+  real alpha_acam;
+  real alpha_brni;
+  real alpha_clpu;
+  real alpha_brho;
+  real alpha_gitr;
+  real alpha_amme;
+  real alpha_plno;
+  real alpha_thir;
+  real alpha_mica;
+  real alpha_ceso;
+  real alpha_twil;
+  real alpha_lomu;
+  real alpha_taca;
+  real alpha_mael;
+  real alpha_leni;
+  real alpha_avba;
 
 }
 
@@ -108,7 +109,7 @@ model{
   // alpha_mael ~ gamma(0.001, 0.001);
   // alpha_leni ~ gamma(0.001, 0.001);
   // alpha_avba ~ gamma(0.001, 0.001);
-  lambda ~ gamma(0.001, 0.001);
+  lambda ~ normal(mean_ctrl_seeds, sd_ctrl_seeds);
 
   // implement the biological model (control, germ rates taken from mean of temps, but using corresponding WP)
   // this models F (seed production) and so does not include seed survival from the seed back (see equations 3 and 4 from Kraft et al. 2015)
