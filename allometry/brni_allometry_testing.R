@@ -46,7 +46,7 @@ brni.phyto <- read.csv(paste0(lead, "BRNI_phyto-processing_20230315.csv"))
 
 # Clean ####
 brni_allo2 <- brni_allo %>%
-  mutate(total.flower.num = pod.num + flower.num, 
+  mutate(total.flower.num = pod.num + flower.num, ## calc total flowers out
          prop.viable = viable.pod.num/pod.num)
 
 ## merge with phyto data for exploration with viability
@@ -81,7 +81,7 @@ ggplot(brni_allo2, aes(x = total.biomass.g, y = total.flower.num, color = treatm
   geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
 
 ## Model ####
-### *linear ####
+### linear ####
 brni_allo_lin <- lm(total.flower.num~total.biomass.g, data = brni_allo2)
 summary(brni_allo_lin)
 ## r2 = 0.9425
@@ -173,7 +173,7 @@ summary(viability.test3)
 ## tot via flowers by bio ####
 ### calc tot via flowers ####
 viability_calcs <- brni.allo.phyto %>%
-  mutate(viable.flowers = flower.num*prop.viable,
+  mutate(viable.flowers = flower.num*prop.viable, ## prop.viable is viable pods
          total.viable.flowers = viable.flowers + viable.pod.num)
 
 ### model ####
@@ -220,9 +220,9 @@ BRNI.allo.output <- data.frame(Species = "BRNI",
                                intercept_pval = NA, 
                                intercept_se = NA, 
                                
-                               slope = brni_allo_lin$coefficients[2], 
-                               slope_pval = summary(brni_allo_lin)$coefficients[2,4], 
-                               slope_se = summary(brni_allo_lin)$coefficients[2,2], 
+                               slope = brni_via_lin3$coefficients[2], 
+                               slope_pval = summary(brni_via_lin3)$coefficients[2,4], 
+                               slope_se = summary(brni_via_lin3)$coefficients[2,2], 
                                poly = NA, 
                                poly_pval = NA, 
                                poly_se = NA,
@@ -235,11 +235,7 @@ BRNI.allo.output <- data.frame(Species = "BRNI",
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA,
-                               
-                               viability_slope = brni_via_lin3$coefficients[2],
-                               viability_slope_pval = summary(brni_via_lin3)$coefficients[2,4],
-                               viability_slope_se = summary(brni_via_lin3)$coefficients[2,2])
+                               viability_D_se = NA)
 
 # Clean Env ####
 rm(list = c("brni.allo.phyto", "brni.phyto", "brni_allo", "brni_allo_lin", "brni_allo_lin_trt", "brni_allo_pol", "brni_allo2", "brni_mean_seeds", "brni_mean_seeds_trt", "brni_seeds",  "brni_via_lin", "brni_via_lin3", "lead", "seed.test", "viability.test", "viability.test2", "viability.test3", "viability_calcs"))
