@@ -121,6 +121,9 @@ ggplot(twil_final[twil_final$majority.seeds.present == "veg",], aes(x=total.biom
 ggplot(twil_final, aes(x=majority.seeds.present)) +
   geom_bar()
 
+## Make Changes ####
+## on double check, this sample was vegetative - didn't have seeds
+twil_final[twil_final$unique == 6091,]$majority.seeds.present <- "veg"
 
 # Check Notes ####
 unique(twil_final$process.notes)

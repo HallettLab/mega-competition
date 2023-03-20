@@ -113,6 +113,18 @@ mael.phyto <- mael_final_dates %>%
 #phyto.uniques.mael <- mael.phyto %>%
  # filter(!is.na(phyto.unique))
 
+mael.phyto[mael.phyto$unique.ID == 11367,]
+mael_final_dates[mael_final_dates$unique.ID==11367,]
+mael_final_dates[mael_final_dates$block == 16 & mael_final_dates$plot == 37 & mael_final_dates$sub == 22,]
+
+
+mael.phyto[mael.phyto$unique.ID == 4346,]
+mael.phyto[mael.phyto$unique.ID == 2942,]
+## Make Mods ####
+## Change seeds in for a pair of phyto.uniques
+mael.phyto[mael.phyto$unique.ID == 11367,]$phyto.seed.in <- 6
+mael.phyto[mael.phyto$unique.ID == 11922,]$phyto.seed.in <- 4
+
 ggplot(mael.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
