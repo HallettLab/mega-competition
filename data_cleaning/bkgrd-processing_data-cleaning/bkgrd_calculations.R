@@ -22,12 +22,8 @@ source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_seeding_dates.R")
 # Combine DFs ####
 
 ## Dates & Germ Rates ####
-plot.dates2 <- plot.dates %>%
-  mutate(bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd),
-         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
-
 ## First, combine plot seeding dates & germ info to eval which germ rate to use for each plot
-dates.germ <- left_join(plot.dates2, bg.germ, by = c("bkgrd")) %>%
+dates.germ <- left_join(plot.dates, bg.germ, by = c("bkgrd")) %>%
   mutate(bp.combo = paste(block, plot, sep = "_"))
 
 ## create a vector of unique block-plot combos
@@ -68,12 +64,7 @@ for(i in 1:length(block.plots)) {
   germ.eval <- rbind(germ.eval, tmp.germ)
       
   }
-  
-germ.eval <- germ.eval %>% 
-  mutate(species = ifelse(species == "THIR-I", "THIR", species), 
-         bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
-         species = ifelse(species == "TWIL-I", "TWIL", species), 
-         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
+
 
 ## Merge avg seed data ####
 ## merge the avg germ rates with the avg seed per indiv data
@@ -102,8 +93,5 @@ bkgrd.seeds <- bkgrd.calc %>%
 ## calculate background seeds out
     ## avg seed per indiv * stems out = seeds.out
 
-# Q Here ####
-## Should this data frame remain in this format for the moment? I don't think storing this in a wide format will work currently. To use the data, one can subset a particular background species & then change column names from there to ex. BRHO.seed.in & BRHO.seed.out
-
-
+# Clean Env ####
 rm(list = c("bkgrd.calc", "bkgrd.n.indiv", "bg.germ", "bg.info", "bg.seeds", "dates.germ", "germ.eval"))

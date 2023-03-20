@@ -23,52 +23,46 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 } 
 
 ## Background Data
-bg_indiv <- read.csv(paste0(lead, "bkgrd-processing_20230211.csv")) %>%
-  mutate(bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd),
-         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd)) %>%
-  ## fix species abbreviations to remove inoc sub-experiment
-  filter(bkgrd != "THIR-U", bkgrd != "TWIL-U", bkgrd != "")
-  ## remove inoc sub-experiment phytos and blank rows
+bg_indiv <- read.csv(paste0(lead, "bkgrd-processing_20230315.csv"))
+  
 
 ## Allometric Relationships
 source("allometry/merge_allometric_relationships.R")
 
 
-# Clean Data ####
-#unique(bg_indiv$bkgrd)
-#ggplot(bg_indiv, aes(x=bkgrd)) +
- # geom_bar()
-
-#blank.check <- bg_indiv %>%
- # filter(bkgrd == "") ## 3 blank rows with nothing at all.
-
-
-## Finished Sp ####
-## separate out finished species
-#finished <- c("ACAM", "ANAR", "AVBA", "BRHO", "CESO", "GITR", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR")
-## all backgrounds are finished
-
-## Allo Types ####
+# Allo Types ####
 ## separate by types of allometric relationships
-totbio.to.something <- c("ACAM", "ANAR", "BRNI", "GITR", "TWIL", "PLNO", "AMME", "MICA", "LOMU", "TACA", "CLPU", "THIR")
+totbio.to.something <- c("ACAM", "AMME", "ANAR", "BRNI", "CLPU", "GITR", "LENI", "LOMU", "MICA", "PLNO", "TACA", "THIR", "TWIL")
 inflor.bio.to.seeds <- c("BRHO", "PLER")
-stem.to.seeds <- c("LENI")
 seeds.per.flower <- c("MAEL", "CESO")
 seeds <- c("AVBA")
 
 ## make a vector of drought blocks
 drought <- c(1, 3, 4, 6, 12, 14)
 
-## Make Mods ####
-## clean up bg data
+
+# Clean Data ####
+## Basic cleaning ####
 bg_indivC <- bg_indiv %>%
-  filter(plot < 43) %>% ## get rid of inoc subexperiment
-  mutate(across(where(is.character), str_trim)) %>%
-  mutate_all(na_if,"") %>% ## make blank values NAs
+  mutate(bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd),
+         bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd)) %>%
+  ## fix species abbreviations to remove inoc sub-experiment
+  filter(bkgrd != "THIR-U", bkgrd != "TWIL-U", bkgrd != "") %>%
+  filter(plot < 43) %>% 
+  ## remove inoc sub-experiment phytos and blank rows
+  mutate(across(where(is.character), str_trim)) %>% ## remove leading & trailing whitespace!!
+  mutate(across(c(scale.ID), toupper)) %>% ## capitalize scale ID
+  mutate_all(na_if,"") %>% ## fill blanks with NAs
   select(-date.collect, -initials) %>%
   mutate(treatment = ifelse(block %in% drought, "D", "C")) ## add treatment column
 
-## check structure
+
+unique(bg_indivC$bkgrd)
+ggplot(bg_indivC, aes(x=bkgrd)) +
+  geom_bar()
+## CLPU has over 20 samples?
+  
+## Check structure ####
 str(bg_indivC)
     ## flower.num is a chr
 unique(bg_indivC$flower.num) ## one value is "F"
@@ -82,26 +76,69 @@ bg_indivC[bg_indivC$block == 7 & bg_indivC$plot == 11,]$process.notes <- "missin
 
 bg_indivC$flower.num <- as.numeric(bg_indivC$flower.num)
 
+## Check completion ####
+bio.rel <- bg_indivC %>% 
+  filter(bkgrd %in% totbio.to.something)
 
-## Calc Avg Indiv ####
+ggplot(bio.rel, aes(x=total.biomass.g)) +
+  geom_histogram() +
+  facet_wrap(~bkgrd)
+
+## 1 row missing - CLPU bkgrd 7-17
+missing.check <- bio.rel %>%
+  filter(is.na(total.biomass.g))
+
+bio.rel[bio.rel$bkgrd == "CLPU",]
+## OK, looks like there are 2 potential block 7 CLPU L dens plots - so it's not an issue that we are missing 7-17.
+
+inflor.rel <- bg_indivC %>%
+  filter(bkgrd %in% inflor.bio.to.seeds)
+
+ggplot(inflor.rel, aes(x=inflor.g)) +
+  geom_histogram() +
+  facet_wrap(~bkgrd)
+## no missing vals
+
+seeds.rel <- bg_indivC %>%
+  filter(bkgrd %in% seeds.per.flower)
+
+ggplot(seeds.rel, aes(x=flower.num)) +
+  geom_histogram() +
+  facet_wrap(~bkgrd)
+## missing 1 and this must be the CESO bkgrd
+
+## Check notes ####
+unique(bg_indivC$process.notes)
+unique(bg_indivC$census.notes)
+## THIR - need to take into account the TINC indiv present... somehow...
+## WUE leaf weights...
+## Vegetative vs flowering indiv for several species
+    ## GITR
+    ## ANAR - but these notes didn't get carried over
+
+
+with.notes <- bg_indivC %>%
+  filter(!is.na(census.notes))
+
+
+
+# Calc Avg Indiv ####
 bg.ind <- bg_indivC %>%
   mutate(avg.ind = ifelse(bkgrd %in% totbio.to.something, total.biomass.g/n.indiv, NA),
          avg.ind = ifelse(bkgrd %in% inflor.bio.to.seeds, inflor.g/n.indiv, avg.ind),
-         avg.ind = ifelse(bkgrd %in% stem.to.seeds, total.stem.length.mm/n.indiv, avg.ind),
          avg.ind = ifelse(bkgrd %in% seeds.per.flower, flower.num/n.indiv, avg.ind),
          avg.ind = ifelse(bkgrd %in% seeds, glume.num/n.indiv, avg.ind))
 ## Calc the avg bg indiv, use the most appropriate measurement for each species
   
   
 # Calc Avg Seed Output ####
-## make a vector of finished bg plots
-#bg.sp <- unique(bg.ind[bg.ind$bkgrd %in% finished,]$bkgrd)
-bg.sp <- unique(bg.ind[bg.ind$bkgrd != "BRNI" & bg.ind$bkgrd != "LENI",]$bkgrd)
+## make a vector of species
+bg.sp <- unique(bg.ind$bkgrd)
 
 
 ## separate totbio to something relationships
-totbio.to.flowers.to.seeds <- c("ACAM", "ANAR", "GITR", "PLNO", "AMME")
-totbio.to.seeds <- c("CLPU", "MICA", "LOMU", "TACA", "BRNI")
+totbio.to.flowers.to.seeds <- c("ACAM", "AMME", "ANAR", "BRNI", "GITR", "LENI", "PLNO")
+totbio.to.seeds <- c("CLPU", "LOMU", "MICA", "TACA")
 totbio.to.flowers.to.viability <- c("THIR", "TWIL")
 
 
@@ -118,7 +155,7 @@ for (i in 1:length(bg.sp)){
   tmp.model <- allo.df[allo.df$Species == bg.sp[i],]
   
   ## separate by allo-rel type and calc avg seeds out per indiv
-  if (bg.sp[i] %in% totbio.to.seeds | bg.sp[i] %in% inflor.bio.to.seeds | bg.sp[i] %in% stem.to.seeds) {
+  if (bg.sp[i] %in% totbio.to.seeds | bg.sp[i] %in% inflor.bio.to.seeds) {
     
     tmp.ind <- tmp.sp %>%
       mutate(bg.avg.seed.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind + (tmp.model$poly*(avg.ind^2))))) %>%
@@ -169,5 +206,5 @@ for (i in 1:length(bg.sp)){
 bg.seeds <- bg.ind.avg
 
 # Clean Env ####
-rm(bg_indiv, bg.ind, bg.sp, seeds, tmp.ind, tmp.sp, tmp.model, totbio.to.seeds, inflor.bio.to.seeds, stem.to.seeds, bg.ind.avg, bg_indivC, drought, i, seeds.per.flower, totbio.to.flowers.to.seeds, totbio.to.flowers.to.viability, totbio.to.something, basic_cleaning_func)
+rm(bg_indiv, bg.ind, bg.sp, bio.rel, inflor.rel, seeds.rel, missing.check, with.notes, seeds, tmp.ind, tmp.sp, tmp.model, totbio.to.seeds, inflor.bio.to.seeds, bg.ind.avg, bg_indivC, drought, i, seeds.per.flower, totbio.to.flowers.to.seeds, totbio.to.flowers.to.viability, totbio.to.something, basic_cleaning_func)
 
