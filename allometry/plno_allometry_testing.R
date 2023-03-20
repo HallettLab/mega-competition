@@ -114,11 +114,7 @@ PLNO.allo.output <- data.frame(Species = "PLNO",
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA,
-                               
-                               viability_slope = NA,
-                               viability_slope_pval = NA,
-                               viability_slope_se = NA)
+                               viability_D_se = NA)
 
 
 rm(list = c("allo_lead", "plno_flowers_allo", "plno_seed_means", "plno_seeds_allo",  "plno_allo_lin", "plno_allo_lin2", "plno_allo_pol", "plno_allo_pol2", "plno_seeds"))

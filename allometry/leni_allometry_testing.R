@@ -43,7 +43,7 @@ ggplot(leni_allo, aes(x = total.biomass.g, y = pod.num)) +
 
 
 # Model ####
-## linear ####
+## *linear ####
 leni_allo_rel_lin <- lm(pod.num ~ total.biomass.g, data = leni_allo)
 summary(leni_allo_rel_lin) # r2 = 0.986
 
@@ -67,19 +67,15 @@ LENI.allo.output <- data.frame(Species = "LENI",
                                poly_pval = NA, 
                                poly_se = NA,
                                
-                               seeds_C = NA,
+                               seeds_C = 2,
                                seeds_C_se = NA,
-                               seeds_D = NA,
+                               seeds_D = 2,
                                seeds_D_se = NA, 
                                
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA,
-                               
-                               viability_slope = NA,
-                               viability_slope_pval = NA,
-                               viability_slope_se = NA)
+                               viability_D_se = NA)
 
 # Clean Env ####
 rm(list = c("allo_lead", "leni_allo", "leni_allo_rel_lin", "leni_allo_rel_pol"))

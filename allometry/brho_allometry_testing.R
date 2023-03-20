@@ -117,11 +117,7 @@ BRHO.allo.output <- data.frame(Species = "BRHO",
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA,
-           
-           viability_slope = NA,
-           viability_slope_pval = NA,
-           viability_slope_se = NA)
+           viability_D_se = NA)
 
 # Clean Env ####
 rm(allo_lead, brho_allo, date, brho_fallo_rel)

@@ -109,11 +109,7 @@ AMME.allo.output <- data.frame(Species = "AMME",
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA, 
-                               
-                               viability_slope = NA,
-                               viability_slope_pval = NA,
-                               viability_slope_se = NA)
+                               viability_D_se = NA)
 
 
 rm(list = c("allo_lead", "amme_flowers_allo", "amme_seed_means", "amme_seeds_allo",  "amme_allo_lin", "amme_allo_lin2", "amme_allo_pol", "amme_allo_pol2", "amme_seeds"))

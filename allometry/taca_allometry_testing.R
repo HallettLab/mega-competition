@@ -98,11 +98,7 @@ TACA.allo.output <- data.frame(Species = "TACA",
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA,
-                               
-                               viability_slope = NA,
-                               viability_slope_pval = NA,
-                               viability_slope_se = NA)
+                               viability_D_se = NA)
 
 # Clean Env ####
 rm(list = c("allo_lead", "taca_allo", "taca_allo_rel", "taca_allo_rel_lin", "taca_allo_rel_pol", "seedtrt", "seedtrt2"))

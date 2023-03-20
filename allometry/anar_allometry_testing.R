@@ -146,10 +146,6 @@ ANAR.allo.output <- data.frame(Species = "ANAR",
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA,
-           
-           viability_slope = NA,
-           viability_slope_pval = NA,
-           viability_slope_se = NA)
+           viability_D_se = NA)
 
 rm(list = c("allo_lead", "anar_fallo_rel", "anar_allo",  "anar_seeds", "anar_mean_seeds", "seedtrt", "anar_seed_means"))

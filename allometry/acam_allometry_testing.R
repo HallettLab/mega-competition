@@ -112,11 +112,7 @@ ACAM.allo.output <- data.frame(Species = "ACAM",
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA, 
-           
-           viability_slope = NA,
-           viability_slope_pval = NA,
-           viability_slope_se = NA)
+           viability_D_se = NA)
 
 ## clean up env
 rm(list = c("allo_lead", "acam_fallo_rel", "acam_flower_allo", "acam_mean_seeds",  "acam_seed_allo", "seedtrt", "acam_seed_means"))

@@ -161,10 +161,6 @@ GITR.allo.output <- data.frame(Species = "GITR",
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA,
-           
-           viability_slope = NA,
-           viability_slope_pval = NA,
-           viability_slope_se = NA)
+           viability_D_se = NA)
 
 rm(list = c("allo_lead", "date", "drought", "gitr_fallo_rel", "gitr_flower_allo", "gitr_mean_seeds",  "gitr_seed_allo", "seedtrt", "gitr_seed_means"))

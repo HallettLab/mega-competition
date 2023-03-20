@@ -84,10 +84,6 @@ MAEL.allo.output <- data.frame(Species = "MAEL",
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA,
-           
-           viability_slope = NA,
-           viability_slope_pval = NA,
-           viability_slope_se = NA)
+           viability_D_se = NA)
 
 rm(mael_allo, seedtrt, allo_lead, mael_seed_means)

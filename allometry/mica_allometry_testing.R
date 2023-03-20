@@ -70,11 +70,7 @@ MICA.allo.output <- data.frame(Species = "MICA",
                                viability_C = NA,
                                viability_C_se = NA,
                                viability_D = NA,
-                               viability_D_se = NA,
-                               
-                               viability_slope = NA,
-                               viability_slope_pval = NA,
-                               viability_slope_se = NA)
+                               viability_D_se = NA)
 
 ## clean env
 rm(list = c("mica_allo", "mica_allo_rel_lin", "mica_allo_rel_pol", "allo_lead"))

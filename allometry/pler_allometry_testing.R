@@ -115,4 +115,4 @@ PLER.allo.output <- data.frame(Species = "PLER",
            viability_D_se = NA)
 
 # Clean Env ####
-rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2", "bioseeds"))
+rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2"))

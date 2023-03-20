@@ -138,10 +138,6 @@ THIR.allo.output <- data.frame(Species = "THIR",
                                viability_C = mean_viability[,1],
                                viability_C_se = mean_viability[,2],
                                viability_D = mean_viability[,1],
-                               viability_D_se = mean_viability[,2],
-                               
-                               viability_slope = NA,
-                               viability_slope_pval = NA,
-                               viability_slope_se = NA)
+                               viability_D_se = mean_viability[,2])
 
 rm(list = c("mean_viability", "viability_test", "viability_sum", "thir_viability_allo", "thir_flowers_allo", "thir_fallo_pol2", "thir_fallo_pol", "thir_fallo_lin", "thir_fallo_lin2", "thir_combined", "thir_phyto"))
