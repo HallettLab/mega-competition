@@ -49,32 +49,41 @@ ggplot(pler_allo[pler_allo$inflor.g > 0,], aes(x=inflor.g, y=seed.num)) +
   geom_smooth(method = "lm", formula = y ~ log(x))
 
 ## Model ####
+### *linear ####
 inflorseeds <- lm(seed.num~inflor.g, data = pler_allo)
 summary(inflorseeds)
+## R2 = 0.9669
 
+### poly ####
 inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = pler_allo)
 summary(inflorseeds2)
+## 0.967, but poly term is not signif; stick with linear
 
-# Biomass-Seed Rel. ####
-## Visualize ####
-ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num, color = treatment)) +
-  geom_point() +
-  geom_smooth(method = "lm")
+
+
+# Explored tot bio to seeds, but can't use since we didn't measure tot bio for all samples
+
+# Biomass-Seed Rel. 
+## Visualize 
+#ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num, color = treatment)) +
+  #geom_point() +
+  #geom_smooth(method = "lm")
 ## the error bars on the lines overlap for most of it - so probably not separate relationships here
 
-ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num)) +
-  geom_point() +
-  geom_smooth(method = "lm")
+#ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num)) +
+  #geom_point() +
+  #geom_smooth(method = "lm")
 
-ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ poly(x,2))
+#ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num)) +
+  #geom_point() +
+  #geom_smooth(method = "lm", formula = y ~ poly(x,2))
 
-## Model ####
+## *Model 
 
-bioseeds <- lm(seed.num~total.biomass.g, data = pler_allo)
-summary(bioseeds)
+#bioseeds <- lm(seed.num~total.biomass.g, data = pler_allo)
+#summary(bioseeds)
 # y = 3.143 + 346.885x
+## we can't use this relationship as we haven't measured total biomass for all fo the samples...
 
 # bioseeds2 <- lm(seed.num ~ total.biomass.g + I(total.biomass.g^2), data = pler_allo)
 # summary(bioseeds2)
@@ -87,9 +96,9 @@ PLER.allo.output <- data.frame(Species = "PLER",
            intercept_pval = NA, 
            intercept_se = NA, 
            
-           slope = summary(bioseeds)$coefficients[2,1], 
-           slope_pval = summary(bioseeds)$coefficients[2,4], 
-           slope_se = summary(bioseeds)$coefficients[2,2], 
+           slope = summary(inflorseeds)$coefficients[2,1], 
+           slope_pval = summary(inflorseeds)$coefficients[2,4], 
+           slope_se = summary(inflorseeds)$coefficients[2,2], 
            
            poly = NA, 
            poly_pval = NA, 
@@ -103,11 +112,7 @@ PLER.allo.output <- data.frame(Species = "PLER",
            viability_C = NA,
            viability_C_se = NA,
            viability_D = NA,
-           viability_D_se = NA,
-           
-           viability_slope = NA,
-           viability_slope_pval = NA,
-           viability_slope_se = NA)
+           viability_D_se = NA)
 
 # Clean Env ####
 rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2", "bioseeds"))
