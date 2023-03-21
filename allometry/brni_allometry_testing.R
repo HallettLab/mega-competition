@@ -39,7 +39,7 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
   lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/"
 } 
 
-brni.phyto <- read.csv(paste0(lead, "BRNI_phyto-processing_20230315.csv"))
+brni_phyto <- read.csv(paste0(lead, "BRNI_phyto-processing_20230315.csv"))
 
 
 
@@ -50,7 +50,7 @@ brni_allo2 <- brni_allo %>%
          prop.viable = viable.pod.num/pod.num)
 
 ## merge with phyto data for exploration with viability
-brni.allo.phyto <- left_join(brni_allo2, brni.phyto, by = c("block", "plot", "sub", "phyto.unique"))
+brni.allo.phyto <- left_join(brni_allo2, brni_phyto, by = c("block", "plot", "sub", "phyto.unique"))
 
 
 # Bio-Flower Relationship ####
@@ -238,4 +238,4 @@ BRNI.allo.output <- data.frame(Species = "BRNI",
                                viability_D_se = NA)
 
 # Clean Env ####
-rm(list = c("brni.allo.phyto", "brni.phyto", "brni_allo", "brni_allo_lin", "brni_allo_lin_trt", "brni_allo_pol", "brni_allo2", "brni_mean_seeds", "brni_mean_seeds_trt", "brni_seeds",  "brni_via_lin", "brni_via_lin3", "lead", "seed.test", "viability.test", "viability.test2", "viability.test3", "viability_calcs"))
+rm(list = c("brni.allo.phyto", "brni_phyto", "brni_allo", "brni_allo_lin", "brni_allo_lin_trt", "brni_allo_pol", "brni_allo2", "brni_mean_seeds", "brni_mean_seeds_trt", "brni_seeds",  "brni_via_lin", "brni_via_lin3", "lead", "seed.test", "viability.test", "viability.test2", "viability.test3", "viability_calcs"))
