@@ -120,6 +120,7 @@ bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)]
 
 check <- bg.phyto.seeds %>%
   filter(is.na(bg.seeds.in))
+## PLER 7958 in ANAR background
 
 # Format for Models ####
 ## pivot wider ####
