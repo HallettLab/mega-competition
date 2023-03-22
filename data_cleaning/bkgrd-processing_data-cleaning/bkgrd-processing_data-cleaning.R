@@ -90,6 +90,10 @@ missing.check <- bio.rel %>%
 
 bio.rel[bio.rel$bkgrd == "CLPU",]
 ## OK, looks like there are 2 potential block 7 CLPU L dens plots - so it's not an issue that we are missing 7-17.
+## should remove this in case this is what is causing some of the CLPU issues
+
+#bg_indivC[bg_indivC$bkgrd == "CLPU" & bg_indivC$block == 7 & bg_indivC$plot == 17,]
+#bg_indivC[bg_indivC$unique == 243,]
 
 inflor.rel <- bg_indivC %>%
   filter(bkgrd %in% inflor.bio.to.seeds)
@@ -120,10 +124,30 @@ unique(bg_indivC$census.notes)
 with.notes <- bg_indivC %>%
   filter(!is.na(census.notes))
 
+### Calc Prop THIR ####
+THIR.temp <- bg_indivC %>%
+  filter(bkgrd == "THIR") %>%
+  mutate(THIR.cov.temp = substr(census.notes, 1, 13),
+         THIR.cov = as.numeric(gsub("([0-9]+).*$", "\\1", THIR.cov.temp)), 
+         TINC.cov.temp = substr(census.notes, 14, 27),
+         TINC.cov = as.numeric(gsub("([0-9]+).*$", "\\1", TINC.cov.temp))) %>%
+  mutate(THIR.cov2 = ifelse(str_detect(THIR.cov.temp, "TINC") == TRUE, TINC.cov, THIR.cov),
+         TINC.cov2 = ifelse(str_detect(TINC.cov.temp, "TH") == TRUE, THIR.cov, TINC.cov))
+## extract info in notes to get %cov of THIR and TINC in separate cols
+
+## fix a few that don't follow the same pattern
+THIR.temp[THIR.temp$unique == 137,]$THIR.cov2 <- 75
+THIR.temp[THIR.temp$unique == 101,]$THIR.cov2 <- 55
+
+## finish calcs
+THIR.temp <- THIR.temp %>%
+  mutate(tot.thir = THIR.cov2 + TINC.cov2,
+         THIR.prop = THIR.cov2/tot.thir) ## calc the prop THIR
 
 
 # Calc Avg Indiv ####
 bg.ind <- bg_indivC %>%
+  filter(unique != 243) %>% ## remove missing extra CLPU bkgrd
   mutate(avg.ind = ifelse(bkgrd %in% totbio.to.something, total.biomass.g/n.indiv, NA),
          avg.ind = ifelse(bkgrd %in% inflor.bio.to.seeds, inflor.g/n.indiv, avg.ind),
          avg.ind = ifelse(bkgrd %in% seeds.per.flower, flower.num/n.indiv, avg.ind),
@@ -203,8 +227,9 @@ for (i in 1:length(bg.sp)){
   
 }
 
-bg.seeds <- bg.ind.avg
+bg.seeds <- left_join(bg.ind.avg, THIR.temp[, c(1:4, 23)], by = c("block", "plot", "bkgrd", "dens"))
+## merge THIR prop calcs back in so that it carries through to the next script
 
 # Clean Env ####
-rm(bg_indiv, bg.ind, bg.sp, bio.rel, inflor.rel, seeds.rel, missing.check, with.notes, seeds, tmp.ind, tmp.sp, tmp.model, totbio.to.seeds, inflor.bio.to.seeds, bg.ind.avg, bg_indivC, drought, i, seeds.per.flower, totbio.to.flowers.to.seeds, totbio.to.flowers.to.viability, totbio.to.something, basic_cleaning_func)
+rm(bg_indiv, bg.ind, bg.sp, bio.rel, inflor.rel, seeds.rel, missing.check, with.notes, seeds, tmp.ind, tmp.sp, tmp.model, totbio.to.seeds, inflor.bio.to.seeds, bg.ind.avg, bg_indivC, drought, i, seeds.per.flower, totbio.to.flowers.to.seeds, totbio.to.flowers.to.viability, totbio.to.something, basic_cleaning_func, THIR.temp)
 

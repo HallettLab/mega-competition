@@ -69,7 +69,7 @@ for(i in 1:length(block.plots)) {
 ## Merge avg seed data ####
 ## merge the avg germ rates with the avg seed per indiv data
 bg.info <- left_join(germ.eval, bg.seeds, by = c("block", "plot", "bkgrd")) %>%
-  select(block, plot, bkgrd, germ.calc, bg.avg.seed.num)
+  select(block, plot, bkgrd, germ.calc, bg.avg.seed.num, THIR.prop)
 
 bkgrd.n.indiv <- bkgrd.n.indiv %>% 
   mutate(bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
@@ -83,6 +83,8 @@ bkgrd.calc <- left_join(bkgrd.n.indiv, bg.info, by = c("block", "plot", "bkgrd")
 # Calc Seeds ####
 bkgrd.seeds <- bkgrd.calc %>%
   mutate(bg.seeds.in = bkgrd.n.indiv/germ.calc,
+         bg.seeds.in = ifelse(bkgrd == "THIR", bg.seeds.in*THIR.prop, bg.seeds.in),
+         ## account for TINC by reducing seeds in number by the prop of TINC present
          bg.seeds.out = bkgrd.n.indiv*bg.avg.seed.num) %>%
   select(unique.ID, bg.seeds.in, bg.seeds.out, bkgrd)
 
