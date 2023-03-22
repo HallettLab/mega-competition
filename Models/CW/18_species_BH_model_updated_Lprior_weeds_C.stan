@@ -32,7 +32,6 @@ data{
   vector[N] gamu; 
   vector[N] hygl;
   vector[N] siga;
-  
 }
 
 parameters{
@@ -152,13 +151,13 @@ model{
     alpha_taca*taca[i]*0.87 + 
     alpha_mael*mael[i]*0.59 + 
     alpha_leni*leni[i]*0.85 + 
-    alpha_avba*avba[i]*0.96) +
+    alpha_avba*avba[i]*0.96 +
     alpha_crco*crco[i] +
     alpha_erbo*erbo[i] +
     alpha_figa*figa[i] +
     alpha_gamu*gamu[i] +
     alpha_hygl*hygl[i] +
-    alpha_siga*siga[i];
+    alpha_siga*siga[i]);
     
   }
 

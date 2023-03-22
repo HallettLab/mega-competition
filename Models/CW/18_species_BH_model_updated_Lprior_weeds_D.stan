@@ -151,13 +151,13 @@ model{
     alpha_taca*taca[i]*0.86 + 
     alpha_mael*mael[i]*0.18 + 
     alpha_leni*leni[i]*0.3 + 
-    alpha_avba*avba[i]*0.88)+
+    alpha_avba*avba[i]*0.88+
     alpha_crco*crco[i] +
     alpha_erbo*erbo[i] +
     alpha_figa*figa[i] +
     alpha_gamu*gamu[i] +
     alpha_hygl*hygl[i] +
-    alpha_siga*siga[i];
+    alpha_siga*siga[i]);
   }
 
   // calculate the likelihood
