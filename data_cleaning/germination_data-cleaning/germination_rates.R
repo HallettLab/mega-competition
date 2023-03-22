@@ -81,8 +81,11 @@ ggplot(germ.sum.trt[germ.sum.trt$WP == -0.5,], aes(x = as.factor(Temp), y = avg.
 avgtemp <- c("ACAM", "AMME", "AVBA", "BRHO", "CESO", "TACA", "LOMU", "GITR", "LENI", "MAEL", "MICA", "PLNO", "TWIL", "THIR")
 ## no effect of temp on germination, use average
 
-vartemp <- c("ANAR", "BRNI", "CLPU")
+vartemp <- c("BRNI", "CLPU")
 ## variable temp: for blocks seeded in warm rain use warm germ, otherwise cold
+
+warmtemp <- "ANAR"
+#decided to go with warm temp for ANAR as there is 0 germ in cold but we did see germ and there are no diffs between background number individuals (p = 0.243)
 
 coldtemp <- c("PLER")
 ## better germ in cold temps, use cold
@@ -107,6 +110,11 @@ if (sp %in% avgtemp) { ## if the species isn't affected by temp, use the average
   temp <- germ.sum %>%
     filter(Temp != 15, species == sp)
   
+} else if (sp %in% warmtemp) { ## if the species germ rate depends on temp
+  
+  temp <- germ.sum %>%
+    filter(Temp == 20, species == sp)
+  
 } else { ## for anything else (cold temp species - PLER)
   
   temp <- germ.sum %>%
@@ -124,4 +132,4 @@ bg.germ <- df %>%
 
 
 
-rm(list = c("avgtemp", "coldtemp", "germ.sum", "germ2", "i", "lead", "sp","species", "temp", "vartemp", "germ.sum.sp", "germ.sum.trt", "germ", "df"))
+rm(list = c("avgtemp", "coldtemp", "germ.sum", "germ2", "i", "lead", "sp","species", "temp", "vartemp", "germ.sum.sp", "germ.sum.trt", "germ", "df", "warmtemp"))
