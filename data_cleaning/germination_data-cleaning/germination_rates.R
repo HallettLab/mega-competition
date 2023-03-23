@@ -88,7 +88,7 @@ warmtemp <- "ANAR"
 #decided to go with warm temp for ANAR as there is 0 germ in cold but we did see germ and there are no diffs between background number individuals (p = 0.243)
 
 coldtemp <- c("PLER")
-## better germ in cold temps, use cold
+## better germ in cold temps, use cold because all seeds were at some point exposed to cold temps with rain
 
 species <- unique(germ.sum$species)
 

@@ -25,6 +25,8 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 ## Background Data
 bg_indiv <- read.csv(paste0(lead, "bkgrd-processing_20230315.csv"))
   
+## WUE data for AMME & PLNO
+wue <- read.csv(paste0(lead, "WUE_samples.csv"))
 
 ## Allometric Relationships
 source("allometry/merge_allometric_relationships.R")
@@ -144,9 +146,25 @@ THIR.temp <- THIR.temp %>%
   mutate(tot.thir = THIR.cov2 + TINC.cov2,
          THIR.prop = THIR.cov2/tot.thir) ## calc the prop THIR
 
+### Add in WUE weights ####
+#### clean wue data 
+wueC <- wue %>%
+  mutate(bkgrd = species,
+         block = Block,
+         wue.g = total.mg/1000)
+
+
+AMME_PLNO <- left_join(bg_indivC, wueC[,c(3,11:14)], by = c("block", "plot", "bkgrd")) %>%
+  filter(bkgrd == "AMME" | bkgrd == "PLNO", !is.na(wue.g)) %>%
+  mutate(tot.bio = ifelse(str_detect(census.notes, "WUE")== TRUE, total.biomass.g + wue.g, total.biomass.g))
+
+bg_indivC2 <- left_join(bg_indivC, AMME_PLNO[,c(1:3,18)], by = c("block", "plot", "bkgrd")) %>%
+  mutate(total.biomass.g = ifelse(!is.na(tot.bio), tot.bio, total.biomass.g))
+
+
 
 # Calc Avg Indiv ####
-bg.ind <- bg_indivC %>%
+bg.ind <- bg_indivC2 %>%
   filter(unique != 243) %>% ## remove missing extra CLPU bkgrd
   mutate(avg.ind = ifelse(bkgrd %in% totbio.to.something, total.biomass.g/n.indiv, NA),
          avg.ind = ifelse(bkgrd %in% inflor.bio.to.seeds, inflor.g/n.indiv, avg.ind),
@@ -230,6 +248,24 @@ for (i in 1:length(bg.sp)){
 bg.seeds <- left_join(bg.ind.avg, THIR.temp[, c(1:4, 23)], by = c("block", "plot", "bkgrd", "dens"))
 ## merge THIR prop calcs back in so that it carries through to the next script
 
+## Test CESO Bgs ####
+ceso.bgs <- bg.seeds %>%
+  filter(bkgrd == "CESO")
+
+ceso.block.model <- aov(bg.avg.seed.num~block, data = ceso.bgs)
+summary(ceso.block.model)
+## block has a marginally signif effect on avg seeds (p=0.0858)
+ceso.dens.model <- aov(bg.avg.seed.num~dens, data = ceso.bgs)
+summary(ceso.dens.model)
+## no signif effect of density
+
+## therefore, will substitute block 7 plot 26 avg indiv seeds out for the missing block 7 plot 11
+
+bg.seeds[bg.seeds$block == 7 & bg.seeds$bkgrd == "CESO", ]
+
+### Fix CESO 7-11 ####
+bg.seeds[bg.seeds$block == 7 & bg.seeds$plot == 11 & bg.seeds$bkgrd == "CESO", ]$bg.avg.seed.num <- 695.175
+
 # Clean Env ####
-rm(bg_indiv, bg.ind, bg.sp, bio.rel, inflor.rel, seeds.rel, missing.check, with.notes, seeds, tmp.ind, tmp.sp, tmp.model, totbio.to.seeds, inflor.bio.to.seeds, bg.ind.avg, bg_indivC, drought, i, seeds.per.flower, totbio.to.flowers.to.seeds, totbio.to.flowers.to.viability, totbio.to.something, basic_cleaning_func, THIR.temp)
+rm(bg_indiv, bg.ind, bg.sp, bio.rel, inflor.rel, seeds.rel, missing.check, with.notes, seeds, tmp.ind, tmp.sp, tmp.model, totbio.to.seeds, inflor.bio.to.seeds, bg.ind.avg, bg_indivC, drought, i, seeds.per.flower, totbio.to.flowers.to.seeds, totbio.to.flowers.to.viability, totbio.to.something, basic_cleaning_func, THIR.temp, bg_indivC2, wue, wueC, AMME_PLNO, ceso.bgs, ceso.block.model, ceso.dens.model)
 
