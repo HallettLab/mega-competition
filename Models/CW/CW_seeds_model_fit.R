@@ -587,6 +587,94 @@ save(seeds_lomu_d, file = "models/CW/models_by_species/posteriors/seeds_lomu_D_p
 
 
 # MAEL ####
+## control ####
+dat <- subset(model.dat.filtered, phyto == "MAEL" & bkgrd != "ANAR")
+dat <- subset(dat, treatment == "C")
+
+Fecundity <- as.integer(round(dat$phyto.seeds.out.final))
+
+pler <- as.integer(dat$PLER)
+anar <- as.integer(dat$ANAR)
+acam <- as.integer(dat$ACAM)
+brni <- as.integer(dat$BRNI)
+clpu <- as.integer(dat$CLPU)
+brho <- as.integer(dat$BRHO)
+gitr <- as.integer(dat$GITR)
+amme <- as.integer(dat$AMME)
+plno <- as.integer(dat$PLNO)
+thir <- as.integer(dat$THIR)
+mica <- as.integer(dat$MICA)
+ceso <- as.integer(dat$CESO)
+twil <- as.integer(dat$TWIL)
+lomu <- as.integer(dat$LOMU)
+taca <- as.integer(dat$TACA)
+mael <- as.integer(dat$MAEL)
+leni <- as.integer(dat$LENI)
+avba <- as.integer(dat$AVBA)
+
+N <- as.integer(length(Fecundity))
+
+intra <- mael
+
+intra_g <- 0.59 #hwat germ rate are we using?
+#intra_s <- ignoring this for now
+
+seeds_mael_c <- stan(file = "models/CW/18_species_BH_model_updated_Lprior_weeds_C.stan", data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba", "crco", "erbo", "figa", "gamu", "hygl", "siga"),
+                     iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     init = initials1) 
+
+print(seeds_pler_c)
+pairs(seeds_pler_c)
+stan_dens(seeds_pler_c)
+
+save(seeds_pler_c, file = "models/CW/models_by_species/posteriors/seeds_pler_C_posteriors_constrainedL.rdata")
+
+## drought ####
+
+dat <- subset(model.dat.filtered, phyto == "PLER" & bkgrd != "ANAR")
+dat <- subset(dat, treatment == "D")
+
+Fecundity <- as.integer(round(dat$phyto.seeds.out.final))
+
+pler <- as.integer(dat$PLER)
+anar <- as.integer(dat$ANAR)
+acam <- as.integer(dat$ACAM)
+brni <- as.integer(dat$BRNI)
+clpu <- as.integer(dat$CLPU)
+brho <- as.integer(dat$BRHO)
+gitr <- as.integer(dat$GITR)
+amme <- as.integer(dat$AMME)
+plno <- as.integer(dat$PLNO)
+thir <- as.integer(dat$THIR)
+mica <- as.integer(dat$MICA)
+ceso <- as.integer(dat$CESO)
+twil <- as.integer(dat$TWIL)
+lomu <- as.integer(dat$LOMU)
+taca <- as.integer(dat$TACA)
+mael <- as.integer(dat$MAEL)
+leni <- as.integer(dat$LENI)
+avba <- as.integer(dat$AVBA)
+
+N <- as.integer(length(Fecundity))
+
+intra <- pler
+
+intra_g <- 0.53 #hwat germ rate are we using?
+#intra_s <- ignoring this for now
+
+seeds_pler_d <- stan(file = "models/CW/models_by_species/PLER_BH_model_D.stan", data = c("N", "Fecundity", "intra", "intra_g", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba"),
+                     iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+                     init = initials1) 
+
+plot(seeds_pler_d)
+print(seeds_pler_d)
+stan_dens(seeds_pler_d)
+
+save(seeds_pler_d, file = "models/CW/models_by_species/posteriors/seeds_pler_D_posteriors_constrainedL.rdata")
+
+
+
+
 
 # MICA ####
 
