@@ -5,10 +5,10 @@ library(ggplot2)
 library(tidyverse)
 
 ### Extract means of each parameter ####
-species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI")
+species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI", "MAEL", "CLPU")
 
 ## something wrong with these two currently - they were kicking up errors during model fitting, so not surprising
-##  "MAEL",  "CLPU"
+##  
 
 trt <- c("C","D")
 params <- data.frame()
@@ -29,10 +29,10 @@ for(i in species){
   }
 }
 
-# NOTE ####
-## something seems to have gone wrong with CLPU.... look into later
-## not all species were read in, only 12.
-## ahh anything after CLPU didn't make it in.
+
+
+
+traceplot(posteriors[[34]])
 
 
 ### Extract and inspect distributions ####
