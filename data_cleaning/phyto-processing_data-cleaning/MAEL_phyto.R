@@ -81,9 +81,20 @@ plot.dates[plot.dates$block == 14,]
 ## anything seeded 11/10 or later has 10 MAEL seeds in and anything before should be 3.
 
 
+# Add planting dates ####
 ## join planting dates DF with mael_final
 mael_final_dates <- left_join(mael_final, plot.dates, by = c("block", "plot", "bkgrd"))
+    ## one caveat about dates - Control plots don't have a bg planting date as there is no planted background. The way we have done things below means that they don't get a phyto seeds in value
 
+## 2817 planted 11-14
+## 5574 & 12005 planted 11-11
+## 7519 planted 11-10
+
+## Fix Control planting dates ####
+mael_final_dates[mael_final_dates$unique.ID == 2817,]$date <- "2021-11-14"
+mael_final_dates[mael_final_dates$unique.ID == 5574,]$date <- "2021-11-11"
+mael_final_dates[mael_final_dates$unique.ID == 12005,]$date <- "2021-11-11"
+mael_final_dates[mael_final_dates$unique.ID == 7519,]$date <- "2021-11-10"
 #mael_final_dates[mael_final_dates$unique.ID == 3928,]
 
 
@@ -113,6 +124,11 @@ mael.phyto <- mael_final_dates %>%
 #phyto.uniques.mael <- mael.phyto %>%
  # filter(!is.na(phyto.unique))
 
+mael.check <- mael.phyto %>%
+  filter(is.na(phyto.seed.in))
+mael.controls <- mael_final_dates %>%
+  filter(bkgrd == "Control")
+
 mael.phyto[mael.phyto$unique.ID == 11367,]
 mael_final_dates[mael_final_dates$unique.ID==11367,]
 mael_final_dates[mael_final_dates$block == 16 & mael_final_dates$plot == 37 & mael_final_dates$sub == 22,]
@@ -129,4 +145,4 @@ ggplot(mael.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
 ## clean env
-rm(list = c("mael", "maelC", "plot.dates", "tmp", "df", "mael_final", "mael_final_dates"))
+rm(list = c("mael", "maelC", "plot.dates", "tmp", "df", "mael_final", "mael_final_dates", "mael.check", "mael.controls"))
