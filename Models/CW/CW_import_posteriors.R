@@ -32,7 +32,7 @@ for(i in species){
 
 
 
-traceplot(posteriors[[34]])
+#traceplot(posteriors[[34]])
 
 
 ### Extract and inspect distributions ####

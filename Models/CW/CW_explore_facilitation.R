@@ -12,6 +12,13 @@ source("Models/CW/CW_import_posteriors.R")
 ## traits
 source("data_cleaning/trait_data-cleaning/adult_traits/adult_traits_cleaning.R")
 
+
+
+## create a function to calculate standard error
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
 # Explore All Interactions ####
 
 ## Create summary data frame of posterior values
