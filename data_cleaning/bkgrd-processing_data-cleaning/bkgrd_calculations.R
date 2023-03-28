@@ -17,7 +17,8 @@ source("data_cleaning/phyto-collections_data-cleaning/phyto-collections_data-cle
 source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_seeding_dates.R")
 
 
-
+#test <- anti_join(plot.dates, bg.seeds, by = c("block", "plot", "bkgrd"))
+## plot.dates has 398 rows, bg.seeds has 396; this happened because block 7 has 3 CLPU bgs and block 6 has 3 THIR bgs. One of each of these was not sampled for bg individuals.
 
 # Combine DFs ####
 
@@ -39,8 +40,9 @@ for(i in 1:length(block.plots)) {
   tmp.plot <- dates.germ %>%
     filter(bp.combo == block.plots[i])
   
-  ## check if it's a temp sensitive species (ANAR, BRNI, CLPU)
-  if(unique(tmp.plot$bkgrd == "ANAR") | unique(tmp.plot$bkgrd == "BRNI") | unique(tmp.plot$bkgrd == "CLPU")) {
+  ## check if it's a temp sensitive species (BRNI, CLPU)
+  if(unique(tmp.plot$bkgrd == "BRNI") | unique(tmp.plot$bkgrd == "CLPU")) {
+        ## removed ANAR as temp sensitive species
     
     ## if it's temp sensitive check the planting date of a plot
     if (unique(tmp.plot$date) < "2021-11-10") { ## if planted on 11/9 or before
