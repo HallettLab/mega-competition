@@ -1,7 +1,6 @@
 ## Model loop 
 
-# Prep #
-
+# Prep ####
 source("data_cleaning/format_model_dat.R") ## get formatted model data
 
 library(rstan)
@@ -10,8 +9,8 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-# things to work out: germination rates, seed survival rates
 
+# Set initials ####
 initials <- list(lambda=250, 
                  alpha_pler=1, 
                  alpha_anar=1, 
@@ -38,29 +37,32 @@ initials <- list(lambda=250,
                  alpha_hygl=1,
                  alpha_siga=1)
 
-initials1<- list(initials, initials, initials, initials) 
-species <- c("PLER")
-#species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO")
+initials1<- list(initials, initials, initials, initials)
+
+# Loop thru ea Species ####
+species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "BRNI", "LENI")
+## does order matter here?
 
 trt <- c("C","D")
 
 model.output <- list()
 warnings <- list()
 
+## Last minute mods ####
 # This is placeholder until we figure out what to do about ANAR backgrounds that either have 0 stems or where germ estimates were zero (but clearly they werent)
-model.dat.filtered[!is.finite(model.dat.filtered$ANAR),]$ANAR <- mean(model.dat.filtered[is.finite(model.dat.filtered$ANAR) & model.dat.filtered$bkgrd == "ANAR",]$ANAR, na.rm = T)
+#model.dat.filtered[!is.finite(model.dat.filtered$ANAR),]$ANAR <- mean(model.dat.filtered[is.finite(model.dat.filtered$ANAR) & model.dat.filtered$bkgrd == "ANAR",]$ANAR, na.rm = T)
 
-# 5462 doesnt have background CESO data, temp fix here
-model.dat <- filter(model.dat.filtered, unique.ID != 5462)
+# 5462 doesnt have phyto.seeds.out.final - which is odd because it has a flower.num in the processing data - something must have gone wrong
+#model.dat <- filter(model.dat.filtered, unique.ID != 5462)
 
 # really should fix format.dat script but lazy right now
 #model.dat <- model.dat[!(model.dat$dens == "none" & model.dat$phyto == model.dat$bkgrd),]
 
 # replacing 0s with small number for now
-model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
+model.dat.filtered[model.dat.filtered$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
 
 #model.dat[, 11:28][is.na(model.dat[, 11:28])] <- 0
-model.dat <- model.dat %>%
+model.dat <- model.dat.filtered %>%
   select(-combos)
 
 
@@ -119,6 +121,8 @@ for(i in species){
     save(tmp, file = paste0("Models/CW/posteriors/seeds_",i,"_",j,"_posteriors_upLprior_weeds.rdata"))
   }
 }
+
+
 
 
 

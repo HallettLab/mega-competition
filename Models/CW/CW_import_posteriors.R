@@ -5,9 +5,10 @@ library(ggplot2)
 library(tidyverse)
 
 ### Extract means of each parameter ####
-species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR", "MAEL", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM")
+species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI", "MAEL", "CLPU")
 
-## "CLPU",
+## something wrong with these two currently - they were kicking up errors during model fitting, so not surprising
+##  
 
 trt <- c("C","D")
 params <- data.frame()
@@ -16,7 +17,7 @@ plots <- list()
 
 for(i in species){
   for(j in trt){
-    load(paste0("models/CW/posteriors/seeds_", i, "_", j, "_posteriors_upLprior.rdata"))
+    load(paste0("models/CW/posteriors/seeds_", i, "_", j, "_posteriors_upLprior_weeds.rdata"))
     print(tmp)
     tmp2 <- rstan::extract(tmp)
     plots[[paste0(i, "_", j)]] <- traceplot(tmp, pars = names(tmp2[-20]))
@@ -28,10 +29,10 @@ for(i in species){
   }
 }
 
-# NOTE ####
-## something seems to have gone wrong with CLPU.... look into later
-## not all species were read in, only 12.
-## ahh anything after CLPU didn't make it in.
+
+
+
+traceplot(posteriors[[34]])
 
 
 ### Extract and inspect distributions ####
@@ -61,6 +62,14 @@ ggplot(posteriors2, aes(x = alpha_pler, fill = treatment, line = treatment)) +
   facet_wrap(~species, ncol = 3, scales = "free")
 
 ggplot(posteriors2, aes(x = alpha_brho, fill = treatment, line = treatment)) + 
+  geom_density() + 
+  facet_wrap(~species, ncol = 3, scales = "free")
+
+ggplot(posteriors2, aes(x = alpha_leni, fill = treatment, line = treatment)) + 
+  geom_density() + 
+  facet_wrap(~species, ncol = 3, scales = "free")
+
+ggplot(posteriors2, aes(x = alpha_brni, fill = treatment, line = treatment)) + 
   geom_density() + 
   facet_wrap(~species, ncol = 3, scales = "free")
 
@@ -144,7 +153,7 @@ ggplot(posteriors2.sum, aes(x=species, y=lambda.scaled.mean, color = treatment))
 # Species by Species params ####
 ## change to long data format
 posteriors_long <- posteriors2 %>%
-  pivot_longer(2:19, names_to = "alpha_name", values_to = "alpha_value")
+  pivot_longer(2:24, names_to = "alpha_name", values_to = "alpha_value")
 
 #posteriors_long_old <- posteriors3 %>%
   #pivot_longer(2:19, names_to = "alpha_name", values_to = "alpha_value")
@@ -160,7 +169,7 @@ ggplot(posteriors_long, aes(x=lambda, fill = treatment, line = treatment)) +
   #facet_wrap(~species, ncol = 3, scales = "free") +
   #scale_fill_manual(values = c("#003366", "#FFA630"))
 
-ggsave("models/CW/preliminary_figures/model_posteriors_updated_lambdas/lambda_all_sp_old_posteriors.png", width = 8, height = 7)
+ggsave("models/CW/preliminary_figures/model_posteriors_updated_lambdas/lambda_all_sp_weeds.png", width = 8, height = 7)
 
 ## PLER
 ggplot(posteriors_long[posteriors_long$species == "PLER",], aes(x = alpha_value, fill = treatment, line = treatment)) + 

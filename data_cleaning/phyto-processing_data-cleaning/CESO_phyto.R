@@ -87,5 +87,12 @@ ceso.phyto <- ceso_final %>%
   
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
+ggplot(ceso.phyto, aes(x=phyto.seed.out)) +
+  geom_histogram()
+## nothing missing here!
+
+ggplot(ceso.phyto, aes(x=phyto.seed.in)) +
+  geom_histogram()
+
 ## clean up env
 rm(list = c("ceso", "cesoC", "ceso_final", "df", "tmp"))

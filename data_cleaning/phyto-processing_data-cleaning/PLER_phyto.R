@@ -135,6 +135,9 @@ ggplot(pler.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 ## 2 rows w/NAs these were missing samples, removed now.
 
+ggplot(pler.phyto, aes(x=phyto.seed.in)) +
+  geom_histogram()
+
 #pler_phyto_check <- pler.phyto %>%
  # filter(is.na(phyto.seed.out))
 ## 2 missing samples
