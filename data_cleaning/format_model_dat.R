@@ -8,9 +8,17 @@ source("data_cleaning/phyto-processing_data-cleaning/compile_phyto-processing_da
 source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_calculations.R")
 
 
-# Double checks ####
-all.phytos[all.phytos$unique.ID == 5462,]
-## this phyto has a seed out val currently. It just loses it somewhere along the way
+# change THIR and TWIL names in germ data  #
+#germ.sum.sp.DC <- germ.sum.sp.DC %>% 
+ # mutate(species = ifelse(species == "THIR-I", "THIR", species), 
+      #   species = ifelse(species == "TWIL-I", "TWIL", species))
+
+# change THIR and TWIL names in unique ID key
+#unique.key <- unique.key %>% 
+ # mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
+     #    bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
+      #   phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
+      #   bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
 
 
 # Replicate Control Rows ####
@@ -104,23 +112,15 @@ bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkg
   mutate(bg.seeds.in = ifelse(is.na(bg.seeds.in) & unique.ID %in% unique.id.controls, 0, bg.seeds.in),
          bg.seeds.out = ifelse(is.na(bg.seeds.out) & unique.ID %in% unique.id.controls, 0, bg.seeds.out))
 
-bg.phyto.seeds[bg.phyto.seeds$unique.ID == 5462,]
-## CESO sample still ok here
+## join weed census ####
+#bg.phyto.seeds.weeds <- left_join(bg.phyto.seeds, phyto.census[,c(1,5:10)], by = "unique.ID")
 
 ## reorder columns
 bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
 check <- bg.phyto.seeds %>%
   filter(is.na(bg.seeds.in))
-## No NAs
 ## PLER 7958 in ANAR background
-
-check2 <- bg.phyto.seeds %>%
-  filter(is.na(phyto.seed.in))
-## several MAEL phytos with no seeds in vals. that's probably why the model wasn't working for this species...
-
-check3 <- bg.phyto.seeds %>%
-  filter(is.na(phyto.seed.out))
 
 # Format for Models ####
 ## pivot wider ####
@@ -164,17 +164,6 @@ lambda_priors <- all.phytos.info %>%
   group_by(phyto) %>%
   summarise(max_seeds_ctrl = max(phyto.seed.out), 
             sd_seeds = sd(phyto.seed.out))
-## there is only one CLPU control sample. So there's no SD and therefore the model won't run correctly since this is an automatic input.
 
-## Fix CLPU ####
-clpu <- bg.phyto.seeds %>%
-  filter(phyto == "CLPU", bg.seeds.in == 0, bkgrd == "AVBA") %>%
-  summarise(max_seeds_ctrl = max(phyto.seed.out), 
-            sd_seeds = sd(phyto.seed.out))
-## will substitue AVBA bgs with no indiv in the bg as controls for this purpose
-
-lambda_priors[lambda_priors$phyto == "CLPU",]$max_seeds_ctrl <- clpu$max_seeds_ctrl
-lambda_priors[lambda_priors$phyto == "CLPU",]$sd_seeds <- clpu$sd_seeds
-
-# Clean env ####
-rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, ok.reps, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps)
+## clean env
+rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, ok.reps, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init)
