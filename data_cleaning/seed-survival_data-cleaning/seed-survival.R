@@ -39,25 +39,29 @@ ggplot(surv.sum, aes(x = Species, y = surv.mean.p)) +
   geom_errorbar(aes(ymin = surv.mean.p - surv.se.p, ymax = surv.mean.p + surv.se.p)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
+##### Traits ####
 trait.adult <- read.csv("/users/Marina/Documents/Dropbox/Mega_Competition/Data/Traits/Megacomp_adult-traits.csv")
 
-trait.seed <- read.csv("/users/Marina/Documents/USDA-PostDoc/Projects/Seed-Traits/Data/20230202_Seed-Traits_cleaning.csv")
+trait.seed <- read.csv("/users/Marina/Documents/USDA-PostDoc/Projects/Seed-Traits/Data/20230324_Seed-Traits_cleaning.csv")
 
-trait.seed <- trait.seed[,-10] # get rid of height because we have better height data for adults 
-colnames(trait.seed)[17] <- "cn.seed"
-trait <- merge(trait.seed, trait.adult, by.x = "code", by.y = "Code", all.x = F, all.y = T)
-trait[trait$code_4 == "PLER",]$E.S <- 0.8946559
-trait[trait$code_4 == "PLER",]$coat.thick <- 0.0104
+trait.seed <- trait.seed[,-9] # get rid of height because we have better height data for adults 
+colnames(trait.seed)[20] <- "cn.seed"
+trait <- merge(trait.seed, trait.adult[,-c(1:7,13:25)], by.x = "code", by.y = "Code", all.x = F, all.y = T)
 
 surv.trait <- merge(surv[,c(3,5)], trait, by = "Species", all.y = T, all.x = F)
 surv.sum <- merge(surv.sum, trait, by = "Species", all.y = T, all.x = F)
 
-ggplot(surv.trait, aes(y = n.viable/100, x = coat.perm)) +
+ggplot(surv.trait, aes(y = n.viable/100, x = log(coat.perm.perc))) +
   geom_point()
 
-ggplot(surv.trait, aes(y = n.viable/100, x = coat.thick/mass.mg)) +
+ggplot(surv.trait, aes(y = n.viable/100, x = coat.thick/morph.mass.mg)) +
   geom_point() +
   geom_smooth(method = "lm")
+
+ggplot(filter(surv.trait, nat.inv == "native"), aes(y = n.viable/100, x = coat.thick/chem.mass.mg)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~group)
 
 ggplot(surv.trait, aes(y = n.viable/100, x = coat.perm)) +
   geom_point()
@@ -66,10 +70,11 @@ ggplot(surv.trait, aes(y = n.viable/100, x = coat.perm)) +
 hist(log(trait$coat.perm))
 hist(log(trait$Height_cm))
 hist(log(trait$coat.thick))
-hist(sqrt(trait$E.S)) # need to look at this more
+hist(trait$E.S) # need to look at this more
 hist(log(trait$SLA_cm2.g))
 hist(log(trait$cn.seed))
-hist(sqrt(trait$shape))
+hist(sqrt(trait$shape.c))
+hist(sqrt(trait$shape.m))
 hist(log(trait$size))
 hist(trait$set.time.mpsec)
 hist(log(trait$mass.mg))
@@ -88,11 +93,13 @@ trait$cn.seed.log <- log(trait$cn.seed)
 
 all.pca <- c("Height_cm.log", "SLA_cm2.g.log", "LWC", "CN", "coat.perm.log", "E.S.log", "coat.thick",  "mass.mg.log", "set.time.mpsec", "shape.sqrt",  "size.log", "cn.seed.log")
 
-pca <- prcomp(trait[, all.pca], scale = T)
+pca <- prcomp(trait[, c(6:14,18:21,24:27,31,34:37)], scale = T)
 summary(pca)
 
 all.pca <- cbind(trait, pca$x[,1:4])
-all.pca$FunGroup <- paste(all.pca$nativity, all.pca$growth_form, sep = " ")
+all.pca$FunGroup <- paste(all.pca$nat.inv, all.pca$group, sep = " ")
+
+library(ggfortify)
 
 autoplot(pca, x = 1, y = 2, data = all.pca, frame = F, loadings = T, loadings.label = T, label = T, col = "FunGroup", size = 1) +
   theme_classic() +
