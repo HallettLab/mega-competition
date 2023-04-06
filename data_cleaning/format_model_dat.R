@@ -166,4 +166,4 @@ lambda_priors <- all.phytos.info %>%
             sd_seeds = sd(phyto.seed.out))
 
 ## clean env
-rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, ok.reps, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init)
+rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init)
