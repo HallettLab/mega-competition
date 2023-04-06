@@ -8,19 +8,6 @@ source("data_cleaning/phyto-processing_data-cleaning/compile_phyto-processing_da
 source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_calculations.R")
 
 
-# change THIR and TWIL names in germ data  #
-#germ.sum.sp.DC <- germ.sum.sp.DC %>% 
- # mutate(species = ifelse(species == "THIR-I", "THIR", species), 
-      #   species = ifelse(species == "TWIL-I", "TWIL", species))
-
-# change THIR and TWIL names in unique ID key
-#unique.key <- unique.key %>% 
- # mutate(phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
-     #    bkgrd = ifelse(bkgrd == "THIR-I", "THIR", bkgrd), 
-      #   phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto), 
-      #   bkgrd = ifelse(bkgrd == "TWIL-I", "TWIL", bkgrd))
-
-
 # Replicate Control Rows ####
 all.phytos.info <- left_join(all.phytos, unique.key, by = c("unique.ID", "phyto")) %>%
   mutate(bkgrd = ifelse(bkgrd == "ERBO", "Control", bkgrd))
@@ -150,12 +137,12 @@ ok.reps <- model.dat.init %>%
   filter(dens != "none") %>%
   group_by(treatment, phyto, bkgrd) %>%
   summarise(reps = n()) %>%
-  mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
+  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
   filter(reps > 2)
 
 ### add in weed census ####
 model.dat.filtered <- left_join(model.dat.init, phyto.census[,c(1,5:10)], by = "unique.ID") %>%
-  mutate(combos = paste(phyto, bkgrd, sep = "_")) %>%
+  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
   filter(combos %in% ok.reps$combos)
 
 # Make Lambda Priors df ####
