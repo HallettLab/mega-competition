@@ -5,10 +5,10 @@ library(ggplot2)
 library(tidyverse)
 
 ### Extract means of each parameter ####
-species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI", "MAEL", "CLPU")
+species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI", "CLPU")
 
 ## something wrong with these two currently - they were kicking up errors during model fitting, so not surprising
-##  
+##  MAEL
 
 trt <- c("C","D")
 params <- data.frame()
