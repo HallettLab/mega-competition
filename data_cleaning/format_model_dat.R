@@ -99,15 +99,9 @@ bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkg
   mutate(bg.seeds.in = ifelse(is.na(bg.seeds.in) & unique.ID %in% unique.id.controls, 0, bg.seeds.in),
          bg.seeds.out = ifelse(is.na(bg.seeds.out) & unique.ID %in% unique.id.controls, 0, bg.seeds.out))
 
-## join weed census ####
-#bg.phyto.seeds.weeds <- left_join(bg.phyto.seeds, phyto.census[,c(1,5:10)], by = "unique.ID")
-
 ## reorder columns
 bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
-check <- bg.phyto.seeds %>%
-  filter(is.na(bg.seeds.in))
-## PLER 7958 in ANAR background
 
 # Format for Models ####
 ## pivot wider ####
@@ -133,17 +127,18 @@ for(i in species){
 model.dat.init <- model.dat.init [,-10] ## get rid of phyto.seeds.in.final column
 
 ## filter by rep num ####
-ok.reps <- model.dat.init %>%
+reps.num <- model.dat.init %>%
   filter(dens != "none") %>%
   group_by(treatment, phyto, bkgrd) %>%
   summarise(reps = n()) %>%
-  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
-  filter(reps > 2)
+  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) #%>%
+  #filter(reps > 2)
 
 ### add in weed census ####
-model.dat.filtered <- left_join(model.dat.init, phyto.census[,c(1,5:10)], by = "unique.ID") %>%
-  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
-  filter(combos %in% ok.reps$combos)
+model.dat <- left_join(model.dat.init, phyto.census[,c(1,5:11)], by = "unique.ID") #%>%
+  #mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
+  #filter(combos %in% ok.reps$combos)
+## don't filter by replicates here, filter afterwards because the model loops thru everything anyways.
 
 # Make Lambda Priors df ####
 lambda_priors <- all.phytos.info %>%
@@ -152,5 +147,16 @@ lambda_priors <- all.phytos.info %>%
   summarise(max_seeds_ctrl = max(phyto.seed.out), 
             sd_seeds = sd(phyto.seed.out))
 
-## clean env
-rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init)
+## Fix CLPU sd ####
+clpu.fix <- bg.phyto.seeds %>%
+  filter(bkgrd == "Control" | bkgrd == "AVBA", phyto == "CLPU") %>%
+  group_by(phyto) %>%
+  summarise(max_seeds_ctrl = max(phyto.seed.out), 
+            sd_seeds = sd(phyto.seed.out))
+## none of the AVBA backgrounds had any seeds in them, so it should be ok to use the CLPU phytos as controls here.
+
+lambda_priors[lambda_priors$phyto == "CLPU",]$max_seeds_ctrl <- clpu.fix$max_seeds_ctrl
+lambda_priors[lambda_priors$phyto == "CLPU",]$sd_seeds <- clpu.fix$sd_seeds
+
+# Clean Env ####
+rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init, clpu.fix)
