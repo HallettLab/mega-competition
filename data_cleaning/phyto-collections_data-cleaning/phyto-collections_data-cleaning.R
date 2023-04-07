@@ -19,7 +19,7 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 } 
 
 
-date_collections <- 20230210
+date_collections <- 20230407
 
 collections <- read.xlsx(paste0(lead, "Collections/Collections_merged/", date_collections, "_MASTER_Collections.xlsx"), sheet = 2)
 
