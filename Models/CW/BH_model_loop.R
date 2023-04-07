@@ -9,6 +9,8 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
+# Create CSV of ok-reps to later filter model outputs by. Will filter in the import posteriors script, not here
+write.csv(ok.reps, "models/CW/sufficient-replicates.csv")
 
 # Set initials ####
 initials <- list(lambda=250, 
@@ -59,11 +61,10 @@ warnings <- list()
 #model.dat <- model.dat[!(model.dat$dens == "none" & model.dat$phyto == model.dat$bkgrd),]
 
 # replacing 0s with small number for now
-model.dat.filtered[model.dat.filtered$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
+model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
 
 #model.dat[, 11:28][is.na(model.dat[, 11:28])] <- 0
-model.dat <- model.dat.filtered %>%
-  select(-combos)
+
 
 
 for(i in species){
@@ -97,13 +98,13 @@ for(i in species){
     gamu <- as.integer(dat$GAMU)
     hygl <- as.integer(dat$HYGL)
     siga <- as.integer(dat$SIGA)
+    other <- as.integer(dat$other)
     
     N <- as.integer(length(Fecundity))
     
     intra <- as.integer(unlist(dat[,i]))
     
     intra_g <- germ.sum.sp.DC[germ.sum.sp.DC$species == i & germ.sum.sp.DC$trt == j,]$avg.germ 
-    #intra_s <- ignoring this for now
     
     mean_ctrl_seeds <- lambda_priors[lambda_priors$phyto == i,]$max_seeds_ctrl
     
@@ -112,7 +113,7 @@ for(i in species){
     print(i)
     print(j)
     
-    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/18_species_BH_model_updated_Lprior_weeds_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba", "crco", "erbo", "figa", "gamu", "hygl", "siga"),
+    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/18_species_BH_model_updated_Lprior_weeds_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba", "crco", "erbo", "figa", "gamu", "hygl", "siga", "other"),
                                                      iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                                                      init = initials1) 
     
