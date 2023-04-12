@@ -1,3 +1,6 @@
+
+library(RcppAlgos) ## for comboGeneral function
+
 ## load structural coexistence functions from Saavedra 2017
 source("models/CW/structural_coexistence/Saavedra_2017_code/toolbox_coexistence.R")
 source("models/CW/structural_coexistence/Saavedra_2017_code/toolbox_figure.R")
@@ -6,39 +9,17 @@ source("models/CW/structural_coexistence/Saavedra_2017_code/toolbox_figure.R")
 ## import Ricker model posteriors
 source("models/CW/import_ricker_posteriors.R")
 
-## try out structural coexistence when sampling from the posterior distributions rather than taking the mean
 
 
-## test with 100 draws from the posterior distrib
 
-# sample()
-
-params1 <- posteriors2 %>%
-  select(-(alpha_erbo:lp__)) %>%
-  group_by(treatment, species) %>%
-  summarise(across(lambda:alpha_avba, sample))
-  
-  
-  
-  #mutate(alpha_name2 = toupper(substr(alpha_name, start = 7, stop = 11))) %>%
-  select(-lambda, -lp__, -alpha_other, -alpha_name) %>%
-  pivot_wider(names_from = alpha_name2, values_from = alpha_value)
-  
-  
-  
-  mutate(alpha = sample(alpha_value, 100)) %>%
-  
-
-# test <- 
-
-
-params1$ACAM[[1]][1]
-
-ACAM.sample <- sample(posteriors_long[posteriors_long$species == "ACAM",]$alpha_value, 100)
 
 ## change column names to make the for loop easier to write
-#colnames(mean_alphas) <- c("treatment", "species", "lambda", "ACAM", "AMME", "ANAR", "AVBA", "BRHO", "BRNI", "CESO", "CLPU", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+posteriors3 <- posteriors2 %>% 
+  relocate(sort(colnames(posteriors2))) %>% ## alphabetize
+  select(-alpha_erbo, -alpha_figa, -alpha_gamu, -alpha_hygl, -alpha_other, -alpha_siga, -lp__) ## remove unnecessary cols
 
+## rename
+colnames(posteriors3) <- c("ACAM", "AMME", "ANAR", "AVBA", "BRHO", "BRNI", "CESO", "CLPU", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "lambda", "species", "treatment")
 
 
 
@@ -49,7 +30,7 @@ ACAM.sample <- sample(posteriors_long[posteriors_long$species == "ACAM",]$alpha_
 # Struct. Coexist Calc ####
 ## Prep ####
 ## make a vector of all unique species
-species <- unique(posteriors_long$species)
+species <- unique(posteriors2$species)
 
 ## create empty dataframe
 allcomm <- data.frame(ACAM = NA, AMME = NA, ANAR = NA, AVBA = NA, BRHO = NA, BRNI=NA, CESO=NA, GITR=NA, LENI = NA, LOMU= NA, MAEL= NA, MICA= NA, PLER= NA, PLNO= NA, TACA= NA, THIR= NA, TWIL = NA, feasibility=NA, rich = NA, treatment = NA, niche_diff = NA, fitness_diff = NA, community = NA)
@@ -58,7 +39,7 @@ allcomm <- data.frame(ACAM = NA, AMME = NA, ANAR = NA, AVBA = NA, BRHO = NA, BRN
 richness <- 1:18
 
 ## create vector of treatments
-treat <- unique(mean_alphas$treatment)
+treat <- unique(posteriors2$treatment)
 
 ## Loop ####
 ## iterate calcs over every comm comp and treatment
@@ -76,21 +57,36 @@ for(k in 1:length(treat)){
       ## create a vector of community composition for each iteration
       cc <- as.character(comp[j,])
       
+      ## create a vector of treatments
       trt <- treat[k]
-      ## select precipitation treatment
       
-      ## Randomly sample 100 times
-      tmp_params <- posteriors2 %>%
+      ## select precipitation treatment
+      tmp_params <- posteriors3 %>%
         filter(treatment %in% trt) %>%
         filter(species %in% cc)
 
       ## select the matching columns
       sp <- unique(tmp_params$species)
-      colnames(tmp_params)[grepl(sp,toupper(colnames(tmp_params)))]
+      
+      #colnames(tmp_params)[grepl(sp,toupper(colnames(tmp_params)))]
+      
       tmp_alphas <- tmp_params %>%
         ungroup() %>%
-        select(all_of(sp)) %>%
-        as.matrix()
+        select(all_of(sp), species) %>%
+        group_by(species) %>%
+        mutate()
+      
+      random_vector <- round(runif(n=100, min = 1, max = length(tmp_alphas$species)/richness[i]))
+      ## select 100 rows using the random vector
+      test <- tmp_alphas[random_vector,]
+      
+      ## shuffle the rows
+      dataframe[sample(1:nrow(dataframe)),]
+      
+      ## randonly select 100 rows using a random vector of vector indices that is unique to each vector
+      ## shuffle each individual vetor
+      
+      
       
       ## pull out intrinsic growth rate vector
       tmp_igr <- as.numeric(tmp_params$lambda)
