@@ -11,7 +11,7 @@ source("models/CW/import_ricker_posteriors.R")
 
 ## test with 100 draws from the posterior distrib
 
-sample()
+# sample()
 
 params1 <- posteriors2 %>%
   select(-(alpha_erbo:lp__)) %>%
@@ -29,7 +29,7 @@ params1 <- posteriors2 %>%
   mutate(alpha = sample(alpha_value, 100)) %>%
   
 
-test <- 
+# test <- 
 
 
 params1$ACAM[[1]][1]
@@ -60,20 +60,15 @@ richness <- 1:18
 ## create vector of treatments
 treat <- unique(mean_alphas$treatment)
 
-
-
-
 ## Loop ####
 ## iterate calcs over every comm comp and treatment
 for(k in 1:length(treat)){
-  
   
   ## iterate at every richness level
   for(i in 1:length(richness)){
     
     ## create all possible combinations of composition at a given richness level
     comp <- data.frame(comboGeneral(species, m=richness[i], freqs = 1))
-    
     
     ## iterate over each possible community composition
     for(j in 1:nrow(comp)){
@@ -85,26 +80,20 @@ for(k in 1:length(treat)){
       ## select precipitation treatment
       
       ## Randomly sample 100 times
-      tmp_params <- posteriors_long %>%
+      tmp_params <- posteriors2 %>%
         filter(treatment %in% trt) %>%
-        filter(species %in% cc) %>%
-        mutate(alpha_name2 = toupper(substr(alpha_name, start = 7, stop = 11))) %>%
-        group_by(treatment, species, alpha_name2) %>%
-        summarise(alpha = sample(alpha_value, 100),
-                  lambda = sample(lambda, 100)) %>%
-        pivot_wider(names_from = alpha_name2, values_from = alpha)
+        filter(species %in% cc)
 
-      
-      sp <- tmp_params$species
-      
       ## select the matching columns
-      tmp_alphas <- tmp %>%
+      sp <- unique(tmp_params$species)
+      colnames(tmp_params)[grepl(sp,toupper(colnames(tmp_params)))]
+      tmp_alphas <- tmp_params %>%
         ungroup() %>%
         select(all_of(sp)) %>%
         as.matrix()
       
       ## pull out intrinsic growth rate vector
-      tmp_igr <- as.numeric(tmp$lambda)
+      tmp_igr <- as.numeric(tmp_params$lambda)
       
       
       ## iterate over each random sample
@@ -126,10 +115,6 @@ for(k in 1:length(treat)){
         temp$feasibility <- f
         temp$niche_diff <- niche
         temp$fitness_diff <- fitness
-        
-        
-        
-        
         
       }
       
