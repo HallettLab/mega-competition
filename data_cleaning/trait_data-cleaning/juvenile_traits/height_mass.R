@@ -50,13 +50,78 @@ colnames(carmen_traits_fall) == colnames(compost_traits_fall2)
 ## col 13
 ## carmen/compost: "dry.root.mass.(g.or.mg)", lina: "dry.root.mass.(g)"
 
-unique(carmen_traits_fall$`dry.leaf.mass.(g.or.mg)`)
-## seems like there are values that probably are in both g and mg
-unique(carmen_traits_fall$`dry.shoot.mass.(-leaf).(g.or.mg)`)
-## hard to tell one way or the other?
+### Fix g vs mg ####
+#### Carmen ####
 
-ggplot(carmen_traits_fall, aes(x=`dry.shoot.mass.(-leaf).(g.or.mg)`, fill = Species)) +
+carmen_traits_fall2 <- carmen_traits_fall %>%
+  filter(!is.na(date.harvest)) 
+
+
+colnames(carmen_traits_fall2)
+
+unique(carmen_traits_fall2$`dry.leaf.mass.(g.or.mg)`)
+## seems like there are values that probably are in both g and mg
+sort(unique(carmen_traits_fall2$`dry.leaf.mass.(mg)`))
+
+ggplot(carmen_traits_fall2, aes(x=`dry.leaf.mass.(mg)`, y=`dry.leaf.mass.(g.or.mg)`)) +
+  geom_point()
+
+
+sort(unique(carmen_traits_fall2$`fresh.leaf.mass.(g.or.mg)`))
+sort(unique(carmen_traits_fall2$`fresh.leaf.mass.(mg)`))
+
+
+sort(unique(carmen_traits_fall2$`dry.shoot.mass.(-leaf).(g.or.mg)`))
+sort(unique(carmen_traits_fall2$`dry.shoot.mass.(-leaf).(mg)`))
+
+sort(unique(carmen_traits_fall2$`dry.root.mass.(g.or.mg)`))
+sort(unique(carmen_traits_fall2$`dry.root.mass.(mg)`))
+
+cw_traits_fall <- carmen_traits_fall2 %>%
+  mutate(dry.leaf.mass.g = ifelse(!is.na(`dry.leaf.mass.(mg)`), 0.001*`dry.leaf.mass.(mg)`, 
+                                  ifelse(`dry.leaf.mass.(g.or.mg)` < 0.05, `dry.leaf.mass.(g.or.mg)`, 
+                                         ifelse(`dry.leaf.mass.(g.or.mg)` > 0.9, 0.001*`dry.leaf.mass.(g.or.mg)`, NA))), 
+         
+         
+         
+         fresh.leaf.mass.g = ifelse(!is.na(`fresh.leaf.mass.(mg)`), 0.001*`fresh.leaf.mass.(mg)`, 
+                                    ifelse(`fresh.leaf.mass.(g.or.mg)` > 2, 0.001*`fresh.leaf.mass.(g.or.mg)`, 
+                                           ifelse(`fresh.leaf.mass.(g.or.mg)` < 2, `fresh.leaf.mass.(g.or.mg)`, NA))), 
+         
+         
+         
+         dry.shoot.mass.no.leaf.g = ifelse(!is.na(`dry.shoot.mass.(-leaf).(mg)`), 0.001*`dry.shoot.mass.(-leaf).(mg)`, 
+                                           ifelse(`dry.shoot.mass.(-leaf).(g.or.mg)` > 2, 0.001*`dry.shoot.mass.(-leaf).(g.or.mg)`, 
+                                                  ifelse(`dry.shoot.mass.(-leaf).(g.or.mg)` < 2, `dry.shoot.mass.(-leaf).(g.or.mg)`, NA))),
+         
+         
+         dry.root.mass.g = ifelse(`dry.root.mass.(g.or.mg)` < 2, `dry.root.mass.(g.or.mg)`, 
+                                  ifelse(`dry.root.mass.(g.or.mg)` > 2, 0.001*`dry.root.mass.(g.or.mg)`, NA)))
+
+
+ggplot(cw_traits_fall, aes(x=dry.leaf.mass.g)) +
   geom_histogram()
+
+
+### probably need to have an 'uncertain' category
+
+#### Caitlin ####
+caitlin_traits_fall2 <- caitlin_traits_fall %>%
+  filter(!is.na(date.harvest))
+
+#### Compost ####
+compost_traits_fall3 <- compost_traits_fall2 %>%
+  filter(!is.na(date.harvest))
+
+
+#### Lina ####
+lina_traits_fall2 <- lina_traits_fall %>%
+  filter(!is.na(date.harvest))
+
+
+
+
+
 
 
 ## Merge ####
@@ -106,7 +171,8 @@ lina_traits_spring$Code
 lina_traits_spring2$Code
 
 ## Merge ####
-spring_traits <- do.call("rbind", list(compost_caitlin_traits_spring2, lina_traits_spring2, carmen_traits_spring2))
+spring_traits <- do.call("rbind", list(compost_caitlin_traits_spring2, lina_traits_spring2, carmen_traits_spring2)) %>%
+  filter(!is.na(date.harvest))
 
 ## Fix Date Format ####
 spring_traits$date.harvest <- as.Date(spring_traits$date.harvest, origin = "1899-12-30")
@@ -122,11 +188,48 @@ colnames(spring_traits)
 ggplot(spring_traits, aes(x=fresh.leaf.mass.g)) +
   geom_histogram() +
   facet_wrap(~Code)
+## missing 2 rows
+
 ggplot(spring_traits, aes(x=fresh.leaf.mass.mg)) +
+  geom_histogram()
+## no data
+
+ggplot(spring_traits, aes(x=height.cm)) +
+  geom_histogram() +
+  facet_wrap(~Code)
+## missing 1 rep
+
+ggplot(spring_traits, aes(x=dry.leaf.mass.g)) +
+  geom_histogram() +
+  facet_wrap(~Code)
+## 15 rows missing 
+
+ggplot(spring_traits, aes(x=`dry.shoot.mass.-leaf.g`)) +
+  geom_histogram() +
+  facet_wrap(~Code)
+## 3 rows missing
+
+ggplot(spring_traits, aes(x=`dry.shoot.mass.-leaf.mg`)) +
   geom_histogram()
 ## empty
 
-str(spring_traits)
+ggplot(spring_traits, aes(x=dry.root.mass.g)) +
+  geom_histogram()
+## missing 10 rows
+
+ggplot(spring_traits, aes(x=dry.root.mass.mg)) +
+  geom_histogram()
+## empty
+
+spring.reps <- spring_traits %>%
+  group_by(Code) %>%
+  summarise(reps = n())
+
+
+
+
+
+colnames(spring_traits)
 
 # Join Fall & Spring ####
 
