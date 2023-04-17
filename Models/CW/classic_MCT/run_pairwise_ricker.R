@@ -7,6 +7,8 @@ source("data_cleaning/seed-survival_data-cleaning/seed-survival_data-cleaning.R"
 
 theme_set(theme_bw())
 
+# Question ####
+## did I get the equations set up correctly? Is the germination term ok where it is? For some reason it was removed in the BH version of this...
 
 # Set up ####
 ## Equations ####
@@ -16,7 +18,7 @@ run.to.equilibrium <- function(surv, germ, lambda, alpha_intra, Nt) {
 }
 ## equilibrium model experiences INTRAspecific competition, but not inter
 
-run.invader <- function(surv, germ, lambda, alpha_inter, resid_abund, invader_abund) {
+run.invader <- function(surv, germ, lambda, alpha_inter, resid_abund, invader_abund, germ_resid) {
    Ntp1 <- (1-germ)*surv*invader_abund + germ*lambda*invader_abund*exp(-alpha_inter * resid_abund * germ_resid)
    LDGR <- log(Ntp1/invader_abund)
    return(LDGR)
@@ -223,61 +225,84 @@ ggplot(residents_wet_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species) +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Ambient Conditions, Ricker Model, 4/12/23")
+  ggtitle("Ambient Conditions, Ricker Model, 4/13/23")
 
-#ggsave("models/CW/classic_MCT/equil_abund_ricker_ambient.png", height = 6, width = 10)
+#ggsave("models/CW/classic_MCT/equil_abund_ricker_ambient_2.png", height = 6, width = 10)
 
 ggplot(residents_dry_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species) +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Drought Conditions, Ricker Model, 4/12/23")
+  ggtitle("Drought Conditions, Ricker Model, 4/13/23")
 
-#ggsave("models/CW/classic_MCT/equil_abund_ricker_drought.png", height = 6, width = 10)
+#ggsave("models/CW/classic_MCT/equil_abund_ricker_drought_2.png", height = 6, width = 10)
 
 
 
 
 # Invade into residents ####
+
 ## Filter species ####
-# species having a hard time reaching equilibrium
-## dry: TWIL, CESO, PLNO
-## wet: TWIL, THIR, AMME, ACAM
 
-rm_dry <- c("TWIL", "CESO", "PLNO", "MAEL")
-rm_wet <- c("TWIL", "THIR", "AMME", "ACAM")
+## didn't have an equilibrium abundance
+rm <- c("TWIL", "THIR") 
+residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm]
+residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
 
-rm <- c("TWIL", "THIR", "AMME", "ACAM", "CESO", "PLNO", "MAEL")
-
-#residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm_wet]
-#residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm_dry]
-
-
+## Prep Loop ####
 #update species list
 species <- species[!(species %in% rm)]
 
-
+## set number of replicates
 reps <- 200
+runs <- 200
 
+## create empty list to contain output
 tmp <- list()
 
-# i = invader, j = resident
+## Run Loop ####
+## i = invader, j = resident
+## for each invader
 for(i in species) {
+  
+  ## for each resident
   for(j in species) {
+    
+    ## when invader and resident are different species
     if(i != j) {
+      
+      ## for each treatment
       for(k in trt){
+        
+        ## create one element of the list
         tmp[[paste0(i, "_into_", j, "_", k)]] <- matrix(NA, reps, runs)
+        
+        ## set invader abundance to 1
         invader_abund <- 1
+        
+        ## create a vector the length of the posterior distrib
         post_length <- length(posteriors[[paste0(i,"_", k)]]$lambda)
         
+        ## for each replicate
         for(r in 1:reps) {
+          
+          ## randomly sample 200 times from the length of the posterior distrib
           posts <- sample(post_length, runs, replace=TRUE)
           
-          tmp[[paste0(i, "_into_", j, "_", k)]][r,] <- run.invader(#surv = avfa_dry$surv, 
+          ## use the run.invader function to add rows to the matrix
+          tmp[[paste0(i, "_into_", j, "_", k)]][r,] <- run.invader(surv = posteriors[[paste0(i,"_", k)]]$surv, 
             germ = posteriors[[paste0(i,"_", k)]]$germ, 
+            germ_resid = posteriors[[paste0(j,"_", k)]]$germ,
             lambda = posteriors[[paste0(i,"_", k)]]$lambda[posts], 
             alpha_inter = unlist(posteriors[[paste0(i,"_", k)]][paste0("alpha_", tolower(j))], use.names = F)[posts],
-            resid_abund = residents_dry[,j], 
+            ## use the appropriate dataframe depending on treat
+            resid_abund = if(k == "D"){
+              residents_dry[,j] 
+            }
+            else {
+              residents_wet[,j]
+            },
+            
             invader_abund = invader_abund)
         }
       }
@@ -285,19 +310,20 @@ for(i in species) {
   }
 }
 
-# Put together ####
+
+## Change to DF ####
 invasion_dry <- list()
 invasion_wet <- list()
 
 for(i in names(tmp)){
   if(str_sub(names(tmp[i]), start = -1) == "C"){
     tmp2 <- as.vector(tmp[[i]])
-    invasion_dry[[i]] <- tmp2
+    invasion_wet[[i]] <- tmp2
   }
   
   else {
     tmp3 <- as.vector(tmp[[i]])
-    invasion_wet[[i]] <- tmp3
+    invasion_dry[[i]] <- tmp3
   }
 }
 
@@ -305,71 +331,28 @@ invasion_dry <- data.frame(invasion_dry)
 invasion_wet <- data.frame(invasion_wet)
 
 
-# mean abundances ####
-equil_abund <- as.data.frame(rbind(apply(residents_dry, 2, mean),
-                                   apply(residents_wet, 2, mean)))
-equil_abund$trt <- c("dry","wet")
 
-equil_abund <- equil_abund %>%
-  pivot_longer(cols = PLER:MICA, names_to = "species", values_to = "abundance")
+invasion_dry_long <- invasion_dry %>%
+  pivot_longer(1:306, names_to = "scenario", values_to = "GRWR") %>%
+  mutate(invader = substr(scenario, 1, 4),
+         resident = substr(scenario, 11, 14))
 
 
-#rm(list=setdiff(ls(), c("invasion_dry", "invasion_wet","equil_abund","params")))
 
-# plot ####
+invasion_wet_long <- invasion_wet %>%
+  pivot_longer(1:306, names_to = "scenario", values_to = "GRWR")
 
-dry_means <- invasion_dry %>% 
-  summarise_all(list(mean))
 
-wet_means <- invasion_wet %>% 
-  summarise_all(list(mean))
 
-colnames(wet_means) <- str_sub(names(wet_means), start = 1, end = 14)
-colnames(dry_means) <- str_sub(names(dry_means), start = 1, end = 14)
+ggplot(invasion_dry_long[invasion_dry_long$invader == "BRHO",], aes(x=GRWR)) +
+  geom_histogram() +
+  facet_wrap(~resident)
 
-invasion_means <- rbind(dry_means, wet_means)
-invasion_means$trt <- c("dry","wet")
 
-invasion_means <- invasion_means %>%
-  pivot_longer(cols = PLER_into_BRHO:MICA_into_LOMU, 
-               names_to = "invasion", values_to = "growth")
 
-invasion_means$invader <- str_sub(invasion_means$invasion, start = 1, end = 4)
-invasion_means$resident <- str_sub(invasion_means$invasion, start = 11, end = 14)
+ggplot(invasion_dry_long[invasion_dry_long$invader == "BRHO",], aes(x=GRWR)) +
+  geom_density() +
+  facet_wrap(~resident, scales = "free")
 
-ggplot(invasion_means, aes(x = resident, y = growth, col = trt, group = trt)) + 
-  geom_point(size = 3) + 
-  facet_wrap(~invader, ncol = 3, scales = "free") +
-  geom_hline(yintercept = 0, linetype = "dashed")
 
-#trait <- read.csv("/users/Marina/Documents/Dropbox/Mega_Competition/Data/Traits/Megacomp_adult-traits.csv")
 
-invasion_means <- merge(invasion_means, trait[,c(2,3,6)], by.x = "invader", by.y = "code_4")
-
-names(invasion_means)[6] <- "invader.nativity"
-names(invasion_means)[7] <- "invader.growth_form"
-
-invasion_means <- merge(invasion_means, trait[,c(2,3,6)], by.x = "resident", by.y = "code_4")
-
-names(invasion_means)[8] <- "resident.nativity"
-names(invasion_means)[9] <- "resident.growth_form"
-
-invasion_means$invader.fungroup <- paste(invasion_means$invader.nativity, invasion_means$invader.growth_form, sep = " ")
-
-invasion_means$resident.fungroup <- paste(invasion_means$resident.nativity, invasion_means$resident.growth_form, sep = " ")
-
-ggplot(invasion_means, aes(x = resident.fungroup, y = growth, fill = trt)) +
-  geom_boxplot() +
-  facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
-  geom_hline(yintercept = 0, linetype = "dashed")
-
-invasion_means_summary <- invasion_means %>%
-  group_by(trt, invader.fungroup, resident.fungroup) %>%
-  summarize(ldgr.mean = mean(growth),
-            ldgr.se = calcSE(growth))
-
-ggplot(invasion_means_summary, aes(x = resident.fungroup, y = ldgr.mean, col = trt, group = trt)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = ldgr.mean - ldgr.se, ymax = ldgr.mean + ldgr.se, width = 0.2)) +
-  facet_wrap(~invader.fungroup, ncol = 3, scales = "free") +
-  geom_hline(yintercept = 0, linetype = "dashed")
