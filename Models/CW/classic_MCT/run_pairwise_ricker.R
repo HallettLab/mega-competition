@@ -257,6 +257,9 @@ species <- species[!(species %in% rm)]
 reps <- 200
 runs <- 200
 
+## I don't currently understand why we have 200 runs and replicates. For this it seems redundant since we calc LDGR once, not in 200 sequential time steps like the equilibrium abundance.
+
+
 ## create empty list to contain output
 tmp <- list()
 
@@ -333,26 +336,55 @@ invasion_wet <- data.frame(invasion_wet)
 
 
 invasion_dry_long <- invasion_dry %>%
-  pivot_longer(1:306, names_to = "scenario", values_to = "GRWR") %>%
+  pivot_longer(1:240, names_to = "scenario", values_to = "GRWR") %>%
   mutate(invader = substr(scenario, 1, 4),
          resident = substr(scenario, 11, 14))
 
 
 
 invasion_wet_long <- invasion_wet %>%
-  pivot_longer(1:306, names_to = "scenario", values_to = "GRWR")
+  pivot_longer(1:240, names_to = "scenario", values_to = "GRWR") %>%
+  mutate(invader = substr(scenario, 1, 4),
+         resident = substr(scenario, 11, 14))
 
 
 
-ggplot(invasion_dry_long[invasion_dry_long$invader == "BRHO",], aes(x=GRWR)) +
-  geom_histogram() +
-  facet_wrap(~resident)
 
 
+for(i in 1:length(species)){
+  
+  
+  p_dry <- ggplot(invasion_dry_long[invasion_dry_long$invader == species[i],], aes(x=GRWR)) +
+    geom_histogram(bins = 100) +  
+    facet_wrap(~resident, scales = "free") +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    ggtitle(paste0(species[i], "Invader Dry, Ricker"))
+  
+  
+  ggsave(p_dry, file=paste0("models/CW/classic_MCT/preliminary_GRWR/", species[i], "_ricker_dry.png"), width = 14, height = 10)
+  
+  
+  p_wet <- ggplot(invasion_wet_long[invasion_wet_long$invader == species[i],], aes(x=GRWR)) +
+    geom_histogram(bins = 100) +  
+    facet_wrap(~resident, scales = "free") +
+    geom_vline(xintercept = 0, linetype = "dashed") +
+    ggtitle(paste0(species[i], "Invader Wet, Ricker"))
+  
+  
+  ggsave(p_wet, file=paste0("models/CW/classic_MCT/preliminary_GRWR/", species[i], "_ricker_wet.png"), width = 14, height = 10)
+
+  
+}
+
+
+
+
+## density plot format
 
 ggplot(invasion_dry_long[invasion_dry_long$invader == "BRHO",], aes(x=GRWR)) +
   geom_density() +
-  facet_wrap(~resident, scales = "free")
-
+  facet_wrap(~resident, scales = "free") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  ggtitle("BRHO Invader Dry, Ricker")
 
 
