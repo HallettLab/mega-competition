@@ -87,9 +87,7 @@ for(i in colnames(mica_final)[15:16]) {
 
 # Make Phyto DF ####
 mica.phyto <- mica_final %>%
-  mutate(phyto.seed.out = (allo.df[allo.df$Species == "MICA",2] + ## intercept
-                             (allo.df[allo.df$Species == "MICA",5]*total.biomass.g.rounded) + ## slope
-                             (allo.df[allo.df$Species == "MICA",8]*(total.biomass.g.rounded^2))), ## poly
+  mutate(phyto.seed.out = (allo.df[allo.df$Species == "MICA",5]*total.biomass.g.rounded), ## slope
          ## calc seed out from biomass weight & allo relationship
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),

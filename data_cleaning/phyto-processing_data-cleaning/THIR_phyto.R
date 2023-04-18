@@ -121,11 +121,12 @@ for(i in colnames(thir_final)[14:15]) {
 
 # Make Phyto Dataframe ####
 thir.phyto <- thir_final %>%
-  mutate(THIR.flowers.out = (allo.df[allo.df$Species == "THIR",2] + ## intercept
-                               (allo.df[allo.df$Species == "THIR",5]*total.biomass.g.rounded)), ## slope
+  mutate(THIR.flowers.out = (allo.df[allo.df$Species == "THIR",5]*total.biomass.g.rounded), ## slope
          ## use tot.bio to flower.num to get flowers out
          
-         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "THIR",17]*THIR.flowers.out,  allo.df[allo.df$Species == "THIR",15]*THIR.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  
+                                 allo.df[allo.df$Species == "THIR",14]*THIR.flowers.out,  
+                                 allo.df[allo.df$Species == "THIR",12]*THIR.flowers.out),
          ## use viability to calculate the total seeds out
          ## viability col is proportion of viable flowers, so multiplying total flowers by the proportion viable should give us the viable flowers which is equivalent to viable seed # as there is always 1 seed/flower.
          

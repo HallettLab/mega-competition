@@ -101,7 +101,9 @@ mael_final_dates[mael_final_dates$unique.ID == 7519,]$date <- "2021-11-10"
 
 # Make Final DF ####
 mael.phyto <- mael_final_dates %>%
-  mutate(phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "MAEL",13]*flower.num,  allo.df[allo.df$Species == "MAEL",11]*flower.num),
+  mutate(phyto.seed.out = ifelse(treatment == "D",  
+                                 allo.df[allo.df$Species == "MAEL",10]*flower.num,  
+                                 allo.df[allo.df$Species == "MAEL",8]*flower.num),
          ## use avg seed num per trt to calculate seeds out
 
          

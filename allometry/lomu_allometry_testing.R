@@ -42,13 +42,14 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 source("data_cleaning/phyto-processing_data-cleaning/basic_cleaning_function.R")
 
 lomu_phyto <- read.csv(paste0(lead, "LOMU_phyto-processing-redo_20230206.csv"))
-lomu_phytoC <- basic_cleaning_func(lomu_phyto)
 
 ## someone wrote "missing in the redo.total.biomass column
-lomu_phytoC[lomu_phytoC$block == 14 & lomu_phytoC$plot == 21 & lomu_phytoC$sub == 2, ]$redo.total.biomass <- NA
-lomu_phytoC[lomu_phytoC$block == 14 & lomu_phytoC$plot == 21 & lomu_phytoC$sub == 2, ]$redo.notes <- "sample missing"
+lomu_phyto[lomu_phyto$block == 14 & lomu_phyto$plot == 21 & lomu_phyto$sub == 2, ]$redo.total.biomass <- NA
+lomu_phyto[lomu_phyto$block == 14 & lomu_phyto$plot == 21 & lomu_phyto$sub == 2, ]$redo.notes <- "sample missing"
 
-lomu_phytoC$redo.total.biomass <- as.numeric(lomu_phytoC$redo.total.biomass)
+lomu_phyto$redo.total.biomass <- as.numeric(lomu_phyto$redo.total.biomass)
+
+lomu_phytoC <- basic_cleaning_func(lomu_phyto)
 
 lomu_phytoC2 <- lomu_phytoC %>%
   mutate(final.total.biomass.g = ifelse(!is.na(redo.total.biomass), redo.total.biomass, total.biomass.g))
@@ -109,13 +110,9 @@ LOMU.allo.output <- data.frame(Species = "LOMU",
                                intercept_pval = NA, 
                                intercept_se = NA, 
                                
-                               slope = lomu_allo_rel_pol$coefficients[2], 
-                               slope_pval = summary(lomu_allo_rel_pol)$coefficients[2,4], 
-                               slope_se = summary(lomu_allo_rel_pol)$coefficients[2,2], 
-                               
-                               poly = summary(lomu_allo_rel_pol)$coefficients[3], 
-                               poly_pval = summary(lomu_allo_rel_pol)$coefficients[3,4], 
-                               poly_se = summary(lomu_allo_rel_pol)$coefficients[3, 2],
+                               slope = lomu_allo_rel_lin$coefficients[2], 
+                               slope_pval = summary(lomu_allo_rel_lin)$coefficients[2,4], 
+                               slope_se = summary(lomu_allo_rel_lin)$coefficients[2,2], 
                                
                                seeds_C = NA,
                                seeds_C_se = NA,

@@ -41,11 +41,15 @@ ggplot(mica_allo, aes(x = total.biomass.g, y = seeds.num)) +
 
 
 # Model ####
+## *Linear ####
 mica_allo_rel_lin <- lm(seeds.num ~ total.biomass.g, data = mica_allo)
 summary(mica_allo_rel_lin) # r2 = 0.9694
 
+## Poly ####
 mica_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = mica_allo)
 summary(mica_allo_rel_pol) # r2 = 0.981
+
+## switched to using linear as poly models are not good for predicting even if they might fit the existing data better.
 
 # Save Output ####
 ## save the model outputs
@@ -54,13 +58,9 @@ MICA.allo.output <- data.frame(Species = "MICA",
                                intercept_pval = NA, 
                                intercept_se = NA, 
                                
-                               slope = mica_allo_rel_pol$coefficients[2], 
-                               slope_pval = summary(mica_allo_rel_pol)$coefficients[2,4], 
-                               slope_se = summary(mica_allo_rel_pol)$coefficients[2,2], 
-                               
-                               poly = summary(mica_allo_rel_pol)$coefficients[3], 
-                               poly_pval = summary(mica_allo_rel_pol)$coefficients[3,4], 
-                               poly_se = summary(mica_allo_rel_pol)$coefficients[3, 2],
+                               slope = mica_allo_rel_lin$coefficients[2], 
+                               slope_pval = summary(mica_allo_rel_lin)$coefficients[2,4], 
+                               slope_se = summary(mica_allo_rel_lin)$coefficients[2,2], 
                                
                                seeds_C = NA,
                                seeds_C_se = NA,

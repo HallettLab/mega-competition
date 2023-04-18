@@ -121,11 +121,10 @@ for(i in colnames(acam_final)[14:17]) {
 
 # Make Phyto DF ####
 acam.phyto <- acam_final %>%
-  mutate(ACAM.flowers.out = (allo.df[allo.df$Species == "ACAM",2] + ## intercept
-                               (allo.df[allo.df$Species == "ACAM",5]*total.biomass.g.rounded)), ## slope
+  mutate(ACAM.flowers.out = (allo.df[allo.df$Species == "ACAM",5]*total.biomass.g.rounded), ## slope
          ## use tot.bio to flower.num to get flowers out
          
-         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "ACAM",13]*ACAM.flowers.out,  allo.df[allo.df$Species == "ACAM",11]*ACAM.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "ACAM",10]*ACAM.flowers.out,  allo.df[allo.df$Species == "ACAM",8]*ACAM.flowers.out),
          ## use avg seed num per trt to calculate seeds out
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
@@ -137,7 +136,6 @@ acam.phyto <- acam_final %>%
 
 ggplot(acam.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
-
 
 ## clean up env
 rm(list = c("acam", "acam_final", "acam_int", "acamC", "df", "tmp", "acam_notes"))

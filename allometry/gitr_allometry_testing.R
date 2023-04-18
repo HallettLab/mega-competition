@@ -111,32 +111,32 @@ TukeyHSD(seedtrt)
 ## Combine drought and controls together for biomass-flower relationship
 
 ## visualize ####
+### linear ####
 ggplot(gitr_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
   geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ poly(x, 2))
+  geom_smooth(method = "lm", alpha = 0.25, size = 0.75)
 
 ## try removing the outliers to see how they influence the relationship
 ggplot(gitr_flower_allo[gitr_flower_allo$total.biomass.g <2,], aes(x=total.biomass.g, y=flower.num)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ x)
 
-## plot as polynomial
+### Poly ####
 ggplot(gitr_flower_allo, aes(x=total.biomass.g, y=flower.num, color = treatment)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ poly(x, 2))
 
 
 ## model ####
-## test linear model first
-# gitr_fallo_rel <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo)
-# summary(gitr_fallo_rel)
-## slope = 55.505
+### *Linear ####
+gitr_fallo_lin <- lm(flower.num ~ total.biomass.g, data = gitr_flower_allo)
+summary(gitr_fallo_lin)
+## R2 = 0.9032
 
-## test polynomial model
-gitr_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = gitr_flower_allo)
-summary(gitr_fallo_rel)
-# y = 0.3267 + 77.6127x - 7.1135x^2
-# slightly higher R2 value, use the polynomial model
+### Poly ####
+gitr_fallo_poly <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = gitr_flower_allo)
+summary(gitr_fallo_poly)
+## R2 = 0.926
 
 # Save Output ####
 ## save the model outputs
@@ -145,14 +145,10 @@ GITR.allo.output <- data.frame(Species = "GITR",
            intercept_pval = NA, 
            intercept_se = NA, 
            
-           slope = gitr_fallo_rel$coefficients[2], 
-           slope_pval = summary(gitr_fallo_rel)$coefficients[2,4], 
-           slope_se = summary(gitr_fallo_rel)$coefficients[2,2], 
-           
-           poly = summary(gitr_fallo_rel)$coefficients[3,1], 
-           poly_pval = summary(gitr_fallo_rel)$coefficients[3,4], 
-           poly_se = summary(gitr_fallo_rel)$coefficients[3,2],
-           
+           slope = gitr_fallo_lin$coefficients[2], 
+           slope_pval = summary(gitr_fallo_lin)$coefficients[2,4], 
+           slope_se = summary(gitr_fallo_lin)$coefficients[2,2], 
+
            seeds_C = gitr_seed_means[gitr_seed_means$treatment == "C",]$mean_seeds,
            seeds_C_se = gitr_seed_means[gitr_seed_means$treatment == "C",]$SE_seeds,
            seeds_D = gitr_seed_means[gitr_seed_means$treatment == "D",]$mean_seeds,
@@ -163,4 +159,4 @@ GITR.allo.output <- data.frame(Species = "GITR",
            viability_D = NA,
            viability_D_se = NA)
 
-rm(list = c("allo_lead", "date", "drought", "gitr_fallo_rel", "gitr_flower_allo", "gitr_mean_seeds",  "gitr_seed_allo", "seedtrt", "gitr_seed_means"))
+rm(list = c("allo_lead", "date", "drought", "gitr_fallo_lin", "gitr_fallo_poly", "gitr_flower_allo", "gitr_mean_seeds",  "gitr_seed_allo", "seedtrt", "gitr_seed_means"))

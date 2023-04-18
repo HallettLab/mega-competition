@@ -77,7 +77,9 @@ unique(df$unique.ID)
 
 # Make Final DF ####
 ceso.phyto <- ceso_final %>%
-  mutate(phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "CESO",13]*flower.num,  allo.df[allo.df$Species == "CESO",11]*flower.num),
+  mutate(phyto.seed.out = ifelse(treatment == "D",  
+                                 allo.df[allo.df$Species == "CESO",10]*flower.num,  
+                                 allo.df[allo.df$Species == "CESO",8]*flower.num),
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default

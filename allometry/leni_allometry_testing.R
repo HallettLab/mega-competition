@@ -63,10 +63,6 @@ LENI.allo.output <- data.frame(Species = "LENI",
                                slope_pval = summary(leni_allo_rel_lin)$coefficients[2,4], 
                                slope_se = summary(leni_allo_rel_lin)$coefficients[2,2], 
                                
-                               poly = NA, 
-                               poly_pval = NA, 
-                               poly_se = NA,
-                               
                                seeds_C = 2,
                                seeds_C_se = NA,
                                seeds_D = 2,

@@ -81,8 +81,7 @@ for(i in colnames(leni_final)[15:16]) {
 
 # Make Phyto DF ####
 leni.phyto <- leni_final %>%
-  mutate(pods.out = (allo.df[allo.df$Species == "LENI",2] + ## intercept
-                             (allo.df[allo.df$Species == "LENI",5]*total.biomass.g)), ## slope
+  mutate(pods.out = (allo.df[allo.df$Species == "LENI",5]*total.biomass.g), ## slope
          ## calc pods out from biomass weight & allo relationship
          
          phyto.seed.out = pods.out*2,

@@ -104,11 +104,7 @@ BRHO.allo.output <- data.frame(Species = "BRHO",
            slope = brho_fallo_rel$coefficients[2], 
            slope_pval = summary(brho_fallo_rel)$coefficients[2,4], 
            slope_se = summary(brho_fallo_rel)$coefficients[2,2], 
-           
-           poly = NA, 
-           poly_pval = NA, 
-           poly_se = NA,
-           
+       
            seeds_C = NA,
            seeds_C_se = NA,
            seeds_D = NA,

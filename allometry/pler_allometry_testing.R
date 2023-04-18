@@ -100,10 +100,6 @@ PLER.allo.output <- data.frame(Species = "PLER",
            slope_pval = summary(inflorseeds)$coefficients[2,4], 
            slope_se = summary(inflorseeds)$coefficients[2,2], 
            
-           poly = NA, 
-           poly_pval = NA, 
-           poly_se = NA,
-           
            seeds_C = NA,
            seeds_C_se = NA,
            seeds_D = NA,

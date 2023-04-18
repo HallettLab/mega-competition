@@ -118,9 +118,7 @@ clpu_final[clpu_final$block == 14 & clpu_final$plot == 36,]$unique.ID <- 9227
 # Make Phyto Dataframe ####
 clpu.phyto <- clpu_final %>%
   filter(unique.ID != 1319) %>% ## remove sample
-  mutate(phyto.seed.out = allo.df[allo.df$Species == "CLPU",2] + ## intercept
-           (allo.df[allo.df$Species == "CLPU",5]*total.biomass.g) + ## slope 
-           (allo.df[allo.df$Species == "CLPU", 8]*(total.biomass.g^2)), ## poly
+  mutate(phyto.seed.out = allo.df[allo.df$Species == "CLPU",5]*total.biomass.g,  ## slope 
          ## use tot.bio to seed.num
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),

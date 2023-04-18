@@ -140,18 +140,15 @@ for(i in colnames(lomu_final)[14:16]) {
 
 # Make Phyto Dataframe ####
 lomu.phyto <- lomu_final %>%
-  mutate(phyto.seed.out = (allo.df[allo.df$Species == "LOMU",2] + ## intercept
-                             (allo.df[allo.df$Species == "LOMU",5]*final.total.biomass.g) + ## slope
-                             (allo.df[allo.df$Species == "LOMU",8]*(final.total.biomass.g^2))), ## poly
+  mutate(phyto.seed.out = (allo.df[allo.df$Species == "LOMU",5]*final.total.biomass.g), ## slope
          ## use tot.bio to seed.num
-         
-         
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
          
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
-  ## then, check for # indiv > 3, use # indiv as seeds.in here also
+         ## then, check for # indiv > 3, use # indiv as seeds.in here also
+  
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 # NOTE: ####

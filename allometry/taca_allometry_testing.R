@@ -46,7 +46,6 @@ summary(seedtrt2)
 ## Phyto data
 #taca_phyto <- read.csv(paste0(allo_lead, "TACA_phyto-processing_20221108.csv"))
 
-
 ## visualize ####
 ggplot(taca_allo, aes(x = total.biomass.g, y = seeds.num)) +
   geom_point() +
@@ -58,23 +57,22 @@ ggplot(taca_allo[taca_allo$total.biomass.g<20,], aes(x = total.biomass.g, y = se
   geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
 
 ## model ####
-## test linear model first
+### *linear ####
 taca_allo_rel_lin <- lm(seeds.num ~ total.biomass.g, data = taca_allo)
 summary(taca_allo_rel_lin) # r2 = 0.9731
 
-## test polynomial model
+### poly ####
 taca_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo)
 summary(taca_allo_rel_pol) # r2 = 0.9973
 
 # what about without outliers?
 ## test linear model first
-taca_allo_rel <- lm(seeds.num ~ total.biomass.g, data = taca_allo[taca_allo$total.biomass.g<20,])
-summary(taca_allo_rel) # r2 = 0.957
+#taca_allo_rel <- lm(seeds.num ~ total.biomass.g, data = taca_allo[taca_allo$total.biomass.g<20,])
+#summary(taca_allo_rel) # r2 = 0.957
 
 ## test polynomial model
-taca_allo_rel <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo[taca_allo$total.biomass.g<20,])
-summary(taca_allo_rel) # r2 = 0.9668
-
+#taca_allo_rel <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo[taca_allo$total.biomass.g<20,])
+#summary(taca_allo_rel) # r2 = 0.9668
 
 # Save Outputs ####
 TACA.allo.output <- data.frame(Species = "TACA", 
@@ -82,14 +80,10 @@ TACA.allo.output <- data.frame(Species = "TACA",
                                intercept_pval = NA, 
                                intercept_se = NA, 
                                
-                               slope = taca_allo_rel_pol$coefficients[2], 
-                               slope_pval = summary(taca_allo_rel_pol)$coefficients[2,4], 
-                               slope_se = summary(taca_allo_rel_pol)$coefficients[2,2], 
-                               
-                               poly = summary(taca_allo_rel_pol)$coefficients[3], 
-                               poly_pval = summary(taca_allo_rel_pol)$coefficients[3,4], 
-                               poly_se = summary(taca_allo_rel_pol)$coefficients[3, 2],
-                               
+                               slope = taca_allo_rel_lin$coefficients[2], 
+                               slope_pval = summary(taca_allo_rel_lin)$coefficients[2,4], 
+                               slope_se = summary(taca_allo_rel_lin)$coefficients[2,2], 
+
                                seeds_C = NA,
                                seeds_C_se = NA,
                                seeds_D = NA,
@@ -101,4 +95,4 @@ TACA.allo.output <- data.frame(Species = "TACA",
                                viability_D_se = NA)
 
 # Clean Env ####
-rm(list = c("allo_lead", "taca_allo", "taca_allo_rel", "taca_allo_rel_lin", "taca_allo_rel_pol", "seedtrt", "seedtrt2"))
+rm(list = c("allo_lead", "taca_allo", "taca_allo_rel_lin", "taca_allo_rel_pol", "seedtrt", "seedtrt2"))

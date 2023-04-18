@@ -156,11 +156,12 @@ for(i in colnames(brni_final)[16:17]) {
 
 # Make Phyto DF ####
 brni.phyto <- brni_final %>%
-  mutate(total.viable.flowers.out = (allo.df[allo.df$Species == "BRNI",2] + ## intercept
-                             (allo.df[allo.df$Species == "BRNI",5]*total.biomass.g)), ## slope
+  mutate(total.viable.flowers.out = (allo.df[allo.df$Species == "BRNI",5]*total.biomass.g), ## slope
          ## calc total viable flowers out from biomass
          
-         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "BRNI",13]*total.viable.flowers.out,  allo.df[allo.df$Species == "BRNI",11]*total.viable.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  
+                                 allo.df[allo.df$Species == "BRNI",10]*total.viable.flowers.out,  
+                                 allo.df[allo.df$Species == "BRNI",8]*total.viable.flowers.out),
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default
@@ -173,4 +174,3 @@ brni.phyto <- brni_final %>%
 
 
 rm(list = c("brni", "brni_final", "brniC", "brniC2", "df", "drought", "flowers", "i", "incompletes", "lead", "na.pheno", "seeds", "tmp", "veg"))
-

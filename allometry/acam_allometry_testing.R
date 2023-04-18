@@ -100,10 +100,6 @@ ACAM.allo.output <- data.frame(Species = "ACAM",
            slope_pval = summary(acam_fallo_rel)$coefficients[2,4], 
            slope_se = summary(acam_fallo_rel)$coefficients[2,2], 
            
-           poly = NA, 
-           poly_pval = NA, 
-           poly_se = NA,
-           
            seeds_C = acam_seed_means[acam_seed_means$treatment == "C",]$mean_seeds,
            seeds_C_se = acam_seed_means[acam_seed_means$treatment == "C",]$SE_seeds,
            seeds_D = acam_seed_means[acam_seed_means$treatment == "D",]$mean_seeds,

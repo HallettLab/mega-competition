@@ -94,14 +94,12 @@ for(i in colnames(gitr_final)[14:15]) {
 
 # Make Phyto DF ####
 gitr.phyto <- gitr_final %>%
-  mutate(GITR.flowers.out = (allo.df[allo.df$Species == "GITR",2] + ## intercept 
-                            (allo.df[allo.df$Species == "GITR",5]*total.biomass.g.rounded) + ## slope
-                              (allo.df[allo.df$Species == "GITR",8]*(total.biomass.g.rounded^2))), ## poly
+  mutate(GITR.flowers.out = (allo.df[allo.df$Species == "GITR",5]*total.biomass.g.rounded), ## slope
          ## use tot.bio to flower.num to get flowers out
          
          phyto.seed.out = ifelse(treatment == "D",  
-                                 allo.df[allo.df$Species == "GITR",13]*GITR.flowers.out,  ## drought seeds
-                                 allo.df[allo.df$Species == "GITR",11]*GITR.flowers.out), ## control seeds
+                                 allo.df[allo.df$Species == "GITR",10]*GITR.flowers.out,  ## drought seeds
+                                 allo.df[allo.df$Species == "GITR",8]*GITR.flowers.out), ## control seeds
          ## use avg seed num per trt to calculate seeds out
            
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
@@ -111,7 +109,6 @@ gitr.phyto <- gitr_final %>%
         ## then, check for # indiv > 3, use # indiv as seeds.in here also
   
   select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
-
 
 ## check the seed.in numbers
 ggplot(gitr.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +

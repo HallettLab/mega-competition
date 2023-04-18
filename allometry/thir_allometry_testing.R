@@ -110,12 +110,6 @@ viability_test <- aov(viability~treatment, data = thir_viability_allo)
 summary(viability_test)
 ## not significantly different, use an overall mean 
 
-
-
-
-
-
-
 # Save Outputs ####
 THIR.allo.output <- data.frame(Species = "THIR", 
                                intercept = 0, 
@@ -125,10 +119,6 @@ THIR.allo.output <- data.frame(Species = "THIR",
                                slope = thir_fallo_lin$coefficients[2], 
                                slope_pval = summary(thir_fallo_lin)$coefficients[2,4], 
                                slope_se = summary(thir_fallo_lin)$coefficients[2,2], 
-                               
-                               poly = NA, 
-                               poly_pval = NA, 
-                               poly_se = NA,
                                
                                seeds_C = 1,
                                seeds_C_se = NA,

@@ -92,8 +92,7 @@ unique(brho_final$process.notes)
 
 # Make Phyto DF ####
 brho.phyto <- brho_final %>%
-  mutate(phyto.seed.out = (allo.df[allo.df$Species == "BRHO",2] + ## intercept
-                            (allo.df[allo.df$Species == "BRHO",5]*inflor.g.rounded)), ## slope
+  mutate(phyto.seed.out = (allo.df[allo.df$Species == "BRHO",5]*inflor.g.rounded), ## slope
          ## calc seed out from inflor weight & allo relationship
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),

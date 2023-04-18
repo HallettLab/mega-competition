@@ -53,13 +53,9 @@ CLPU.allo.output <- data.frame(Species = "CLPU",
                                intercept_pval = NA, 
                                intercept_se = NA, 
                                
-                               slope = clpu_allo_rel_pol$coefficients[2], 
-                               slope_pval = summary(clpu_allo_rel_pol)$coefficients[2,4], 
-                               slope_se = summary(clpu_allo_rel_pol)$coefficients[2,2], 
-                               
-                               poly = summary(clpu_allo_rel_pol)$coefficients[3], 
-                               poly_pval = summary(clpu_allo_rel_pol)$coefficients[3,4], 
-                               poly_se = summary(clpu_allo_rel_pol)$coefficients[3, 2],
+                               slope = clpu_allo_rel_lin$coefficients[2], 
+                               slope_pval = summary(clpu_allo_rel_lin)$coefficients[2,4], 
+                               slope_se = summary(clpu_allo_rel_lin)$coefficients[2,2], 
                                
                                seeds_C = NA,
                                seeds_C_se = NA,

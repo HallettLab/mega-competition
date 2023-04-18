@@ -78,14 +78,12 @@ for(i in colnames(plno_final)[13:15]) {
 
 # Make Phyto DF ####
 plno.phyto <- plno_final %>%
-  mutate(plno.flowers.out = (allo.df[allo.df$Species == "PLNO",2] + ## intercept
-                             (allo.df[allo.df$Species == "PLNO",5]*total.biomass.g) + ## slope
-                             (allo.df[allo.df$Species == "PLNO",8]*(total.biomass.g^2))), ## poly
+  mutate(plno.flowers.out = (allo.df[allo.df$Species == "PLNO",5]*total.biomass.g), ## slope
          ## calc seed out from biomass weight & allo relationship
          
          phyto.seed.out = ifelse(treatment == "D",  
-                                 allo.df[allo.df$Species == "PLNO",13]*plno.flowers.out,  ## drought seeds
-                                 allo.df[allo.df$Species == "PLNO",11]*plno.flowers.out), ## control seeds
+                                 allo.df[allo.df$Species == "PLNO",10]*plno.flowers.out,  ## drought seeds
+                                 allo.df[allo.df$Species == "PLNO",8]*plno.flowers.out), ## control seeds
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default

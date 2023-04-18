@@ -26,7 +26,6 @@ plno_flowers_allo <- read.csv(paste0(allo_lead, "PLNO-flowers_allometry-processi
 
 plno_seeds_allo <- read.csv(paste0(allo_lead, "PLNO-seeds_allometry-processing_20220130.csv"))
 
-
 nrow(plno_flowers_allo[plno_flowers_allo$treatment == "D",]) ## 20
 nrow(plno_flowers_allo[plno_flowers_allo$treatment == "C",]) ## 20
 
@@ -82,12 +81,10 @@ plno_allo_pol2 <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2) + treat
 summary(plno_allo_pol2)
 ## R2 = 0.9249
 
-
 ## seeds ####
 plno_seeds <- aov(seeds.num~treatment, data = plno_seeds_allo)
 summary(plno_seeds)
 ## significant effect of treatment, use separate numbers
-
 
 # Save Output ####
 ## save the model outputs
@@ -95,17 +92,11 @@ PLNO.allo.output <- data.frame(Species = "PLNO",
                                intercept = 0, 
                                intercept_pval = NA, 
                                intercept_se = NA, 
-                               
-                               
-                               slope = plno_allo_pol$coefficients[2], 
-                               slope_pval = summary(plno_allo_pol)$coefficients[2,4], 
-                               slope_se = summary(plno_allo_pol)$coefficients[2,2], 
-                               
-                               poly = summary(plno_allo_pol)$coefficients[3], 
-                               poly_pval = summary(plno_allo_pol)$coefficients[3,4], 
-                               poly_se = summary(plno_allo_pol)$coefficients[3, 2],
-                               
-                               
+
+                               slope = plno_allo_lin$coefficients[2], 
+                               slope_pval = summary(plno_allo_lin)$coefficients[2,4], 
+                               slope_se = summary(plno_allo_lin)$coefficients[2,2], 
+ 
                                seeds_C = plno_seed_means[plno_seed_means$treatment == "C",]$mean.seeds,
                                seeds_C_se = plno_seed_means[plno_seed_means$treatment == "C",]$se.seeds,
                                seeds_D = plno_seed_means[plno_seed_means$treatment == "D",]$mean.seeds,
@@ -115,6 +106,5 @@ PLNO.allo.output <- data.frame(Species = "PLNO",
                                viability_C_se = NA,
                                viability_D = NA,
                                viability_D_se = NA)
-
 
 rm(list = c("allo_lead", "plno_flowers_allo", "plno_seed_means", "plno_seeds_allo",  "plno_allo_lin", "plno_allo_lin2", "plno_allo_pol", "plno_allo_pol2", "plno_seeds"))

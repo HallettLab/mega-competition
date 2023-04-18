@@ -7,7 +7,7 @@
     ## input should be named like: "BRHO.allo.output"
 
 ## Relevant Outputs
-    ## allo.df -> one df that will contain the species name, the model intercept, the slope (coeff column) & coeff2 if it is a polynomial model
+    ## allo.df -> one df that will contain the species name, the model intercept, the slope, mean seeds, and mean viability 
 
 
 # Read in Data ####
@@ -31,8 +31,7 @@ source("allometry/thir_allometry_testing.R")
 source("allometry/twil_allometry_testing.R")
 
 ## merge all together
-allo.df <- do.call("rbind", list(ACAM.allo.output, ANAR.allo.output, AMME.allo.output, BRHO.allo.output, BRNI.allo.output, CESO.allo.output, CLPU.allo.output, GITR.allo.output, LENI.allo.output, LOMU.allo.output, MAEL.allo.output, MICA.allo.output, PLER.allo.output, PLNO.allo.output, TACA.allo.output, THIR.allo.output, TWIL.allo.output)) %>%
-  mutate(poly = ifelse(is.na(poly), 0, poly)) ## change NAs to 0s, will work better in later calculations.
+allo.df <- do.call("rbind", list(ACAM.allo.output, ANAR.allo.output, AMME.allo.output, BRHO.allo.output, BRNI.allo.output, CESO.allo.output, CLPU.allo.output, GITR.allo.output, LENI.allo.output, LOMU.allo.output, MAEL.allo.output, MICA.allo.output, PLER.allo.output, PLNO.allo.output, TACA.allo.output, THIR.allo.output, TWIL.allo.output))
 
 
 ## clean up env

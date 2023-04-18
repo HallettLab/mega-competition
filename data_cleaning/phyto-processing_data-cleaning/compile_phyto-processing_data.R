@@ -27,5 +27,12 @@ source("data_cleaning/phyto-processing_data-cleaning/TWIL_phyto.R")
 all.phytos <- do.call("rbind", list(acam.phyto, anar.phyto, amme.phyto, avba.phyto, brho.phyto, brni.phyto, ceso.phyto, clpu.phyto, gitr.phyto, leni.phyto, lomu.phyto, mael.phyto, mica.phyto, pler.phyto, plno.phyto, taca.phyto, thir.phyto, twil.phyto))
     ## add more phytos in as they are ready here.
 
+
+#ggplot(all.phytos, aes(x=phyto.seed.out)) +
+  #geom_histogram() +
+  #facet_wrap(~phyto, scales = "free")
+
+#ggsave("models/CW/preliminary_figures/phyto.seed.output.png", height = 8, width = 12)
+
 ## clean env 
 rm(list = c("acam.phyto", "anar.phyto", "amme.phyto", "avba.phyto", "basic_cleaning_func", "brho.phyto", "brni.phyto", "ceso.phyto",  "clpu.phyto", "gitr.phyto", "leni.phyto", "lomu.phyto", "mael.phyto", "mica.phyto", "pler.phyto", "plno.phyto", "taca.phyto", "thir.phyto", "twil.phyto", "not_planted", "i", "drought"))

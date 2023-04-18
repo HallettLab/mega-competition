@@ -76,7 +76,8 @@ anar_seed_means <- cbind(treatment = c("C", "D"), anar_seed_means)
 # TotBio - Flower ####
 ## Combine drought and controls together for biomass-flower relationship
 
-## visualize ####
+## Visualize ####
+### Linear ####
 ggplot(anar_allo, aes(x = total.biomass.g, y = flower.num)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25, size = 0.75, formula = y ~ x)
@@ -88,6 +89,13 @@ ggplot(anar_allo, aes(x = total.biomass.g, y = flower.num)) +
 anar_allo[anar_allo$total.biomass.g > 5,]$flower.num
 ## 419 flowers on the largest sample.
 
+## plot as linear w/o outlier
+ggplot(anar_allo[anar_allo$total.biomass.g<5,], aes(x = total.biomass.g, y = flower.num)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.25, size = 0.75) +
+  ylab("ANAR Flower Number") + xlab("Total AG Biomass (g)")
+
+### Poly ####
 ## plot as polynomial
 ggplot(anar_allo, aes(x = total.biomass.g, y = flower.num)) +
   geom_point() +
@@ -104,24 +112,23 @@ ggplot(anar_allo[anar_allo$total.biomass.g<5,], aes(x = total.biomass.g, y = flo
 
 #ggsave("anar_flower_poly_no_outlier.png", width = 3, height = 3)
 
-
 ## model ####
-## test linear model first
-# anar_fallo_rel <- lm(flower.num ~ total.biomass.g, data = anar_allo)
-# summary(anar_fallo_rel) # r2 = 0.931
+### *linear ####
+anar_fallo_lin <- lm(flower.num ~ total.biomass.g, data = anar_allo)
+summary(anar_fallo_lin) # r2 = 0.9314
 
-## test polynomial model
-# anar_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = anar_allo)
-# summary(anar_fallo_rel) # r2 = 0.934
+### poly ####
+anar_fallo_poly <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = anar_allo)
+summary(anar_fallo_poly) # r2 = 0.9343
 
-# Test without outlier
-# anar_fallo_rel <- lm(flower.num ~ total.biomass.g, data = anar_allo[anar_allo$total.biomass.g<5,])
-# summary(anar_fallo_rel) # r2 = 0.774
-# 
-# 
-anar_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = anar_allo[anar_allo$total.biomass.g<5,])
-summary(anar_fallo_rel) # r2 = 0.829
-# polynomial is better with and without outlier, calculate seeds for outlier separately which we already have. so done. 
+### No outlier ####
+#### Linear ####
+anar_fallo_lin_no <- lm(flower.num ~ total.biomass.g, data = anar_allo[anar_allo$total.biomass.g<5,])
+summary(anar_fallo_lin_no) # r2 = 0.774
+
+#### Poly ####
+anar_fallo_poly_no <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = anar_allo[anar_allo$total.biomass.g<5,])
+summary(anar_fallo_poly_no) # r2 = 0.8296
 
 # Save Output ####
 ## save the model outputs
@@ -130,13 +137,9 @@ ANAR.allo.output <- data.frame(Species = "ANAR",
            intercept_pval = NA, 
            intercept_se = NA, 
            
-           slope = anar_fallo_rel$coefficients[2], 
-           slope_pval = summary(anar_fallo_rel)$coefficients[2,4], 
-           slope_se = summary(anar_fallo_rel)$coefficients[2,2], 
-           
-           poly = summary(anar_fallo_rel)$coefficients[3,1], 
-           poly_pval = summary(anar_fallo_rel)$coefficients[3,4], 
-           poly_se = summary(anar_fallo_rel)$coefficients[3,2],
+           slope = anar_fallo_lin$coefficients[2], 
+           slope_pval = summary(anar_fallo_lin)$coefficients[2,4], 
+           slope_se = summary(anar_fallo_lin)$coefficients[2,2], 
            
            seeds_C = anar_seed_means[anar_seed_means$treatment == "C",]$mean_seeds,
            seeds_C_se = anar_seed_means[anar_seed_means$treatment == "C",]$SE_seeds,
@@ -148,4 +151,4 @@ ANAR.allo.output <- data.frame(Species = "ANAR",
            viability_D = NA,
            viability_D_se = NA)
 
-rm(list = c("allo_lead", "anar_fallo_rel", "anar_allo",  "anar_seeds", "anar_mean_seeds", "seedtrt", "anar_seed_means"))
+rm(list = c("allo_lead", "anar_fallo_lin_no", "anar_fallo_poly_no", "anar_fallo_poly", "anar_fallo_lin", "anar_allo",  "anar_seeds", "anar_mean_seeds", "seedtrt", "anar_seed_means"))

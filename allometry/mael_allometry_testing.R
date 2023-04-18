@@ -72,10 +72,6 @@ MAEL.allo.output <- data.frame(Species = "MAEL",
            slope_pval = NA, 
            slope_se = NA, 
            
-           poly = NA, 
-           poly_pval = NA, 
-           poly_se = NA,
-           
            seeds_C = mael_seed_means[mael_seed_means$treatment == "C",]$mean_seeds,
            seeds_C_se = mael_seed_means[mael_seed_means$treatment == "C",]$SE_seeds,
            seeds_D = mael_seed_means[mael_seed_means$treatment == "D",]$mean_seeds,

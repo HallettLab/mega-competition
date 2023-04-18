@@ -144,17 +144,20 @@ unique(twil_final$census.notes)
 # Make Phyto Dataframe ####
 twil.phyto <- twil_final %>%
   mutate(TWIL.flowers.out = ifelse(majority.seeds.present == "Y" | majority.seeds.present == "veg", 
-                                   allo.df[allo.df$Species == "TWIL",2] + ## intercept
-                                     (allo.df[allo.df$Species == "TWIL",5]*total.biomass.g.rounded) + ## slope 
-                                   (allo.df[allo.df$Species == "TWIL", 8]*(total.biomass.g.rounded^2)), flower.num),
+                                   allo.df[allo.df$Species == "TWIL",5]*total.biomass.g.rounded, ## slope
+                                   flower.num),
          ## if most seeds present, use biomass-flower rel. otherwise use flower.num count; need to make a decision still on how to treat vegetative samples, currently we are treating them as if they would potentially produce seeds at some point.
          
          
-         viable.flowers.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "TWIL",17]*TWIL.flowers.out,  allo.df[allo.df$Species == "TWIL",15]*TWIL.flowers.out),
+         viable.flowers.out = ifelse(treatment == "D",  
+                                     allo.df[allo.df$Species == "TWIL",14]*TWIL.flowers.out,  
+                                     allo.df[allo.df$Species == "TWIL",12]*TWIL.flowers.out),
          ## use viability to calculate the viable flowers out
          ## viability col is proportion of viable flowers, so multiplying total flowers by the proportion viable should give us the viable flowers
          
-         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "TWIL",13]*viable.flowers.out,  allo.df[allo.df$Species == "TWIL",11]*viable.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  
+                                 allo.df[allo.df$Species == "TWIL",10]*viable.flowers.out,  
+                                 allo.df[allo.df$Species == "TWIL",8]*viable.flowers.out),
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),
          ## for phyto uniques, use the # indiv as the seeds.in, otherwise put 3 as the default

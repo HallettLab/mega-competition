@@ -71,10 +71,6 @@ CESO.allo.output <- data.frame(Species = "CESO",
                                slope_pval = NA, 
                                slope_se = NA, 
                                
-                               poly = NA, 
-                               poly_pval = NA, 
-                               poly_se = NA,
-                               
                                seeds_C = ceso_seed_means[ceso_seed_means$treatment == "C",]$mean_seeds,
                                seeds_C_se = ceso_seed_means[ceso_seed_means$treatment == "C",]$SE_seeds,
                                seeds_D = ceso_seed_means[ceso_seed_means$treatment == "D",]$mean_seeds,

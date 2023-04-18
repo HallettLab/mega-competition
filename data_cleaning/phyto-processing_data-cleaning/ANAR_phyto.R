@@ -104,14 +104,12 @@ not_planted <- c(1069, 1369, 1618, 1803, 1828, 2086, 2311, 2336, 2361, 2561, 258
 
 # Make Phyto DF ####
 anar.phyto <- anar_final %>%
-  mutate(ANAR.flowers.out = (allo.df[allo.df$Species == "ANAR",2] + ## intercept
-                               (allo.df[allo.df$Species == "ANAR",5]*total.biomass.g) + ## slope
-                               (allo.df[allo.df$Species == "ANAR",8]*total.biomass.g^2)), ## poly
+  mutate(ANAR.flowers.out = (allo.df[allo.df$Species == "ANAR",5]*total.biomass.g), ## slope
          ## use tot.bio to flower.num to get flowers out
          
-         ANAR.flowers.out = ifelse(total.biomass.g > 5, 419, ANAR.flowers.out), ## for the largest sample, put in flower # manually as this didn't work well with the allometric relationship
-         
-         phyto.seed.out = ifelse(treatment == "D",  allo.df[allo.df$Species == "ANAR",13]*ANAR.flowers.out,  allo.df[allo.df$Species == "ANAR",11]*ANAR.flowers.out),
+         phyto.seed.out = ifelse(treatment == "D",  
+                                 allo.df[allo.df$Species == "ANAR",10]*ANAR.flowers.out,  
+                                 allo.df[allo.df$Species == "ANAR",8]*ANAR.flowers.out),
          ## use avg seed num per trt to calculate seeds out
          
          phyto.seed.in = ifelse(!is.na(phyto.unique), phyto.n.indiv, 3),

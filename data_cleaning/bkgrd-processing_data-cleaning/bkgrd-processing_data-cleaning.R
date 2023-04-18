@@ -200,7 +200,7 @@ for (i in 1:length(bg.sp)){
   if (bg.sp[i] %in% totbio.to.seeds | bg.sp[i] %in% inflor.bio.to.seeds) {
     
     tmp.ind <- tmp.sp %>%
-      mutate(bg.avg.seed.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind + (tmp.model$poly*(avg.ind^2))))) %>%
+      mutate(bg.avg.seed.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind))) %>%
       select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
     
   }
@@ -208,7 +208,7 @@ for (i in 1:length(bg.sp)){
   else if (bg.sp[i] %in% totbio.to.flowers.to.seeds) {
     
     tmp.ind <- tmp.sp %>%
-      mutate(avg.flower.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind) + (tmp.model$poly*(avg.ind^2))),
+      mutate(avg.flower.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind)),
              bg.avg.seed.num = ifelse(treatment == "D", avg.flower.num*tmp.model$seeds_D, avg.flower.num*tmp.model$seeds_C)) %>%
       select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
 
@@ -217,7 +217,7 @@ for (i in 1:length(bg.sp)){
   else if (bg.sp[i] %in% totbio.to.flowers.to.viability) {
     
     tmp.ind <- tmp.sp %>%
-      mutate(avg.flower.num = (tmp.model$intercept + ((tmp.model$slope)*avg.ind) + (tmp.model$poly*(avg.ind^2))),
+      mutate(avg.flower.num = (tmp.model$intercept + (tmp.model$slope*avg.ind)),
              avg.via.num = ifelse(treatment == "D", avg.flower.num*tmp.model$viability_D, avg.flower.num*tmp.model$viability_C),
              bg.avg.seed.num = ifelse(treatment == "D", avg.via.num*tmp.model$seeds_D, avg.via.num*tmp.model$seeds_C)) %>%
       select(treatment, block, plot, bkgrd, dens, bg.avg.seed.num)
@@ -268,4 +268,3 @@ bg.seeds[bg.seeds$block == 7 & bg.seeds$plot == 11 & bg.seeds$bkgrd == "CESO", ]
 
 # Clean Env ####
 rm(bg_indiv, bg.ind, bg.sp, bio.rel, inflor.rel, seeds.rel, missing.check, with.notes, seeds, tmp.ind, tmp.sp, tmp.model, totbio.to.seeds, inflor.bio.to.seeds, bg.ind.avg, bg_indivC, drought, i, seeds.per.flower, totbio.to.flowers.to.seeds, totbio.to.flowers.to.viability, totbio.to.something, basic_cleaning_func, THIR.temp, bg_indivC2, wue, wueC, AMME_PLNO, ceso.bgs, ceso.block.model, ceso.dens.model)
-
