@@ -22,7 +22,7 @@ basic_cleaning_func <- function(phyto_data, ...) {
            phyto = ifelse(phyto == "THIR-I", "THIR", phyto), 
            phyto = ifelse(phyto == "TWIL-I", "TWIL", phyto)) %>%
     
-    mutate_all(na_if,"") %>% ## make blank values NAs
+    mutate(across(where(is.character), ~na_if(.x, ""))) %>% ## make blank values NAs
     
     filter(plot < 43, bkgrd != "VIVI") ## get rid of trifolium sub experiment and VIVI plots that were not used at all.
   

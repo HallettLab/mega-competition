@@ -33,7 +33,7 @@ collections.fkC <- collections.fk %>%
   filter(plot < 43, bkgrd != "VIVI") %>% ## take out trifolium sub-exp & unsampled VIVI backgrounds
   mutate(phyto.unique = toupper(phyto.unique), ## capitalize all values
          unique.ID = unique) %>% ## standardize column name
-  mutate_all(na_if,"") ## make blank values NAs
+  mutate(across(where(is.character), ~na_if(.x, ""))) ## make blank values NAs
 
 drought <- c(1, 3, 4, 6, 12, 14) ## create a treatment vector
 
