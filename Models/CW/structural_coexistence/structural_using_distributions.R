@@ -14,12 +14,12 @@ source("models/CW/import_ricker_posteriors.R")
 
 
 ## change column names to make the for loop easier to write
-posteriors3 <- posteriors2 %>% 
-  relocate(sort(colnames(posteriors2))) %>% ## alphabetize
-  select(-alpha_erbo, -alpha_figa, -alpha_gamu, -alpha_hygl, -alpha_other, -alpha_siga, -lp__) ## remove unnecessary cols
+#posteriors3 <- posteriors2 %>% 
+ # relocate(sort(colnames(posteriors2))) %>% ## alphabetize
+  #select(-alpha_erbo, -alpha_figa, -alpha_gamu, -alpha_hygl, -alpha_other, -alpha_siga, -lp__) ## remove unnecessary cols
 
 ## rename
-colnames(posteriors3) <- c("ACAM", "AMME", "ANAR", "AVBA", "BRHO", "BRNI", "CESO", "CLPU", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "lambda", "species", "treatment")
+#colnames(posteriors3) <- c("ACAM", "AMME", "ANAR", "AVBA", "BRHO", "BRNI", "CESO", "CLPU", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "lambda", "species", "treatment")
 
 
 
@@ -29,8 +29,22 @@ colnames(posteriors3) <- c("ACAM", "AMME", "ANAR", "AVBA", "BRHO", "BRNI", "CESO
 
 # Struct. Coexist Calc ####
 ## Prep ####
+
+r_samples <- 200 ## how many times to sample
+
 ## make a vector of all unique species
 species <- unique(posteriors2$species)
+
+combo <- c()
+
+N <- array(NA, c(combo, species, runs))
+## create an array where each of the rows is one of the composition combos 
+## The columns should be: one for each species, plus feasibility, richness, treatment, niche_diff, and fitness_diff
+## Each of the stacked matrices represents a run of the loop
+
+
+
+
 
 ## create empty dataframe
 allcomm <- data.frame(ACAM = NA, AMME = NA, ANAR = NA, AVBA = NA, BRHO = NA, BRNI=NA, CESO=NA, GITR=NA, LENI = NA, LOMU= NA, MAEL= NA, MICA= NA, PLER= NA, PLNO= NA, TACA= NA, THIR= NA, TWIL = NA, feasibility=NA, rich = NA, treatment = NA, niche_diff = NA, fitness_diff = NA, community = NA)
@@ -41,24 +55,88 @@ richness <- 1:18
 ## create vector of treatments
 treat <- unique(posteriors2$treatment)
 
+
+
+
 ## Loop ####
 ## iterate calcs over every comm comp and treatment
-for(k in 1:length(treat)){
+for(k in treat){
   
   ## iterate at every richness level
-  for(i in 1:length(richness)){
+  for(i in richness){
     
     ## create all possible combinations of composition at a given richness level
     comp <- data.frame(comboGeneral(species, m=richness[i], freqs = 1))
     
-    ## iterate over each possible community composition
+    ## iterate over each possible community composition (iterate by row)
     for(j in 1:nrow(comp)){
       
       ## create a vector of community composition for each iteration
       cc <- as.character(comp[j,])
       
+      
+      ## create an empty list
+      comp_list <- list()
+      
+      ## pull out each species in the comp
+      for(l in cc) {
+        
+        comp_list[[l]] <- posteriors[[paste0(l, "_", k)]]
+        
+      }
+      
+      ## need to pull out particular columns of these species
+      
+      test <- list()
+      
+      for(l in cc) {
+        
+        for (m in cc)  {
+          
+          test[[l]][m] <- comp_list[[l]][paste0("alpha", "_", tolower(l))]
+          ## ISSUE HERE: list names are not assoc with species yet
+        }
+        
+      }
+      
+      ## get length of posterior distrib
+      posts <- length(test[[l]][[l]])
+      
+      N <- array(NA, c(species, species, runs))
+      ## randomly sample and put into an array?
+      test2 <- list()
+      for (l in cc) {
+        
+        for (m in cc)  {
+          
+        ## randomly sample indices
+        sample_posts <- sample(posts, r_samples, replace = TRUE)
+        test2 <- test[[l]][[l]][sample_posts]
+        
+        }
+        
+      }
+      
+      
+      
+      
+      
+      #test3 <- test[[l]][sample_posts]
+      
+      #test4 <- test[sample_posts]
+      ## then select, randomize, shuffle
+      
+      
+      
+      
       ## create a vector of treatments
       trt <- treat[k]
+      
+      
+      
+      ## select a particular species treatment combo
+      datset <- posteriors[[i]] 
+      
       
       ## select precipitation treatment
       tmp_params <- posteriors3 %>%
