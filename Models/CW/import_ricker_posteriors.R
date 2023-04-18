@@ -43,5 +43,5 @@ for(i in species){
 
 
 ## change to long data format
-posteriors_long <- posteriors2 %>%
-  pivot_longer(2:24, names_to = "alpha_name", values_to = "alpha_value")
+#posteriors_long <- posteriors2 %>%
+ # pivot_longer(2:24, names_to = "alpha_name", values_to = "alpha_value")
