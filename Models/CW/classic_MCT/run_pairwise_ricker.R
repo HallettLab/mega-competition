@@ -377,7 +377,7 @@ for(i in 1:length(species)){
 }
 
 
-
+rm(p_dry, p_wet)
 
 ## density plot format
 
@@ -388,3 +388,8 @@ ggplot(invasion_dry_long[invasion_dry_long$invader == "BRHO",], aes(x=GRWR)) +
   ggtitle("BRHO Invader Dry, Ricker")
 
 
+# Save Data ####
+write.csv(invasion_dry, file = "models/CW/classic_MCT/GRWR_dry.csv")
+write.csv(invasion_wet, file = "models/CW/classic_MCT/GRWR_wet.csv")
+
+rm(invasion_dry, invasion_wet)
