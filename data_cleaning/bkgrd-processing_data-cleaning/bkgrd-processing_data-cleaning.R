@@ -54,7 +54,7 @@ bg_indivC <- bg_indiv %>%
   ## remove inoc sub-experiment phytos and blank rows
   mutate(across(where(is.character), str_trim)) %>% ## remove leading & trailing whitespace!!
   mutate(across(c(scale.ID), toupper)) %>% ## capitalize scale ID
-  mutate_all(na_if,"") %>% ## fill blanks with NAs
+  mutate(across(where(is.character), ~na_if(.x, ""))) %>%## make blank values NAs
   select(-date.collect, -initials) %>%
   mutate(treatment = ifelse(block %in% drought, "D", "C")) ## add treatment column
 

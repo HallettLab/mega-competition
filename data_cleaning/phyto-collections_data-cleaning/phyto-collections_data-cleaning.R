@@ -48,7 +48,7 @@ collectionsC <- collections %>%
          bkgrd.n.indiv = ifelse(bkgrd == "Control", NA, bkgrd.n.indiv), 
          Nbrhood.size = ifelse(phyto %in% nhood10, 10, ## fill in all vals of neighborhood size
                                ifelse(phyto %in% nhood18, 18, Nbrhood.size))) %>% ## change # of background indiv in controls to NA
-  mutate_all(na_if,"")
+  mutate(across(where(is.character), ~na_if(.x, ""))) ## make blank values NAs
 
 ### create brho data for Larissa ####
 #brho_collections <- collectionsC %>%

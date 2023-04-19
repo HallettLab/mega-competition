@@ -103,6 +103,20 @@ bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkg
 bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
 
+# Replicate Info ####
+reps <- bg.phyto.seeds %>%
+  filter(dens != "none") %>%
+  mutate(bg.indiv.absent = ifelse(bg.seeds.out == 0, 1, 0)) %>%
+  group_by(treatment, phyto, bkgrd) %>%
+  summarise(bad.reps = sum(bg.indiv.absent), 
+            tot.reps = n()) %>%
+  ungroup() %>%
+  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_"), 
+         true.reps = tot.reps-bad.reps) 
+## lose 122/640 pairwise by treatment combinations
+
+#write.csv(reps, "models/CW/replicate-info.csv")
+
 # Format for Models ####
 ## pivot wider ####
 model.dat.init <- bg.phyto.seeds %>%
@@ -125,14 +139,6 @@ for(i in species){
 }
 
 model.dat.init <- model.dat.init [,-10] ## get rid of phyto.seeds.in.final column
-
-## filter by rep num ####
-reps.num <- model.dat.init %>%
-  filter(dens != "none") %>%
-  group_by(treatment, phyto, bkgrd) %>%
-  summarise(reps = n()) %>%
-  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) #%>%
-  #filter(reps > 2)
 
 ### add in weed census ####
 model.dat <- left_join(model.dat.init, phyto.census[,c(1,5:11)], by = "unique.ID") #%>%
