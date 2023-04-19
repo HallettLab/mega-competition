@@ -4,7 +4,7 @@ library(bayesplot)
 library(ggplot2)
 library(tidyverse)
 
-### Extract means of each parameter ####
+# Extract means of each parameter ####
 species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI", "CLPU", "MAEL")
 
 
@@ -29,7 +29,7 @@ for(i in species){
 
 
 
-### Extract and inspect distributions ####
+# Extract and inspect distributions ####
 # unlist each of the species/rainfall combinations
 posteriors2 <- data.frame()
 
@@ -40,8 +40,3 @@ for(i in species){
     posteriors2 <- rbind(posteriors2, tmp) 
   }
 }
-
-
-## change to long data format
-#posteriors_long <- posteriors2 %>%
- # pivot_longer(2:24, names_to = "alpha_name", values_to = "alpha_value")

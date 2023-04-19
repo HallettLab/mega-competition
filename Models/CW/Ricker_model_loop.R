@@ -9,9 +9,6 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-# Create CSV of ok-reps to later filter model outputs by. Will filter in the import posteriors script, not here
-write.csv(reps.num, "models/CW/replicates-info.csv")
-
 # Set initials ####
 initials <- list(lambda=250, 
                  alpha_pler=1, 
@@ -41,6 +38,22 @@ initials <- list(lambda=250,
 
 initials1<- list(initials, initials, initials, initials)
 
+## Last minute data mods ####
+
+# replacing 0s with small number for now
+model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
+
+## ok reps
+good.reps <- reps %>%
+  filter(true.reps > 3)
+
+good.reps.vec <- unique(good.reps$combos)
+
+model.dat.filtered <- model.dat %>%
+  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
+  filter(combos %in% good.reps.vec)
+
+
 # Loop thru ea Species ####
 species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "BRNI", "LENI")
 ## does order matter here?
@@ -50,16 +63,9 @@ trt <- c("C","D")
 model.output <- list()
 warnings <- list()
 
-## Last minute mods ####
-
-# replacing 0s with small number for now
-model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
-
-
-
 for(i in species){
   for(j in trt){
-    dat <- subset(model.dat, phyto == i)
+    dat <- subset(model.dat.filtered, phyto == i)
     dat <- subset(dat, treatment == j)
     
     Fecundity <- as.integer(round(dat$phyto.seeds.out.final))

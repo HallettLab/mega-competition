@@ -1,4 +1,4 @@
-// Beverton-Holt growth model
+// Ricker growth model
 
 data{
   int<lower = 1> N;

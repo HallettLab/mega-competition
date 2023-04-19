@@ -1,11 +1,10 @@
-// Beverton-Holt growth model; will add in s*(1-g) when we get the data
+// Ricker growth model
 
 data{
   int<lower = 1> N;
   int Fecundity[N];
   vector[N] intra;
   real intra_g;
-  //real intra_s; //ignoring this for now until we process the data
   real mean_ctrl_seeds; 
   real sd_ctrl_seeds;
   vector[N] pler;
