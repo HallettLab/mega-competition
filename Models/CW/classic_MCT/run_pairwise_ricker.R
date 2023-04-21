@@ -225,17 +225,17 @@ ggplot(residents_wet_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species) +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Ambient Conditions, Ricker Model, 4/13/23")
+  ggtitle("Ambient Conditions, Ricker Model, Filt Dat, 4/19/23")
 
-#ggsave("models/CW/classic_MCT/equil_abund_ricker_ambient_2.png", height = 6, width = 10)
+ggsave("models/CW/classic_MCT/equil_abund_ricker_ambient_3.png", height = 6, width = 10)
 
 ggplot(residents_dry_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species) +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Drought Conditions, Ricker Model, 4/13/23")
+  ggtitle("Drought Conditions, Ricker Model, Filt Dat, 4/19/23")
 
-#ggsave("models/CW/classic_MCT/equil_abund_ricker_drought_2.png", height = 6, width = 10)
+ggsave("models/CW/classic_MCT/equil_abund_ricker_drought_3.png", height = 6, width = 10)
 
 
 
@@ -245,7 +245,7 @@ ggplot(residents_dry_long, aes(x=num, y=equil_abund)) +
 ## Filter species ####
 
 ## didn't have an equilibrium abundance
-rm <- c("TWIL", "THIR") 
+rm <- c("THIR") 
 residents_wet <- residents_wet[,!colnames(residents_wet) %in% rm]
 residents_dry <- residents_dry[,!colnames(residents_dry) %in% rm]
 
