@@ -101,8 +101,11 @@ for(k in treat){
       
       ## get length of posterior distrib
       posts <- length(test[[l]][[l]])
+      sp <- length(cc)
       
-      N <- array(NA, c(species, species, runs))
+      N <- array(NA, c(sp, sp, r_samples))
+      
+      
       ## randomly sample and put into an array?
       test2 <- list()
       for (l in cc) {
@@ -111,7 +114,7 @@ for(k in treat){
           
         ## randomly sample indices
         sample_posts <- sample(posts, r_samples, replace = TRUE)
-        test2 <- test[[l]][[l]][sample_posts]
+        N[,,] <- test[[l]][[m]][sample_posts]
         
         }
         
