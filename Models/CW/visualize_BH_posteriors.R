@@ -1,4 +1,4 @@
-source("models/CW/import_ricker_posteriors.R")
+source("models/CW/import_BH_posteriors.R")
 
 ## change to long data format
 posteriors_long <- posteriors2 %>%
@@ -16,21 +16,21 @@ for(i in sp){
     geom_density() + 
     facet_wrap(~species, ncol = 3, scales = "free")+
     scale_fill_manual(values = c("#003366", "#FFA630")) +
-    ggtitle("Ricker Model") + xlab(paste0("alpha_", tolower(i))) +
+    ggtitle("BH Model") + xlab(paste0("alpha_", tolower(i))) +
     geom_vline(xintercept = 0, linetype = "dashed")
   
   
-  ggsave(alpha, file=paste0("models/CW/preliminary_figures/ricker_model_posteriors/", "alpha_", tolower(i), "_ricker.png"), width = 12, height = 10)
+  ggsave(alpha, file=paste0("models/CW/preliminary_figures/BH_model_posteriors/", "alpha_", tolower(i), "_BH.png"), width = 12, height = 10)
   
   
   invader <- ggplot(posteriors_long[posteriors_long$species == i,], aes(x = alpha_value, fill = treatment, line = treatment)) + 
     geom_density() + 
     facet_wrap(~alpha_name, ncol = 3, scales = "free") +
     scale_fill_manual(values = c("#003366", "#FFA630")) +
-    ggtitle(paste0(i, " invader")) +
+    ggtitle(paste0(i, " invader BH")) +
     geom_vline(xintercept = 0, linetype = "dashed")
   
-  ggsave(invader, file=paste0("models/CW/preliminary_figures/ricker_model_posteriors/", i, "_inter_alphas_ricker.png"), width = 14, height = 10)
+  ggsave(invader, file=paste0("models/CW/preliminary_figures/BH_model_posteriors/", i, "_inter_alphas_BH.png"), width = 14, height = 10)
   
   
 }
@@ -39,5 +39,6 @@ for(i in sp){
 ggplot(posteriors2, aes(x = lambda, fill = treatment, line = treatment)) + 
   geom_density() + 
   facet_wrap(~species, ncol = 3, scales = "free") +
-  scale_fill_manual(values = c("#003366", "#FFA630"))
-ggsave(file=paste0("models/CW/preliminary_figures/ricker_model_posteriors/", i, "_inter_alphas_ricker.png"), width = 14, height = 10)
+  scale_fill_manual(values = c("#003366", "#FFA630"))+
+  ggtitle("BH")
+ggsave(file=paste0("models/CW/preliminary_figures/BH_model_posteriors/", i, "_inter_alphas_BH.png"), width = 14, height = 10)

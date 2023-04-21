@@ -34,7 +34,8 @@ initials <- list(lambda=250,
                  alpha_figa=1,
                  alpha_gamu=1,
                  alpha_hygl=1,
-                 alpha_siga=1)
+                 alpha_siga=1, 
+                 alpha_other=1)
 
 initials1<- list(initials, initials, initials, initials)
 

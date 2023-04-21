@@ -9,8 +9,6 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-# Create CSV of ok-reps to later filter model outputs by. Will filter in the import posteriors script, not here
-write.csv(ok.reps, "models/CW/sufficient-replicates.csv")
 
 # Set initials ####
 initials <- list(lambda=250, 
@@ -37,7 +35,8 @@ initials <- list(lambda=250,
                  alpha_figa=1,
                  alpha_gamu=1,
                  alpha_hygl=1,
-                 alpha_siga=1)
+                 alpha_siga=1, 
+                 alpha_other=1)
 
 initials1<- list(initials, initials, initials, initials)
 
@@ -65,6 +64,15 @@ model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
 
 #model.dat[, 11:28][is.na(model.dat[, 11:28])] <- 0
 
+## ok reps
+good.reps <- reps %>%
+  filter(true.reps > 3)
+
+good.reps.vec <- unique(good.reps$combos)
+
+model.dat.filtered <- model.dat %>%
+  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
+  filter(combos %in% good.reps.vec)
 
 
 for(i in species){
@@ -119,7 +127,7 @@ for(i in species){
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/CW/posteriors/seeds_",i,"_",j,"_posteriors_upLprior_weeds.rdata"))
+    save(tmp, file = paste0("Models/CW/posteriors/seeds_",i,"_",j,"_posteriors_BH_filtered_dat.rdata"))
   }
 }
 
