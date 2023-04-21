@@ -24,7 +24,7 @@ source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_seeding_dates.R")
 
 ## Dates & Germ Rates ####
 ## First, combine plot seeding dates & germ info to eval which germ rate to use for each plot
-dates.germ <- left_join(plot.dates, bg.germ, by = c("bkgrd")) %>%
+dates.germ <- left_join(plot.dates, bg.germ, by = c("bkgrd"), relationship = "many-to-many") %>%
   mutate(bp.combo = paste(block, plot, sep = "_"))
 
 ## create a vector of unique block-plot combos
@@ -98,4 +98,4 @@ bkgrd.seeds <- bkgrd.calc %>%
     ## avg seed per indiv * stems out = seeds.out
 
 # Clean Env ####
-rm(list = c("bkgrd.calc", "bkgrd.n.indiv", "bg.germ", "bg.info", "bg.seeds", "dates.germ", "germ.eval"))
+rm(list = c("bkgrd.calc", "bkgrd.n.indiv", "bg.germ", "bg.info", "bg.seeds", "dates.germ", "germ.eval", "tmp.germ", "tmp.plot"))
