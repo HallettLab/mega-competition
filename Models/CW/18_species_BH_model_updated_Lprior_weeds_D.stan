@@ -32,6 +32,7 @@ data{
   vector[N] gamu; 
   vector[N] hygl;
   vector[N] siga;
+  vector[N] other;
 }
 
 
@@ -80,6 +81,7 @@ parameters{
    real alpha_gamu; 
    real alpha_hygl;
    real alpha_siga;
+   real alpha_other;
 }
 
 model{
@@ -110,6 +112,7 @@ model{
   alpha_gamu ~ normal(0, 1);
   alpha_hygl ~ normal(0, 1);
   alpha_siga ~ normal(0, 1);
+  alpha_other ~ normal(0, 1);
   // alpha_pler ~ gamma(0.001, 0.001);
   // alpha_anar ~ gamma(0.001, 0.001);
   // alpha_acam ~ gamma(0.001, 0.001);
@@ -157,7 +160,8 @@ model{
     alpha_figa*figa[i] +
     alpha_gamu*gamu[i] +
     alpha_hygl*hygl[i] +
-    alpha_siga*siga[i]);
+    alpha_siga*siga[i] +
+    alpha_other*other[i]);
   }
 
   // calculate the likelihood
