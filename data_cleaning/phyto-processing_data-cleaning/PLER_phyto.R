@@ -34,9 +34,10 @@ pler_int <- left_join(plerC, unique.key, by = c("treatment", "block", "plot", "s
 med_scales <- c("A", "E", "F", "G")  ## scales that need to be rounded
 
 pler_final <- pler_int %>%
-  mutate(inflor.g.rounded = ifelse(scale.ID %in% med_scales, round(inflor.g, digits = 3), inflor.g)) %>% ## round to 3 decimal places
+  mutate(inflor.g.rounded = ifelse(scale.ID %in% med_scales, round(inflor.g, digits = 3), inflor.g),
+         total.biomass.g.rounded = ifelse(scale.ID %in% med_scales, round(total.biomass.g, digits = 3), total.biomass.g)) %>% ## round to 3 decimal places
   
-  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, inflor.g.rounded, empty.flower.num, flower.num, seed.num, new.flower.num, scale.ID, process.notes, census.notes, unique.ID) ## select only needed columns
+  select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, inflor.g.rounded, total.biomass.g.rounded, empty.flower.num, flower.num, seed.num, new.flower.num, scale.ID, process.notes, census.notes, unique.ID) ## select only needed columns
 
 
 
@@ -142,4 +143,4 @@ ggplot(pler.phyto, aes(x=phyto.seed.in)) +
 ## 2 missing samples
 
 ## clean up env
-rm(list = c("pler", "pler.notes", "pler_complete", "pler_final", "pler_final2", "pler_incomplete", "pler_int", "plerC", "tmp", "df"))
+rm(list = c("pler", "pler.notes", "pler_complete", "pler_final", "pler_incomplete", "pler_int", "plerC", "tmp", "df"))

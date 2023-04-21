@@ -133,4 +133,4 @@ anar.phyto <- anar_final %>%
 ggplot(anar.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
-rm(list = c("anar", "anar_final", "anar_int", "anarC", "df", "tmp"))
+rm(list = c("anar", "anar_int", "anarC", "df", "tmp"))

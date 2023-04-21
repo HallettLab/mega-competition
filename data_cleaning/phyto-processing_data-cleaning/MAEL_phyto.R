@@ -147,4 +147,4 @@ ggplot(mael.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
 ## clean env
-rm(list = c("mael", "maelC", "plot.dates", "tmp", "df", "mael_final", "mael_final_dates", "mael.check", "mael.controls"))
+rm(list = c("mael", "maelC", "plot.dates", "tmp", "df", "mael_final_dates", "mael.check", "mael.controls"))

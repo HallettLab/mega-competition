@@ -113,4 +113,4 @@ ggplot(brho.phyto, aes(x=phyto.n.indiv, y=phyto.seed.in)) +
   ## looks like there is a phyto.unique that has 3 seeds in, meaning that 3 phytos were found there. Probably okay, there must have been more seeds than 3 planted in that particular subplot, but since it's split into a phyto.unique we are using the phyto.n.indiv number for this.
 
 ## clean up env
-rm(list = c("brho", "brho_final", "brhoC", "df", "tmp"))
+rm(list = c("brho", "brhoC", "df", "tmp"))

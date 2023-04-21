@@ -138,4 +138,4 @@ ggplot(acam.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
 ## clean up env
-rm(list = c("acam", "acam_final", "acam_int", "acamC", "df", "tmp", "acam_notes"))
+rm(list = c("acam", "acam_int", "acamC", "df", "tmp", "acam_notes"))

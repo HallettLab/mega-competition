@@ -120,4 +120,4 @@ ggplot(gitr.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()
 
 ## clean env 
-rm(list = c("gitr", "gitr_final", "gitrC", "df", "tmp"))
+rm(list = c("gitr", "gitrC", "df", "tmp"))

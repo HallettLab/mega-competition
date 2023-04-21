@@ -96,4 +96,4 @@ leni.phyto <- leni_final %>%
 
 
 ## clean up env
-rm(list = c("leni", "leni_final", "leniC", "leni.notes", "df", "tmp"))
+rm(list = c("leni", "leniC", "leni.notes", "df", "tmp"))

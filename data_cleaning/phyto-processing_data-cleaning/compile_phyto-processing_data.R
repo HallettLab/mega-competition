@@ -35,4 +35,4 @@ all.phytos <- do.call("rbind", list(acam.phyto, anar.phyto, amme.phyto, avba.phy
 #ggsave("models/CW/preliminary_figures/phyto.seed.output.png", height = 8, width = 12)
 
 ## clean env 
-rm(list = c("acam.phyto", "anar.phyto", "amme.phyto", "avba.phyto", "basic_cleaning_func", "brho.phyto", "brni.phyto", "ceso.phyto",  "clpu.phyto", "gitr.phyto", "leni.phyto", "lomu.phyto", "mael.phyto", "mica.phyto", "pler.phyto", "plno.phyto", "taca.phyto", "thir.phyto", "twil.phyto", "not_planted", "i", "drought"))
+rm(list = c("acam.phyto", "anar.phyto", "amme.phyto", "avba.phyto", "basic_cleaning_func", "brho.phyto", "brni.phyto", "ceso.phyto",  "clpu.phyto", "gitr.phyto", "leni.phyto", "lomu.phyto", "mael.phyto", "mica.phyto", "pler.phyto", "plno.phyto", "taca.phyto", "thir.phyto", "twil.phyto", "not_planted", "i", "drought", "acam_final", "anar_final", "brho_final", "clpu_final", "gitr_final", "leni_final", "lomu_final", "mael_final", "pler_final2", "thir_final", "twil_final"))

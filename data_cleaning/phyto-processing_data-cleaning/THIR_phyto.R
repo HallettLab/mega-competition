@@ -145,4 +145,4 @@ ggplot(thir.phyto, aes(x=phyto.seed.out)) +
 
 
 ## clean up env
-rm(list = c("thir", "thir_final", "thirC", "df", "tmp"))
+rm(list = c("thir", "thirC", "df", "tmp"))

@@ -177,4 +177,4 @@ ggplot(twil.phyto, aes(x=phyto.seed.out)) +
 
 
 ## clean up env
-rm(list = c("twil", "twil_final", "twilC", "med_scales", "note_check"))
+rm(list = c("twil", "twilC", "med_scales", "note_check"))

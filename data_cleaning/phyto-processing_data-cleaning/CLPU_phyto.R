@@ -137,4 +137,4 @@ ggplot(clpu.phyto, aes(x=unique.ID)) +
   geom_histogram()
 
 ## clean up env
-rm(list = c("clpu", "clpu_final", "clpuC", "df", "tmp", "na.check"))
+rm(list = c("clpu", "clpuC", "df", "tmp", "na.check"))
