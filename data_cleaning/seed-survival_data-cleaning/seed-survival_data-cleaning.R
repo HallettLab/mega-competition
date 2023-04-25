@@ -38,7 +38,9 @@ surv.sum <- surv %>%
          sp.ep = substr(toupper(sub("([^ ]* )", "\\2", Species)), 1, 2),
          species = paste0(genus, sp.ep), 
          species = ifelse(species == "FEPE", "LOMU", 
-                          ifelse(species == "ELCA", "TACA", species))) %>%
+                          ifelse(species == "ELCA", "TACA", species)), 
+         species = ifelse(species == "TRHI", "THIR", 
+                          ifelse(species == "TRWI", "TWIL", species))) %>%
   group_by(species) %>%
   summarize(
     surv.mean.p = mean(n.viable)/100,
