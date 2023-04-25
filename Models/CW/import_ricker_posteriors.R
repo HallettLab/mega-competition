@@ -1,42 +1,51 @@
-# extract posteriors
+## Extract Model Posteriors 
+
+## set up env
 library(rstan)
 library(bayesplot)
 library(ggplot2)
 library(tidyverse)
+theme_set(theme_bw())
 
-# Extract means of each parameter ####
+# Extract Posteriors ####
+## List Form ####
 species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI", "CLPU", "MAEL")
 
-
 trt <- c("C","D")
-params <- data.frame()
-posteriors <- list()
-plots <- list()
+ricker_posteriors <- list()
+ricker_plots <- list()
 
 for(i in species){
   for(j in trt){
+    
+    ## load desired model
     load(paste0("models/CW/posteriors/seeds_", i, "_", j, "_posteriors_Ricker.rdata"))
+    
+    ## print to see n_eff and Rhat diagnostics
+    print(i)
+    print(j)
     print(tmp)
+    
+    ## extract model info
     tmp2 <- rstan::extract(tmp)
-    plots[[paste0(i, "_", j)]] <- traceplot(tmp, pars = names(tmp2[-20]))
-    posteriors[[paste0(i,"_",j)]] <- tmp2[-20]
-    tmp3 <- as.data.frame(lapply(tmp2, mean))[-20]
-    tmp3$species <- i
-    tmp3$treatment <- j
-    params <- rbind(params,tmp3)
+    
+    ## create trace plots for diagnostics
+    ricker_plots[[paste0(i, "_", j)]] <- traceplot(tmp, pars = names(tmp2[-20]))
+    
+    ## save posterior distributions
+    ricker_posteriors[[paste0(i,"_",j)]] <- tmp2[-20]
+    
   }
 }
 
-
-
-# Extract and inspect distributions ####
+## DF Form ####
 # unlist each of the species/rainfall combinations
-posteriors2 <- data.frame()
+ricker_posteriors2 <- data.frame()
 
 for(i in species){
   for(j in trt){
-    tmp <- as_tibble(do.call("cbind", posteriors[[paste0(i,"_",j)]])) %>%
+    tmp <- as_tibble(do.call("cbind", ricker_posteriors[[paste0(i,"_",j)]])) %>%
       mutate(species = i, treatment = j)
-    posteriors2 <- rbind(posteriors2, tmp) 
+    ricker_posteriors2 <- rbind(ricker_posteriors2, tmp) 
   }
 }
