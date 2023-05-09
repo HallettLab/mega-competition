@@ -1,5 +1,7 @@
 ## Compare BH and Ricker
 
+source("models/CW/import_ricker_posteriors.R")
+
 # Lambda ####
 ricker_lambda_mean <- ricker_lambda_mean %>%
   mutate(model = "ricker")
@@ -41,6 +43,7 @@ ggsave("models/CW/preliminary_figures/model_comparison_lambda_diff.png", width =
 # Alpha ####
 ## mean ####
 ricker_alpha_mean <- ricker_alpha_mean %>%
+  pivot_longer()
   mutate(model = "ricker")
 
 BH_alpha_mean <- BH_alpha_mean %>%
