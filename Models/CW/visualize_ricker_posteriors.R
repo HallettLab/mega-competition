@@ -6,7 +6,7 @@ theme_set(theme_bw())
 ## change to long data format
 ricker_posteriors_long <- ricker_posteriors2 %>%
   pivot_longer(2:24, names_to = "alpha_name", values_to = "alpha_value") %>%
-  filter(!alpha_name %in% c("alpha_figa", "alpha_gamu", "alpha_hygl", "alpha_siga", "alpha_other", "lp__"))
+  filter(!alpha_name %in% c("alpha_figa", "alpha_gamu", "alpha_hygl", "alpha_siga", "alpha_other", "alpha_crco", "alpha_erbo", "lp__"))
 
 ## calc mean lambda
 ricker_lambda_mean <- ricker_posteriors_long %>%
@@ -29,10 +29,10 @@ ricker_alpha_mean <- ricker_posteriors_long %>%
 
 # Save figures ####
 ## Alphas ####
-sp <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI", "CLPU", "MAEL")
+species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
 ## save model coeff
-for(i in sp){
+for(i in species){
   
   alpha <- ggplot(ricker_posteriors_long[ricker_posteriors_long$alpha_name == paste0("alpha_", tolower(i)),], aes(x = alpha_value, fill = treatment, line = treatment)) + 
     geom_density() + 
@@ -83,8 +83,9 @@ ggplot(ricker_lambda_mean, aes(x=treatment, y=mean_lambda, color = treatment)) +
   geom_point(size = 3) +
   scale_color_manual(values = c("#003366", "#FFA630"))+
   geom_errorbar(aes(ymin = mean_lambda - sd_lambda, ymax = mean_lambda + sd_lambda), width = 0.25) +
-  facet_wrap(~species) +
+  facet_wrap(~species, scales = "free") +
   ggtitle("Mean Lambda, Ricker")
+ggsave("models/CW/preliminary_figures/ricker_model_posteriors/mean_lambdas_ricker.png", width = 12, height = 9)  
 
 ggplot(ricker_alpha_mean, aes(x=alpha, y=mean_alpha, color = treatment)) +
   geom_point() +
@@ -97,5 +98,31 @@ ggplot(ricker_alpha_mean, aes(x=alpha, y=mean_alpha, color = treatment)) +
 ggsave("models/CW/preliminary_figures/ricker_model_posteriors/mean_alphas_ricker.png", width = 14, height = 10)  
 
 
+ggplot(ricker_alpha_mean, aes(x=species, y=mean_alpha, color = treatment)) +
+  geom_point() +
+  scale_color_manual(values = c("#003366", "#FFA630"))+
+  geom_errorbar(aes(ymin = mean_alpha - sd_alpha, ymax = mean_alpha + sd_alpha)) +
+  facet_wrap(~alpha_name, ncol = 3, nrow = 6, scales = "free") +
+  ggtitle("Mean Alpha, Ricker") +
+  theme(axis.text.x = element_text(angle = 30)) +
+  geom_hline(yintercept = 0, linetype = "dashed")
+ggsave("models/CW/preliminary_figures/ricker_model_posteriors/mean_alphas_ricker2.png", width = 15, height = 12) 
 
 
+
+### Mean summary
+
+nrow(ricker_alpha_mean[ricker_alpha_mean$mean_alpha < 0,])/nrow(ricker_alpha_mean)
+
+facilitation <- ricker_alpha_mean %>%
+  filter(mean_alpha < 0, 
+         alpha_name != "alpha_avba",
+         alpha_name != "alpha_clpu")
+ggplot(facilitation, aes(x=species, y=mean_alpha, color = treatment)) +
+  geom_point() +
+  scale_color_manual(values = c("#003366", "#FFA630"))+
+  facet_wrap(~alpha_name, scales = "free", ncol = 3, nrow = 5) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  geom_errorbar(aes(ymin=mean_alpha-sd_alpha, ymax = mean_alpha+sd_alpha), width = 0.25) +
+  geom_hline(yintercept = 0, linetype = "dashed")
+ggsave("models/CW/preliminary_figures/ricker_model_posteriors/mean_alphas_facilitation_ricker.png", width = 10, height = 8)
