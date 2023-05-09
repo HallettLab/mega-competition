@@ -149,9 +149,15 @@ model.dat <- left_join(model.dat.init, phyto.census[,c(1,5:11)], by = "unique.ID
 # Make Lambda Priors df ####
 lambda_priors <- all.phytos.info %>%
   filter(bkgrd == "Control") %>%
-  group_by(phyto) %>%
+  group_by(phyto, treatment) %>%
   summarise(max_seeds_ctrl = max(phyto.seed.out), 
             sd_seeds = sd(phyto.seed.out))
+
+ctrl_seed_output_check <- all.phytos.info %>%
+  filter(bkgrd == "Control") %>%
+  group_by(phyto, treatment) %>%
+  summarise(mean.seeds = mean(phyto.seed.out), 
+            sd.seeds = sd(phyto.seed.out))
 
 ## Fix CLPU sd ####
 clpu.fix <- bg.phyto.seeds %>%
@@ -165,4 +171,4 @@ lambda_priors[lambda_priors$phyto == "CLPU",]$max_seeds_ctrl <- clpu.fix$max_see
 lambda_priors[lambda_priors$phyto == "CLPU",]$sd_seeds <- clpu.fix$sd_seeds
 
 # Clean Env ####
-rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, tmp.germ, tmp.plot, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init, clpu.fix)
+rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks, all.phytos.info, bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init, clpu.fix)

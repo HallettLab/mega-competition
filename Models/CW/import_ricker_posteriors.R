@@ -9,7 +9,8 @@ theme_set(theme_bw())
 
 # Extract Posteriors ####
 ## List Form ####
-species <- c("PLER", "BRHO", "GITR", "AVBA", "ANAR",  "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "ACAM", "BRNI", "LENI", "CLPU", "MAEL")
+species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+## CLPU, AVBA
 
 trt <- c("C","D")
 ricker_posteriors <- list()

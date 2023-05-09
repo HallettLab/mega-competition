@@ -15,7 +15,7 @@ initials <- list(lambda=250,
                  alpha_anar=1, 
                  alpha_acam=1,
                  alpha_brni=1, 
-                 alpha_clpu=1, 
+                 #alpha_clpu=1, 
                  alpha_brho=1,
                  alpha_gitr=1, 
                  alpha_amme=1, 
@@ -28,7 +28,7 @@ initials <- list(lambda=250,
                  alpha_taca=1,
                  alpha_mael=1, 
                  alpha_leni=1, 
-                 alpha_avba=1, 
+                # alpha_avba=1, 
                  alpha_crco=1,
                  alpha_erbo=1,
                  alpha_figa=1,
@@ -56,8 +56,10 @@ model.dat.filtered <- model.dat %>%
 
 
 # Loop thru ea Species ####
-species <- c("PLER", "BRHO", "GITR", "ACAM", "AVBA", "ANAR", "MAEL", "CLPU", "TACA", "LOMU", "TWIL", "THIR", "CESO", "MICA", "AMME", "PLNO", "BRNI", "LENI")
+species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 ## does order matter here?
+
+## "CLPU", "AVBA", 
 
 trt <- c("C","D")
 
@@ -75,7 +77,7 @@ for(i in species){
     anar <- as.integer(dat$ANAR)
     acam <- as.integer(dat$ACAM)
     brni <- as.integer(dat$BRNI)
-    clpu <- as.integer(dat$CLPU)
+    #clpu <- as.integer(dat$CLPU)
     brho <- as.integer(dat$BRHO)
     gitr <- as.integer(dat$GITR)
     amme <- as.integer(dat$AMME)
@@ -88,7 +90,7 @@ for(i in species){
     taca <- as.integer(dat$TACA)
     mael <- as.integer(dat$MAEL)
     leni <- as.integer(dat$LENI)
-    avba <- as.integer(dat$AVBA)
+    #avba <- as.integer(dat$AVBA)
     crco <- as.integer(dat$CRCO)
     erbo <- as.integer(dat$ERBO)
     figa <- as.integer(dat$FIGA)
@@ -103,16 +105,16 @@ for(i in species){
     
     intra_g <- germ.sum.sp.DC[germ.sum.sp.DC$species == i & germ.sum.sp.DC$trt == j,]$avg.germ 
 
-    mean_ctrl_seeds <- lambda_priors[lambda_priors$phyto == i,]$max_seeds_ctrl
+    mean_ctrl_seeds <- lambda_priors[lambda_priors$phyto == i & lambda_priors$treatment == j,]$max_seeds_ctrl
     
-    sd_ctrl_seeds <- lambda_priors[lambda_priors$phyto == i,]$sd_seeds
+    sd_ctrl_seeds <- lambda_priors[lambda_priors$phyto == i & lambda_priors$treatment == j,]$sd_seeds
     
     print(i)
     print(j)
     
-    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/18_species_Ricker_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "pler", "anar", "acam", "brni","clpu","brho","gitr","amme","plno","thir","mica","ceso","twil","lomu","taca","mael","leni", "avba", "crco", "erbo", "figa", "gamu", "hygl", "siga", "other"),
-                                                     iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/18_species_Ricker_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "acam", "amme", "anar", "brho","brni", "ceso", "gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca", "thir","twil","crco", "erbo", "figa", "gamu", "hygl", "siga", "other"), iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                                                      init = initials1) 
+    ## "clpu","avba",
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
