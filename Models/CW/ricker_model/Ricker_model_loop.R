@@ -114,13 +114,13 @@ for(i in species){
     print(i)
     print(j)
     
-    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/18_species_Ricker_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "acam", "amme", "anar", "brho","brni", "ceso", "gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca", "thir","twil","crco", "erbo", "figa", "gamu", "hygl", "siga", "other"), iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/ricker_model/18_species_Ricker_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "acam", "amme", "anar", "brho","brni", "ceso", "gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca", "thir","twil","crco", "erbo", "figa", "gamu", "hygl", "siga", "other"), iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                                                      init = initials1) 
     ## "clpu","avba",
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/CW/posteriors/seeds_",i,"_",j,"_posteriors_Ricker.rdata"))
+    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/seeds_",i,"_",j,"_posteriors_Ricker.rdata"))
   }
 }
 

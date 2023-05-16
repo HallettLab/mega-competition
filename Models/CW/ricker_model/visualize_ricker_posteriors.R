@@ -31,7 +31,6 @@ ricker_alpha_mean <- ricker_posteriors_long %>%
 ## Alphas ####
 species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
-## save model coeff
 for(i in species){
   
   alpha <- ggplot(ricker_posteriors_long[ricker_posteriors_long$alpha_name == paste0("alpha_", tolower(i)),], aes(x = alpha_value, fill = treatment, line = treatment)) + 
@@ -41,7 +40,7 @@ for(i in species){
     ggtitle("Ricker Model") + xlab(paste0("alpha_", tolower(i))) +
     geom_vline(xintercept = 0, linetype = "dashed")
   
-  ggsave(alpha, file=paste0("models/CW/preliminary_figures/ricker_model_posteriors/", "alpha_", tolower(i), "_ricker.png"), width = 12, height = 10)
+  ggsave(alpha, file=paste0("models/CW/ricker_model/posterior_figures/", "alpha_", tolower(i), "_ricker.png"), width = 12, height = 10)
   
   invader <- ggplot(ricker_posteriors_long[ricker_posteriors_long$species == i,], aes(x = alpha_value, fill = treatment, line = treatment)) + 
     geom_density() + 
@@ -50,7 +49,7 @@ for(i in species){
     ggtitle(paste0(i, " invader")) +
     geom_vline(xintercept = 0, linetype = "dashed")
   
-  ggsave(invader, file=paste0("models/CW/preliminary_figures/ricker_model_posteriors/", i, "_inter_alphas_ricker.png"), width = 14, height = 10)
+  ggsave(invader, file=paste0("models/CW/ricker_model/posterior_figures/", i, "_inter_alphas_ricker.png"), width = 14, height = 10)
   
   
 }
@@ -71,7 +70,7 @@ ggplot(ricker_lambda_mean, aes(x=treatment, y=mean_lambda, color = treatment)) +
   geom_errorbar(aes(ymin = mean_lambda - sd_lambda, ymax = mean_lambda + sd_lambda), width = 0.25) +
   facet_wrap(~species, scales = "free") +
   ggtitle("Mean Lambda, Ricker")
-ggsave("models/CW/preliminary_figures/ricker_model_posteriors/mean_lambdas_ricker.png", width = 12, height = 9)  
+ggsave("models/CW/ricker_model/posterior_figures/mean_lambdas_ricker.png", width = 12, height = 9)  
 
 ggplot(ricker_alpha_mean, aes(x=alpha, y=mean_alpha, color = treatment)) +
   geom_point() +
@@ -81,7 +80,7 @@ ggplot(ricker_alpha_mean, aes(x=alpha, y=mean_alpha, color = treatment)) +
   ggtitle("Mean Alpha, Ricker") +
   theme(axis.text.x = element_text(angle = 20)) +
   geom_hline(yintercept = 0, linetype = "dashed")
-ggsave("models/CW/preliminary_figures/ricker_model_posteriors/mean_alphas_ricker.png", width = 14, height = 10)  
+ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_ricker.png", width = 14, height = 10)  
 
 
 ggplot(ricker_alpha_mean, aes(x=species, y=mean_alpha, color = treatment)) +
@@ -92,7 +91,7 @@ ggplot(ricker_alpha_mean, aes(x=species, y=mean_alpha, color = treatment)) +
   ggtitle("Mean Alpha, Ricker") +
   theme(axis.text.x = element_text(angle = 30)) +
   geom_hline(yintercept = 0, linetype = "dashed")
-ggsave("models/CW/preliminary_figures/ricker_model_posteriors/mean_alphas_ricker2.png", width = 15, height = 12) 
+ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_ricker2.png", width = 15, height = 12) 
 
 ### Mean summary
 nrow(ricker_alpha_mean[ricker_alpha_mean$mean_alpha < 0,])/nrow(ricker_alpha_mean)
@@ -108,4 +107,4 @@ ggplot(facilitation, aes(x=species, y=mean_alpha, color = treatment)) +
   theme(axis.text.x = element_text(angle = 90)) +
   geom_errorbar(aes(ymin=mean_alpha-sd_alpha, ymax = mean_alpha+sd_alpha), width = 0.25) +
   geom_hline(yintercept = 0, linetype = "dashed")
-ggsave("models/CW/preliminary_figures/ricker_model_posteriors/mean_alphas_facilitation_ricker.png", width = 10, height = 8)
+ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_facilitation_ricker.png", width = 10, height = 8)

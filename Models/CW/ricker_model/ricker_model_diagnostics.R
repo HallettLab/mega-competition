@@ -1,4 +1,5 @@
-source("models/CW/import_ricker_posteriors.R")
+# Set up env ####
+source("models/CW/ricker_model/import_ricker_posteriors.R")
 
 # Pairs Plots ####
 trt <- c("C","D")
@@ -8,10 +9,10 @@ for(i in species){
   for(j in trt) {
     
     ## load desired model
-    load(paste0("models/CW/posteriors/seeds_", i, "_", j, "_posteriors_Ricker.rdata"))
+    load(paste0("models/CW/ricker_model/posteriors/seeds_", i, "_", j, "_posteriors_Ricker.rdata"))
 
     ## create pdf of pairs plots for each model    
-    pdf(paste0("models/CW/preliminary_figures/ricker_model_diagnostics/ricker_model_pairs_plots_", i, "_", j, ".pdf"), width = 20, height = 20)
+    pdf(paste0("models/CW/ricker_model/ricker_model_diagnostics/ricker_model_pairs_plots_", i, "_", j, ".pdf"), width = 20, height = 20)
     
     ## code for the plot
     ## only include parameters that we will be using in models (i.e. drop the weed alphas)
@@ -25,7 +26,7 @@ for(i in species){
 # Traceplots ####
 sp_trt <- names(ricker_plots)
 
-pdf("models/CW/preliminary_figures/ricker_model_posteriors/ricker_model_trace_plots.pdf", width = 12, height = 8)
+pdf("models/CW/ricker_model/ricker_model_diagnostics/ricker_model_trace_plots.pdf", width = 12, height = 8)
 
 for(i in 1:length(sp_trt)){
   
