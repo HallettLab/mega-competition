@@ -25,6 +25,14 @@ ggplot(all.phytos.info, aes(x=phyto.seed.out, color = treatment)) +
   facet_wrap(~phyto, scales = "free") +
   scale_color_manual(values = c("#003366", "#FFA630"))
 
+ggplot(all.phytos.info[all.phytos.info$phyto != "AVBA" & all.phytos.info$phyto != "CLPU",], aes(x=treatment, y=phyto.seed.out, color = treatment)) +
+  geom_boxplot() +
+  facet_wrap(~phyto, scales = "free", ncol = 4, nrow = 4) +
+  scale_color_manual(values = c("#003366", "#FFA630")) +
+  ylab("Phytometer Seeds Out") + xlab("Treatment")
+
+ggsave("models/CW/preliminary_figures/sanity_checks/seeds_out_by_trt.png", width = 10, height = 8)
+
 ggplot(all.phytos.info, aes(x= treatment, y=phyto.seed.out)) +
   geom_boxplot() +
   facet_wrap(~phyto, scales = "free")

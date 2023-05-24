@@ -147,10 +147,16 @@ model.dat <- left_join(model.dat.init, phyto.census[,c(1,5:11)], by = "unique.ID
 ## don't filter by replicates here, filter afterwards because the model loops thru everything anyways.
 
 # Make Lambda Priors df ####
-lambda_priors <- all.phytos.info %>%
+lambda_priors_max <- all.phytos.info %>%
   filter(bkgrd == "Control") %>%
   group_by(phyto, treatment) %>%
   summarise(max_seeds_ctrl = max(phyto.seed.out), 
+            sd_seeds = sd(phyto.seed.out))
+
+lambda_priors_mean <- all.phytos.info %>%
+  filter(bkgrd == "Control") %>%
+  group_by(phyto, treatment) %>%
+  summarise(mean_seeds_ctrl = mean(phyto.seed.out), 
             sd_seeds = sd(phyto.seed.out))
 
 ctrl_seed_output_check <- all.phytos.info %>%
@@ -160,15 +166,15 @@ ctrl_seed_output_check <- all.phytos.info %>%
             sd.seeds = sd(phyto.seed.out))
 
 ## Fix CLPU sd ####
-clpu.fix <- bg.phyto.seeds %>%
-  filter(bkgrd == "Control" | bkgrd == "AVBA", phyto == "CLPU") %>%
-  group_by(phyto) %>%
-  summarise(max_seeds_ctrl = max(phyto.seed.out), 
-            sd_seeds = sd(phyto.seed.out))
+#clpu.fix <- bg.phyto.seeds %>%
+ # filter(bkgrd == "Control" | bkgrd == "AVBA", phyto == "CLPU") %>%
+  #group_by(phyto) %>%
+  #summarise(max_seeds_ctrl = max(phyto.seed.out), 
+   #         sd_seeds = sd(phyto.seed.out))
 ## none of the AVBA backgrounds had any seeds in them, so it should be ok to use the CLPU phytos as controls here.
 
-lambda_priors[lambda_priors$phyto == "CLPU",]$max_seeds_ctrl <- clpu.fix$max_seeds_ctrl
-lambda_priors[lambda_priors$phyto == "CLPU",]$sd_seeds <- clpu.fix$sd_seeds
+#lambda_priors[lambda_priors$phyto == "CLPU",]$max_seeds_ctrl <- clpu.fix$max_seeds_ctrl
+#lambda_priors[lambda_priors$phyto == "CLPU",]$sd_seeds <- clpu.fix$sd_seeds
 
 # Clean Env ####
-rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks,  bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init, clpu.fix)
+rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks,  bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init)

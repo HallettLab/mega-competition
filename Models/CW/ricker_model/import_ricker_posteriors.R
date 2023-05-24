@@ -20,7 +20,7 @@ for(i in species){
   for(j in trt){
     
     ## load desired model
-    load(paste0("models/CW/ricker_model/posteriors/seeds_", i, "_", j, "_posteriors_Ricker.rdata"))
+    load(paste0("models/CW/ricker_model/posteriors/lambda_prior_mean/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors.rdata"))
     
     ## print to see n_eff and Rhat diagnostics
     print(i)

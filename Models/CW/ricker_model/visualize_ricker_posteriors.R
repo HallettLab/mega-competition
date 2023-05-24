@@ -1,4 +1,4 @@
-source("models/CW/import_ricker_posteriors.R")
+source("models/CW/ricker_model/import_ricker_posteriors.R")
 reps <- read.csv("models/CW/replicate-info.csv")
 theme_set(theme_bw())
 
@@ -40,7 +40,7 @@ for(i in species){
     ggtitle("Ricker Model") + xlab(paste0("alpha_", tolower(i))) +
     geom_vline(xintercept = 0, linetype = "dashed")
   
-  ggsave(alpha, file=paste0("models/CW/ricker_model/posterior_figures/", "alpha_", tolower(i), "_ricker.png"), width = 12, height = 10)
+  ggsave(alpha, file=paste0("models/CW/ricker_model/posterior_figures/", "alpha_", tolower(i), "_ricker_meanLpriors.png"), width = 12, height = 10)
   
   invader <- ggplot(ricker_posteriors_long[ricker_posteriors_long$species == i,], aes(x = alpha_value, fill = treatment, line = treatment)) + 
     geom_density() + 
@@ -49,7 +49,7 @@ for(i in species){
     ggtitle(paste0(i, " invader")) +
     geom_vline(xintercept = 0, linetype = "dashed")
   
-  ggsave(invader, file=paste0("models/CW/ricker_model/posterior_figures/", i, "_inter_alphas_ricker.png"), width = 14, height = 10)
+  ggsave(invader, file=paste0("models/CW/ricker_model/posterior_figures/", i, "_inter_alphas_ricker_meanLpriors.png"), width = 14, height = 10)
   
   
 }
@@ -61,7 +61,7 @@ ggplot(ricker_posteriors2, aes(x = lambda, fill = treatment, line = treatment)) 
   scale_fill_manual(values = c("#003366", "#FFA630")) +
   ggtitle("Lambda, Ricker")
 
-ggsave(file=paste0("models/CW/preliminary_figures/ricker_model_posteriors/lambda_ricker.png"), width = 14, height = 10)
+ggsave(file=paste0("models/CW/preliminary_figures/ricker_model_posteriors/lambda_ricker_meanLpriors.png"), width = 14, height = 10)
 
 ## Means ####
 ggplot(ricker_lambda_mean, aes(x=treatment, y=mean_lambda, color = treatment)) +
@@ -70,7 +70,7 @@ ggplot(ricker_lambda_mean, aes(x=treatment, y=mean_lambda, color = treatment)) +
   geom_errorbar(aes(ymin = mean_lambda - sd_lambda, ymax = mean_lambda + sd_lambda), width = 0.25) +
   facet_wrap(~species, scales = "free") +
   ggtitle("Mean Lambda, Ricker")
-ggsave("models/CW/ricker_model/posterior_figures/mean_lambdas_ricker.png", width = 12, height = 9)  
+ggsave("models/CW/ricker_model/posterior_figures/mean_lambdas_ricker_meanLpriors.png", width = 12, height = 9)  
 
 ggplot(ricker_alpha_mean, aes(x=alpha, y=mean_alpha, color = treatment)) +
   geom_point() +
@@ -80,7 +80,7 @@ ggplot(ricker_alpha_mean, aes(x=alpha, y=mean_alpha, color = treatment)) +
   ggtitle("Mean Alpha, Ricker") +
   theme(axis.text.x = element_text(angle = 20)) +
   geom_hline(yintercept = 0, linetype = "dashed")
-ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_ricker.png", width = 14, height = 10)  
+ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_ricker_meanLpriors.png", width = 14, height = 10)  
 
 
 ggplot(ricker_alpha_mean, aes(x=species, y=mean_alpha, color = treatment)) +
@@ -91,7 +91,7 @@ ggplot(ricker_alpha_mean, aes(x=species, y=mean_alpha, color = treatment)) +
   ggtitle("Mean Alpha, Ricker") +
   theme(axis.text.x = element_text(angle = 30)) +
   geom_hline(yintercept = 0, linetype = "dashed")
-ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_ricker2.png", width = 15, height = 12) 
+ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_ricker2_meanLpriors.png", width = 15, height = 12) 
 
 ### Mean summary
 nrow(ricker_alpha_mean[ricker_alpha_mean$mean_alpha < 0,])/nrow(ricker_alpha_mean)
@@ -107,4 +107,36 @@ ggplot(facilitation, aes(x=species, y=mean_alpha, color = treatment)) +
   theme(axis.text.x = element_text(angle = 90)) +
   geom_errorbar(aes(ymin=mean_alpha-sd_alpha, ymax = mean_alpha+sd_alpha), width = 0.25) +
   geom_hline(yintercept = 0, linetype = "dashed")
-ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_facilitation_ricker.png", width = 10, height = 8)
+ggsave("models/CW/ricker_model/posterior_figures/mean_alphas_facilitation_ricker_meanLpriors.png", width = 10, height = 8)
+
+## Checks ####
+### AMME lambda distrib ####
+
+for (i in species) {
+  
+  ggplot(ricker_posteriors2[ricker_posteriors2$species == i,], aes(x=lambda)) +
+    geom_density() +
+    facet_wrap(~treatment, scales = "free") +
+    ggtitle(i)
+  
+  ggsave(paste0("models/CW/ricker_model/posterior_figures/mean_L_priors/lambda_separated/", i, "_lambda_meanLpriors.png"), width = 4, height = 3)
+  
+}
+
+
+amme_lambda <- ricker_posteriors2 %>%
+  filter(species == "AMME") %>%
+  select(lambda, species, treatment)
+
+ggplot(amme_lambda, aes(x=lambda)) +
+  geom_density() +
+  facet_wrap(~treatment, scales = "free")
+
+acam_lambda <- ricker_posteriors2 %>%
+  filter(species == "ACAM") %>%
+  select(lambda, species, treatment)
+
+ggplot(acam_lambda, aes(x=lambda)) +
+  geom_density() +
+  facet_wrap(~treatment, scales = "free")
+

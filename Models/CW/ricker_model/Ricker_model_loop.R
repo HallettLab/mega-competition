@@ -107,9 +107,9 @@ for(i in species){
     
     intra_g <- germ.sum.sp.DC[germ.sum.sp.DC$species == i & germ.sum.sp.DC$trt == j,]$avg.germ 
 
-    mean_ctrl_seeds <- lambda_priors[lambda_priors$phyto == i & lambda_priors$treatment == j,]$max_seeds_ctrl
+    mean_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i & lambda_priors_mean$treatment == j,]$mean_seeds_ctrl
     
-    sd_ctrl_seeds <- lambda_priors[lambda_priors$phyto == i & lambda_priors$treatment == j,]$sd_seeds
+    sd_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i & lambda_priors_mean$treatment == j,]$sd_seeds
     
     print(i)
     print(j)
@@ -120,7 +120,7 @@ for(i in species){
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/seeds_",i,"_",j,"_posteriors_Ricker.rdata"))
+    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/seeds_",i,"_",j,"_posteriors_Ricker_meanLpriors.rdata"))
   }
 }
 

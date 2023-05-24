@@ -9,10 +9,10 @@ for(i in species){
   for(j in trt) {
     
     ## load desired model
-    load(paste0("models/CW/ricker_model/posteriors/seeds_", i, "_", j, "_posteriors_Ricker.rdata"))
+    load(paste0("models/CW/ricker_model/posteriors/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors.rdata"))
 
     ## create pdf of pairs plots for each model    
-    pdf(paste0("models/CW/ricker_model/ricker_model_diagnostics/ricker_model_pairs_plots_", i, "_", j, ".pdf"), width = 20, height = 20)
+    pdf(paste0("models/CW/ricker_model/ricker_model_diagnostics/ricker_model_pairs_plots_", i, "_", j, "_meanLpriors.pdf"), width = 20, height = 20)
     
     ## code for the plot
     ## only include parameters that we will be using in models (i.e. drop the weed alphas)
@@ -26,7 +26,7 @@ for(i in species){
 # Traceplots ####
 sp_trt <- names(ricker_plots)
 
-pdf("models/CW/ricker_model/ricker_model_diagnostics/ricker_model_trace_plots.pdf", width = 12, height = 8)
+pdf("models/CW/ricker_model/ricker_model_diagnostics/ricker_model_trace_plots_meanLpriors.pdf", width = 12, height = 8)
 
 for(i in 1:length(sp_trt)){
   
@@ -36,3 +36,18 @@ for(i in 1:length(sp_trt)){
 }
 
 dev.off()
+
+# Correlation Matrices ####
+## load desired model
+
+## ACAM_D, AMME_C, BRNI_C, BRNI_D, MAEL_D
+
+i <- "ACAM"
+j <- "D"
+
+load(paste0("models/CW/ricker_model/posteriors/lambda_prior_mean/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors.rdata"))
+
+cor(tmp, pars = c("lambda", "alpha_acam", "alpha_amme", "alpha_anar", "alpha_brho", "alpha_brni", "alpha_ceso", "alpha_gitr", "alpha_leni", "alpha_lomu", "alpha_mael", "alpha_mica", "alpha_pler", "alpha_plno", "alpha_taca", "alpha_thir",  "alpha_twil"))
+
+
+

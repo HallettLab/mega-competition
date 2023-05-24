@@ -11,7 +11,7 @@
 
 <meta name="author" content="Carmen Watkins" />
 
-<meta name="date" content="2023-05-17" />
+<meta name="date" content="2023-05-24" />
 
 <title>ricker_Rhat_values</title>
 
@@ -352,7 +352,7 @@ display: none;
 
 <h1 class="title toc-ignore">ricker_Rhat_values</h1>
 <h4 class="author">Carmen Watkins</h4>
-<h4 class="date">2023-05-17</h4>
+<h4 class="date">2023-05-24</h4>
 
 </div>
 
@@ -365,7 +365,7 @@ trt &lt;- c(&quot;C&quot;,&quot;D&quot;)
 for(i in species){
   for(j in trt) {
 ## load desired model
-    load(paste0(&quot;posteriors/seeds_&quot;, i, &quot;_&quot;, j, &quot;_posteriors_Ricker.rdata&quot;))
+    load(paste0(&quot;posteriors/lambda_prior_mean/seeds_&quot;, i, &quot;_&quot;, j, &quot;_posteriors_Ricker_meanLpriors.rdata&quot;))
     
     ## print to see n_eff and Rhat diagnostics
     print(i)
@@ -381,13 +381,13 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5%
-## lambda         19.66    0.01 0.58    18.51    19.28    19.66    20.05    20.82
+## lambda         19.63    0.01 0.57    18.52    19.24    19.62    20.02    20.75
 ## alpha_acam     -0.11    0.00 0.01    -0.12    -0.12    -0.11    -0.11    -0.10
-## alpha_amme     -0.10    0.00 0.01    -0.12    -0.11    -0.10    -0.09    -0.08
+## alpha_amme     -0.10    0.00 0.01    -0.12    -0.11    -0.10    -0.10    -0.08
 ## alpha_anar      0.06    0.00 0.01     0.04     0.05     0.06     0.06     0.07
-## alpha_brho      0.02    0.02 0.98    -1.92    -0.65     0.03     0.67     1.93
+## alpha_brho      0.01    0.02 1.00    -1.90    -0.66    -0.02     0.67     1.98
 ## alpha_brni      0.05    0.00 0.01     0.03     0.04     0.05     0.05     0.06
-## alpha_ceso      0.01    0.02 1.00    -1.94    -0.65    -0.01     0.69     1.97
+## alpha_ceso      0.00    0.02 1.01    -1.91    -0.71     0.00     0.68     1.97
 ## alpha_gitr      0.06    0.00 0.01     0.05     0.05     0.06     0.06     0.07
 ## alpha_leni      0.08    0.00 0.01     0.06     0.07     0.08     0.09     0.10
 ## alpha_lomu     -0.04    0.00 0.01    -0.06    -0.05    -0.04    -0.03    -0.02
@@ -396,44 +396,44 @@ for(i in species){
 ## alpha_pler      0.12    0.00 0.01     0.11     0.12     0.12     0.13     0.14
 ## alpha_plno      0.06    0.00 0.01     0.03     0.05     0.06     0.07     0.09
 ## alpha_taca      0.45    0.00 0.04     0.37     0.42     0.45     0.47     0.53
-## alpha_thir     -0.01    0.02 0.99    -1.96    -0.69    -0.01     0.66     1.95
-## alpha_twil      0.04    0.00 0.01     0.02     0.03     0.04     0.05     0.07
-## alpha_crco     -0.07    0.00 0.06    -0.18    -0.11    -0.07    -0.03     0.05
-## alpha_erbo      0.39    0.00 0.09     0.22     0.33     0.39     0.45     0.58
-## alpha_figa     -0.93    0.00 0.02    -0.98    -0.95    -0.93    -0.92    -0.89
-## alpha_gamu     -0.24    0.00 0.01    -0.27    -0.25    -0.24    -0.23    -0.22
-## alpha_hygl      0.06    0.00 0.05    -0.03     0.03     0.06     0.09     0.15
-## alpha_siga      0.13    0.00 0.08    -0.03     0.08     0.13     0.18     0.27
-## alpha_other     0.06    0.00 0.02     0.03     0.05     0.06     0.07     0.09
-## lp__        25271.48    0.06 3.50 25263.81 25269.38 25271.81 25274.04 25277.24
+## alpha_thir      0.02    0.02 0.97    -1.87    -0.63     0.02     0.66     1.87
+## alpha_twil      0.04    0.00 0.01     0.02     0.03     0.04     0.05     0.06
+## alpha_crco     -0.07    0.00 0.06    -0.18    -0.11    -0.07    -0.03     0.04
+## alpha_erbo      0.39    0.00 0.09     0.21     0.33     0.39     0.45     0.58
+## alpha_figa     -0.94    0.00 0.02    -0.98    -0.95    -0.93    -0.92    -0.89
+## alpha_gamu     -0.24    0.00 0.01    -0.27    -0.25    -0.24    -0.24    -0.22
+## alpha_hygl      0.06    0.00 0.05    -0.03     0.03     0.06     0.09     0.16
+## alpha_siga      0.13    0.00 0.08    -0.02     0.08     0.13     0.18     0.28
+## alpha_other     0.06    0.00 0.02     0.03     0.05     0.06     0.07     0.10
+## lp__        25272.66    0.06 3.41 25265.12 25270.54 25272.98 25275.09 25278.44
 ##             n_eff Rhat
-## lambda       2974    1
-## alpha_acam   3227    1
-## alpha_amme   3274    1
-## alpha_anar   3401    1
-## alpha_brho   3414    1
-## alpha_brni   3321    1
-## alpha_ceso   3054    1
-## alpha_gitr   3255    1
-## alpha_leni   3529    1
-## alpha_lomu   3296    1
-## alpha_mael   3036    1
-## alpha_mica   3478    1
-## alpha_pler   3432    1
-## alpha_plno   3242    1
-## alpha_taca   3099    1
-## alpha_thir   3434    1
-## alpha_twil   3429    1
-## alpha_crco   3259    1
-## alpha_erbo   3276    1
-## alpha_figa   2577    1
-## alpha_gamu   3345    1
-## alpha_hygl   3285    1
-## alpha_siga   3368    1
-## alpha_other  3323    1
-## lp__         3063    1
+## lambda       3273    1
+## alpha_acam   3285    1
+## alpha_amme   2965    1
+## alpha_anar   3369    1
+## alpha_brho   3421    1
+## alpha_brni   3335    1
+## alpha_ceso   3262    1
+## alpha_gitr   3407    1
+## alpha_leni   3426    1
+## alpha_lomu   3422    1
+## alpha_mael   3286    1
+## alpha_mica   3705    1
+## alpha_pler   3280    1
+## alpha_plno   3631    1
+## alpha_taca   3370    1
+## alpha_thir   3373    1
+## alpha_twil   3367    1
+## alpha_crco   3391    1
+## alpha_erbo   3523    1
+## alpha_figa   3485    1
+## alpha_gamu   3207    1
+## alpha_hygl   3381    1
+## alpha_siga   3334    1
+## alpha_other  3454    1
+## lp__         2970    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:03:42 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 10:50:46 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -444,31 +444,31 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                mean se_mean   sd    2.5%     25%     50%     75%   97.5% n_eff
-## lambda        19.93    0.03 1.51   17.17   18.89   19.87   20.90   23.14  3558
-## alpha_acam     0.11    0.00 0.04    0.03    0.09    0.11    0.14    0.20  3614
-## alpha_amme     2.64    0.01 0.41    1.85    2.36    2.63    2.90    3.49  3259
-## alpha_anar     0.28    0.00 0.04    0.20    0.25    0.28    0.30    0.36  3495
-## alpha_brho    -0.01    0.00 0.00   -0.02   -0.01   -0.01   -0.01   -0.01  3405
-## alpha_brni     0.31    0.00 0.04    0.24    0.29    0.31    0.34    0.40  3593
-## alpha_ceso     0.59    0.00 0.09    0.43    0.53    0.59    0.65    0.78  3376
-## alpha_gitr     0.03    0.00 0.00    0.03    0.03    0.03    0.04    0.04  3554
-## alpha_leni     0.52    0.00 0.05    0.42    0.48    0.52    0.55    0.62  3334
-## alpha_lomu     0.24    0.00 0.03    0.18    0.22    0.24    0.26    0.30  3526
-## alpha_mael     0.01    0.02 0.99   -1.90   -0.67    0.00    0.68    1.99  2942
-## alpha_mica     0.18    0.00 0.03    0.12    0.16    0.18    0.20    0.24  3307
-## alpha_pler     0.20    0.00 0.03    0.16    0.19    0.20    0.22    0.26  3473
-## alpha_plno     0.02    0.02 1.02   -1.96   -0.69    0.01    0.71    2.01  3550
-## alpha_taca     0.22    0.00 0.02    0.17    0.20    0.22    0.23    0.26  3501
-## alpha_thir     0.68    0.00 0.09    0.52    0.62    0.68    0.74    0.87  3716
-## alpha_twil    -1.01    0.00 0.23   -1.45   -1.16   -1.01   -0.86   -0.54  3637
-## alpha_crco     0.02    0.00 0.00    0.01    0.01    0.02    0.02    0.02  3486
-## alpha_erbo     0.85    0.00 0.18    0.50    0.72    0.84    0.97    1.22  3145
-## alpha_figa     0.21    0.00 0.03    0.14    0.18    0.21    0.23    0.27  2786
-## alpha_gamu    -0.02    0.00 0.03   -0.07   -0.04   -0.02    0.00    0.03  3099
-## alpha_hygl    -0.05    0.00 0.02   -0.10   -0.07   -0.05   -0.04   -0.01  3314
-## alpha_siga    -0.10    0.00 0.02   -0.13   -0.11   -0.10   -0.09   -0.06  3430
-## alpha_other    0.18    0.00 0.01    0.15    0.17    0.18    0.19    0.20  3437
-## lp__        6428.37    0.06 3.47 6420.79 6426.31 6428.71 6430.85 6434.16  2900
+## lambda        19.63    0.03 1.52   17.02   18.56   19.54   20.62   22.88  3011
+## alpha_acam     0.11    0.00 0.04    0.02    0.08    0.11    0.14    0.20  3132
+## alpha_amme     2.62    0.01 0.41    1.82    2.33    2.60    2.90    3.46  3554
+## alpha_anar     0.28    0.00 0.04    0.20    0.25    0.27    0.30    0.36  3421
+## alpha_brho    -0.01    0.00 0.00   -0.02   -0.01   -0.01   -0.01   -0.01  3421
+## alpha_brni     0.31    0.00 0.04    0.23    0.29    0.31    0.34    0.40  3196
+## alpha_ceso     0.59    0.00 0.09    0.43    0.53    0.59    0.65    0.77  3937
+## alpha_gitr     0.03    0.00 0.00    0.03    0.03    0.03    0.04    0.04  3533
+## alpha_leni     0.52    0.00 0.05    0.43    0.48    0.52    0.55    0.62  3593
+## alpha_lomu     0.24    0.00 0.03    0.18    0.22    0.24    0.26    0.31  3400
+## alpha_mael     0.00    0.02 1.00   -1.94   -0.67    0.00    0.67    2.00  3589
+## alpha_mica     0.18    0.00 0.03    0.12    0.16    0.18    0.20    0.24  3676
+## alpha_pler     0.20    0.00 0.02    0.16    0.19    0.20    0.22    0.25  3543
+## alpha_plno    -0.02    0.02 1.02   -1.98   -0.69   -0.03    0.65    2.01  3419
+## alpha_taca     0.22    0.00 0.02    0.18    0.20    0.22    0.23    0.26  3433
+## alpha_thir     0.69    0.00 0.09    0.52    0.62    0.68    0.74    0.87  3565
+## alpha_twil    -1.02    0.00 0.22   -1.46   -1.16   -1.02   -0.87   -0.59  3467
+## alpha_crco     0.02    0.00 0.00    0.01    0.01    0.02    0.02    0.02  3478
+## alpha_erbo     0.85    0.00 0.18    0.52    0.72    0.85    0.96    1.20  3254
+## alpha_figa     0.21    0.00 0.03    0.14    0.18    0.21    0.23    0.28  3476
+## alpha_gamu    -0.02    0.00 0.03   -0.07   -0.04   -0.02    0.00    0.03  3459
+## alpha_hygl    -0.06    0.00 0.02   -0.10   -0.07   -0.06   -0.04   -0.01  3328
+## alpha_siga    -0.10    0.00 0.02   -0.13   -0.11   -0.10   -0.09   -0.06  3378
+## alpha_other    0.18    0.00 0.01    0.15    0.17    0.18    0.19    0.20  3286
+## lp__        6429.48    0.06 3.41 6422.08 6427.38 6429.84 6431.90 6435.19  2917
 ##             Rhat
 ## lambda         1
 ## alpha_acam     1
@@ -496,7 +496,7 @@ for(i in species){
 ## alpha_other    1
 ## lp__           1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:06:13 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 10:51:59 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -507,59 +507,59 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5%
-## lambda         32.66    0.02 1.21    30.39    31.84    32.64    33.48    35.07
-## alpha_acam     -0.01    0.02 1.02    -1.98    -0.69    -0.02     0.68     1.96
+## lambda         32.72    0.02 1.19    30.47    31.91    32.71    33.49    35.10
+## alpha_acam      0.00    0.02 1.02    -2.04    -0.68     0.00     0.71     1.96
 ## alpha_amme     -0.29    0.00 0.01    -0.30    -0.29    -0.29    -0.28    -0.28
 ## alpha_anar      0.00    0.00 0.00     0.00     0.00     0.00     0.00     0.01
 ## alpha_brho      0.02    0.00 0.00     0.02     0.02     0.02     0.02     0.02
 ## alpha_brni      0.06    0.00 0.00     0.05     0.05     0.06     0.06     0.06
-## alpha_ceso     -0.01    0.02 0.99    -2.00    -0.68    -0.01     0.67     1.92
-## alpha_gitr      0.01    0.02 1.00    -1.96    -0.67     0.00     0.68     1.98
+## alpha_ceso      0.00    0.02 1.02    -2.00    -0.69     0.00     0.68     2.03
+## alpha_gitr      0.00    0.02 1.02    -2.04    -0.69     0.03     0.67     2.02
 ## alpha_leni      0.07    0.00 0.00     0.06     0.06     0.07     0.07     0.07
 ## alpha_lomu      0.00    0.00 0.00     0.00     0.00     0.00     0.01     0.01
-## alpha_mael      0.02    0.02 0.97    -1.90    -0.65     0.01     0.67     1.94
-## alpha_mica      0.00    0.00 0.00     0.00     0.00     0.00     0.00     0.01
-## alpha_pler     -0.02    0.02 1.01    -2.01    -0.70    -0.05     0.67     1.96
-## alpha_plno     -0.01    0.02 1.01    -1.98    -0.69    -0.02     0.65     2.00
-## alpha_taca      0.00    0.02 1.00    -1.92    -0.67     0.01     0.66     2.00
-## alpha_thir     -0.02    0.02 1.01    -1.99    -0.68    -0.03     0.66     1.94
-## alpha_twil      0.01    0.02 0.99    -1.96    -0.64     0.00     0.67     2.02
-## alpha_crco      0.02    0.00 0.00     0.01     0.02     0.02     0.02     0.02
+## alpha_mael      0.01    0.02 0.99    -1.99    -0.65     0.02     0.67     1.93
+## alpha_mica      0.00    0.00 0.00     0.00     0.00     0.00     0.01     0.01
+## alpha_pler     -0.04    0.02 0.98    -2.00    -0.69    -0.05     0.62     1.87
+## alpha_plno     -0.01    0.02 1.01    -1.95    -0.67    -0.01     0.65     1.93
+## alpha_taca     -0.02    0.02 1.00    -1.95    -0.73    -0.01     0.66     1.94
+## alpha_thir      0.01    0.02 1.00    -1.86    -0.67    -0.02     0.68     2.06
+## alpha_twil      0.03    0.02 0.98    -1.87    -0.62     0.02     0.70     1.90
+## alpha_crco      0.02    0.00 0.00     0.01     0.01     0.02     0.02     0.02
 ## alpha_erbo      0.68    0.00 0.04     0.61     0.66     0.68     0.71     0.76
-## alpha_figa      0.23    0.00 0.03     0.16     0.20     0.22     0.25     0.30
+## alpha_figa      0.23    0.00 0.03     0.16     0.20     0.23     0.25     0.29
 ## alpha_gamu      0.00    0.00 0.00    -0.01     0.00     0.00     0.00     0.01
 ## alpha_hygl     -0.05    0.00 0.02    -0.09    -0.06    -0.05    -0.03     0.00
 ## alpha_siga      0.13    0.00 0.02     0.10     0.12     0.13     0.14     0.16
 ## alpha_other     0.12    0.00 0.00     0.11     0.12     0.12     0.12     0.13
-## lp__        49274.48    0.06 3.38 49266.98 49272.41 49274.77 49276.88 49280.24
+## lp__        49274.95    0.07 3.47 49267.52 49272.81 49275.29 49277.46 49280.79
 ##             n_eff Rhat
-## lambda       3348    1
-## alpha_acam   3677    1
-## alpha_amme   3433    1
-## alpha_anar   3691    1
-## alpha_brho   3137    1
-## alpha_brni   3619    1
-## alpha_ceso   3177    1
-## alpha_gitr   3674    1
-## alpha_leni   3631    1
-## alpha_lomu   3461    1
-## alpha_mael   3395    1
-## alpha_mica   3577    1
-## alpha_pler   3556    1
-## alpha_plno   3388    1
-## alpha_taca   3304    1
-## alpha_thir   2944    1
-## alpha_twil   3435    1
-## alpha_crco   3370    1
-## alpha_erbo   3294    1
-## alpha_figa   3453    1
-## alpha_gamu   3247    1
-## alpha_hygl   3494    1
-## alpha_siga   3460    1
-## alpha_other  3562    1
-## lp__         2976    1
+## lambda       3213    1
+## alpha_acam   3488    1
+## alpha_amme   3406    1
+## alpha_anar   3109    1
+## alpha_brho   3481    1
+## alpha_brni   3660    1
+## alpha_ceso   3397    1
+## alpha_gitr   3199    1
+## alpha_leni   3328    1
+## alpha_lomu   3533    1
+## alpha_mael   3794    1
+## alpha_mica   3116    1
+## alpha_pler   3657    1
+## alpha_plno   3777    1
+## alpha_taca   3753    1
+## alpha_thir   3319    1
+## alpha_twil   3524    1
+## alpha_crco   3144    1
+## alpha_erbo   3886    1
+## alpha_figa   3478    1
+## alpha_gamu   3359    1
+## alpha_hygl   3066    1
+## alpha_siga   3301    1
+## alpha_other  3297    1
+## lp__         2812    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:07:45 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 10:52:54 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -570,59 +570,59 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                 mean se_mean    sd     2.5%      25%      50%      75%    97.5%
-## lambda       3118.55    1.65 92.63  2941.63  3055.72  3118.25  3179.90  3305.06
-## alpha_acam      0.01    0.02  1.00    -1.93    -0.65     0.01     0.70     1.96
-## alpha_amme      4.52    0.00  0.08     4.36     4.46     4.52     4.57     4.68
+## lambda       3030.54    1.62 91.05  2851.64  2969.40  3028.38  3092.71  3211.77
+## alpha_acam      0.00    0.02  1.01    -1.96    -0.69     0.00     0.66     1.99
+## alpha_amme      4.46    0.00  0.08     4.30     4.41     4.46     4.52     4.62
 ## alpha_anar      0.15    0.00  0.01     0.13     0.14     0.15     0.16     0.18
 ## alpha_brho      0.03    0.00  0.00     0.02     0.03     0.03     0.03     0.03
-## alpha_brni      0.09    0.00  0.01     0.08     0.09     0.09     0.10     0.10
+## alpha_brni      0.09    0.00  0.01     0.08     0.09     0.09     0.09     0.10
 ## alpha_ceso      0.06    0.00  0.01     0.05     0.06     0.06     0.06     0.07
 ## alpha_gitr      0.04    0.00  0.00     0.04     0.04     0.04     0.04     0.05
 ## alpha_leni     -0.01    0.00  0.00    -0.02    -0.01    -0.01    -0.01     0.00
-## alpha_lomu      0.00    0.02  1.01    -2.02    -0.68     0.00     0.68     1.96
-## alpha_mael      1.40    0.00  0.07     1.26     1.35     1.40     1.45     1.56
-## alpha_mica      0.01    0.02  0.99    -1.98    -0.66     0.02     0.66     1.91
+## alpha_lomu     -0.02    0.02  0.99    -1.96    -0.72    -0.02     0.67     1.90
+## alpha_mael      1.40    0.00  0.07     1.26     1.35     1.40     1.45     1.54
+## alpha_mica     -0.03    0.02  1.01    -2.08    -0.70    -0.04     0.64     1.89
 ## alpha_pler      0.00    0.00  0.00     0.00     0.00     0.00     0.00     0.01
-## alpha_plno      0.00    0.02  0.98    -1.97    -0.65     0.00     0.65     1.92
+## alpha_plno      0.02    0.02  1.01    -1.91    -0.68     0.05     0.71     2.00
 ## alpha_taca      0.00    0.00  0.00    -0.01    -0.01     0.00     0.00     0.00
 ## alpha_thir     -0.02    0.00  0.01    -0.03    -0.02    -0.02    -0.01     0.00
-## alpha_twil     -2.15    0.00  0.05    -2.25    -2.18    -2.15    -2.12    -2.05
+## alpha_twil     -2.15    0.00  0.05    -2.25    -2.19    -2.15    -2.12    -2.06
 ## alpha_crco     -0.01    0.00  0.00    -0.01    -0.01    -0.01    -0.01    -0.01
-## alpha_erbo      1.33    0.00  0.03     1.26     1.30     1.33     1.35     1.40
-## alpha_figa      0.60    0.00  0.02     0.55     0.58     0.60     0.61     0.65
+## alpha_erbo      1.33    0.00  0.03     1.26     1.30     1.33     1.35     1.39
+## alpha_figa      0.60    0.00  0.02     0.55     0.58     0.60     0.62     0.65
 ## alpha_gamu      0.06    0.00  0.01     0.05     0.06     0.06     0.07     0.08
 ## alpha_hygl      0.39    0.00  0.03     0.33     0.37     0.39     0.41     0.45
-## alpha_siga      0.02    0.00  0.00     0.02     0.02     0.02     0.03     0.03
+## alpha_siga      0.03    0.00  0.00     0.02     0.02     0.03     0.03     0.03
 ## alpha_other     0.10    0.00  0.01     0.09     0.10     0.10     0.10     0.11
-## lp__        69117.18    0.06  3.49 69109.59 69114.96 69117.50 69119.70 69122.99
+## lp__        69085.18    0.07  3.45 69077.28 69083.07 69085.54 69087.60 69090.98
 ##             n_eff Rhat
-## lambda       3166    1
-## alpha_acam   2887    1
-## alpha_amme   3242    1
-## alpha_anar   3376    1
-## alpha_brho   3147    1
-## alpha_brni   3278    1
-## alpha_ceso   3332    1
-## alpha_gitr   3217    1
-## alpha_leni   3497    1
-## alpha_lomu   3270    1
-## alpha_mael   3437    1
-## alpha_mica   3670    1
-## alpha_pler   3212    1
-## alpha_plno   3327    1
-## alpha_taca   3536    1
-## alpha_thir   3217    1
-## alpha_twil   3223    1
-## alpha_crco   3138    1
-## alpha_erbo   3246    1
-## alpha_figa   3319    1
-## alpha_gamu   3010    1
-## alpha_hygl   3008    1
-## alpha_siga   3347    1
-## alpha_other  3152    1
-## lp__         3012    1
+## lambda       3177    1
+## alpha_acam   3298    1
+## alpha_amme   2997    1
+## alpha_anar   3462    1
+## alpha_brho   3294    1
+## alpha_brni   3601    1
+## alpha_ceso   3533    1
+## alpha_gitr   3475    1
+## alpha_leni   3371    1
+## alpha_lomu   3308    1
+## alpha_mael   3428    1
+## alpha_mica   3407    1
+## alpha_pler   3363    1
+## alpha_plno   3275    1
+## alpha_taca   3152    1
+## alpha_thir   3306    1
+## alpha_twil   3377    1
+## alpha_crco   3065    1
+## alpha_erbo   3442    1
+## alpha_figa   3274    1
+## alpha_gamu   3469    1
+## alpha_hygl   3326    1
+## alpha_siga   3496    1
+## alpha_other  3000    1
+## lp__         2738    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:28:50 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:00:20 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -633,12 +633,12 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         823.72    0.09 4.86    814.37    820.41    823.56    827.00
+## lambda         823.43    0.08 4.81    813.81    820.27    823.48    826.67
 ## alpha_acam      -0.34    0.00 0.00     -0.35     -0.35     -0.34     -0.34
 ## alpha_amme      -0.02    0.00 0.01     -0.03     -0.02     -0.02     -0.01
 ## alpha_anar       0.11    0.00 0.00      0.11      0.11      0.11      0.11
 ## alpha_brho       0.07    0.00 0.00      0.06      0.07      0.07      0.07
-## alpha_brni       0.12    0.00 0.00      0.11      0.11      0.11      0.12
+## alpha_brni       0.12    0.00 0.00      0.11      0.11      0.12      0.12
 ## alpha_ceso       0.51    0.00 0.02      0.48      0.50      0.51      0.52
 ## alpha_gitr       0.05    0.00 0.00      0.05      0.05      0.05      0.06
 ## alpha_leni       0.01    0.00 0.00      0.01      0.01      0.01      0.01
@@ -646,46 +646,46 @@ for(i in species){
 ## alpha_mael      -0.13    0.00 0.01     -0.15     -0.14     -0.13     -0.13
 ## alpha_mica       0.09    0.00 0.00      0.08      0.09      0.09      0.09
 ## alpha_pler       0.07    0.00 0.00      0.06      0.07      0.07      0.07
-## alpha_plno       0.32    0.00 0.01      0.29      0.31      0.32      0.33
+## alpha_plno       0.32    0.00 0.02      0.29      0.31      0.32      0.33
 ## alpha_taca       0.05    0.00 0.00      0.04      0.05      0.05      0.05
 ## alpha_thir      -0.22    0.00 0.00     -0.22     -0.22     -0.22     -0.21
 ## alpha_twil      -0.07    0.00 0.00     -0.08     -0.07     -0.07     -0.07
 ## alpha_crco      -0.21    0.00 0.00     -0.22     -0.21     -0.21     -0.21
-## alpha_erbo      -0.04    0.00 0.02     -0.08     -0.06     -0.04     -0.03
+## alpha_erbo      -0.04    0.00 0.02     -0.08     -0.05     -0.04     -0.03
 ## alpha_figa       0.22    0.00 0.01      0.20      0.21      0.22      0.23
 ## alpha_gamu       0.03    0.00 0.00      0.03      0.03      0.03      0.03
 ## alpha_hygl       0.15    0.00 0.01      0.13      0.14      0.15      0.16
-## alpha_siga       0.16    0.00 0.03      0.11      0.14      0.16      0.17
+## alpha_siga       0.16    0.00 0.02      0.11      0.14      0.16      0.17
 ## alpha_other     -0.19    0.00 0.00     -0.20     -0.19     -0.19     -0.18
-## lp__        507384.57    0.06 3.44 507377.34 507382.41 507384.94 507387.11
+## lp__        507384.00    0.06 3.50 507376.25 507381.85 507384.30 507386.54
 ##                 97.5% n_eff Rhat
-## lambda         833.40  2679    1
-## alpha_acam      -0.34  3183    1
-## alpha_amme       0.00  3215    1
-## alpha_anar       0.11  2998    1
-## alpha_brho       0.07  3324    1
-## alpha_brni       0.12  3265    1
-## alpha_ceso       0.54  3374    1
-## alpha_gitr       0.06  3523    1
-## alpha_leni       0.01  4069    1
-## alpha_lomu       0.27  3185    1
-## alpha_mael      -0.12  3502    1
-## alpha_mica       0.10  3133    1
-## alpha_pler       0.07  3276    1
-## alpha_plno       0.35  3435    1
-## alpha_taca       0.06  3551    1
-## alpha_thir      -0.21  3626    1
-## alpha_twil      -0.07  3314    1
-## alpha_crco      -0.20  3406    1
-## alpha_erbo      -0.01  3426    1
-## alpha_figa       0.24  3418    1
-## alpha_gamu       0.04  3261    1
-## alpha_hygl       0.18  3549    1
-## alpha_siga       0.21  3217    1
-## alpha_other     -0.18  3436    1
-## lp__        507390.21  3050    1
+## lambda         832.61  3369    1
+## alpha_acam      -0.34  3376    1
+## alpha_amme      -0.01  3276    1
+## alpha_anar       0.11  3326    1
+## alpha_brho       0.07  3525    1
+## alpha_brni       0.12  3436    1
+## alpha_ceso       0.54  3256    1
+## alpha_gitr       0.06  3936    1
+## alpha_leni       0.01  3712    1
+## alpha_lomu       0.27  3574    1
+## alpha_mael      -0.12  3504    1
+## alpha_mica       0.10  3434    1
+## alpha_pler       0.08  3521    1
+## alpha_plno       0.35  3462    1
+## alpha_taca       0.06  3519    1
+## alpha_thir      -0.21  3336    1
+## alpha_twil      -0.07  3687    1
+## alpha_crco      -0.20  3658    1
+## alpha_erbo      -0.01  3619    1
+## alpha_figa       0.24  3649    1
+## alpha_gamu       0.04  3533    1
+## alpha_hygl       0.18  3448    1
+## alpha_siga       0.20  3316    1
+## alpha_other     -0.18  3707    1
+## lp__        507389.71  2937    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:31:42 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:01:04 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -696,9 +696,9 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean    sd      2.5%       25%       50%       75%
-## lambda        2683.29    0.23 13.36   2657.35   2674.39   2683.15   2692.51
+## lambda        2682.19    0.24 13.55   2655.32   2672.92   2682.31   2691.31
 ## alpha_acam       0.48    0.00  0.02      0.43      0.46      0.48      0.49
-## alpha_amme       0.34    0.00  0.10      0.15      0.28      0.34      0.41
+## alpha_amme       0.34    0.00  0.10      0.15      0.27      0.33      0.40
 ## alpha_anar       0.25    0.00  0.00      0.25      0.25      0.25      0.25
 ## alpha_brho       0.08    0.00  0.00      0.07      0.08      0.08      0.08
 ## alpha_brni       0.24    0.00  0.01      0.23      0.24      0.24      0.25
@@ -706,49 +706,49 @@ for(i in species){
 ## alpha_gitr       0.10    0.00  0.00      0.09      0.10      0.10      0.10
 ## alpha_leni       0.32    0.00  0.01      0.30      0.31      0.32      0.32
 ## alpha_lomu       0.25    0.00  0.01      0.23      0.24      0.25      0.26
-## alpha_mael       0.03    0.00  0.05     -0.07     -0.01      0.03      0.07
+## alpha_mael       0.03    0.00  0.05     -0.07     -0.01      0.03      0.06
 ## alpha_mica       0.18    0.00  0.01      0.17      0.18      0.18      0.19
 ## alpha_pler       0.21    0.00  0.01      0.20      0.20      0.21      0.21
 ## alpha_plno       0.42    0.00  0.03      0.36      0.40      0.42      0.44
-## alpha_taca       0.28    0.00  0.01      0.27      0.27      0.28      0.28
+## alpha_taca       0.28    0.00  0.01      0.27      0.28      0.28      0.29
 ## alpha_thir       0.47    0.00  0.01      0.45      0.46      0.47      0.48
-## alpha_twil       5.91    0.00  0.18      5.56      5.79      5.91      6.03
+## alpha_twil       5.92    0.00  0.18      5.56      5.80      5.91      6.04
 ## alpha_crco      -0.03    0.00  0.00     -0.03     -0.03     -0.03     -0.03
 ## alpha_erbo       1.13    0.00  0.03      1.08      1.11      1.13      1.14
-## alpha_figa       0.33    0.00  0.01      0.32      0.32      0.33      0.33
+## alpha_figa       0.33    0.00  0.01      0.31      0.32      0.33      0.33
 ## alpha_gamu       0.08    0.00  0.00      0.07      0.07      0.08      0.08
 ## alpha_hygl      -0.03    0.00  0.01     -0.05     -0.04     -0.03     -0.03
 ## alpha_siga       0.10    0.00  0.00      0.10      0.10      0.10      0.11
 ## alpha_other     -0.09    0.00  0.00     -0.10     -0.09     -0.09     -0.09
-## lp__        566386.99    0.06  3.45 566379.28 566384.76 566387.26 566389.44
+## lp__        566375.24    0.06  3.42 566367.76 566373.19 566375.52 566377.65
 ##                 97.5% n_eff Rhat
-## lambda        2709.80  3306    1
-## alpha_acam       0.53  3179    1
-## alpha_amme       0.52  3054    1
-## alpha_anar       0.26  3545    1
-## alpha_brho       0.08  4115    1
-## alpha_brni       0.26  3401    1
-## alpha_ceso       0.19  3480    1
-## alpha_gitr       0.10  3469    1
-## alpha_leni       0.33  3380    1
-## alpha_lomu       0.27  3402    1
-## alpha_mael       0.13  3484    1
-## alpha_mica       0.20  3449    1
-## alpha_pler       0.22  3468    1
-## alpha_plno       0.47  3329    1
-## alpha_taca       0.29  3440    1
-## alpha_thir       0.50  3463    1
-## alpha_twil       6.28  3605    1
-## alpha_crco      -0.03  3354    1
-## alpha_erbo       1.18  3206    1
-## alpha_figa       0.34  3243    1
-## alpha_gamu       0.08  3391    1
-## alpha_hygl      -0.01  3311    1
-## alpha_siga       0.11  3498    1
-## alpha_other     -0.08  3529    1
-## lp__        566392.86  3021    1
+## lambda        2709.01  3207    1
+## alpha_acam       0.53  3201    1
+## alpha_amme       0.54  3396    1
+## alpha_anar       0.26  3426    1
+## alpha_brho       0.08  3942    1
+## alpha_brni       0.26  3308    1
+## alpha_ceso       0.19  3321    1
+## alpha_gitr       0.10  3237    1
+## alpha_leni       0.33  3311    1
+## alpha_lomu       0.27  3207    1
+## alpha_mael       0.14  3089    1
+## alpha_mica       0.20  3313    1
+## alpha_pler       0.22  3290    1
+## alpha_plno       0.47  3383    1
+## alpha_taca       0.30  3314    1
+## alpha_thir       0.50  3265    1
+## alpha_twil       6.28  3468    1
+## alpha_crco      -0.03  3071    1
+## alpha_erbo       1.18  3371    1
+## alpha_figa       0.34  3495    1
+## alpha_gamu       0.08  3632    1
+## alpha_hygl      -0.01  2902    1
+## alpha_siga       0.11  3208    1
+## alpha_other     -0.08  3528    1
+## lp__        566381.05  3125    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:40:14 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:03:17 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -759,59 +759,59 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         153.93    0.02 0.96    152.05    153.30    153.92    154.60
+## lambda         153.95    0.02 0.97    152.00    153.30    153.94    154.61
 ## alpha_acam      -0.16    0.00 0.01     -0.17     -0.16     -0.16     -0.15
-## alpha_amme       0.26    0.00 0.01      0.24      0.25      0.26      0.27
+## alpha_amme       0.26    0.00 0.01      0.24      0.26      0.26      0.27
 ## alpha_anar       0.05    0.00 0.00      0.04      0.04      0.05      0.05
 ## alpha_brho       0.04    0.00 0.00      0.04      0.04      0.04      0.04
 ## alpha_brni       0.10    0.00 0.00      0.10      0.10      0.10      0.10
 ## alpha_ceso       0.14    0.00 0.00      0.13      0.13      0.14      0.14
 ## alpha_gitr       0.04    0.00 0.00      0.04      0.04      0.04      0.04
 ## alpha_leni       0.10    0.00 0.00      0.10      0.10      0.10      0.11
-## alpha_lomu       0.17    0.00 0.00      0.16      0.17      0.17      0.17
+## alpha_lomu       0.17    0.00 0.00      0.16      0.17      0.17      0.18
 ## alpha_mael       0.18    0.00 0.01      0.17      0.18      0.18      0.18
 ## alpha_mica       0.04    0.00 0.00      0.04      0.04      0.04      0.04
 ## alpha_pler       0.10    0.00 0.00      0.10      0.10      0.10      0.11
-## alpha_plno       0.13    0.00 0.01      0.11      0.12      0.13      0.13
+## alpha_plno       0.13    0.00 0.01      0.11      0.12      0.13      0.14
 ## alpha_taca       0.15    0.00 0.00      0.15      0.15      0.15      0.16
 ## alpha_thir      -0.07    0.00 0.00     -0.07     -0.07     -0.07     -0.06
 ## alpha_twil       0.00    0.00 0.00      0.00      0.00      0.00      0.00
 ## alpha_crco       0.14    0.00 0.01      0.12      0.14      0.14      0.15
 ## alpha_erbo       0.01    0.00 0.00      0.00      0.00      0.01      0.01
-## alpha_figa       1.06    0.00 0.02      1.02      1.04      1.06      1.07
+## alpha_figa       1.06    0.00 0.02      1.02      1.05      1.06      1.07
 ## alpha_gamu      -0.15    0.00 0.00     -0.15     -0.15     -0.15     -0.15
 ## alpha_hygl       0.13    0.00 0.01      0.12      0.12      0.13      0.13
-## alpha_siga      -0.22    0.00 0.02     -0.25     -0.23     -0.22     -0.20
-## alpha_other     -0.37    0.00 0.00     -0.37     -0.37     -0.37     -0.36
-## lp__        644026.67    0.06 3.39 644019.29 644024.54 644026.95 644029.03
+## alpha_siga      -0.22    0.00 0.02     -0.25     -0.23     -0.22     -0.21
+## alpha_other     -0.37    0.00 0.00     -0.37     -0.37     -0.36     -0.36
+## lp__        644029.21    0.06 3.42 644021.75 644027.13 644029.54 644031.57
 ##                 97.5% n_eff Rhat
-## lambda         155.81  3136    1
-## alpha_acam      -0.15  3374    1
-## alpha_amme       0.28  3132    1
-## alpha_anar       0.05  3106    1
-## alpha_brho       0.04  2920    1
-## alpha_brni       0.11  3437    1
-## alpha_ceso       0.14  3400    1
-## alpha_gitr       0.05  3381    1
-## alpha_leni       0.11  3553    1
-## alpha_lomu       0.18  3403    1
-## alpha_mael       0.19  3155    1
-## alpha_mica       0.04  3048    1
-## alpha_pler       0.11  3218    1
-## alpha_plno       0.15  3428    1
-## alpha_taca       0.16  3526    1
-## alpha_thir      -0.06  2743    1
-## alpha_twil       0.00  3269    1
-## alpha_crco       0.16  2996    1
-## alpha_erbo       0.01  3446    1
-## alpha_figa       1.09  3620    1
-## alpha_gamu      -0.15  3358    1
-## alpha_hygl       0.14  3203    1
-## alpha_siga      -0.18  3325    1
-## alpha_other     -0.36  3519    1
-## lp__        644032.34  2735    1
+## lambda         155.84  3382    1
+## alpha_acam      -0.14  3434    1
+## alpha_amme       0.28  3158    1
+## alpha_anar       0.05  3130    1
+## alpha_brho       0.04  3269    1
+## alpha_brni       0.11  3565    1
+## alpha_ceso       0.14  2848    1
+## alpha_gitr       0.05  3416    1
+## alpha_leni       0.11  3303    1
+## alpha_lomu       0.18  3170    1
+## alpha_mael       0.19  3054    1
+## alpha_mica       0.04  3351    1
+## alpha_pler       0.11  3354    1
+## alpha_plno       0.15  3153    1
+## alpha_taca       0.16  3511    1
+## alpha_thir      -0.06  3382    1
+## alpha_twil       0.00  3136    1
+## alpha_crco       0.16  3531    1
+## alpha_erbo       0.01  3002    1
+## alpha_figa       1.09  3259    1
+## alpha_gamu      -0.15  3264    1
+## alpha_hygl       0.14  3237    1
+## alpha_siga      -0.18  3207    1
+## alpha_other     -0.36  3442    1
+## lp__        644035.05  3081    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:45:11 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:04:33 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -822,7 +822,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         127.46    0.01 0.65    126.20    127.04    127.47    127.88
+## lambda         127.47    0.01 0.65    126.20    127.03    127.46    127.90
 ## alpha_acam      -0.37    0.00 0.01     -0.38     -0.37     -0.37     -0.36
 ## alpha_amme       0.44    0.00 0.08      0.29      0.39      0.44      0.49
 ## alpha_anar       0.05    0.00 0.00      0.05      0.05      0.05      0.05
@@ -831,11 +831,11 @@ for(i in species){
 ## alpha_ceso       0.12    0.00 0.00      0.11      0.11      0.12      0.12
 ## alpha_gitr       0.07    0.00 0.00      0.07      0.07      0.07      0.07
 ## alpha_leni       0.14    0.00 0.01      0.13      0.13      0.14      0.14
-## alpha_lomu       0.23    0.00 0.01      0.22      0.23      0.23      0.23
+## alpha_lomu       0.23    0.00 0.01      0.22      0.23      0.23      0.24
 ## alpha_mael       0.16    0.00 0.04      0.09      0.14      0.16      0.19
 ## alpha_mica       0.14    0.00 0.01      0.13      0.14      0.14      0.15
 ## alpha_pler       0.05    0.00 0.00      0.05      0.05      0.05      0.05
-## alpha_plno       0.42    0.00 0.02      0.37      0.41      0.42      0.44
+## alpha_plno       0.42    0.00 0.02      0.38      0.41      0.42      0.44
 ## alpha_taca       0.07    0.00 0.00      0.07      0.07      0.07      0.07
 ## alpha_thir       0.32    0.00 0.01      0.30      0.31      0.32      0.33
 ## alpha_twil      -0.66    0.00 0.07     -0.79     -0.71     -0.66     -0.62
@@ -846,35 +846,35 @@ for(i in species){
 ## alpha_hygl      -0.55    0.00 0.01     -0.57     -0.55     -0.55     -0.54
 ## alpha_siga       0.02    0.00 0.00      0.01      0.01      0.02      0.02
 ## alpha_other     -0.13    0.00 0.00     -0.13     -0.13     -0.13     -0.13
-## lp__        604810.27    0.07 3.53 604802.54 604808.07 604810.61 604812.88
+## lp__        604813.06    0.06 3.45 604805.35 604810.97 604813.38 604815.50
 ##                 97.5% n_eff Rhat
-## lambda         128.75  3327    1
-## alpha_acam      -0.35  3416    1
-## alpha_amme       0.59  3346    1
-## alpha_anar       0.06  3324    1
-## alpha_brho       0.03  3176    1
-## alpha_brni       0.21  3469    1
-## alpha_ceso       0.13  3687    1
-## alpha_gitr       0.07  3757    1
-## alpha_leni       0.15  3270    1
-## alpha_lomu       0.24  3460    1
-## alpha_mael       0.23  3546    1
-## alpha_mica       0.15  3591    1
-## alpha_pler       0.06  3674    1
-## alpha_plno       0.47  3155    1
-## alpha_taca       0.08  3892    1
-## alpha_thir       0.34  3285    1
-## alpha_twil      -0.52  3256    1
-## alpha_crco       0.01  3297    1
-## alpha_erbo      -0.30  3185    1
-## alpha_figa       0.19  3489    1
-## alpha_gamu       0.00  3259    1
-## alpha_hygl      -0.52  3517    1
-## alpha_siga       0.02  3332    1
-## alpha_other     -0.12  3554    1
-## lp__        604816.07  2820    1
+## lambda         128.78  3225    1
+## alpha_acam      -0.35  3348    1
+## alpha_amme       0.59  2989    1
+## alpha_anar       0.06  3661    1
+## alpha_brho       0.03  2985    1
+## alpha_brni       0.22  3529    1
+## alpha_ceso       0.13  3406    1
+## alpha_gitr       0.07  4091    1
+## alpha_leni       0.15  3594    1
+## alpha_lomu       0.24  3263    1
+## alpha_mael       0.23  3421    1
+## alpha_mica       0.15  3519    1
+## alpha_pler       0.06  3909    1
+## alpha_plno       0.47  3635    1
+## alpha_taca       0.08  3420    1
+## alpha_thir       0.34  3503    1
+## alpha_twil      -0.53  3601    1
+## alpha_crco       0.01  3353    1
+## alpha_erbo      -0.30  3413    1
+## alpha_figa       0.19  3288    1
+## alpha_gamu       0.00  3639    1
+## alpha_hygl      -0.53  3399    1
+## alpha_siga       0.02  3578    1
+## alpha_other     -0.12  3314    1
+## lp__        604818.90  2978    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:53:12 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:06:50 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -885,13 +885,13 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                   mean se_mean     sd       2.5%        25%        50%
-## lambda         6036.74    2.59 136.60    5770.92    5945.09    6033.67
+## lambda         5989.90    2.63 137.74    5719.44    5893.09    5990.89
 ## alpha_acam       -0.04    0.00   0.00      -0.04      -0.04      -0.04
 ## alpha_amme        0.22    0.00   0.01       0.21       0.22       0.22
 ## alpha_anar       -0.01    0.00   0.00      -0.01      -0.01      -0.01
 ## alpha_brho        0.00    0.00   0.00       0.00       0.00       0.00
-## alpha_brni        1.19    0.00   0.01       1.17       1.18       1.19
-## alpha_ceso       -0.02    0.02   1.01      -1.98      -0.70      -0.03
+## alpha_brni        1.18    0.00   0.01       1.16       1.18       1.18
+## alpha_ceso       -0.03    0.02   1.01      -1.99      -0.70      -0.04
 ## alpha_gitr       -0.01    0.00   0.00      -0.01      -0.01      -0.01
 ## alpha_leni        0.04    0.00   0.00       0.04       0.04       0.04
 ## alpha_lomu       -0.04    0.00   0.00      -0.04      -0.04      -0.04
@@ -907,37 +907,37 @@ for(i in species){
 ## alpha_figa       -0.18    0.00   0.00      -0.18      -0.18      -0.18
 ## alpha_gamu       -0.13    0.00   0.00      -0.13      -0.13      -0.13
 ## alpha_hygl        0.03    0.00   0.00       0.02       0.03       0.03
-## alpha_siga        0.58    0.00   0.01       0.56       0.57       0.58
+## alpha_siga        0.58    0.00   0.01       0.55       0.57       0.58
 ## alpha_other       0.06    0.00   0.00       0.05       0.06       0.06
-## lp__        1303975.35    0.06   3.36 1303967.99 1303973.21 1303975.66
+## lp__        1303963.63    0.07   3.52 1303955.64 1303961.42 1303963.96
 ##                    75%      97.5% n_eff Rhat
-## lambda         6128.55    6309.62  2782    1
-## alpha_acam       -0.03      -0.03  3104    1
-## alpha_amme        0.23       0.23  3407    1
-## alpha_anar       -0.01      -0.01  3010    1
-## alpha_brho        0.00       0.00  3104    1
-## alpha_brni        1.19       1.21  2817    1
-## alpha_ceso        0.66       1.97  3123    1
-## alpha_gitr       -0.01      -0.01  3468    1
-## alpha_leni        0.05       0.05  3805    1
-## alpha_lomu       -0.03      -0.03  3265    1
-## alpha_mael       -0.33      -0.32  3445    1
-## alpha_mica        0.00       0.00  3188    1
-## alpha_pler        0.01       0.01  3168    1
-## alpha_plno        0.07       0.08  3118    1
-## alpha_taca        0.02       0.02  3869    1
-## alpha_thir       -0.05      -0.05  3578    1
-## alpha_twil        0.04       0.04  3359    1
-## alpha_crco        0.03       0.03  3101    1
-## alpha_erbo        1.37       1.38  3505    1
-## alpha_figa       -0.17      -0.17  3488    1
-## alpha_gamu       -0.13      -0.13  3436    1
-## alpha_hygl        0.03       0.04  3293    1
-## alpha_siga        0.58       0.60  3373    1
-## alpha_other       0.06       0.06  3542    1
-## lp__        1303977.74 1303981.04  2934    1
+## lambda         6082.53    6256.74  2745    1
+## alpha_acam       -0.03      -0.03  3145    1
+## alpha_amme        0.23       0.23  3410    1
+## alpha_anar       -0.01      -0.01  3346    1
+## alpha_brho        0.00       0.00  3504    1
+## alpha_brni        1.19       1.20  2719    1
+## alpha_ceso        0.67       1.94  3167    1
+## alpha_gitr       -0.01      -0.01  3409    1
+## alpha_leni        0.05       0.05  3818    1
+## alpha_lomu       -0.03      -0.03  2824    1
+## alpha_mael       -0.33      -0.32  3338    1
+## alpha_mica        0.00       0.00  3215    1
+## alpha_pler        0.01       0.01  3303    1
+## alpha_plno        0.07       0.08  3182    1
+## alpha_taca        0.02       0.02  3530    1
+## alpha_thir       -0.05      -0.05  3514    1
+## alpha_twil        0.04       0.04  3222    1
+## alpha_crco        0.03       0.03  3493    1
+## alpha_erbo        1.37       1.38  3453    1
+## alpha_figa       -0.17      -0.17  3364    1
+## alpha_gamu       -0.13      -0.13  3551    1
+## alpha_hygl        0.03       0.04  3518    1
+## alpha_siga        0.58       0.60  3360    1
+## alpha_other       0.06       0.06  3411    1
+## lp__        1303966.13 1303969.38  2754    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 09:59:06 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:10:17 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -948,12 +948,12 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean    sd      2.5%       25%       50%       75%
-## lambda        2584.14    0.74 36.26   2513.09   2559.76   2584.05   2607.90
+## lambda        2583.41    0.70 36.71   2511.54   2559.87   2583.10   2608.23
 ## alpha_acam      -0.14    0.00  0.01     -0.16     -0.14     -0.14     -0.13
 ## alpha_amme       1.81    0.00  0.07      1.67      1.76      1.81      1.86
 ## alpha_anar       0.08    0.00  0.00      0.08      0.08      0.08      0.09
 ## alpha_brho       0.05    0.00  0.00      0.04      0.05      0.05      0.05
-## alpha_brni       0.70    0.00  0.01      0.68      0.69      0.70      0.71
+## alpha_brni       0.70    0.00  0.01      0.67      0.69      0.70      0.71
 ## alpha_ceso       0.03    0.00  0.00      0.03      0.03      0.03      0.04
 ## alpha_gitr       0.02    0.00  0.00      0.02      0.02      0.02      0.02
 ## alpha_leni       0.30    0.00  0.01      0.29      0.30      0.30      0.31
@@ -961,7 +961,7 @@ for(i in species){
 ## alpha_mael       0.18    0.00  0.01      0.16      0.17      0.18      0.18
 ## alpha_mica       0.10    0.00  0.00      0.10      0.10      0.10      0.10
 ## alpha_pler       0.08    0.00  0.00      0.08      0.08      0.08      0.08
-## alpha_plno       0.01    0.02  1.00     -1.97     -0.65      0.01      0.67
+## alpha_plno       0.01    0.02  1.01     -1.99     -0.64      0.02      0.67
 ## alpha_taca       0.09    0.00  0.00      0.09      0.09      0.09      0.09
 ## alpha_thir       0.08    0.00  0.00      0.07      0.08      0.08      0.08
 ## alpha_twil      -0.33    0.00  0.03     -0.38     -0.35     -0.33     -0.31
@@ -972,35 +972,35 @@ for(i in species){
 ## alpha_hygl       0.38    0.00  0.02      0.35      0.37      0.38      0.39
 ## alpha_siga      -0.09    0.00  0.00     -0.09     -0.09     -0.09     -0.09
 ## alpha_other      0.34    0.00  0.00      0.33      0.34      0.34      0.34
-## lp__        779122.56    0.06  3.42 779115.02 779120.56 779122.89 779124.98
+## lp__        779121.89    0.06  3.43 779114.62 779119.75 779122.19 779124.34
 ##                 97.5% n_eff Rhat
-## lambda        2656.31  2416    1
-## alpha_acam      -0.12  2952    1
-## alpha_amme       1.96  3310    1
-## alpha_anar       0.09  3408    1
-## alpha_brho       0.05  3719    1
-## alpha_brni       0.73  2566    1
-## alpha_ceso       0.04  3937    1
-## alpha_gitr       0.02  3296    1
-## alpha_leni       0.32  3196    1
-## alpha_lomu       0.00  3664    1
-## alpha_mael       0.20  3244    1
-## alpha_mica       0.11  3154    1
-## alpha_pler       0.09  3521    1
-## alpha_plno       1.93  3132    1
-## alpha_taca       0.09  3863    1
-## alpha_thir       0.08  3313    1
-## alpha_twil      -0.28  3224    1
-## alpha_crco       0.00  3429    1
-## alpha_erbo      -0.17  3369    1
-## alpha_figa       0.27  3172    1
-## alpha_gamu       0.05  3520    1
-## alpha_hygl       0.41  3181    1
-## alpha_siga      -0.09  3791    1
-## alpha_other      0.35  3579    1
-## lp__        779128.21  2990    1
+## lambda        2656.39  2733    1
+## alpha_acam      -0.12  3360    1
+## alpha_amme       1.96  3258    1
+## alpha_anar       0.09  3376    1
+## alpha_brho       0.05  3811    1
+## alpha_brni       0.73  2717    1
+## alpha_ceso       0.04  3589    1
+## alpha_gitr       0.02  3578    1
+## alpha_leni       0.32  3127    1
+## alpha_lomu       0.00  3303    1
+## alpha_mael       0.20  2887    1
+## alpha_mica       0.11  3087    1
+## alpha_pler       0.09  3793    1
+## alpha_plno       2.02  3246    1
+## alpha_taca       0.09  3616    1
+## alpha_thir       0.08  3406    1
+## alpha_twil      -0.28  3625    1
+## alpha_crco       0.00  3359    1
+## alpha_erbo      -0.17  3354    1
+## alpha_figa       0.27  3235    1
+## alpha_gamu       0.05  3514    1
+## alpha_hygl       0.41  3016    1
+## alpha_siga      -0.09  3507    1
+## alpha_other      0.35  3434    1
+## lp__        779127.78  2953    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:02:13 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:12:35 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1011,7 +1011,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                   mean se_mean   sd       2.5%        25%        50%        75%
-## lambda          306.07    0.03 1.57     303.04     305.01     306.10     307.13
+## lambda          306.07    0.03 1.60     302.89     305.01     306.09     307.17
 ## alpha_acam        0.18    0.00 0.00       0.17       0.18       0.18       0.18
 ## alpha_amme        0.21    0.00 0.00       0.21       0.21       0.21       0.22
 ## alpha_anar        0.05    0.00 0.00       0.05       0.05       0.05       0.05
@@ -1035,35 +1035,35 @@ for(i in species){
 ## alpha_hygl       -0.71    0.00 0.00      -0.71      -0.71      -0.71      -0.71
 ## alpha_siga       -0.58    0.00 0.01      -0.60      -0.59      -0.58      -0.58
 ## alpha_other      -0.26    0.00 0.00      -0.26      -0.26      -0.26      -0.26
-## lp__        3116290.27    0.07 3.61 3116282.30 3116288.03 3116290.68 3116292.88
+## lp__        3116292.78    0.07 3.48 3116285.08 3116290.70 3116293.05 3116295.28
 ##                  97.5% n_eff Rhat
-## lambda          309.17  3370    1
-## alpha_acam        0.18  3319    1
-## alpha_amme        0.22  3523    1
-## alpha_anar        0.05  3308    1
-## alpha_brho        0.00  3613    1
-## alpha_brni        0.10  3494    1
-## alpha_ceso        0.01  3371    1
-## alpha_gitr        0.03  3296    1
-## alpha_leni        0.14  3510    1
-## alpha_lomu        0.08  3641    1
-## alpha_mael        0.28  3380    1
-## alpha_mica        0.01  3425    1
-## alpha_pler        0.01  3320    1
-## alpha_plno        0.10  2885    1
-## alpha_taca        0.24  2773    1
-## alpha_thir        0.10  3389    1
-## alpha_twil        0.08  3473    1
-## alpha_crco        0.64  3338    1
-## alpha_erbo        3.47  3267    1
-## alpha_figa        0.23  3503    1
-## alpha_gamu       -0.02  3367    1
-## alpha_hygl       -0.71  3254    1
-## alpha_siga       -0.57  3204    1
-## alpha_other      -0.25  3676    1
-## lp__        3116296.33  2888    1
+## lambda          309.10  3341    1
+## alpha_acam        0.18  3151    1
+## alpha_amme        0.22  3030    1
+## alpha_anar        0.05  3068    1
+## alpha_brho        0.00  3190    1
+## alpha_brni        0.10  3697    1
+## alpha_ceso        0.01  3377    1
+## alpha_gitr        0.03  3176    1
+## alpha_leni        0.14  3949    1
+## alpha_lomu        0.08  3435    1
+## alpha_mael        0.28  3391    1
+## alpha_mica        0.01  3506    1
+## alpha_pler        0.01  3163    1
+## alpha_plno        0.10  3637    1
+## alpha_taca        0.24  3145    1
+## alpha_thir        0.10  3281    1
+## alpha_twil        0.08  3354    1
+## alpha_crco        0.64  3399    1
+## alpha_erbo        3.46  3171    1
+## alpha_figa        0.23  3420    1
+## alpha_gamu       -0.02  2767    1
+## alpha_hygl       -0.71  3373    1
+## alpha_siga       -0.57  3399    1
+## alpha_other      -0.25  3395    1
+## lp__        3116298.57  2851    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:04:28 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:14:44 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1074,7 +1074,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         200.46    0.03 1.50    197.62    199.39    200.43    201.44
+## lambda         200.41    0.03 1.48    197.49    199.42    200.41    201.41
 ## alpha_acam       0.07    0.00 0.01      0.05      0.06      0.07      0.07
 ## alpha_amme       1.43    0.00 0.05      1.34      1.40      1.43      1.46
 ## alpha_anar       0.13    0.00 0.00      0.12      0.13      0.13      0.13
@@ -1098,35 +1098,35 @@ for(i in species){
 ## alpha_hygl       0.70    0.00 0.01      0.68      0.69      0.70      0.71
 ## alpha_siga      -0.04    0.00 0.00     -0.04     -0.04     -0.04     -0.03
 ## alpha_other      0.00    0.00 0.00     -0.01      0.00      0.00      0.00
-## lp__        518357.64    0.07 3.59 518349.70 518355.48 518358.04 518360.19
+## lp__        518359.36    0.06 3.37 518352.19 518357.32 518359.60 518361.67
 ##                 97.5% n_eff Rhat
-## lambda         203.47  3391    1
-## alpha_acam       0.08  3131    1
-## alpha_amme       1.52  3236    1
-## alpha_anar       0.13  3336    1
-## alpha_brho       0.01  3278    1
-## alpha_brni       0.15  3488    1
-## alpha_ceso       0.00  3292    1
-## alpha_gitr       0.01  3301    1
-## alpha_leni       0.13  3420    1
-## alpha_lomu       0.09  3411    1
-## alpha_mael       0.83  3282    1
-## alpha_mica       0.16  3195    1
-## alpha_pler       0.06  3414    1
-## alpha_plno       0.20  3109    1
-## alpha_taca       0.17  3403    1
-## alpha_thir      -0.05  3467    1
+## lambda         203.34  3256    1
+## alpha_acam       0.08  2907    1
+## alpha_amme       1.52  2810    1
+## alpha_anar       0.13  3552    1
+## alpha_brho       0.01  3139    1
+## alpha_brni       0.15  3142    1
+## alpha_ceso       0.00  3452    1
+## alpha_gitr       0.01  3039    1
+## alpha_leni       0.13  3240    1
+## alpha_lomu       0.09  3404    1
+## alpha_mael       0.83  3316    1
+## alpha_mica       0.16  3395    1
+## alpha_pler       0.06  3673    1
+## alpha_plno       0.20  3322    1
+## alpha_taca       0.17  3333    1
+## alpha_thir      -0.05  3361    1
 ## alpha_twil      -0.76  3242    1
-## alpha_crco       0.00  3662    1
-## alpha_erbo      -0.19  3042    1
-## alpha_figa       0.05  3190    1
-## alpha_gamu      -0.09  3480    1
-## alpha_hygl       0.72  3025    1
-## alpha_siga      -0.03  3426    1
-## alpha_other      0.01  3140    1
-## lp__        518363.45  2887    1
+## alpha_crco       0.00  3568    1
+## alpha_erbo      -0.19  3272    1
+## alpha_figa       0.05  3457    1
+## alpha_gamu      -0.09  3355    1
+## alpha_hygl       0.72  3311    1
+## alpha_siga      -0.03  3355    1
+## alpha_other      0.01  3329    1
+## lp__        518365.19  2841    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:08:16 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:17:15 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1137,7 +1137,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         152.94    0.02 0.92    151.10    152.29    152.95    153.57
+## lambda         152.94    0.02 0.91    151.16    152.30    152.95    153.55
 ## alpha_acam       0.20    0.00 0.02      0.17      0.19      0.20      0.21
 ## alpha_amme       0.51    0.00 0.02      0.47      0.49      0.51      0.52
 ## alpha_anar       0.01    0.00 0.00      0.01      0.01      0.01      0.01
@@ -1152,7 +1152,7 @@ for(i in species){
 ## alpha_pler       0.09    0.00 0.00      0.09      0.09      0.09      0.10
 ## alpha_plno      -0.27    0.00 0.01     -0.28     -0.27     -0.27     -0.26
 ## alpha_taca       0.11    0.00 0.00      0.10      0.11      0.11      0.11
-## alpha_thir      -0.23    0.00 0.00     -0.23     -0.23     -0.23     -0.22
+## alpha_thir      -0.23    0.00 0.01     -0.24     -0.23     -0.23     -0.22
 ## alpha_twil      -0.04    0.00 0.00     -0.04     -0.04     -0.04     -0.04
 ## alpha_crco       0.16    0.00 0.01      0.15      0.16      0.16      0.17
 ## alpha_erbo       1.08    0.00 0.06      0.97      1.04      1.08      1.12
@@ -1161,35 +1161,35 @@ for(i in species){
 ## alpha_hygl      -0.14    0.00 0.01     -0.15     -0.15     -0.14     -0.14
 ## alpha_siga       0.69    0.00 0.03      0.64      0.67      0.69      0.71
 ## alpha_other     -0.08    0.00 0.00     -0.09     -0.08     -0.08     -0.08
-## lp__        512211.59    0.06 3.40 512204.10 512209.41 512211.92 512214.05
+## lp__        512213.05    0.06 3.47 512205.37 512210.94 512213.46 512215.47
 ##                 97.5% n_eff Rhat
-## lambda         154.69  3195    1
-## alpha_acam       0.23  3329    1
-## alpha_amme       0.54  3319    1
-## alpha_anar       0.01  3505    1
-## alpha_brho       0.10  3215    1
-## alpha_brni       0.13  3253    1
-## alpha_ceso       0.06  3475    1
-## alpha_gitr       0.03  3585    1
-## alpha_leni       0.04  3636    1
-## alpha_lomu       0.10  3381    1
-## alpha_mael       0.12  3125    1
-## alpha_mica       0.04  3652    1
-## alpha_pler       0.10  3228    1
-## alpha_plno      -0.25  2971    1
-## alpha_taca       0.12  3182    1
-## alpha_thir      -0.22  3201    1
-## alpha_twil      -0.03  3268    1
-## alpha_crco       0.17  3351    1
-## alpha_erbo       1.19  3248    1
-## alpha_figa      -0.45  3479    1
-## alpha_gamu      -0.09  3461    1
-## alpha_hygl      -0.13  2983    1
-## alpha_siga       0.75  3144    1
-## alpha_other     -0.07  3564    1
-## lp__        512217.30  2785    1
+## lambda         154.79  3163    1
+## alpha_acam       0.23  3376    1
+## alpha_amme       0.54  3084    1
+## alpha_anar       0.01  3423    1
+## alpha_brho       0.10  3179    1
+## alpha_brni       0.13  3464    1
+## alpha_ceso       0.06  3315    1
+## alpha_gitr       0.03  3127    1
+## alpha_leni       0.04  3085    1
+## alpha_lomu       0.10  3255    1
+## alpha_mael       0.12  2981    1
+## alpha_mica       0.04  3404    1
+## alpha_pler       0.10  3274    1
+## alpha_plno      -0.25  3152    1
+## alpha_taca       0.12  3292    1
+## alpha_thir      -0.22  2987    1
+## alpha_twil      -0.03  3087    1
+## alpha_crco       0.17  3248    1
+## alpha_erbo       1.19  2959    1
+## alpha_figa      -0.45  3134    1
+## alpha_gamu      -0.09  3250    1
+## alpha_hygl      -0.13  2784    1
+## alpha_siga       0.75  3187    1
+## alpha_other     -0.07  3141    1
+## lp__        512218.87  3178    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:10:46 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:18:42 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1200,7 +1200,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         218.12    0.02 1.36    215.46    217.19    218.15    219.03
+## lambda         218.12    0.02 1.33    215.37    217.26    218.12    219.02
 ## alpha_acam       0.05    0.00 0.01      0.03      0.05      0.05      0.06
 ## alpha_amme       0.65    0.00 0.05      0.56      0.62      0.65      0.69
 ## alpha_anar       0.14    0.00 0.00      0.13      0.14      0.14      0.14
@@ -1208,15 +1208,15 @@ for(i in species){
 ## alpha_brni       0.33    0.00 0.01      0.31      0.32      0.33      0.33
 ## alpha_ceso       0.15    0.00 0.01      0.14      0.15      0.15      0.16
 ## alpha_gitr       0.04    0.00 0.00      0.04      0.04      0.04      0.04
-## alpha_leni       0.21    0.00 0.01      0.20      0.21      0.21      0.21
+## alpha_leni       0.21    0.00 0.00      0.20      0.21      0.21      0.21
 ## alpha_lomu       0.15    0.00 0.00      0.14      0.15      0.15      0.15
 ## alpha_mael      -0.12    0.00 0.03     -0.17     -0.14     -0.12     -0.10
 ## alpha_mica       0.36    0.00 0.01      0.34      0.35      0.36      0.36
-## alpha_pler       0.17    0.00 0.00      0.16      0.16      0.17      0.17
+## alpha_pler       0.16    0.00 0.00      0.16      0.16      0.16      0.17
 ## alpha_plno       0.76    0.00 0.04      0.69      0.74      0.76      0.79
 ## alpha_taca       0.23    0.00 0.01      0.22      0.22      0.23      0.23
 ## alpha_thir       0.11    0.00 0.01      0.09      0.10      0.11      0.11
-## alpha_twil       1.78    0.00 0.08      1.62      1.72      1.78      1.83
+## alpha_twil       1.77    0.00 0.08      1.61      1.71      1.77      1.83
 ## alpha_crco       0.01    0.00 0.00      0.01      0.01      0.01      0.01
 ## alpha_erbo       0.07    0.00 0.01      0.05      0.06      0.07      0.07
 ## alpha_figa       0.06    0.00 0.00      0.05      0.06      0.06      0.06
@@ -1224,35 +1224,35 @@ for(i in species){
 ## alpha_hygl       0.27    0.00 0.01      0.24      0.26      0.27      0.27
 ## alpha_siga       0.09    0.00 0.00      0.08      0.08      0.09      0.09
 ## alpha_other      0.24    0.00 0.00      0.24      0.24      0.24      0.25
-## lp__        492023.90    0.06 3.47 492016.01 492021.85 492024.27 492026.37
+## lp__        492026.02    0.07 3.44 492018.27 492023.86 492026.32 492028.46
 ##                 97.5% n_eff Rhat
-## lambda         220.82  3498    1
-## alpha_acam       0.08  3093    1
-## alpha_amme       0.75  3400    1
-## alpha_anar       0.15  3305    1
-## alpha_brho       0.08  3513    1
-## alpha_brni       0.34  3376    1
-## alpha_ceso       0.16  3412    1
-## alpha_gitr       0.04  3500    1
-## alpha_leni       0.22  3333    1
-## alpha_lomu       0.16  3344    1
-## alpha_mael      -0.07  3255    1
-## alpha_mica       0.38  3355    1
-## alpha_pler       0.17  3705    1
-## alpha_plno       0.84  3094    1
-## alpha_taca       0.24  3456    1
-## alpha_thir       0.13  3654    1
-## alpha_twil       1.93  3424    1
-## alpha_crco       0.01  3263    1
-## alpha_erbo       0.08  3623    1
-## alpha_figa       0.07  3442    1
-## alpha_gamu      -0.06  3754    1
-## alpha_hygl       0.29  3649    1
-## alpha_siga       0.09  3619    1
-## alpha_other      0.25  3226    1
-## lp__        492029.60  2957    1
+## lambda         220.61  3370    1
+## alpha_acam       0.08  3456    1
+## alpha_amme       0.75  3208    1
+## alpha_anar       0.15  3469    1
+## alpha_brho       0.08  3760    1
+## alpha_brni       0.34  3179    1
+## alpha_ceso       0.16  3562    1
+## alpha_gitr       0.04  3342    1
+## alpha_leni       0.22  3383    1
+## alpha_lomu       0.16  3392    1
+## alpha_mael      -0.06  3487    1
+## alpha_mica       0.38  3267    1
+## alpha_pler       0.17  3454    1
+## alpha_plno       0.84  3353    1
+## alpha_taca       0.24  3362    1
+## alpha_thir       0.13  3461    1
+## alpha_twil       1.94  3366    1
+## alpha_crco       0.01  3305    1
+## alpha_erbo       0.08  3396    1
+## alpha_figa       0.07  3352    1
+## alpha_gamu      -0.06  3758    1
+## alpha_hygl       0.29  3383    1
+## alpha_siga       0.09  3403    1
+## alpha_other      0.25  3781    1
+## lp__        492031.86  2622    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:15:04 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:21:30 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1263,7 +1263,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                   mean se_mean   sd       2.5%        25%        50%        75%
-## lambda          185.51    0.02 0.95     183.65     184.86     185.49     186.15
+## lambda          185.49    0.02 0.97     183.61     184.84     185.48     186.16
 ## alpha_acam       -0.17    0.00 0.00      -0.18      -0.17      -0.17      -0.17
 ## alpha_amme        0.00    0.00 0.01      -0.02      -0.01       0.00       0.00
 ## alpha_anar       -0.01    0.00 0.00      -0.01      -0.01      -0.01      -0.01
@@ -1272,11 +1272,11 @@ for(i in species){
 ## alpha_ceso        0.12    0.00 0.00       0.12       0.12       0.12       0.13
 ## alpha_gitr        0.02    0.00 0.00       0.02       0.02       0.02       0.02
 ## alpha_leni        0.01    0.00 0.00       0.01       0.01       0.01       0.01
-## alpha_lomu        0.02    0.00 0.00       0.02       0.02       0.02       0.03
+## alpha_lomu        0.03    0.00 0.00       0.02       0.02       0.03       0.03
 ## alpha_mael        0.01    0.00 0.00       0.01       0.01       0.01       0.02
 ## alpha_mica        0.00    0.00 0.00       0.00       0.00       0.00       0.00
 ## alpha_pler        0.03    0.00 0.00       0.02       0.03       0.03       0.03
-## alpha_plno        0.07    0.00 0.01       0.05       0.06       0.07       0.07
+## alpha_plno        0.07    0.00 0.01       0.06       0.06       0.07       0.07
 ## alpha_taca        0.01    0.00 0.00       0.01       0.01       0.01       0.01
 ## alpha_thir        0.04    0.00 0.00       0.03       0.04       0.04       0.04
 ## alpha_twil       -0.08    0.00 0.00      -0.09      -0.08      -0.08      -0.08
@@ -1287,35 +1287,35 @@ for(i in species){
 ## alpha_hygl        0.08    0.00 0.00       0.07       0.07       0.08       0.08
 ## alpha_siga        0.06    0.00 0.01       0.04       0.05       0.06       0.06
 ## alpha_other      -0.08    0.00 0.00      -0.08      -0.08      -0.08      -0.08
-## lp__        1077994.37    0.06 3.46 1077986.68 1077992.25 1077994.68 1077996.85
+## lp__        1077997.72    0.07 3.51 1077989.72 1077995.59 1077998.09 1078000.25
 ##                  97.5% n_eff Rhat
-## lambda          187.40  3358    1
-## alpha_acam       -0.17  3540    1
-## alpha_amme        0.01  3208    1
-## alpha_anar       -0.01  3540    1
-## alpha_brho        0.00  3466    1
-## alpha_brni        0.09  2734    1
-## alpha_ceso        0.13  3081    1
-## alpha_gitr        0.02  3300    1
-## alpha_leni        0.01  3084    1
-## alpha_lomu        0.03  3816    1
-## alpha_mael        0.02  3152    1
-## alpha_mica        0.00  3368    1
-## alpha_pler        0.03  3008    1
-## alpha_plno        0.08  3342    1
-## alpha_taca        0.01  3078    1
-## alpha_thir        0.04  3389    1
-## alpha_twil       -0.08  3137    1
-## alpha_crco        0.02  3364    1
-## alpha_erbo        0.46  3255    1
-## alpha_figa        0.16  3437    1
-## alpha_gamu        0.00  3088    1
-## alpha_hygl        0.08  3089    1
-## alpha_siga        0.07  3204    1
-## alpha_other      -0.08  3426    1
-## lp__        1078000.28  3096    1
+## lambda          187.40  3212    1
+## alpha_acam       -0.17  3457    1
+## alpha_amme        0.01  3438    1
+## alpha_anar       -0.01  3303    1
+## alpha_brho        0.00  3159    1
+## alpha_brni        0.09  3084    1
+## alpha_ceso        0.13  3149    1
+## alpha_gitr        0.02  3482    1
+## alpha_leni        0.01  3317    1
+## alpha_lomu        0.03  3752    1
+## alpha_mael        0.02  3206    1
+## alpha_mica        0.00  3346    1
+## alpha_pler        0.03  3553    1
+## alpha_plno        0.08  3182    1
+## alpha_taca        0.01  3602    1
+## alpha_thir        0.04  3197    1
+## alpha_twil       -0.08  3808    1
+## alpha_crco        0.02  3379    1
+## alpha_erbo        0.46  3057    1
+## alpha_figa        0.16  3397    1
+## alpha_gamu        0.00  3175    1
+## alpha_hygl        0.08  3179    1
+## alpha_siga        0.08  3225    1
+## alpha_other      -0.08  3318    1
+## lp__        1078003.45  2842    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:18:32 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:24:52 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1326,9 +1326,9 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         767.72    0.09 5.05    757.89    764.30    767.72    771.08
+## lambda         767.79    0.09 5.12    757.75    764.41    767.79    771.30
 ## alpha_acam      -0.17    0.00 0.00     -0.18     -0.18     -0.17     -0.17
-## alpha_amme       0.36    0.00 0.06      0.24      0.32      0.36      0.40
+## alpha_amme       0.36    0.00 0.06      0.25      0.32      0.36      0.40
 ## alpha_anar       0.00    0.00 0.00      0.00      0.00      0.00      0.00
 ## alpha_brho       0.02    0.00 0.00      0.02      0.02      0.02      0.02
 ## alpha_brni       0.09    0.00 0.00      0.09      0.09      0.09      0.09
@@ -1342,43 +1342,43 @@ for(i in species){
 ## alpha_plno       0.14    0.00 0.01      0.12      0.13      0.14      0.14
 ## alpha_taca       0.01    0.00 0.00      0.01      0.01      0.01      0.01
 ## alpha_thir       0.01    0.00 0.00      0.01      0.01      0.01      0.01
-## alpha_twil      -0.51    0.00 0.03     -0.57     -0.54     -0.52     -0.49
+## alpha_twil      -0.51    0.00 0.03     -0.57     -0.53     -0.51     -0.49
 ## alpha_crco       0.01    0.00 0.00      0.01      0.01      0.01      0.01
 ## alpha_erbo       0.46    0.00 0.01      0.44      0.45      0.46      0.46
 ## alpha_figa       0.42    0.00 0.00      0.41      0.41      0.42      0.42
 ## alpha_gamu       0.02    0.00 0.00      0.01      0.02      0.02      0.02
-## alpha_hygl      -0.22    0.00 0.01     -0.24     -0.22     -0.22     -0.21
+## alpha_hygl      -0.22    0.00 0.01     -0.23     -0.22     -0.22     -0.21
 ## alpha_siga      -0.06    0.00 0.00     -0.06     -0.06     -0.06     -0.05
 ## alpha_other     -0.03    0.00 0.00     -0.03     -0.03     -0.03     -0.03
-## lp__        747549.34    0.06 3.52 747541.62 747547.22 747549.65 747551.87
+## lp__        747549.62    0.06 3.37 747542.46 747547.54 747549.92 747552.03
 ##                 97.5% n_eff Rhat
-## lambda         777.91  2960    1
-## alpha_acam      -0.17  3075    1
-## alpha_amme       0.48  3128    1
-## alpha_anar       0.01  3629    1
-## alpha_brho       0.02  3237    1
-## alpha_brni       0.10  3348    1
-## alpha_ceso       0.16  3316    1
-## alpha_gitr       0.03  3310    1
-## alpha_leni       0.06  2945    1
-## alpha_lomu       0.02  3263    1
-## alpha_mael       0.50  2953    1
-## alpha_mica      -0.02  3323    1
-## alpha_pler       0.00  3277    1
-## alpha_plno       0.15  3080    1
-## alpha_taca       0.02  3330    1
-## alpha_thir       0.02  3399    1
-## alpha_twil      -0.46  3578    1
-## alpha_crco       0.01  3091    1
-## alpha_erbo       0.47  2929    1
-## alpha_figa       0.42  3274    1
-## alpha_gamu       0.02  3211    1
-## alpha_hygl      -0.20  3222    1
-## alpha_siga      -0.05  3376    1
-## alpha_other     -0.03  2967    1
-## lp__        747555.06  3048    1
+## lambda         778.08  3101    1
+## alpha_acam      -0.17  3206    1
+## alpha_amme       0.47  3171    1
+## alpha_anar       0.01  3533    1
+## alpha_brho       0.02  3187    1
+## alpha_brni       0.10  3273    1
+## alpha_ceso       0.16  3304    1
+## alpha_gitr       0.03  3758    1
+## alpha_leni       0.06  3077    1
+## alpha_lomu       0.02  3064    1
+## alpha_mael       0.50  3141    1
+## alpha_mica      -0.02  3505    1
+## alpha_pler       0.00  3645    1
+## alpha_plno       0.15  3077    1
+## alpha_taca       0.02  3260    1
+## alpha_thir       0.02  3085    1
+## alpha_twil      -0.46  3362    1
+## alpha_crco       0.01  3285    1
+## alpha_erbo       0.47  3238    1
+## alpha_figa       0.42  3384    1
+## alpha_gamu       0.02  3574    1
+## alpha_hygl      -0.20  3064    1
+## alpha_siga      -0.05  3336    1
+## alpha_other     -0.03  3348    1
+## lp__        747555.30  2908    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:21:41 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:27:40 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1389,7 +1389,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                   mean se_mean   sd       2.5%        25%        50%        75%
-## lambda          609.58    0.06 3.04     603.71     607.57     609.55     611.68
+## lambda          609.55    0.05 3.08     603.70     607.42     609.46     611.60
 ## alpha_acam        0.04    0.00 0.00       0.03       0.03       0.04       0.04
 ## alpha_amme        0.14    0.00 0.01       0.13       0.14       0.14       0.15
 ## alpha_anar        0.02    0.00 0.00       0.01       0.02       0.02       0.02
@@ -1408,40 +1408,40 @@ for(i in species){
 ## alpha_twil        0.08    0.00 0.00       0.07       0.08       0.08       0.08
 ## alpha_crco       -0.04    0.00 0.00      -0.04      -0.04      -0.04      -0.03
 ## alpha_erbo        0.92    0.00 0.03       0.87       0.90       0.92       0.94
-## alpha_figa        0.70    0.00 0.02       0.65       0.68       0.70       0.71
+## alpha_figa        0.70    0.00 0.02       0.66       0.68       0.70       0.71
 ## alpha_gamu        0.03    0.00 0.00       0.03       0.03       0.03       0.03
 ## alpha_hygl        0.16    0.00 0.01       0.15       0.16       0.16       0.17
 ## alpha_siga       -0.03    0.00 0.00      -0.04      -0.03      -0.03      -0.03
 ## alpha_other      -0.24    0.00 0.00      -0.25      -0.24      -0.24      -0.24
-## lp__        1369160.99    0.07 3.47 1369153.56 1369158.77 1369161.39 1369163.48
+## lp__        1369163.40    0.06 3.43 1369155.78 1369161.33 1369163.69 1369165.87
 ##                  97.5% n_eff Rhat
-## lambda          615.48  2985    1
-## alpha_acam        0.04  3400    1
-## alpha_amme        0.15  3575    1
-## alpha_anar        0.02  3220    1
-## alpha_brho        0.10  3372    1
-## alpha_brni        0.15  3690    1
-## alpha_ceso        0.17  3300    1
-## alpha_gitr        0.07  3869    1
-## alpha_leni        0.11  3529    1
-## alpha_lomu        0.09  3292    1
-## alpha_mael        0.31  3300    1
-## alpha_mica        0.01  3400    1
-## alpha_pler        0.11  3394    1
-## alpha_plno        0.22  3462    1
-## alpha_taca        0.26  3359    1
-## alpha_thir        0.09  3406    1
-## alpha_twil        0.08  3121    1
-## alpha_crco       -0.03  3297    1
-## alpha_erbo        0.98  3207    1
-## alpha_figa        0.74  3235    1
-## alpha_gamu        0.04  3359    1
-## alpha_hygl        0.18  3360    1
-## alpha_siga       -0.02  3454    1
-## alpha_other      -0.23  3177    1
-## lp__        1369166.73  2643    1
+## lambda          615.76  3319    1
+## alpha_acam        0.04  3188    1
+## alpha_amme        0.15  3598    1
+## alpha_anar        0.02  3464    1
+## alpha_brho        0.10  3525    1
+## alpha_brni        0.15  3471    1
+## alpha_ceso        0.17  3166    1
+## alpha_gitr        0.07  3424    1
+## alpha_leni        0.11  3582    1
+## alpha_lomu        0.09  3357    1
+## alpha_mael        0.31  2937    1
+## alpha_mica        0.01  3312    1
+## alpha_pler        0.11  3308    1
+## alpha_plno        0.22  3481    1
+## alpha_taca        0.26  3202    1
+## alpha_thir        0.09  3151    1
+## alpha_twil        0.08  3468    1
+## alpha_crco       -0.03  3332    1
+## alpha_erbo        0.97  3298    1
+## alpha_figa        0.74  3308    1
+## alpha_gamu        0.04  3622    1
+## alpha_hygl        0.18  3154    1
+## alpha_siga       -0.02  3017    1
+## alpha_other      -0.23  3419    1
+## lp__        1369169.09  2912    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:22:53 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:28:47 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1452,9 +1452,9 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                   mean se_mean   sd       2.5%        25%        50%        75%
-## lambda          556.02    0.06 3.47     549.27     553.65     556.04     558.30
-## alpha_acam        0.15    0.00 0.01       0.13       0.14       0.14       0.15
-## alpha_amme        0.01    0.02 1.01      -1.95      -0.65       0.01       0.69
+## lambda          556.07    0.06 3.45     549.37     553.66     556.15     558.37
+## alpha_acam        0.14    0.00 0.01       0.13       0.14       0.14       0.15
+## alpha_amme        0.02    0.02 1.00      -1.98      -0.64       0.04       0.69
 ## alpha_anar        0.14    0.00 0.01       0.13       0.14       0.14       0.14
 ## alpha_brho        0.08    0.00 0.00       0.08       0.08       0.08       0.08
 ## alpha_brni        0.25    0.00 0.00       0.24       0.24       0.25       0.25
@@ -1468,7 +1468,7 @@ for(i in species){
 ## alpha_plno        0.13    0.00 0.01       0.12       0.13       0.13       0.14
 ## alpha_taca        0.22    0.00 0.00       0.21       0.22       0.22       0.22
 ## alpha_thir        0.13    0.00 0.01       0.12       0.13       0.13       0.14
-## alpha_twil        1.02    0.00 0.03       0.96       1.00       1.02       1.04
+## alpha_twil        1.02    0.00 0.03       0.95       1.00       1.02       1.04
 ## alpha_crco        0.01    0.00 0.00       0.01       0.01       0.01       0.01
 ## alpha_erbo        1.35    0.00 0.02       1.32       1.34       1.35       1.36
 ## alpha_figa        0.00    0.00 0.00       0.00       0.00       0.00       0.01
@@ -1476,35 +1476,35 @@ for(i in species){
 ## alpha_hygl       -0.81    0.00 0.01      -0.82      -0.81      -0.81      -0.80
 ## alpha_siga       -0.12    0.00 0.00      -0.12      -0.12      -0.12      -0.11
 ## alpha_other       0.12    0.00 0.00       0.11       0.11       0.12       0.12
-## lp__        1047696.04    0.06 3.42 1047688.61 1047693.93 1047696.37 1047698.52
+## lp__        1047697.87    0.07 3.50 1047690.04 1047695.70 1047698.25 1047700.34
 ##                  97.5% n_eff Rhat
-## lambda          562.85  3347    1
-## alpha_acam        0.16  3709    1
-## alpha_amme        1.97  3774    1
-## alpha_anar        0.15  3304    1
-## alpha_brho        0.09  3861    1
-## alpha_brni        0.25  3766    1
-## alpha_ceso        0.19  3530    1
-## alpha_gitr        0.07  3647    1
-## alpha_leni        0.31  3621    1
-## alpha_lomu        0.14  3560    1
-## alpha_mael        0.81  3522    1
-## alpha_mica        0.19  3524    1
-## alpha_pler        0.25  3443    1
-## alpha_plno        0.15  3619    1
-## alpha_taca        0.22  3971    1
-## alpha_thir        0.15  3379    1
-## alpha_twil        1.09  3389    1
-## alpha_crco        0.01  3378    1
-## alpha_erbo        1.38  3482    1
-## alpha_figa        0.01  3403    1
-## alpha_gamu        0.03  3649    1
-## alpha_hygl       -0.79  3230    1
-## alpha_siga       -0.11  3314    1
-## alpha_other       0.13  3375    1
-## lp__        1047701.67  2890    1
+## lambda          562.87  3319    1
+## alpha_acam        0.16  3328    1
+## alpha_amme        1.97  3109    1
+## alpha_anar        0.15  3590    1
+## alpha_brho        0.09  3494    1
+## alpha_brni        0.25  3021    1
+## alpha_ceso        0.19  3223    1
+## alpha_gitr        0.07  3607    1
+## alpha_leni        0.31  2942    1
+## alpha_lomu        0.14  3623    1
+## alpha_mael        0.81  3364    1
+## alpha_mica        0.19  3411    1
+## alpha_pler        0.25  3658    1
+## alpha_plno        0.15  3325    1
+## alpha_taca        0.22  3709    1
+## alpha_thir        0.15  3166    1
+## alpha_twil        1.09  3447    1
+## alpha_crco        0.01  3275    1
+## alpha_erbo        1.38  3327    1
+## alpha_figa        0.01  3405    1
+## alpha_gamu        0.03  3479    1
+## alpha_hygl       -0.79  3284    1
+## alpha_siga       -0.11  3542    1
+## alpha_other       0.13  3484    1
+## lp__        1047703.69  2773    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:25:03 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:30:36 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1515,59 +1515,59 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                   mean se_mean   sd       2.5%        25%        50%        75%
-## lambda         1185.56    0.12 6.84    1172.11    1181.03    1185.55    1190.05
-## alpha_acam       -0.02    0.02 1.00      -1.93      -0.70      -0.03       0.65
-## alpha_amme        0.02    0.02 1.00      -1.91      -0.65       0.00       0.66
+## lambda         1185.53    0.13 7.02    1171.69    1180.79    1185.43    1190.31
+## alpha_acam       -0.02    0.02 1.00      -1.99      -0.69       0.00       0.65
+## alpha_amme       -0.01    0.02 0.99      -1.93      -0.68       0.01       0.64
 ## alpha_anar       -0.01    0.00 0.00      -0.01      -0.01      -0.01      -0.01
 ## alpha_brho        0.01    0.00 0.00       0.01       0.01       0.01       0.01
 ## alpha_brni        0.07    0.00 0.00       0.06       0.06       0.07       0.07
 ## alpha_ceso        0.26    0.00 0.00       0.25       0.26       0.26       0.27
 ## alpha_gitr        0.06    0.00 0.00       0.06       0.06       0.06       0.06
 ## alpha_leni        0.03    0.00 0.00       0.03       0.03       0.03       0.03
-## alpha_lomu        0.01    0.02 0.99      -1.91      -0.65       0.00       0.66
+## alpha_lomu        0.01    0.02 0.99      -1.98      -0.64       0.00       0.67
 ## alpha_mael        0.12    0.00 0.00       0.12       0.12       0.12       0.12
 ## alpha_mica        0.01    0.00 0.00       0.01       0.01       0.01       0.01
 ## alpha_pler        0.04    0.00 0.00       0.04       0.04       0.04       0.04
-## alpha_plno        0.02    0.02 0.99      -1.92      -0.67       0.02       0.66
+## alpha_plno        0.00    0.02 0.98      -1.95      -0.66       0.00       0.66
 ## alpha_taca        0.09    0.00 0.00       0.09       0.09       0.09       0.09
 ## alpha_thir        0.26    0.00 0.00       0.25       0.26       0.26       0.26
 ## alpha_twil       -0.12    0.00 0.00      -0.12      -0.12      -0.12      -0.12
-## alpha_crco        0.90    0.00 0.06       0.78       0.86       0.90       0.94
+## alpha_crco        0.90    0.00 0.06       0.79       0.86       0.90       0.94
 ## alpha_erbo        1.01    0.00 0.01       0.99       1.01       1.01       1.02
 ## alpha_figa        1.59    0.00 0.02       1.56       1.58       1.59       1.60
 ## alpha_gamu       -0.02    0.00 0.00      -0.02      -0.02      -0.02      -0.02
 ## alpha_hygl       -0.24    0.00 0.00      -0.24      -0.24      -0.24      -0.24
-## alpha_siga        0.09    0.00 0.04       0.02       0.07       0.09       0.12
+## alpha_siga        0.10    0.00 0.04       0.02       0.07       0.10       0.12
 ## alpha_other       0.09    0.00 0.00       0.09       0.09       0.09       0.09
-## lp__        1197914.84    0.07 3.45 1197907.08 1197912.89 1197915.20 1197917.32
+## lp__        1197915.37    0.07 3.42 1197907.92 1197913.28 1197915.70 1197917.83
 ##                  97.5% n_eff Rhat
-## lambda         1198.79  3502    1
-## alpha_acam        1.95  3732    1
-## alpha_amme        2.02  3300    1
-## alpha_anar       -0.01  3332    1
-## alpha_brho        0.01  3451    1
-## alpha_brni        0.07  3496    1
-## alpha_ceso        0.27  3334    1
-## alpha_gitr        0.06  3162    1
-## alpha_leni        0.03  3549    1
-## alpha_lomu        1.97  3540    1
-## alpha_mael        0.12  3089    1
-## alpha_mica        0.01  3476    1
-## alpha_pler        0.04  3288    1
-## alpha_plno        2.01  3365    1
-## alpha_taca        0.09  3186    1
-## alpha_thir        0.27  3428    1
-## alpha_twil       -0.12  3092    1
-## alpha_crco        1.04  3555    1
-## alpha_erbo        1.03  3392    1
-## alpha_figa        1.63  3040    1
-## alpha_gamu       -0.02  3563    1
-## alpha_hygl       -0.23  3625    1
-## alpha_siga        0.17  3418    1
-## alpha_other       0.10  3187    1
-## lp__        1197920.51  2727    1
+## lambda         1199.30  3145    1
+## alpha_acam        1.94  3337    1
+## alpha_amme        1.93  3367    1
+## alpha_anar       -0.01  3507    1
+## alpha_brho        0.01  3140    1
+## alpha_brni        0.07  3497    1
+## alpha_ceso        0.27  2982    1
+## alpha_gitr        0.06  3289    1
+## alpha_leni        0.03  3356    1
+## alpha_lomu        1.97  2958    1
+## alpha_mael        0.12  3123    1
+## alpha_mica        0.01  3530    1
+## alpha_pler        0.04  3318    1
+## alpha_plno        1.86  3182    1
+## alpha_taca        0.09  3447    1
+## alpha_thir        0.27  3203    1
+## alpha_twil       -0.12  3331    1
+## alpha_crco        1.03  3273    1
+## alpha_erbo        1.04  3462    1
+## alpha_figa        1.63  3249    1
+## alpha_gamu       -0.02  3499    1
+## alpha_hygl       -0.23  3244    1
+## alpha_siga        0.17  3224    1
+## alpha_other       0.10  3399    1
+## lp__        1197921.17  2603    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:27:18 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:32:15 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1578,23 +1578,23 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         271.88    0.11 5.65    260.68    268.14    271.82    275.79
-## alpha_acam       0.01    0.02 1.02     -2.04     -0.67      0.01      0.69
-## alpha_amme       0.02    0.02 1.01     -1.96     -0.64      0.03      0.70
+## lambda         271.76    0.11 5.67    260.42    267.96    271.77    275.51
+## alpha_acam       0.01    0.02 0.99     -1.89     -0.68      0.00      0.67
+## alpha_amme      -0.01    0.02 1.01     -1.96     -0.68     -0.01      0.66
 ## alpha_anar       0.06    0.00 0.00      0.06      0.06      0.06      0.07
 ## alpha_brho       0.08    0.00 0.00      0.08      0.08      0.08      0.09
 ## alpha_brni       0.13    0.00 0.00      0.12      0.12      0.13      0.13
-## alpha_ceso       0.17    0.00 0.01      0.16      0.17      0.17      0.17
+## alpha_ceso       0.17    0.00 0.01      0.16      0.16      0.17      0.17
 ## alpha_gitr       0.01    0.00 0.00      0.01      0.01      0.01      0.01
 ## alpha_leni       0.05    0.00 0.00      0.05      0.05      0.05      0.05
 ## alpha_lomu       0.00    0.00 0.00     -0.01      0.00      0.00      0.00
 ## alpha_mael      -0.32    0.00 0.01     -0.34     -0.33     -0.32     -0.32
 ## alpha_mica      -0.02    0.00 0.00     -0.02     -0.02     -0.02     -0.01
-## alpha_pler      -0.02    0.02 0.99     -1.93     -0.69     -0.04      0.63
-## alpha_plno       0.02    0.02 1.00     -1.94     -0.65      0.01      0.70
+## alpha_pler      -0.03    0.02 0.99     -1.95     -0.73     -0.03      0.65
+## alpha_plno       0.00    0.02 0.98     -1.94     -0.65     -0.01      0.66
 ## alpha_taca       0.01    0.00 0.00      0.01      0.01      0.01      0.01
 ## alpha_thir      -0.16    0.00 0.00     -0.17     -0.17     -0.16     -0.16
-## alpha_twil      -0.01    0.02 1.02     -2.03     -0.69     -0.03      0.68
+## alpha_twil      -0.02    0.02 1.00     -1.98     -0.69     -0.01      0.65
 ## alpha_crco       0.01    0.00 0.00      0.01      0.01      0.01      0.01
 ## alpha_erbo      -0.40    0.00 0.01     -0.42     -0.41     -0.40     -0.40
 ## alpha_figa       0.10    0.00 0.00      0.09      0.09      0.10      0.10
@@ -1602,35 +1602,35 @@ for(i in species){
 ## alpha_hygl       0.31    0.00 0.01      0.29      0.30      0.31      0.32
 ## alpha_siga      -0.13    0.00 0.00     -0.13     -0.13     -0.13     -0.13
 ## alpha_other     -0.01    0.00 0.00     -0.01     -0.01     -0.01     -0.01
-## lp__        338324.02    0.06 3.47 338316.45 338321.86 338324.39 338326.48
+## lp__        338324.97    0.07 3.50 338317.37 338322.74 338325.35 338327.49
 ##                 97.5% n_eff Rhat
-## lambda         282.70  2840    1
-## alpha_acam       1.95  3299    1
-## alpha_amme       2.03  3062    1
-## alpha_anar       0.07  3307    1
-## alpha_brho       0.09  3580    1
-## alpha_brni       0.13  3335    1
-## alpha_ceso       0.18  2977    1
-## alpha_gitr       0.01  2826    1
-## alpha_leni       0.06  3320    1
-## alpha_lomu       0.00  3878    1
-## alpha_mael      -0.30  2903    1
-## alpha_mica      -0.01  3392    1
-## alpha_pler       1.91  3497    1
-## alpha_plno       1.99  3349    1
-## alpha_taca       0.01  3291    1
-## alpha_thir      -0.16  3131    1
-## alpha_twil       2.01  3459    1
-## alpha_crco       0.01  3390    1
-## alpha_erbo      -0.39  3028    1
-## alpha_figa       0.10  3493    1
-## alpha_gamu      -0.18  3355    1
-## alpha_hygl       0.34  2932    1
-## alpha_siga      -0.12  3621    1
-## alpha_other      0.00  3056    1
-## lp__        338329.83  2938    1
+## lambda         283.24  2652    1
+## alpha_acam       1.96  3210    1
+## alpha_amme       1.99  3254    1
+## alpha_anar       0.07  3333    1
+## alpha_brho       0.09  3602    1
+## alpha_brni       0.13  3553    1
+## alpha_ceso       0.18  2976    1
+## alpha_gitr       0.01  3278    1
+## alpha_leni       0.06  3450    1
+## alpha_lomu       0.00  3703    1
+## alpha_mael      -0.30  2736    1
+## alpha_mica      -0.01  3697    1
+## alpha_pler       1.87  3004    1
+## alpha_plno       1.93  3333    1
+## alpha_taca       0.01  3435    1
+## alpha_thir      -0.16  3146    1
+## alpha_twil       1.92  3450    1
+## alpha_crco       0.01  3403    1
+## alpha_erbo      -0.39  3164    1
+## alpha_figa       0.10  3430    1
+## alpha_gamu      -0.18  3411    1
+## alpha_hygl       0.34  3161    1
+## alpha_siga      -0.12  3091    1
+## alpha_other      0.00  3156    1
+## lp__        338330.75  2639    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:28:53 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:33:17 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1641,17 +1641,17 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         240.34    0.02 1.17    238.09    239.53    240.34    241.17
+## lambda         240.35    0.02 1.15    238.09    239.54    240.35    241.14
 ## alpha_acam      -0.01    0.00 0.01     -0.02     -0.01     -0.01      0.00
 ## alpha_amme       0.73    0.00 0.03      0.67      0.71      0.73      0.75
 ## alpha_anar       0.16    0.00 0.00      0.16      0.16      0.16      0.17
 ## alpha_brho       0.08    0.00 0.00      0.07      0.08      0.08      0.08
 ## alpha_brni       0.23    0.00 0.01      0.21      0.22      0.23      0.23
-## alpha_ceso       0.27    0.00 0.01      0.25      0.26      0.27      0.27
+## alpha_ceso       0.27    0.00 0.01      0.26      0.26      0.27      0.27
 ## alpha_gitr       0.09    0.00 0.00      0.09      0.09      0.09      0.09
 ## alpha_leni       0.20    0.00 0.01      0.19      0.20      0.20      0.21
 ## alpha_lomu       0.18    0.00 0.00      0.17      0.18      0.18      0.18
-## alpha_mael       0.44    0.00 0.01      0.41      0.43      0.44      0.45
+## alpha_mael       0.44    0.00 0.02      0.41      0.43      0.44      0.45
 ## alpha_mica       0.03    0.00 0.00      0.03      0.03      0.03      0.03
 ## alpha_pler       0.17    0.00 0.00      0.16      0.16      0.17      0.17
 ## alpha_plno       0.02    0.00 0.01      0.00      0.01      0.02      0.02
@@ -1660,40 +1660,40 @@ for(i in species){
 ## alpha_twil       0.13    0.00 0.01      0.12      0.13      0.13      0.14
 ## alpha_crco      -0.44    0.00 0.00     -0.45     -0.44     -0.44     -0.43
 ## alpha_erbo       0.69    0.00 0.02      0.65      0.68      0.69      0.71
-## alpha_figa       1.90    0.00 0.05      1.80      1.87      1.90      1.93
+## alpha_figa       1.90    0.00 0.05      1.81      1.87      1.90      1.93
 ## alpha_gamu       0.49    0.00 0.00      0.48      0.48      0.49      0.49
 ## alpha_hygl       0.79    0.00 0.02      0.75      0.77      0.79      0.80
 ## alpha_siga      -0.40    0.00 0.02     -0.43     -0.41     -0.40     -0.39
 ## alpha_other      0.02    0.00 0.00      0.02      0.02      0.02      0.02
-## lp__        514046.79    0.07 3.49 514038.96 514044.57 514047.20 514049.24
+## lp__        514049.45    0.06 3.45 514041.80 514047.32 514049.82 514051.93
 ##                 97.5% n_eff Rhat
-## lambda         242.62  3138    1
-## alpha_acam       0.01  3368    1
-## alpha_amme       0.79  3120    1
-## alpha_anar       0.17  3498    1
-## alpha_brho       0.08  3720    1
-## alpha_brni       0.24  3242    1
-## alpha_ceso       0.28  3278    1
-## alpha_gitr       0.10  3239    1
-## alpha_leni       0.22  3381    1
-## alpha_lomu       0.19  3286    1
-## alpha_mael       0.47  3082    1
-## alpha_mica       0.03  3285    1
-## alpha_pler       0.18  3653    1
-## alpha_plno       0.04  3367    1
-## alpha_taca       0.22  3323    1
-## alpha_thir      -0.02  3507    1
-## alpha_twil       0.15  3710    1
-## alpha_crco      -0.43  3264    1
-## alpha_erbo       0.74  3310    1
-## alpha_figa       2.00  3587    1
-## alpha_gamu       0.49  3309    1
-## alpha_hygl       0.83  3260    1
-## alpha_siga      -0.36  3230    1
-## alpha_other      0.02  3302    1
-## lp__        514052.63  2867    1
+## lambda         242.60  3331    1
+## alpha_acam       0.01  3465    1
+## alpha_amme       0.79  3393    1
+## alpha_anar       0.17  3509    1
+## alpha_brho       0.08  3544    1
+## alpha_brni       0.24  3489    1
+## alpha_ceso       0.28  3356    1
+## alpha_gitr       0.10  3401    1
+## alpha_leni       0.22  3417    1
+## alpha_lomu       0.19  3285    1
+## alpha_mael       0.47  3362    1
+## alpha_mica       0.03  3305    1
+## alpha_pler       0.18  3298    1
+## alpha_plno       0.04  3395    1
+## alpha_taca       0.22  3525    1
+## alpha_thir      -0.02  3502    1
+## alpha_twil       0.15  3314    1
+## alpha_crco      -0.43  3385    1
+## alpha_erbo       0.74  3328    1
+## alpha_figa       1.99  3295    1
+## alpha_gamu       0.49  3401    1
+## alpha_hygl       0.83  3428    1
+## alpha_siga      -0.36  3359    1
+## alpha_other      0.02  3290    1
+## lp__        514055.18  2925    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:31:24 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:35:27 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1704,7 +1704,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         370.31    0.06 3.12    364.11    368.16    370.31    372.40
+## lambda         370.28    0.06 3.07    364.26    368.22    370.26    372.35
 ## alpha_acam      -0.31    0.00 0.01     -0.34     -0.32     -0.31     -0.30
 ## alpha_amme      -1.49    0.00 0.07     -1.63     -1.54     -1.49     -1.44
 ## alpha_anar      -0.11    0.00 0.00     -0.12     -0.11     -0.11     -0.11
@@ -1712,9 +1712,9 @@ for(i in species){
 ## alpha_brni       0.33    0.00 0.01      0.31      0.32      0.33      0.34
 ## alpha_ceso       0.05    0.00 0.01      0.04      0.05      0.05      0.06
 ## alpha_gitr       0.12    0.00 0.00      0.11      0.12      0.12      0.12
-## alpha_leni       0.58    0.00 0.02      0.55      0.57      0.58      0.59
+## alpha_leni       0.58    0.00 0.02      0.54      0.57      0.58      0.59
 ## alpha_lomu       0.14    0.00 0.01      0.12      0.13      0.14      0.14
-## alpha_mael       0.54    0.00 0.06      0.41      0.49      0.54      0.58
+## alpha_mael       0.54    0.00 0.07      0.41      0.49      0.54      0.58
 ## alpha_mica       0.02    0.00 0.00      0.02      0.02      0.02      0.02
 ## alpha_pler       0.11    0.00 0.01      0.10      0.10      0.11      0.11
 ## alpha_plno      -0.27    0.00 0.01     -0.29     -0.28     -0.27     -0.27
@@ -1728,35 +1728,35 @@ for(i in species){
 ## alpha_hygl       0.18    0.00 0.02      0.13      0.16      0.18      0.19
 ## alpha_siga      -0.03    0.00 0.00     -0.04     -0.04     -0.03     -0.03
 ## alpha_other     -0.28    0.00 0.00     -0.29     -0.28     -0.28     -0.28
-## lp__        578807.79    0.06 3.45 578799.80 578805.79 578808.05 578810.26
+## lp__        578808.98    0.07 3.55 578800.75 578806.95 578809.39 578811.48
 ##                 97.5% n_eff Rhat
-## lambda         376.47  2800    1
-## alpha_acam      -0.29  3168    1
-## alpha_amme      -1.34  3413    1
-## alpha_anar      -0.10  3700    1
-## alpha_brho       0.09  3454    1
-## alpha_brni       0.35  3353    1
-## alpha_ceso       0.07  3499    1
-## alpha_gitr       0.13  2896    1
-## alpha_leni       0.61  3474    1
-## alpha_lomu       0.15  3668    1
-## alpha_mael       0.67  3473    1
-## alpha_mica       0.03  3077    1
-## alpha_pler       0.12  3040    1
-## alpha_plno      -0.25  3442    1
-## alpha_taca       0.10  3488    1
-## alpha_thir      -0.18  3351    1
-## alpha_twil      -3.91  3290    1
-## alpha_crco      -0.03  2838    1
-## alpha_erbo      -1.85  2798    1
-## alpha_figa      -0.04  2463    1
-## alpha_gamu       0.22  3639    1
-## alpha_hygl       0.22  3305    1
-## alpha_siga      -0.02  3427    1
-## alpha_other     -0.28  2954    1
-## lp__        578813.68  3141    1
+## lambda         376.21  2938    1
+## alpha_acam      -0.29  3185    1
+## alpha_amme      -1.34  3466    1
+## alpha_anar      -0.10  3111    1
+## alpha_brho       0.09  3119    1
+## alpha_brni       0.35  3448    1
+## alpha_ceso       0.07  3266    1
+## alpha_gitr       0.13  3443    1
+## alpha_leni       0.61  3660    1
+## alpha_lomu       0.15  3355    1
+## alpha_mael       0.67  3188    1
+## alpha_mica       0.03  2791    1
+## alpha_pler       0.12  3236    1
+## alpha_plno      -0.25  3498    1
+## alpha_taca       0.10  3193    1
+## alpha_thir      -0.18  3620    1
+## alpha_twil      -3.91  3451    1
+## alpha_crco      -0.03  3210    1
+## alpha_erbo      -1.85  2707    1
+## alpha_figa      -0.04  3006    1
+## alpha_gamu       0.22  3696    1
+## alpha_hygl       0.22  3372    1
+## alpha_siga      -0.02  3445    1
+## alpha_other     -0.28  3182    1
+## lp__        578814.79  2820    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:35:22 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:39:33 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1767,17 +1767,17 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         183.31    0.02 1.28    180.84    182.48    183.28    184.15
+## lambda         183.34    0.02 1.29    180.73    182.50    183.35    184.21
 ## alpha_acam      -0.05    0.00 0.01     -0.07     -0.06     -0.05     -0.04
 ## alpha_amme       0.37    0.00 0.02      0.33      0.36      0.37      0.38
 ## alpha_anar       0.03    0.00 0.00      0.03      0.03      0.03      0.03
 ## alpha_brho       0.11    0.00 0.00      0.10      0.11      0.11      0.11
 ## alpha_brni       0.25    0.00 0.01      0.24      0.25      0.25      0.26
-## alpha_ceso       0.20    0.00 0.01      0.18      0.19      0.20      0.20
+## alpha_ceso       0.20    0.00 0.01      0.19      0.19      0.20      0.20
 ## alpha_gitr       0.07    0.00 0.00      0.07      0.07      0.07      0.07
 ## alpha_leni       0.21    0.00 0.01      0.19      0.20      0.21      0.21
 ## alpha_lomu       0.18    0.00 0.00      0.17      0.17      0.18      0.18
-## alpha_mael       0.38    0.00 0.02      0.35      0.37      0.38      0.40
+## alpha_mael       0.39    0.00 0.02      0.35      0.37      0.38      0.40
 ## alpha_mica       0.04    0.00 0.00      0.03      0.03      0.04      0.04
 ## alpha_pler       0.06    0.00 0.00      0.05      0.06      0.06      0.06
 ## alpha_plno       0.09    0.00 0.01      0.07      0.08      0.09      0.10
@@ -1791,35 +1791,35 @@ for(i in species){
 ## alpha_hygl      -0.37    0.00 0.01     -0.39     -0.38     -0.37     -0.37
 ## alpha_siga      -0.14    0.00 0.01     -0.15     -0.14     -0.14     -0.13
 ## alpha_other      0.25    0.00 0.01      0.24      0.25      0.25      0.26
-## lp__        372474.40    0.06 3.55 372466.28 372472.15 372474.78 372476.99
+## lp__        372476.01    0.06 3.45 372468.29 372473.93 372476.32 372478.49
 ##                 97.5% n_eff Rhat
-## lambda         185.88  3305    1
-## alpha_acam      -0.03  3096    1
-## alpha_amme       0.41  3113    1
-## alpha_anar       0.03  3745    1
-## alpha_brho       0.12  3321    1
-## alpha_brni       0.26  3142    1
-## alpha_ceso       0.21  3306    1
-## alpha_gitr       0.07  3313    1
-## alpha_leni       0.22  3516    1
-## alpha_lomu       0.19  3371    1
-## alpha_mael       0.42  3179    1
-## alpha_mica       0.04  3563    1
-## alpha_pler       0.06  3274    1
-## alpha_plno       0.11  3397    1
-## alpha_taca       0.25  2850    1
-## alpha_thir       0.05  3409    1
-## alpha_twil       0.12  3508    1
-## alpha_crco       0.13  3073    1
-## alpha_erbo       1.07  3377    1
-## alpha_figa       0.42  3233    1
-## alpha_gamu      -0.04  3470    1
-## alpha_hygl      -0.35  3233    1
-## alpha_siga      -0.12  3267    1
-## alpha_other      0.27  3289    1
-## lp__        372480.16  3082    1
+## lambda         185.83  3164    1
+## alpha_acam      -0.03  3407    1
+## alpha_amme       0.41  3243    1
+## alpha_anar       0.03  3695    1
+## alpha_brho       0.12  3173    1
+## alpha_brni       0.26  3245    1
+## alpha_ceso       0.21  3576    1
+## alpha_gitr       0.07  3417    1
+## alpha_leni       0.22  3219    1
+## alpha_lomu       0.19  3146    1
+## alpha_mael       0.42  3134    1
+## alpha_mica       0.04  3372    1
+## alpha_pler       0.06  3421    1
+## alpha_plno       0.11  3153    1
+## alpha_taca       0.25  3410    1
+## alpha_thir       0.05  3235    1
+## alpha_twil       0.12  3273    1
+## alpha_crco       0.13  3327    1
+## alpha_erbo       1.07  3174    1
+## alpha_figa       0.42  2984    1
+## alpha_gamu      -0.04  3516    1
+## alpha_hygl      -0.35  3165    1
+## alpha_siga      -0.12  3365    1
+## alpha_other      0.27  3260    1
+## lp__        372481.80  3056    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:36:26 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:40:36 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1830,59 +1830,59 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda          94.44    0.02 0.89     92.74     93.85     94.42     95.05
+## lambda          94.43    0.02 0.90     92.73     93.81     94.41     95.03
 ## alpha_acam      -0.18    0.00 0.01     -0.20     -0.19     -0.18     -0.18
-## alpha_amme       1.12    0.00 0.20      0.75      0.98      1.11      1.25
+## alpha_amme       1.12    0.00 0.20      0.72      0.98      1.11      1.26
 ## alpha_anar      -0.04    0.00 0.00     -0.05     -0.04     -0.04     -0.04
 ## alpha_brho       0.05    0.00 0.00      0.04      0.05      0.05      0.05
 ## alpha_brni       0.12    0.00 0.01      0.11      0.12      0.12      0.13
-## alpha_ceso       0.20    0.00 0.01      0.19      0.20      0.20      0.21
+## alpha_ceso       0.21    0.00 0.01      0.19      0.20      0.21      0.21
 ## alpha_gitr       0.07    0.00 0.00      0.07      0.07      0.07      0.07
 ## alpha_leni       0.42    0.00 0.02      0.39      0.41      0.42      0.43
 ## alpha_lomu       0.10    0.00 0.01      0.09      0.10      0.10      0.10
-## alpha_mael       0.22    0.00 0.06      0.10      0.17      0.22      0.26
+## alpha_mael       0.22    0.00 0.06      0.09      0.18      0.22      0.26
 ## alpha_mica       0.25    0.00 0.01      0.22      0.24      0.25      0.26
 ## alpha_pler       0.01    0.00 0.00      0.01      0.01      0.01      0.01
-## alpha_plno      -0.23    0.00 0.02     -0.28     -0.25     -0.23     -0.22
+## alpha_plno      -0.23    0.00 0.02     -0.28     -0.25     -0.24     -0.22
 ## alpha_taca       0.04    0.00 0.00      0.03      0.03      0.04      0.04
 ## alpha_thir      -0.01    0.00 0.01     -0.03     -0.02     -0.01      0.00
-## alpha_twil      -1.14    0.00 0.09     -1.32     -1.21     -1.15     -1.08
+## alpha_twil      -1.15    0.00 0.09     -1.33     -1.21     -1.15     -1.08
 ## alpha_crco      -0.01    0.00 0.00     -0.01     -0.01     -0.01     -0.01
-## alpha_erbo       1.07    0.00 0.05      0.97      1.04      1.07      1.11
+## alpha_erbo       1.08    0.00 0.05      0.97      1.04      1.08      1.11
 ## alpha_figa       0.07    0.00 0.01      0.06      0.07      0.07      0.08
 ## alpha_gamu      -0.06    0.00 0.01     -0.07     -0.06     -0.06     -0.06
 ## alpha_hygl      -0.04    0.00 0.02     -0.07     -0.05     -0.04     -0.03
 ## alpha_siga      -0.09    0.00 0.00     -0.10     -0.09     -0.09     -0.09
 ## alpha_other     -0.06    0.00 0.01     -0.07     -0.06     -0.06     -0.05
-## lp__        226547.82    0.06 3.50 226540.23 226545.64 226548.14 226550.35
+## lp__        226549.62    0.06 3.57 226541.50 226547.52 226550.05 226552.15
 ##                 97.5% n_eff Rhat
-## lambda          96.20  3052    1
-## alpha_acam      -0.17  3514    1
-## alpha_amme       1.50  3114    1
-## alpha_anar      -0.03  3339    1
-## alpha_brho       0.05  3795    1
-## alpha_brni       0.14  3118    1
+## lambda          96.18  3079    1
+## alpha_acam      -0.17  3242    1
+## alpha_amme       1.51  3210    1
+## alpha_anar      -0.03  3360    1
+## alpha_brho       0.05  3270    1
+## alpha_brni       0.14  3106    1
 ## alpha_ceso       0.22  3161    1
-## alpha_gitr       0.08  3402    1
-## alpha_leni       0.46  3309    1
-## alpha_lomu       0.11  2774    1
-## alpha_mael       0.34  3267    1
-## alpha_mica       0.27  2819    1
-## alpha_pler       0.01  3240    1
-## alpha_plno      -0.19  3334    1
-## alpha_taca       0.05  3514    1
-## alpha_thir       0.01  3260    1
-## alpha_twil      -0.96  3147    1
-## alpha_crco      -0.01  3393    1
-## alpha_erbo       1.18  3451    1
-## alpha_figa       0.08  3174    1
-## alpha_gamu      -0.05  3360    1
-## alpha_hygl       0.00  3378    1
-## alpha_siga      -0.09  3739    1
-## alpha_other     -0.04  3319    1
-## lp__        226553.72  2962    1
+## alpha_gitr       0.08  3522    1
+## alpha_leni       0.46  3120    1
+## alpha_lomu       0.11  3148    1
+## alpha_mael       0.34  3099    1
+## alpha_mica       0.27  3261    1
+## alpha_pler       0.01  3258    1
+## alpha_plno      -0.19  3234    1
+## alpha_taca       0.05  3193    1
+## alpha_thir       0.01  2915    1
+## alpha_twil      -0.96  3250    1
+## alpha_crco      -0.01  3265    1
+## alpha_erbo       1.18  3284    1
+## alpha_figa       0.08  3160    1
+## alpha_gamu      -0.05  3300    1
+## alpha_hygl       0.00  3233    1
+## alpha_siga      -0.09  3503    1
+## alpha_other     -0.04  3469    1
+## lp__        226555.46  3076    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:39:21 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:43:03 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1893,21 +1893,21 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         326.67    0.06 3.48    319.99    324.34    326.60    328.97
+## lambda         326.74    0.06 3.40    320.12    324.46    326.69    328.98
 ## alpha_acam      -0.12    0.00 0.00     -0.13     -0.12     -0.12     -0.12
-## alpha_amme      -0.02    0.02 1.02     -2.03     -0.69      0.00      0.69
-## alpha_anar       0.04    0.02 0.98     -1.82     -0.62      0.03      0.70
-## alpha_brho       0.00    0.02 0.99     -1.96     -0.69     -0.02      0.68
+## alpha_amme      -0.01    0.02 0.99     -1.99     -0.68     -0.02      0.66
+## alpha_anar      -0.02    0.02 0.99     -1.95     -0.71      0.01      0.68
+## alpha_brho       0.00    0.02 1.00     -1.91     -0.67     -0.02      0.69
 ## alpha_brni       0.09    0.00 0.00      0.09      0.09      0.09      0.09
-## alpha_ceso      -0.02    0.02 0.99     -1.91     -0.71     -0.03      0.64
+## alpha_ceso      -0.01    0.02 0.99     -1.92     -0.65     -0.01      0.65
 ## alpha_gitr       0.01    0.00 0.00      0.01      0.01      0.01      0.01
 ## alpha_leni       0.03    0.00 0.00      0.03      0.03      0.03      0.03
 ## alpha_lomu       0.06    0.00 0.00      0.06      0.06      0.06      0.06
-## alpha_mael       0.00    0.02 1.03     -1.97     -0.68     -0.02      0.70
+## alpha_mael       0.00    0.02 0.98     -1.93     -0.67     -0.01      0.67
 ## alpha_mica       0.01    0.00 0.00      0.01      0.01      0.01      0.01
-## alpha_pler       0.00    0.02 0.99     -2.04     -0.66      0.00      0.69
+## alpha_pler       0.02    0.02 1.00     -1.92     -0.67      0.03      0.68
 ## alpha_plno       0.04    0.00 0.00      0.03      0.03      0.04      0.04
-## alpha_taca       0.00    0.02 0.98     -1.93     -0.67      0.00      0.65
+## alpha_taca       0.00    0.02 1.01     -2.01     -0.69     -0.03      0.69
 ## alpha_thir       0.09    0.00 0.00      0.09      0.09      0.09      0.10
 ## alpha_twil      -0.02    0.00 0.00     -0.02     -0.02     -0.02     -0.02
 ## alpha_crco       0.24    0.00 0.01      0.22      0.24      0.24      0.25
@@ -1917,35 +1917,35 @@ for(i in species){
 ## alpha_hygl       0.03    0.00 0.00      0.02      0.03      0.03      0.03
 ## alpha_siga      -0.31    0.00 0.02     -0.36     -0.33     -0.31     -0.29
 ## alpha_other      0.24    0.00 0.01      0.23      0.24      0.24      0.24
-## lp__        210706.43    0.07 3.47 210698.86 210704.28 210706.74 210708.98
+## lp__        210706.83    0.07 3.42 210699.31 210704.75 210707.23 210709.22
 ##                 97.5% n_eff Rhat
-## lambda         333.82  3443    1
-## alpha_acam      -0.12  3659    1
-## alpha_amme       1.95  3180    1
-## alpha_anar       1.94  3457    1
-## alpha_brho       1.94  2921    1
-## alpha_brni       0.10  3618    1
-## alpha_ceso       1.94  3360    1
-## alpha_gitr       0.01  3423    1
-## alpha_leni       0.04  3856    1
-## alpha_lomu       0.07  3537    1
-## alpha_mael       2.03  3182    1
-## alpha_mica       0.01  3394    1
-## alpha_pler       1.86  3515    1
-## alpha_plno       0.04  3301    1
-## alpha_taca       1.91  3014    1
-## alpha_thir       0.10  3368    1
-## alpha_twil      -0.02  3711    1
-## alpha_crco       0.27  3217    1
-## alpha_erbo       0.64  3336    1
-## alpha_figa       0.14  3281    1
-## alpha_gamu       0.03  3488    1
-## alpha_hygl       0.04  3264    1
-## alpha_siga      -0.26  3369    1
-## alpha_other      0.25  3424    1
-## lp__        210712.15  2852    1
+## lambda         333.44  3119    1
+## alpha_acam      -0.12  3530    1
+## alpha_amme       1.93  3027    1
+## alpha_anar       1.88  3191    1
+## alpha_brho       1.95  3446    1
+## alpha_brni       0.10  3460    1
+## alpha_ceso       1.97  3432    1
+## alpha_gitr       0.01  3317    1
+## alpha_leni       0.04  3441    1
+## alpha_lomu       0.07  3392    1
+## alpha_mael       1.91  3298    1
+## alpha_mica       0.01  3253    1
+## alpha_pler       2.03  3315    1
+## alpha_plno       0.04  3302    1
+## alpha_taca       1.96  2815    1
+## alpha_thir       0.10  3421    1
+## alpha_twil      -0.02  3428    1
+## alpha_crco       0.27  2944    1
+## alpha_erbo       0.64  3287    1
+## alpha_figa       0.14  3270    1
+## alpha_gamu       0.03  3422    1
+## alpha_hygl       0.04  3488    1
+## alpha_siga      -0.26  3022    1
+## alpha_other      0.25  3354    1
+## lp__        210712.54  2703    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:40:38 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:46:58 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -1956,23 +1956,23 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         279.27    0.08 4.72    270.33    275.98    279.17    282.43
+## lambda         278.84    0.08 4.71    269.93    275.70    278.78    281.95
 ## alpha_acam       0.07    0.00 0.01      0.05      0.06      0.07      0.07
-## alpha_amme       0.02    0.02 0.99     -1.92     -0.65      0.03      0.68
-## alpha_anar       0.01    0.02 1.01     -1.97     -0.68     -0.01      0.70
+## alpha_amme       0.01    0.02 0.99     -1.98     -0.65      0.02      0.66
+## alpha_anar      -0.01    0.02 1.00     -1.96     -0.66     -0.04      0.67
 ## alpha_brho       0.00    0.00 0.00     -0.01      0.00      0.00      0.00
-## alpha_brni      -0.01    0.02 1.01     -1.97     -0.68     -0.02      0.67
-## alpha_ceso       0.01    0.02 1.00     -1.94     -0.68      0.00      0.70
+## alpha_brni      -0.01    0.02 0.99     -1.91     -0.70     -0.03      0.69
+## alpha_ceso       0.02    0.02 0.99     -1.97     -0.64      0.02      0.67
 ## alpha_gitr       0.01    0.00 0.00      0.01      0.01      0.01      0.01
-## alpha_leni       0.01    0.02 1.00     -1.89     -0.67      0.01      0.68
-## alpha_lomu      -0.02    0.02 1.03     -1.97     -0.73     -0.03      0.69
-## alpha_mael       0.24    0.00 0.03      0.19      0.23      0.24      0.26
+## alpha_leni      -0.01    0.02 1.02     -2.02     -0.69     -0.03      0.67
+## alpha_lomu       0.00    0.02 0.98     -1.99     -0.66      0.00      0.66
+## alpha_mael       0.24    0.00 0.02      0.20      0.23      0.24      0.26
 ## alpha_mica       0.03    0.00 0.00      0.02      0.03      0.03      0.03
 ## alpha_pler       0.00    0.00 0.00      0.00      0.00      0.00      0.01
 ## alpha_plno      -0.04    0.00 0.00     -0.05     -0.05     -0.04     -0.04
 ## alpha_taca       0.02    0.00 0.00      0.02      0.02      0.02      0.02
 ## alpha_thir       0.12    0.00 0.01      0.10      0.11      0.12      0.12
-## alpha_twil      -1.80    0.00 0.07     -1.94     -1.85     -1.80     -1.76
+## alpha_twil      -1.80    0.00 0.07     -1.93     -1.85     -1.80     -1.76
 ## alpha_crco      -0.01    0.00 0.00     -0.01     -0.01     -0.01     -0.01
 ## alpha_erbo       0.13    0.00 0.04      0.05      0.10      0.13      0.15
 ## alpha_figa       0.05    0.00 0.01      0.04      0.05      0.05      0.06
@@ -1980,35 +1980,35 @@ for(i in species){
 ## alpha_hygl       0.37    0.00 0.02      0.33      0.35      0.37      0.38
 ## alpha_siga       0.01    0.00 0.00      0.01      0.01      0.01      0.01
 ## alpha_other      0.31    0.00 0.01      0.30      0.31      0.31      0.32
-## lp__        125034.72    0.07 3.45 125027.19 125032.54 125035.04 125037.24
+## lp__        125033.65    0.06 3.48 125026.04 125031.49 125034.00 125036.16
 ##                 97.5% n_eff Rhat
-## lambda         288.69  3283    1
-## alpha_acam       0.09  3284    1
-## alpha_amme       1.97  3296    1
-## alpha_anar       1.96  3271    1
-## alpha_brho       0.00  3243    1
-## alpha_brni       1.96  3150    1
-## alpha_ceso       1.90  3472    1
-## alpha_gitr       0.01  2909    1
-## alpha_leni       2.00  3558    1
-## alpha_lomu       1.99  3320    1
-## alpha_mael       0.29  2874    1
-## alpha_mica       0.03  3377    1
-## alpha_pler       0.01  3263    1
-## alpha_plno      -0.04  3249    1
-## alpha_taca       0.03  3382    1
-## alpha_thir       0.14  3240    1
-## alpha_twil      -1.68  3466    1
-## alpha_crco      -0.01  3239    1
-## alpha_erbo       0.20  3124    1
-## alpha_figa       0.06  3467    1
-## alpha_gamu       0.02  3070    1
-## alpha_hygl       0.40  3279    1
-## alpha_siga       0.02  3128    1
-## alpha_other      0.32  3375    1
-## lp__        125040.45  2533    1
+## lambda         288.14  3290    1
+## alpha_acam       0.09  3557    1
+## alpha_amme       1.92  3501    1
+## alpha_anar       2.03  3192    1
+## alpha_brho       0.00  2931    1
+## alpha_brni       1.92  3371    1
+## alpha_ceso       1.98  3302    1
+## alpha_gitr       0.01  3221    1
+## alpha_leni       1.98  3181    1
+## alpha_lomu       1.95  3227    1
+## alpha_mael       0.29  3497    1
+## alpha_mica       0.03  3515    1
+## alpha_pler       0.01  3258    1
+## alpha_plno      -0.04  2817    1
+## alpha_taca       0.03  3403    1
+## alpha_thir       0.14  3314    1
+## alpha_twil      -1.67  3274    1
+## alpha_crco      -0.01  2966    1
+## alpha_erbo       0.20  3218    1
+## alpha_figa       0.06  2977    1
+## alpha_gamu       0.02  3060    1
+## alpha_hygl       0.40  3110    1
+## alpha_siga       0.02  3049    1
+## alpha_other      0.32  3530    1
+## lp__        125039.41  2979    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:42:04 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:47:52 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -2019,7 +2019,7 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         237.11    0.05 2.69    231.96    235.26    237.11    238.87
+## lambda         237.14    0.05 2.70    231.69    235.28    237.14    238.94
 ## alpha_acam      -0.02    0.00 0.01     -0.03     -0.02     -0.02     -0.01
 ## alpha_amme       0.07    0.00 0.01      0.05      0.07      0.07      0.08
 ## alpha_anar       0.02    0.00 0.00      0.01      0.01      0.02      0.02
@@ -2037,41 +2037,41 @@ for(i in species){
 ## alpha_thir       0.16    0.00 0.01      0.14      0.16      0.16      0.17
 ## alpha_twil      -0.05    0.00 0.00     -0.05     -0.05     -0.05     -0.04
 ## alpha_crco       0.08    0.00 0.01      0.06      0.07      0.08      0.09
-## alpha_erbo       1.14    0.00 0.03      1.08      1.12      1.14      1.17
+## alpha_erbo       1.14    0.00 0.03      1.08      1.12      1.14      1.16
 ## alpha_figa       0.56    0.00 0.01      0.53      0.55      0.56      0.57
 ## alpha_gamu       0.03    0.00 0.01      0.02      0.02      0.03      0.03
 ## alpha_hygl       0.11    0.00 0.01      0.09      0.11      0.11      0.12
-## alpha_siga      -0.56    0.01 0.34     -1.18     -0.80     -0.58     -0.35
+## alpha_siga      -0.57    0.01 0.34     -1.20     -0.81     -0.58     -0.35
 ## alpha_other     -0.02    0.00 0.00     -0.03     -0.03     -0.02     -0.02
-## lp__        275270.40    0.07 3.42 275262.68 275268.30 275270.74 275272.85
+## lp__        275271.36    0.07 3.47 275263.32 275269.29 275271.73 275273.87
 ##                 97.5% n_eff Rhat
-## lambda         242.53  2832    1
-## alpha_acam       0.00  3302    1
-## alpha_amme       0.09  3355    1
-## alpha_anar       0.02  3689    1
-## alpha_brho       0.09  3063    1
-## alpha_brni       0.16  3464    1
-## alpha_ceso       0.28  3277    1
-## alpha_gitr       0.03  3252    1
-## alpha_leni       0.12  3263    1
-## alpha_lomu       0.27  3165    1
-## alpha_mael       0.14  3156    1
-## alpha_mica       0.02  3054    1
-## alpha_pler       0.05  3226    1
-## alpha_plno       0.12  2581    1
-## alpha_taca       0.09  2964    1
-## alpha_thir       0.18  3402    1
-## alpha_twil      -0.04  3232    1
-## alpha_crco       0.11  3356    1
-## alpha_erbo       1.21  3128    1
-## alpha_figa       0.59  2690    1
-## alpha_gamu       0.04  3240    1
-## alpha_hygl       0.13  3588    1
-## alpha_siga       0.14  3466    1
-## alpha_other     -0.02  3258    1
-## lp__        275276.10  2659    1
+## lambda         242.51  2472    1
+## alpha_acam       0.00  3451    1
+## alpha_amme       0.09  3157    1
+## alpha_anar       0.02  3136    1
+## alpha_brho       0.09  3508    1
+## alpha_brni       0.16  3358    1
+## alpha_ceso       0.28  2843    1
+## alpha_gitr       0.03  3405    1
+## alpha_leni       0.12  3415    1
+## alpha_lomu       0.27  3227    1
+## alpha_mael       0.14  3040    1
+## alpha_mica       0.02  3297    1
+## alpha_pler       0.05  3499    1
+## alpha_plno       0.12  3364    1
+## alpha_taca       0.09  2726    1
+## alpha_thir       0.18  3254    1
+## alpha_twil      -0.04  3206    1
+## alpha_crco       0.11  3062    1
+## alpha_erbo       1.21  3255    1
+## alpha_figa       0.59  3057    1
+## alpha_gamu       0.04  3358    1
+## alpha_hygl       0.13  3396    1
+## alpha_siga       0.11  3368    1
+## alpha_other     -0.01  2663    1
+## lp__        275277.02  2775    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:42:48 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:48:37 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -2082,9 +2082,9 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                  mean se_mean   sd      2.5%       25%       50%       75%
-## lambda         110.44    0.02 1.13    108.28    109.66    110.43    111.19
-## alpha_acam      -0.24    0.00 0.02     -0.28     -0.26     -0.24     -0.23
-## alpha_amme       2.00    0.00 0.11      1.80      1.93      2.00      2.07
+## lambda         110.43    0.02 1.16    108.16    109.66    110.43    111.22
+## alpha_acam      -0.24    0.00 0.02     -0.28     -0.26     -0.25     -0.23
+## alpha_amme       2.00    0.00 0.10      1.80      1.93      2.00      2.07
 ## alpha_anar       0.22    0.00 0.01      0.21      0.22      0.22      0.23
 ## alpha_brho       0.03    0.00 0.00      0.02      0.03      0.03      0.03
 ## alpha_brni       0.14    0.00 0.00      0.13      0.14      0.14      0.14
@@ -2095,10 +2095,10 @@ for(i in species){
 ## alpha_mael       0.37    0.00 0.04      0.29      0.34      0.37      0.40
 ## alpha_mica       0.13    0.00 0.01      0.11      0.12      0.13      0.13
 ## alpha_pler       0.02    0.00 0.00      0.01      0.02      0.02      0.02
-## alpha_plno       0.03    0.00 0.02     -0.01      0.02      0.03      0.05
+## alpha_plno       0.03    0.00 0.02      0.00      0.02      0.03      0.04
 ## alpha_taca       0.08    0.00 0.00      0.08      0.08      0.08      0.08
 ## alpha_thir       0.27    0.00 0.01      0.25      0.26      0.27      0.28
-## alpha_twil       0.89    0.00 0.11      0.68      0.81      0.89      0.96
+## alpha_twil       0.90    0.00 0.11      0.69      0.82      0.90      0.97
 ## alpha_crco      -0.01    0.00 0.00     -0.01     -0.01     -0.01     -0.01
 ## alpha_erbo       0.39    0.00 0.03      0.33      0.37      0.39      0.41
 ## alpha_figa      -0.04    0.00 0.00     -0.04     -0.04     -0.04     -0.03
@@ -2106,35 +2106,35 @@ for(i in species){
 ## alpha_hygl      -0.71    0.00 0.01     -0.73     -0.72     -0.71     -0.70
 ## alpha_siga       0.04    0.00 0.01      0.03      0.04      0.04      0.05
 ## alpha_other      0.03    0.00 0.01      0.01      0.02      0.03      0.03
-## lp__        275993.33    0.07 3.43 275985.70 275991.25 275993.64 275995.75
+## lp__        275996.73    0.06 3.46 275988.72 275994.54 275997.06 275999.28
 ##                 97.5% n_eff Rhat
-## lambda         112.68  2682    1
-## alpha_acam      -0.21  3471    1
-## alpha_amme       2.21  3428    1
-## alpha_anar       0.24  3041    1
-## alpha_brho       0.03  3753    1
-## alpha_brni       0.15  3562    1
-## alpha_ceso       0.19  3124    1
-## alpha_gitr       0.06  3741    1
-## alpha_leni      -0.05  2951    1
-## alpha_lomu       0.27  3303    1
-## alpha_mael       0.45  3118    1
-## alpha_mica       0.14  3360    1
-## alpha_pler       0.02  3284    1
-## alpha_plno       0.07  3140    1
-## alpha_taca       0.09  3118    1
-## alpha_thir       0.30  3177    1
-## alpha_twil       1.11  3369    1
-## alpha_crco      -0.01  3574    1
-## alpha_erbo       0.45  3153    1
-## alpha_figa      -0.03  3109    1
-## alpha_gamu      -0.26  3297    1
-## alpha_hygl      -0.69  2960    1
-## alpha_siga       0.05  3191    1
-## alpha_other      0.04  3279    1
-## lp__        275999.05  2653    1
+## lambda         112.64  2821    1
+## alpha_acam      -0.21  3177    1
+## alpha_amme       2.21  3264    1
+## alpha_anar       0.24  2984    1
+## alpha_brho       0.03  3612    1
+## alpha_brni       0.15  3312    1
+## alpha_ceso       0.19  3269    1
+## alpha_gitr       0.06  3693    1
+## alpha_leni      -0.05  3081    1
+## alpha_lomu       0.27  3323    1
+## alpha_mael       0.45  3532    1
+## alpha_mica       0.14  3288    1
+## alpha_pler       0.02  2781    1
+## alpha_plno       0.07  3003    1
+## alpha_taca       0.09  3092    1
+## alpha_thir       0.30  3344    1
+## alpha_twil       1.11  3025    1
+## alpha_crco      -0.01  3328    1
+## alpha_erbo       0.46  3348    1
+## alpha_figa      -0.03  3052    1
+## alpha_gamu      -0.26  3259    1
+## alpha_hygl      -0.69  2972    1
+## alpha_siga       0.05  3024    1
+## alpha_other      0.04  3577    1
+## lp__        276002.44  3211    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:44:02 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:49:55 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -2145,9 +2145,9 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5%
-## lambda         48.98    0.02 0.85    47.37    48.40    48.97    49.55    50.67
+## lambda         48.91    0.02 0.84    47.26    48.33    48.90    49.48    50.56
 ## alpha_acam      0.01    0.00 0.00     0.00     0.01     0.01     0.01     0.02
-## alpha_amme     -0.11    0.00 0.01    -0.12    -0.11    -0.11    -0.11    -0.10
+## alpha_amme     -0.11    0.00 0.01    -0.12    -0.12    -0.11    -0.11    -0.10
 ## alpha_anar      0.02    0.00 0.00     0.02     0.02     0.02     0.02     0.02
 ## alpha_brho      0.02    0.00 0.00     0.01     0.01     0.02     0.02     0.02
 ## alpha_brni      0.03    0.00 0.00     0.03     0.03     0.03     0.03     0.03
@@ -2155,49 +2155,49 @@ for(i in species){
 ## alpha_gitr      0.00    0.00 0.00     0.00     0.00     0.00     0.00     0.00
 ## alpha_leni     -0.01    0.00 0.00    -0.01    -0.01    -0.01    -0.01    -0.01
 ## alpha_lomu      0.07    0.00 0.00     0.06     0.06     0.07     0.07     0.07
-## alpha_mael     -0.02    0.00 0.00    -0.03    -0.03    -0.02    -0.02    -0.02
+## alpha_mael     -0.03    0.00 0.00    -0.03    -0.03    -0.03    -0.02    -0.02
 ## alpha_mica      0.00    0.00 0.00     0.00     0.00     0.00     0.00     0.00
 ## alpha_pler     -0.01    0.00 0.00    -0.01    -0.01    -0.01    -0.01    -0.01
 ## alpha_plno      0.00    0.00 0.00     0.00     0.00     0.00     0.00     0.01
 ## alpha_taca      0.02    0.00 0.00     0.02     0.02     0.02     0.03     0.03
 ## alpha_thir     -0.04    0.00 0.00    -0.04    -0.04    -0.04    -0.04    -0.03
 ## alpha_twil     -0.03    0.00 0.00    -0.04    -0.03    -0.03    -0.03    -0.03
-## alpha_crco      0.15    0.00 0.00     0.14     0.14     0.15     0.15     0.16
-## alpha_erbo      0.00    0.00 0.04    -0.07    -0.03     0.00     0.02     0.07
+## alpha_crco      0.15    0.00 0.01     0.14     0.15     0.15     0.15     0.16
+## alpha_erbo      0.00    0.00 0.04    -0.08    -0.03     0.00     0.02     0.07
 ## alpha_figa      0.10    0.00 0.01     0.08     0.09     0.10     0.11     0.12
 ## alpha_gamu     -0.01    0.00 0.00    -0.02    -0.02    -0.01    -0.01    -0.01
 ## alpha_hygl      0.00    0.00 0.01    -0.02     0.00     0.00     0.01     0.03
-## alpha_siga     -0.45    0.00 0.06    -0.57    -0.49    -0.45    -0.41    -0.33
-## alpha_other     0.11    0.00 0.00     0.10     0.10     0.11     0.11     0.11
-## lp__        80848.13    0.06 3.48 80840.24 80845.96 80848.47 80850.63 80853.95
+## alpha_siga     -0.45    0.00 0.06    -0.58    -0.49    -0.45    -0.41    -0.33
+## alpha_other     0.10    0.00 0.00     0.10     0.10     0.10     0.11     0.11
+## lp__        80847.02    0.07 3.54 80839.16 80844.79 80847.40 80849.52 80852.93
 ##             n_eff Rhat
-## lambda       2102    1
-## alpha_acam   3270    1
-## alpha_amme   3395    1
-## alpha_anar   3171    1
-## alpha_brho   3557    1
-## alpha_brni   3053    1
-## alpha_ceso   3099    1
-## alpha_gitr   3066    1
-## alpha_leni   3763    1
-## alpha_lomu   3356    1
-## alpha_mael   3084    1
-## alpha_mica   3199    1
-## alpha_pler   3511    1
-## alpha_plno   3095    1
-## alpha_taca   3069    1
-## alpha_thir   3135    1
-## alpha_twil   3051    1
-## alpha_crco   3043    1
-## alpha_erbo   3360    1
-## alpha_figa   3353    1
-## alpha_gamu   3345    1
-## alpha_hygl   3430    1
-## alpha_siga   3165    1
-## alpha_other  3356    1
-## lp__         2887    1
+## lambda       3072    1
+## alpha_acam   3283    1
+## alpha_amme   3052    1
+## alpha_anar   3605    1
+## alpha_brho   3328    1
+## alpha_brni   3776    1
+## alpha_ceso   3444    1
+## alpha_gitr   3399    1
+## alpha_leni   3144    1
+## alpha_lomu   3224    1
+## alpha_mael   3336    1
+## alpha_mica   3015    1
+## alpha_pler   3382    1
+## alpha_plno   3334    1
+## alpha_taca   3151    1
+## alpha_thir   3238    1
+## alpha_twil   3441    1
+## alpha_crco   3184    1
+## alpha_erbo   3220    1
+## alpha_figa   3275    1
+## alpha_gamu   3094    1
+## alpha_hygl   2919    1
+## alpha_siga   2901    1
+## alpha_other  3321    1
+## lp__         2880    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:44:52 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:50:43 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -2208,10 +2208,10 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5%
-## lambda         36.79    0.02 0.84    35.18    36.22    36.78    37.33    38.50
+## lambda         36.75    0.01 0.84    35.14    36.15    36.73    37.34    38.42
 ## alpha_acam     -0.11    0.00 0.01    -0.13    -0.12    -0.11    -0.11    -0.09
-## alpha_amme     -0.60    0.00 0.04    -0.69    -0.63    -0.61    -0.58    -0.52
-## alpha_anar      0.10    0.00 0.01     0.09     0.10     0.10     0.11     0.11
+## alpha_amme     -0.61    0.00 0.04    -0.69    -0.64    -0.61    -0.58    -0.52
+## alpha_anar      0.10    0.00 0.01     0.09     0.10     0.10     0.10     0.11
 ## alpha_brho      0.01    0.00 0.00     0.01     0.01     0.01     0.02     0.02
 ## alpha_brni      0.02    0.00 0.00     0.01     0.02     0.02     0.02     0.02
 ## alpha_ceso     -0.01    0.00 0.00    -0.01    -0.01    -0.01    -0.01     0.00
@@ -2221,10 +2221,10 @@ for(i in species){
 ## alpha_mael     -0.47    0.00 0.04    -0.55    -0.50    -0.47    -0.44    -0.39
 ## alpha_mica      0.06    0.00 0.01     0.05     0.06     0.06     0.07     0.08
 ## alpha_pler      0.03    0.00 0.00     0.03     0.03     0.03     0.03     0.04
-## alpha_plno      0.12    0.00 0.02     0.08     0.10     0.12     0.14     0.16
+## alpha_plno      0.12    0.00 0.02     0.08     0.11     0.12     0.13     0.16
 ## alpha_taca      0.02    0.00 0.00     0.01     0.02     0.02     0.02     0.02
 ## alpha_thir     -0.05    0.00 0.00    -0.05    -0.05    -0.05    -0.04    -0.04
-## alpha_twil     -0.62    0.00 0.07    -0.76    -0.67    -0.62    -0.57    -0.48
+## alpha_twil     -0.62    0.00 0.07    -0.76    -0.67    -0.62    -0.57    -0.47
 ## alpha_crco     -0.02    0.00 0.00    -0.02    -0.02    -0.02    -0.01    -0.01
 ## alpha_erbo     -0.21    0.00 0.03    -0.27    -0.23    -0.21    -0.19    -0.15
 ## alpha_figa     -0.04    0.00 0.00    -0.05    -0.05    -0.04    -0.04    -0.04
@@ -2232,35 +2232,35 @@ for(i in species){
 ## alpha_hygl      0.68    0.00 0.03     0.63     0.66     0.68     0.70     0.74
 ## alpha_siga     -0.05    0.00 0.00    -0.06    -0.05    -0.05    -0.04    -0.04
 ## alpha_other    -0.04    0.00 0.00    -0.04    -0.04    -0.04    -0.03    -0.03
-## lp__        65769.17    0.07 3.45 65761.59 65767.08 65769.47 65771.67 65775.05
+## lp__        65770.53    0.06 3.43 65762.77 65768.44 65770.91 65772.98 65776.26
 ##             n_eff Rhat
-## lambda       2853    1
-## alpha_acam   2642    1
-## alpha_amme   3220    1
-## alpha_anar   3587    1
-## alpha_brho   3727    1
-## alpha_brni   3339    1
-## alpha_ceso   3279    1
-## alpha_gitr   3259    1
-## alpha_leni   3173    1
-## alpha_lomu   3461    1
-## alpha_mael   3229    1
-## alpha_mica   3165    1
-## alpha_pler   3200    1
-## alpha_plno   3212    1
-## alpha_taca   3370    1
-## alpha_thir   3091    1
-## alpha_twil   3371    1
-## alpha_crco   3315    1
-## alpha_erbo   3435    1
-## alpha_figa   3153    1
-## alpha_gamu   3119    1
-## alpha_hygl   3469    1
-## alpha_siga   3241    1
-## alpha_other  3345    1
-## lp__         2779    1
+## lambda       3303    1
+## alpha_acam   3453    1
+## alpha_amme   3598    1
+## alpha_anar   3369    1
+## alpha_brho   3550    1
+## alpha_brni   3453    1
+## alpha_ceso   3526    1
+## alpha_gitr   3333    1
+## alpha_leni   3414    1
+## alpha_lomu   3664    1
+## alpha_mael   3588    1
+## alpha_mica   3599    1
+## alpha_pler   3550    1
+## alpha_plno   3387    1
+## alpha_taca   3252    1
+## alpha_thir   3469    1
+## alpha_twil   3322    1
+## alpha_crco   3246    1
+## alpha_erbo   3510    1
+## alpha_figa   3283    1
+## alpha_gamu   3187    1
+## alpha_hygl   3338    1
+## alpha_siga   3616    1
+## alpha_other  3446    1
+## lp__         2901    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:46:01 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:51:54 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -2271,59 +2271,59 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5%
-## lambda         26.69    0.02 0.86    25.08    26.11    26.66    27.25    28.45
-## alpha_acam      0.01    0.02 1.01    -1.97    -0.67     0.02     0.68     1.98
-## alpha_amme      0.39    0.00 0.05     0.28     0.35     0.39     0.42     0.49
+## lambda         26.57    0.01 0.84    24.96    25.99    26.56    27.11    28.27
+## alpha_acam      0.00    0.02 1.00    -1.92    -0.68     0.01     0.67     1.99
+## alpha_amme      0.39    0.00 0.05     0.29     0.35     0.39     0.42     0.49
 ## alpha_anar      0.02    0.00 0.01     0.01     0.02     0.02     0.02     0.03
-## alpha_brho     -0.01    0.02 1.00    -1.99    -0.69    -0.02     0.66     2.01
+## alpha_brho     -0.02    0.02 1.02    -2.09    -0.70    -0.02     0.66     1.92
 ## alpha_brni      0.00    0.00 0.00     0.00     0.00     0.00     0.00     0.01
-## alpha_ceso      0.05    0.00 0.01     0.03     0.04     0.05     0.06     0.07
-## alpha_gitr      0.01    0.02 0.99    -1.87    -0.67    -0.01     0.66     1.99
-## alpha_leni     -0.01    0.02 1.00    -1.96    -0.69     0.00     0.66     1.91
+## alpha_ceso      0.05    0.00 0.01     0.03     0.04     0.05     0.05     0.07
+## alpha_gitr     -0.01    0.02 0.99    -1.95    -0.68     0.00     0.65     1.94
+## alpha_leni      0.00    0.02 1.00    -1.96    -0.69    -0.01     0.68     1.96
 ## alpha_lomu      0.08    0.00 0.01     0.06     0.07     0.08     0.09     0.10
-## alpha_mael      0.00    0.02 1.03    -2.01    -0.69    -0.01     0.70     2.00
+## alpha_mael     -0.01    0.02 1.01    -2.04    -0.68     0.01     0.68     1.94
 ## alpha_mica      0.03    0.00 0.00     0.02     0.02     0.03     0.03     0.03
-## alpha_pler      0.01    0.02 1.01    -2.01    -0.66     0.04     0.70     1.99
-## alpha_plno      0.00    0.02 1.02    -1.96    -0.69    -0.02     0.68     2.01
+## alpha_pler      0.04    0.02 1.01    -1.92    -0.64     0.03     0.72     2.04
+## alpha_plno      0.01    0.02 1.01    -1.98    -0.68     0.01     0.67     1.98
 ## alpha_taca      0.07    0.00 0.01     0.04     0.06     0.07     0.08     0.10
 ## alpha_thir      0.05    0.00 0.01     0.02     0.04     0.05     0.06     0.08
-## alpha_twil      0.00    0.00 0.00     0.00     0.00     0.00     0.00     0.01
+## alpha_twil      0.00    0.00 0.00     0.00     0.00     0.00     0.00     0.00
 ## alpha_crco      0.04    0.00 0.00     0.04     0.04     0.04     0.05     0.05
 ## alpha_erbo     -0.08    0.00 0.04    -0.15    -0.10    -0.08    -0.05    -0.01
 ## alpha_figa      0.12    0.00 0.02     0.09     0.11     0.12     0.13     0.15
 ## alpha_gamu     -0.04    0.00 0.01    -0.06    -0.05    -0.04    -0.04    -0.03
-## alpha_hygl      0.22    0.00 0.04     0.14     0.19     0.22     0.25     0.31
+## alpha_hygl      0.22    0.00 0.04     0.13     0.19     0.22     0.25     0.31
 ## alpha_siga     -0.03    0.00 0.01    -0.05    -0.04    -0.03    -0.03    -0.01
 ## alpha_other     0.00    0.00 0.01    -0.01     0.00     0.00     0.01     0.02
-## lp__        19405.64    0.07 3.47 19398.15 19403.43 19405.95 19408.17 19411.49
+## lp__        19401.44    0.06 3.46 19393.96 19399.30 19401.63 19403.93 19407.25
 ##             n_eff Rhat
-## lambda       3197    1
-## alpha_acam   3251    1
-## alpha_amme   3326    1
-## alpha_anar   3365    1
-## alpha_brho   2778    1
-## alpha_brni   3381    1
-## alpha_ceso   3291    1
-## alpha_gitr   3512    1
-## alpha_leni   3295    1
-## alpha_lomu   3227    1
-## alpha_mael   3387    1
-## alpha_mica   3429    1
-## alpha_pler   3316    1
-## alpha_plno   3343    1
-## alpha_taca   3311    1
-## alpha_thir   3361    1
-## alpha_twil   3188    1
-## alpha_crco   3126    1
-## alpha_erbo   3179    1
-## alpha_figa   3318    1
-## alpha_gamu   3285    1
-## alpha_hygl   3270    1
-## alpha_siga   2953    1
-## alpha_other  3207    1
-## lp__         2763    1
+## lambda       3337    1
+## alpha_acam   3235    1
+## alpha_amme   3458    1
+## alpha_anar   3564    1
+## alpha_brho   3443    1
+## alpha_brni   3269    1
+## alpha_ceso   3531    1
+## alpha_gitr   3219    1
+## alpha_leni   3144    1
+## alpha_lomu   3311    1
+## alpha_mael   3485    1
+## alpha_mica   3738    1
+## alpha_pler   3001    1
+## alpha_plno   3345    1
+## alpha_taca   3167    1
+## alpha_thir   3394    1
+## alpha_twil   3439    1
+## alpha_crco   3493    1
+## alpha_erbo   3294    1
+## alpha_figa   3107    1
+## alpha_gamu   3389    1
+## alpha_hygl   3019    1
+## alpha_siga   3448    1
+## alpha_other  3422    1
+## lp__         3130    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:46:48 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:52:35 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).
@@ -2334,59 +2334,59 @@ for(i in species){
 ## post-warmup draws per chain=834, total post-warmup draws=3336.
 ## 
 ##                 mean se_mean   sd     2.5%      25%      50%      75%    97.5%
-## lambda        371.62    0.17 9.81   352.58   365.04   371.45   378.09   391.35
-## alpha_acam      0.49    0.00 0.05     0.39     0.46     0.49     0.53     0.61
-## alpha_amme      1.33    0.00 0.16     1.04     1.23     1.33     1.44     1.65
-## alpha_anar      0.02    0.00 0.01     0.01     0.02     0.02     0.03     0.04
+## lambda        365.25    0.17 9.60   347.15   358.64   365.12   371.87   384.15
+## alpha_acam      0.49    0.00 0.05     0.39     0.46     0.49     0.53     0.60
+## alpha_amme      1.33    0.00 0.16     1.03     1.22     1.33     1.44     1.64
+## alpha_anar      0.02    0.00 0.01     0.00     0.02     0.02     0.03     0.04
 ## alpha_brho      0.02    0.00 0.00     0.02     0.02     0.02     0.03     0.03
-## alpha_brni      0.04    0.00 0.01     0.02     0.03     0.04     0.04     0.06
-## alpha_ceso     -0.02    0.02 1.01    -1.98    -0.69    -0.01     0.66     1.92
+## alpha_brni      0.03    0.00 0.01     0.02     0.03     0.03     0.04     0.06
+## alpha_ceso      0.01    0.02 1.00    -1.92    -0.66     0.00     0.70     2.00
 ## alpha_gitr      0.06    0.00 0.01     0.05     0.06     0.06     0.07     0.08
-## alpha_leni      0.05    0.00 0.01     0.03     0.05     0.05     0.06     0.08
-## alpha_lomu      0.00    0.00 0.01    -0.01    -0.01     0.00     0.00     0.01
-## alpha_mael      0.17    0.00 0.07     0.04     0.13     0.17     0.22     0.31
-## alpha_mica      0.02    0.02 0.99    -1.88    -0.65    -0.01     0.69     1.95
-## alpha_pler      0.01    0.02 1.00    -1.92    -0.69     0.02     0.68     1.97
-## alpha_plno     -0.02    0.02 1.00    -1.99    -0.71    -0.02     0.66     1.92
+## alpha_leni      0.05    0.00 0.01     0.03     0.04     0.05     0.06     0.08
+## alpha_lomu     -0.01    0.00 0.01    -0.02    -0.01    -0.01     0.00     0.01
+## alpha_mael      0.17    0.00 0.07     0.04     0.12     0.17     0.21     0.31
+## alpha_mica      0.03    0.02 0.99    -1.88    -0.62     0.00     0.68     2.01
+## alpha_pler      0.00    0.02 1.00    -1.97    -0.69     0.01     0.67     1.94
+## alpha_plno     -0.01    0.02 1.01    -2.02    -0.68    -0.02     0.67     1.94
 ## alpha_taca      0.11    0.00 0.01     0.08     0.10     0.11     0.12     0.14
 ## alpha_thir      0.02    0.00 0.02    -0.01     0.01     0.02     0.03     0.05
-## alpha_twil     -0.28    0.00 0.03    -0.34    -0.30    -0.28    -0.26    -0.22
+## alpha_twil     -0.29    0.00 0.03    -0.35    -0.31    -0.29    -0.27    -0.23
 ## alpha_crco     -0.02    0.00 0.00    -0.02    -0.02    -0.02    -0.02    -0.02
-## alpha_erbo     -0.02    0.00 0.06    -0.14    -0.06    -0.02     0.03     0.11
-## alpha_figa      0.08    0.00 0.01     0.06     0.07     0.08     0.09     0.10
-## alpha_gamu     -0.04    0.00 0.01    -0.06    -0.04    -0.04    -0.03    -0.02
-## alpha_hygl      0.37    0.00 0.04     0.30     0.35     0.37     0.40     0.44
+## alpha_erbo     -0.03    0.00 0.06    -0.14    -0.07    -0.03     0.02     0.10
+## alpha_figa      0.08    0.00 0.01     0.06     0.07     0.08     0.08     0.10
+## alpha_gamu     -0.04    0.00 0.01    -0.06    -0.05    -0.04    -0.03    -0.02
+## alpha_hygl      0.36    0.00 0.04     0.29     0.34     0.36     0.39     0.44
 ## alpha_siga     -0.16    0.00 0.01    -0.19    -0.17    -0.16    -0.15    -0.13
 ## alpha_other    -0.04    0.00 0.00    -0.05    -0.04    -0.04    -0.03    -0.03
-## lp__        27922.49    0.06 3.50 27914.78 27920.25 27922.88 27925.04 27928.33
+## lp__        27902.18    0.06 3.43 27894.60 27900.14 27902.48 27904.63 27908.06
 ##             n_eff Rhat
-## lambda       3247    1
-## alpha_acam   3302    1
-## alpha_amme   3133    1
-## alpha_anar   3389    1
-## alpha_brho   3460    1
-## alpha_brni   3092    1
-## alpha_ceso   3297    1
-## alpha_gitr   3303    1
-## alpha_leni   3299    1
+## lambda       3152    1
+## alpha_acam   3415    1
+## alpha_amme   3191    1
+## alpha_anar   3607    1
+## alpha_brho   3486    1
+## alpha_brni   3555    1
+## alpha_ceso   3227    1
+## alpha_gitr   3364    1
+## alpha_leni   3552    1
 ## alpha_lomu   3255    1
-## alpha_mael   3288    1
-## alpha_mica   3374    1
-## alpha_pler   3074    1
-## alpha_plno   2957    1
-## alpha_taca   3491    1
-## alpha_thir   3200    1
-## alpha_twil   3239    1
-## alpha_crco   3637    1
-## alpha_erbo   2967    1
-## alpha_figa   3075    1
-## alpha_gamu   3186    1
-## alpha_hygl   3053    1
-## alpha_siga   3087    1
-## alpha_other  3139    1
-## lp__         2928    1
+## alpha_mael   3219    1
+## alpha_mica   3428    1
+## alpha_pler   3411    1
+## alpha_plno   3150    1
+## alpha_taca   3728    1
+## alpha_thir   3307    1
+## alpha_twil   2870    1
+## alpha_crco   3549    1
+## alpha_erbo   3390    1
+## alpha_figa   3252    1
+## alpha_gamu   3313    1
+## alpha_hygl   2720    1
+## alpha_siga   3008    1
+## alpha_other  3169    1
+## lp__         3088    1
 ## 
-## Samples were drawn using NUTS(diag_e) at Tue May 16 10:47:55 2023.
+## Samples were drawn using NUTS(diag_e) at Sat May 20 11:53:33 2023.
 ## For each parameter, n_eff is a crude measure of effective sample size,
 ## and Rhat is the potential scale reduction factor on split chains (at 
 ## convergence, Rhat=1).</code></pre>
