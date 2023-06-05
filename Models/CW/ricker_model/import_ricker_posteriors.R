@@ -20,7 +20,7 @@ for(i in species){
   for(j in trt){
     
     ## load desired model
-    load(paste0("models/CW/ricker_model/posteriors/lambda_prior_mean/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors.rdata"))
+    load(paste0("models/CW/ricker_model/posteriors/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors_constrained.rdata"))
     
     ## print to see n_eff and Rhat diagnostics
     print(i)
@@ -29,7 +29,7 @@ for(i in species){
     
     ## extract model info
     tmp2 <- rstan::extract(tmp)
-    
+
     ## create trace plots for diagnostics
     ricker_plots[[paste0(i, "_", j)]] <- traceplot(tmp, pars = names(tmp2[-20]))
     

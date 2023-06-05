@@ -1,131 +1,157 @@
 # run coexistence models for dry versus wet
 
-## set up env
-source("Models/CW/import_ricker_posteriors.R")
+# Set up ####
+## Read in Data ####
+## model posteriors
+source("Models/CW/ricker_model/import_ricker_posteriors.R")
+
+## seed survival data
 source("data_cleaning/seed-survival_data-cleaning/seed-survival_data-cleaning.R")
-## load seed survival data
+
+## germination data
+source("data_cleaning/germination_data-cleaning/germination_rates.R")
+
+germ.sum <- germ.sum.sp.DC ## rename so it's easier to use later on
+rm(germ.sum.sp.DC)
+
+## replicate information
 reps <- read.csv("models/CW/replicate-info.csv")
 
 theme_set(theme_bw())
 
 # Question ####
-## did I get the equations set up correctly? Is the germination term ok where it is? For some reason it was removed in the BH version of this...
-
-# Set up ####
-## Equations ####
+## 'As-Is' Equations ####
 run.to.equilibrium <- function(surv, germ, lambda, alpha_intra, Nt) {
-   Ntp1 <- (1-germ)*surv*Nt + germ*lambda*Nt*exp(-alpha_intra *germ* Nt)
+   Ntp1 <- (1-germ)*surv*Nt + germ*lambda*Nt*exp(-alpha_intra *germ* Nt - alpha_inter*germ_inter*inter_abund)
    return(Ntp1)
 }
-## equilibrium model experiences INTRAspecific competition, but not inter
+## keep both intra and inter specific competition terms in this model
 
 run.invader <- function(surv, germ, lambda, alpha_inter, resid_abund, invader_abund, germ_resid) {
-   Ntp1 <- (1-germ)*surv*invader_abund + germ*lambda*invader_abund*exp(-alpha_inter * resid_abund * germ_resid)
+   Ntp1 <- (1-germ)*surv*invader_abund + germ*lambda*invader_abund*exp(-alpha_intra*invader_abund*germ - alpha_inter*resid_abund*germ_resid)
    LDGR <- log(Ntp1/invader_abund)
    return(LDGR)
  
  }
+## keep both intra and inter specific competition terms in this model
+
+## Intra Facilitation Equations ####
+run.to.equilibrium.facilitation <- function(surv, germ, lambda, alpha_intra, Nt) {
+  Ntp1 <- (1-germ)*surv*Nt + germ*lambda*Nt*exp(-alpha_intra*germ*Nt - alpha_intra*germ*(Nt^2) - alpha_inter*germ_inter*inter_abund)
+  return(Ntp1)
+}
+## keep both intra and inter specific competition terms in this model
+
+run.invader.facilitation <- function(surv, germ, lambda, alpha_inter, resid_abund, invader_abund, germ_resid) {
+  Ntp1 <- (1-germ)*surv*invader_abund + germ*lambda*invader_abund*exp(-alpha_intra*invader_abund*germ - alpha_intra*germ*(Nt^2) - alpha_inter*resid_abund*germ_resid)
+  LDGR <- log(Ntp1/invader_abund)
+  return(LDGR)
+  
+}
+
+
+
 
 ## Germ Rates ####
 # germ rates dry
-ricker_posteriors[["PLER_D"]]$germ <- 0.53
-ricker_posteriors[["ANAR_D"]]$germ <- 0.07
-ricker_posteriors[["ACAM_D"]]$germ <- 0.52
-ricker_posteriors[["BRNI_D"]]$germ <- 0.39
-#ricker_posteriors[["CLPU_D"]]$germ <- 0.04
-ricker_posteriors[["BRHO_D"]]$germ <- 1
-ricker_posteriors[["GITR_D"]]$germ <- 0.91
-ricker_posteriors[["AMME_D"]]$germ <- 0.14
-ricker_posteriors[["PLNO_D"]]$germ <- 0.35
-ricker_posteriors[["THIR_D"]]$germ <- 0.38
-ricker_posteriors[["MICA_D"]]$germ <- 0.13
-ricker_posteriors[["CESO_D"]]$germ <- 0.74
-ricker_posteriors[["TWIL_D"]]$germ <- 0.02
-ricker_posteriors[["LOMU_D"]]$germ <- 0.87
-ricker_posteriors[["TACA_D"]]$germ <- 0.86
-ricker_posteriors[["MAEL_D"]]$germ <- 0.18
-ricker_posteriors[["LENI_D"]]$germ <- 0.3
+ricker_posteriors[["ACAM_D"]]$germ <- germ.sum[germ.sum$species == "ACAM" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["AMME_D"]]$germ <- germ.sum[germ.sum$species == "AMME" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["ANAR_D"]]$germ <- germ.sum[germ.sum$species == "ANAR" & germ.sum$trt == "D", ]$avg.germ
 #ricker_posteriors[["AVBA_D"]]$germ <- 0.88
+ricker_posteriors[["BRHO_D"]]$germ <- germ.sum[germ.sum$species == "BRHO" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["BRNI_D"]]$germ <- germ.sum[germ.sum$species == "BRNI" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["CESO_D"]]$germ <- germ.sum[germ.sum$species == "CESO" & germ.sum$trt == "D", ]$avg.germ
+#ricker_posteriors[["CLPU_D"]]$germ <- 0.04
+ricker_posteriors[["GITR_D"]]$germ <- germ.sum[germ.sum$species == "GITR" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["LENI_D"]]$germ <- germ.sum[germ.sum$species == "LENI" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["LOMU_D"]]$germ <- germ.sum[germ.sum$species == "LOMU" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["MAEL_D"]]$germ <- germ.sum[germ.sum$species == "MAEL" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["MICA_D"]]$germ <- germ.sum[germ.sum$species == "MICA" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["PLER_D"]]$germ <- germ.sum[germ.sum$species == "PLER" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["PLNO_D"]]$germ <- germ.sum[germ.sum$species == "PLNO" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["TACA_D"]]$germ <- germ.sum[germ.sum$species == "TACA" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["THIR_D"]]$germ <- germ.sum[germ.sum$species == "THIR" & germ.sum$trt == "D", ]$avg.germ
+ricker_posteriors[["TWIL_D"]]$germ <- germ.sum[germ.sum$species == "TWIL" & germ.sum$trt == "D", ]$avg.germ
 
 # germ rates wet
-ricker_posteriors[["PLER_C"]]$germ <- 0.8
-ricker_posteriors[["ANAR_C"]]$germ <- 0.15
-ricker_posteriors[["ACAM_C"]]$germ <- 0.66
-ricker_posteriors[["BRNI_C"]]$germ <- 0.69
-#ricker_posteriors[["CLPU_C"]]$germ <- 0.37
-ricker_posteriors[["BRHO_C"]]$germ <- 0.97
-ricker_posteriors[["GITR_C"]]$germ <- 0.98
-ricker_posteriors[["AMME_C"]]$germ <- 0.88
-ricker_posteriors[["PLNO_C"]]$germ <- 0.66
-ricker_posteriors[["THIR_C"]]$germ <- 0.79
-ricker_posteriors[["MICA_C"]]$germ <- 0.72
-ricker_posteriors[["CESO_C"]]$germ <- 0.92
-ricker_posteriors[["TWIL_C"]]$germ <- 0.44
-ricker_posteriors[["LOMU_C"]]$germ <- 0.96
-ricker_posteriors[["TACA_C"]]$germ <- 0.87
-ricker_posteriors[["MAEL_C"]]$germ <- 0.59
-ricker_posteriors[["LENI_C"]]$germ <- 0.85
+ricker_posteriors[["ACAM_C"]]$germ <- germ.sum[germ.sum$species == "ACAM" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["AMME_C"]]$germ <- germ.sum[germ.sum$species == "AMME" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["ANAR_C"]]$germ <- germ.sum[germ.sum$species == "ANAR" & germ.sum$trt == "C", ]$avg.germ
 #ricker_posteriors[["AVBA_C"]]$germ <- 0.96
+ricker_posteriors[["BRHO_C"]]$germ <- germ.sum[germ.sum$species == "BRHO" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["BRNI_C"]]$germ <- germ.sum[germ.sum$species == "BRNI" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["CESO_C"]]$germ <- germ.sum[germ.sum$species == "CESO" & germ.sum$trt == "C", ]$avg.germ
+#ricker_posteriors[["CLPU_C"]]$germ <- 0.37
+ricker_posteriors[["GITR_C"]]$germ <- germ.sum[germ.sum$species == "GITR" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["LENI_C"]]$germ <- germ.sum[germ.sum$species == "LENI" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["LOMU_C"]]$germ <- germ.sum[germ.sum$species == "LOMU" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["MAEL_C"]]$germ <- germ.sum[germ.sum$species == "MAEL" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["MICA_C"]]$germ <- germ.sum[germ.sum$species == "MICA" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["PLER_C"]]$germ <- germ.sum[germ.sum$species == "PLER" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["PLNO_C"]]$germ <- germ.sum[germ.sum$species == "PLNO" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["TACA_C"]]$germ <- germ.sum[germ.sum$species == "TACA" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["THIR_C"]]$germ <- germ.sum[germ.sum$species == "THIR" & germ.sum$trt == "C", ]$avg.germ
+ricker_posteriors[["TWIL_C"]]$germ <- germ.sum[germ.sum$species == "TWIL" & germ.sum$trt == "C", ]$avg.germ
 
 ## Seed Survival ####
 ## add seed survival to models
-ricker_posteriors[["PLER_D"]]$surv <- surv.sum[surv.sum$species == "PLER",]$surv.mean.p
-ricker_posteriors[["ANAR_D"]]$surv <- surv.sum[surv.sum$species == "ANAR",]$surv.mean.p
 ricker_posteriors[["ACAM_D"]]$surv <- surv.sum[surv.sum$species == "ACAM",]$surv.mean.p
-ricker_posteriors[["BRNI_D"]]$surv <- surv.sum[surv.sum$species == "BRNI",]$surv.mean.p
-#ricker_posteriors[["CLPU_D"]]$surv <- surv.sum[surv.sum$species == "CLPU",]$surv.mean.p
-ricker_posteriors[["BRHO_D"]]$surv <- surv.sum[surv.sum$species == "BRHO",]$surv.mean.p
-ricker_posteriors[["GITR_D"]]$surv <- surv.sum[surv.sum$species == "GITR",]$surv.mean.p
 ricker_posteriors[["AMME_D"]]$surv <- surv.sum[surv.sum$species == "AMME",]$surv.mean.p
-ricker_posteriors[["PLNO_D"]]$surv <- surv.sum[surv.sum$species == "PLNO",]$surv.mean.p
-ricker_posteriors[["THIR_D"]]$surv <- surv.sum[surv.sum$species == "THIR",]$surv.mean.p
-ricker_posteriors[["MICA_D"]]$surv <- surv.sum[surv.sum$species == "MICA",]$surv.mean.p
-ricker_posteriors[["CESO_D"]]$surv <- surv.sum[surv.sum$species == "CESO",]$surv.mean.p
-ricker_posteriors[["TWIL_D"]]$surv <- surv.sum[surv.sum$species == "TWIL",]$surv.mean.p
-ricker_posteriors[["LOMU_D"]]$surv <- surv.sum[surv.sum$species == "LOMU",]$surv.mean.p
-ricker_posteriors[["TACA_D"]]$surv <- surv.sum[surv.sum$species == "TACA",]$surv.mean.p
-ricker_posteriors[["MAEL_D"]]$surv <- surv.sum[surv.sum$species == "MAEL",]$surv.mean.p
-ricker_posteriors[["LENI_D"]]$surv <- surv.sum[surv.sum$species == "LENI",]$surv.mean.p
+ricker_posteriors[["ANAR_D"]]$surv <- surv.sum[surv.sum$species == "ANAR",]$surv.mean.p
 #ricker_posteriors[["AVBA_D"]]$surv <- surv.sum[surv.sum$species == "AVBA",]$surv.mean.p
+ricker_posteriors[["BRHO_D"]]$surv <- surv.sum[surv.sum$species == "BRHO",]$surv.mean.p
+ricker_posteriors[["BRNI_D"]]$surv <- surv.sum[surv.sum$species == "BRNI",]$surv.mean.p
+ricker_posteriors[["CESO_D"]]$surv <- surv.sum[surv.sum$species == "CESO",]$surv.mean.p
+#ricker_posteriors[["CLPU_D"]]$surv <- surv.sum[surv.sum$species == "CLPU",]$surv.mean.p
+ricker_posteriors[["GITR_D"]]$surv <- surv.sum[surv.sum$species == "GITR",]$surv.mean.p
+ricker_posteriors[["LENI_D"]]$surv <- surv.sum[surv.sum$species == "LENI",]$surv.mean.p
+ricker_posteriors[["LOMU_D"]]$surv <- surv.sum[surv.sum$species == "LOMU",]$surv.mean.p
+ricker_posteriors[["MAEL_D"]]$surv <- surv.sum[surv.sum$species == "MAEL",]$surv.mean.p
+ricker_posteriors[["MICA_D"]]$surv <- surv.sum[surv.sum$species == "MICA",]$surv.mean.p
+ricker_posteriors[["PLER_D"]]$surv <- surv.sum[surv.sum$species == "PLER",]$surv.mean.p
+ricker_posteriors[["PLNO_D"]]$surv <- surv.sum[surv.sum$species == "PLNO",]$surv.mean.p
+ricker_posteriors[["TACA_D"]]$surv <- surv.sum[surv.sum$species == "TACA",]$surv.mean.p
+ricker_posteriors[["THIR_D"]]$surv <- surv.sum[surv.sum$species == "THIR",]$surv.mean.p
+ricker_posteriors[["TWIL_D"]]$surv <- surv.sum[surv.sum$species == "TWIL",]$surv.mean.p
 
-ricker_posteriors[["PLER_C"]]$surv <- surv.sum[surv.sum$species == "PLER",]$surv.mean.p
-ricker_posteriors[["ANAR_C"]]$surv <- surv.sum[surv.sum$species == "ANAR",]$surv.mean.p
 ricker_posteriors[["ACAM_C"]]$surv <- surv.sum[surv.sum$species == "ACAM",]$surv.mean.p
-ricker_posteriors[["BRNI_C"]]$surv <- surv.sum[surv.sum$species == "BRNI",]$surv.mean.p
-#ricker_posteriors[["CLPU_C"]]$surv <- surv.sum[surv.sum$species == "CLPU",]$surv.mean.p
-ricker_posteriors[["BRHO_C"]]$surv <- surv.sum[surv.sum$species == "BRHO",]$surv.mean.p
-ricker_posteriors[["GITR_C"]]$surv <- surv.sum[surv.sum$species == "GITR",]$surv.mean.p
 ricker_posteriors[["AMME_C"]]$surv <- surv.sum[surv.sum$species == "AMME",]$surv.mean.p
-ricker_posteriors[["PLNO_C"]]$surv <- surv.sum[surv.sum$species == "PLNO",]$surv.mean.p
-ricker_posteriors[["THIR_C"]]$surv <- surv.sum[surv.sum$species == "THIR",]$surv.mean.p
-ricker_posteriors[["MICA_C"]]$surv <- surv.sum[surv.sum$species == "MICA",]$surv.mean.p
-ricker_posteriors[["CESO_C"]]$surv <- surv.sum[surv.sum$species == "CESO",]$surv.mean.p
-ricker_posteriors[["TWIL_C"]]$surv <- surv.sum[surv.sum$species == "TWIL",]$surv.mean.p
-ricker_posteriors[["LOMU_C"]]$surv <- surv.sum[surv.sum$species == "LOMU",]$surv.mean.p
-ricker_posteriors[["TACA_C"]]$surv <- surv.sum[surv.sum$species == "TACA",]$surv.mean.p
-ricker_posteriors[["MAEL_C"]]$surv <- surv.sum[surv.sum$species == "MAEL",]$surv.mean.p
-ricker_posteriors[["LENI_C"]]$surv <- surv.sum[surv.sum$species == "LENI",]$surv.mean.p
+ricker_posteriors[["ANAR_C"]]$surv <- surv.sum[surv.sum$species == "ANAR",]$surv.mean.p
 #ricker_posteriors[["AVBA_C"]]$surv <- surv.sum[surv.sum$species == "AVBA",]$surv.mean.p
+ricker_posteriors[["BRHO_C"]]$surv <- surv.sum[surv.sum$species == "BRHO",]$surv.mean.p
+ricker_posteriors[["BRNI_C"]]$surv <- surv.sum[surv.sum$species == "BRNI",]$surv.mean.p
+ricker_posteriors[["CESO_C"]]$surv <- surv.sum[surv.sum$species == "CESO",]$surv.mean.p
+#ricker_posteriors[["CLPU_C"]]$surv <- surv.sum[surv.sum$species == "CLPU",]$surv.mean.p
+ricker_posteriors[["GITR_C"]]$surv <- surv.sum[surv.sum$species == "GITR",]$surv.mean.p
+ricker_posteriors[["LENI_C"]]$surv <- surv.sum[surv.sum$species == "LENI",]$surv.mean.p
+ricker_posteriors[["LOMU_C"]]$surv <- surv.sum[surv.sum$species == "LOMU",]$surv.mean.p
+ricker_posteriors[["MAEL_C"]]$surv <- surv.sum[surv.sum$species == "MAEL",]$surv.mean.p
+ricker_posteriors[["MICA_C"]]$surv <- surv.sum[surv.sum$species == "MICA",]$surv.mean.p
+ricker_posteriors[["PLER_C"]]$surv <- surv.sum[surv.sum$species == "PLER",]$surv.mean.p
+ricker_posteriors[["PLNO_C"]]$surv <- surv.sum[surv.sum$species == "PLNO",]$surv.mean.p
+ricker_posteriors[["TACA_C"]]$surv <- surv.sum[surv.sum$species == "TACA",]$surv.mean.p
+ricker_posteriors[["THIR_C"]]$surv <- surv.sum[surv.sum$species == "THIR",]$surv.mean.p
+ricker_posteriors[["TWIL_C"]]$surv <- surv.sum[surv.sum$species == "TWIL",]$surv.mean.p
 
-# need to add BRNI and LENI when ready; also fix, dont like how sketchy this is
-all_intra <- c("alpha_pler", "alpha_pler", 
-               "alpha_anar", "alpha_anar", 
-               "alpha_acam", "alpha_acam", 
-               "alpha_brni", "alpha_brni",
-               #"alpha_clpu", "alpha_clpu", 
-               "alpha_brho", "alpha_brho", 
-               "alpha_gitr", "alpha_gitr", 
+all_intra <- c("alpha_acam", "alpha_acam", 
                "alpha_amme", "alpha_amme", 
-               "alpha_plno", "alpha_plno", 
-               "alpha_thir", "alpha_thir", 
-               "alpha_mica", "alpha_mica", 
+               "alpha_anar", "alpha_anar",
+               # "alpha_avba", "alpha_avba",
+               "alpha_brho", "alpha_brho", 
+               "alpha_brni", "alpha_brni",
                "alpha_ceso", "alpha_ceso", 
-               "alpha_twil", "alpha_twil", 
+               #"alpha_clpu", "alpha_clpu", 
+               "alpha_gitr", "alpha_gitr",
+               "alpha_leni", "alpha_leni",
                "alpha_lomu", "alpha_lomu", 
-               "alpha_taca", "alpha_taca", 
-               "alpha_mael", "alpha_mael", 
-               "alpha_leni", "alpha_leni") 
-              # "alpha_avba", "alpha_avba")
+               "alpha_mael", "alpha_mael",
+               "alpha_mica", "alpha_mica", 
+               "alpha_pler", "alpha_pler",
+               "alpha_plno", "alpha_plno", 
+               "alpha_taca", "alpha_taca",
+               "alpha_thir", "alpha_thir",
+               "alpha_twil", "alpha_twil") 
+              
 
 # Run to Equilibrium ####
 ## set up loop ####
@@ -226,17 +252,17 @@ ggplot(residents_wet_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species) +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Ambient Conditions, Ricker Model, Filt Dat, 5/9/23")
+  ggtitle("Ambient Conditions, Ricker Model, Filt Dat, 5/25/23")
 
-ggsave("models/CW/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_ambient.png", height = 6, width = 10)
+ggsave("analyses/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_ambient_meanLpriors.png", height = 6, width = 10)
 
 ggplot(residents_dry_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species) +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Drought Conditions, Ricker Model, Filt Dat, 5/9/23")
+  ggtitle("Drought Conditions, Ricker Model, Filt Dat, 5/25/23")
 
-ggsave("models/CW/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_drought.png", height = 6, width = 10)
+ggsave("models/CW/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_drought_meanLpriors.png", height = 6, width = 10)
 
 
 
