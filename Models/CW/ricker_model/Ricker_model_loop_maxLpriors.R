@@ -39,7 +39,7 @@ initials <- list(lambda=250,
 
 initials1<- list(initials, initials, initials, initials)
 
-## Last minute data mods ####
+# Last minute data mods ####
 
 # replacing 0s with small number for now
 #model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
@@ -59,34 +59,40 @@ model.dat.filtered <- model.dat %>%
 # Constrain Priors ####
 ## Problem models
     ## ACAM D, AMME C, BRNI C, BRNI D, and MAEL D.
-constrain <- 50 ## what to divide sd by to constrain the full deviation
-
 lambda_priors_max_C <- lambda_priors_max %>%
-  mutate(sd_constrained = ifelse(phyto == "BRNI", sd_seeds/constrain, 
-                                 ifelse(phyto == "ACAM" & treatment == "D", sd_seeds/constrain, 
-                                        ifelse(phyto == "AMME" & treatment == "C", sd_seeds/constrain, 
-                                               ifelse(phyto == "MAEL" & treatment == "D", sd_seeds/constrain, sd_seeds)))))
+  mutate(sd_constrained = ifelse(phyto == "BRNI", sd_seeds/50, 
+                                 ifelse(phyto == "ACAM" & treatment == "D", sd_seeds/16, 
+                                        ifelse(phyto == "AMME" & treatment == "C", sd_seeds/50, 
+                                               ifelse(phyto == "MAEL" & treatment == "D", sd_seeds/50, sd_seeds)))))
 ## constraining the problem models by making standard deviation of priors smaller
 
-
 # Loop thru ea Species ####
-#species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
-## does order matter here?
-
-#species <- c("ACAM", "AMME", "BRNI", "MAEL")
-species <- c("AMME")
-
+species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 ## "CLPU", "AVBA", 
 
-#trt <- c("C","D")
+constrained50 <- c("AMME_C", "BRNI_C", "BRNI_D", "MAEL_D")
+constrained16 <- c("ACAM_D")
 
-trt <- c("C")
+trt <- c("C","D")
 
 model.output <- list()
 warnings <- list()
 
 for(i in species){
   for(j in trt){
+    
+    ## set constraint value, k, to put in posterior file path
+    sp_trt <- paste0(i, "_", j)
+    
+    if(sp_trt %in% constrained50) {
+      k <- 50
+    } else if (sp_trt %in% constrained16) {
+      k <- 16
+    } else {
+      k <- "none"
+    }
+    
+    ## subset data
     dat <- subset(model.dat.filtered, phyto == i)
     dat <- subset(dat, treatment == j)
     
@@ -137,7 +143,7 @@ for(i in species){
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/seeds_",i,"_",j,"_posteriors_Ricker_maxLpriors_constrainedby_02.rdata"))
+    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/lambda_prior_max/seeds_",i,"_",j,"_posteriors_Ricker_maxLpriors_constrainedby_", k, ".rdata"))
   }
 }
 
