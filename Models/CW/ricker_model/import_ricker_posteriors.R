@@ -12,6 +12,10 @@ theme_set(theme_bw())
 species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 ## CLPU, AVBA
 
+problem.models <- c("ACAM_D", "AMME_C", "BRNI_C", "BRNI_D", "MAEL_D")
+#constrain50 <- c("AMME", "BRNI", "MAEL")
+#constrain16 <- c("ACAM")
+
 trt <- c("C","D")
 ricker_posteriors <- list()
 ricker_plots <- list()
@@ -19,14 +23,29 @@ ricker_plots <- list()
 for(i in species){
   for(j in trt){
     
-    ## load desired model
-    load(paste0("models/CW/ricker_model/posteriors/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors_constrained.rdata"))
+    sp_trt <- paste0(i, "_", j)
     
-    ## print to see n_eff and Rhat diagnostics
+    if (!sp_trt %in% problem.models) {
+      
+      ## load non-constrained models
+      load(paste0("models/CW/ricker_model/posteriors/lambda_prior_max/seeds_", i, "_", j, "_posteriors_Ricker_maxLpriors_constrained.rdata"))
+      
+    } else if (sp_trt %in% problem.models & sp_trt != "ACAM_D") {
+      
+      ## load models constrained by sd/50
+      load(paste0("models/CW/ricker_model/posteriors/lambda_prior_max/seeds_", i, "_", j, "_posteriors_Ricker_maxLpriors_constrainedby_02.rdata"))
+      
+    } else {
+      
+      ## load ACAM D, constrained by sd/16
+      load(paste0("models/CW/ricker_model/posteriors/lambda_prior_max/seeds_", i, "_", j, "_posteriors_Ricker_maxLpriors_constrainedby_0625.rdata"))
+      
+    }
+    
+    ## print to see model that is loading
     print(i)
     print(j)
-    print(tmp)
-    
+
     ## extract model info
     tmp2 <- rstan::extract(tmp)
 
