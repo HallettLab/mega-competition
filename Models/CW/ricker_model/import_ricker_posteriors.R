@@ -13,8 +13,8 @@ species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LO
 ## CLPU, AVBA
 
 ## problem models
-constrained50 <- c("AMME_C", "BRNI_C", "BRNI_D", "MAEL_D")
-constrained16 <- c("ACAM_D")
+constrained100 <- c("ANAR", "BRNI", "LENI")
+#constrained16 <- c("ACAM_D")
 
 trt <- c("C","D")
 ricker_posteriors <- list()
@@ -24,18 +24,20 @@ for(i in species){
   for(j in trt){
     
     ## set k based on which model is being loaded
-    sp_trt <- paste0(i, "_", j)
+    #sp_trt <- paste0(i, "_", j)
     
-    if(sp_trt %in% constrained50) {
-      k <- 50
-    } else if (sp_trt %in% constrained16) {
-      k <- 16
+    if(i %in% constrained100) {
+      k <- 100
+    #} else if (sp_trt %in% constrained16) {
+     # k <- 16
     } else {
-      k <- "none"
+      k <- 50
     }
     
+    #k <- 50
+    
     ## load non-constrained models
-    load(paste0("models/CW/ricker_model/posteriors/lambda_prior_max/seeds_", i, "_", j, "_posteriors_Ricker_maxLpriors_constrainedby_", k, ".rdata"))
+    load(paste0("models/CW/ricker_model/posteriors/lambda_prior_mean/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors_constrainedby_", k, ".rdata"))
     
     ## print to see model that is loading
     print(i)

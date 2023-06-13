@@ -19,39 +19,40 @@ reps <- read.csv("models/CW/replicate-info.csv")
 
 theme_set(theme_bw())
 
-# Question ####
-## 'As-Is' Equations ####
-run.to.equilibrium <- function(surv, germ, lambda, alpha_intra, Nt) {
+date <- 06092023
+
+# Equations ####
+## 'As-Is' ####
+### equilibrium abundance of resident sp
+run.to.equilibrium <- function(surv, germ, lambda, alpha_intra, Nt, alpha_inter, germ_inter, inter_abund) {
    Ntp1 <- (1-germ)*surv*Nt + germ*lambda*Nt*exp(-alpha_intra *germ* Nt - alpha_inter*germ_inter*inter_abund)
    return(Ntp1)
 }
-## keep both intra and inter specific competition terms in this model
 
+### calc invasion GR 
 run.invader <- function(surv, germ, lambda, alpha_inter, resid_abund, invader_abund, germ_resid) {
    Ntp1 <- (1-germ)*surv*invader_abund + germ*lambda*invader_abund*exp(-alpha_intra*invader_abund*germ - alpha_inter*resid_abund*germ_resid)
    LDGR <- log(Ntp1/invader_abund)
    return(LDGR)
- 
  }
-## keep both intra and inter specific competition terms in this model
 
-## Intra Facilitation Equations ####
-run.to.equilibrium.facilitation <- function(surv, germ, lambda, alpha_intra, Nt) {
-  Ntp1 <- (1-germ)*surv*Nt + germ*lambda*Nt*exp(-alpha_intra*germ*Nt - alpha_intra*germ*(Nt^2) - alpha_inter*germ_inter*inter_abund)
+## Intra Facilitation ####
+### equilibrium abundance of resident sp
+### adds a squared term to intraspecific interaction coeff to prevent runaway population sizes when intraspecific facil is present
+run.to.equilibrium.facilitation <- function(surv, germ, lambda, alpha_intra_a,alpha_intra_b, Nt, alpha_inter, germ_inter, inter_abund) {
+  Ntp1 <- (1-germ)*surv*Nt + germ*lambda*Nt*exp(-alpha_intra_a*germ*Nt - alpha_intra_b*germ*(Nt^2) - alpha_inter*germ_inter*inter_abund)
   return(Ntp1)
 }
-## keep both intra and inter specific competition terms in this model
 
+## calc invasion GR with same squared term for consistency
 run.invader.facilitation <- function(surv, germ, lambda, alpha_inter, resid_abund, invader_abund, germ_resid) {
-  Ntp1 <- (1-germ)*surv*invader_abund + germ*lambda*invader_abund*exp(-alpha_intra*invader_abund*germ - alpha_intra*germ*(Nt^2) - alpha_inter*resid_abund*germ_resid)
+  Ntp1 <- (1-germ)*surv*invader_abund + germ*lambda*invader_abund*exp(-alpha_intra*invader_abund*germ - alpha_intra*germ*(invader_abund^2) - alpha_inter*resid_abund*germ_resid)
   LDGR <- log(Ntp1/invader_abund)
   return(LDGR)
   
 }
 
-
-
-
+# Set params ####
 ## Germ Rates ####
 # germ rates dry
 ricker_posteriors[["ACAM_D"]]$germ <- germ.sum[germ.sum$species == "ACAM" & germ.sum$trt == "D", ]$avg.germ
@@ -151,10 +152,10 @@ all_intra <- c("alpha_acam", "alpha_acam",
                "alpha_taca", "alpha_taca",
                "alpha_thir", "alpha_thir",
                "alpha_twil", "alpha_twil") 
-              
 
 # Run to Equilibrium ####
-## set up loop ####
+## Consistent Params ####
+### Set up loop ####
 options <- length(all_intra)
 
 time <- 300
@@ -170,7 +171,7 @@ N[,,1] <- 100 # start with 100 individuals in every case
 residents_dry <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
 residents_wet <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
 
-## loop thru all posteriors ####
+### Loop thru all posteriors ####
 for(i in 1:length(names(ricker_posteriors))) {
   
   ## select a particular species treatment combo
@@ -203,9 +204,14 @@ for(i in 1:length(names(ricker_posteriors))) {
                                      surv = datset$surv,
                                      lambda = lambda, 
                                      alpha_intra = alpha_intra, 
-                                     Nt = N[i, ,t]) 
+                                     Nt = N[i, ,t], 
+                                     alpha_inter = 0,
+                                     germ_inter = 0,
+                                     inter_abund = 0) 
     
   }
+  
+  #surv, germ, lambda, alpha_intra, Nt, alpha_inter, germ_inter, inter_abund
   
   ## if it is a drought model
   if(str_sub(names(ricker_posteriors)[i], start = -1) == "D"){
@@ -236,8 +242,117 @@ for(i in 1:length(names(ricker_posteriors))) {
 residents_wet <- residents_wet[,-1] 
 residents_dry <- residents_dry[,-1]
 
-## Check Equil Abundances ####
 
+## Add Sq. Term ####
+ricker_posteriors_facil[["THIR_D"]]$germ <- germ.sum[germ.sum$species == "THIR" & germ.sum$trt == "D", ]$avg.germ
+
+ricker_posteriors_facil[["THIR_D"]]$surv <- surv.sum[surv.sum$species == "THIR",]$surv.mean.p
+
+### Set up loop ####
+thir_intra <- c("alpha_thir_a", "alpha_thir_b")
+options <- length(thir_intra)
+
+time <- 300
+runs <- 200
+
+N_facil <- array(NA, c(options, runs, time))
+N_facil[,,1] <- 100 # start with 100 individuals in every case
+## create an array where each of the rows is one of the species-treatment combos arranged in the order of all_intra. 
+## Each of the columns is one separate run of the model
+## Each of the stacked matrices represents a particular time slice
+
+## create empty dataframes
+residents_dry_facil <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
+residents_wet_facil <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
+
+intra_facil2 <- c("THIR_D")
+
+### Loop thru all posteriors ####
+for(i in 1:length(intra_facil2)) {
+  
+  ## select a particular species treatment combo
+  sp_trt <- intra_facil2[i]
+  
+  datset <- ricker_posteriors_facil[[sp_trt]] 
+  
+  ## set the intraspecific alpha name
+  intra_a <- paste0("alpha_", tolower(substr(sp_trt, 1, 4)), "_a")
+  intra_b <- paste0("alpha_", tolower(substr(sp_trt, 1, 4)), "_b")
+  
+  ## make a vector of the length of the posterior distribution
+  post_length <- length(datset$lambda)
+  
+  ## get list of all intraspecific alphas
+  all_intras_a <- datset[[intra_a]]
+  all_intras_b <- datset[[intra_b]]
+  
+  
+  ## loop thru each time step
+  for(t in 1:(time-1)) {
+    
+    ## randomly sample indices from the length of posterior distrib 200x
+    posts <- sample(post_length, runs, replace=TRUE)
+    
+    ## use these indices to select 200 lambda values
+    lambda <- datset$lambda[posts]
+    
+    ## use again to select 200 intra_alpha values
+    alpha_intra_a <- all_intras_a[posts]
+    
+    alpha_intra_b <- all_intras_b[posts]
+    ## for each sp x treat combo use the run to equil function to fill one row of data that uses the abundance at time t and outputs the abundance at time t+1
+    ## as the model loops thru sp x treat combos, more rows of the array are filled out
+    N_facil[i, ,t+1] <- run.to.equilibrium.facilitation(germ = datset$germ, 
+                                     surv = datset$surv,
+                                     lambda = lambda, 
+                                     alpha_intra_a = alpha_intra_a,
+                                     alpha_intra_b = alpha_intra_b,
+                                     Nt = N_facil[i, ,t], 
+                                     #Nt = 100,
+                                     alpha_inter = 0,
+                                     germ_inter = 0,
+                                     inter_abund = 0) 
+    
+  }
+  
+  #surv, germ, lambda, alpha_intra, Nt, alpha_inter, germ_inter, inter_abund
+  
+  ## if it is a drought model
+  if(str_sub(sp_trt, start = 6, end= 6) == "D"){
+    
+    ## tmp.df is a vector of the final abundance of all 200 separate runs - will become a column in the output dataframe
+    tmp.df <- data.frame(N_facil[i,,300])
+    
+    ## change the column name to be the species
+    names(tmp.df) <- sp_trt
+    
+    ## append temporary df to the empty df created earlier
+    residents_dry_facil <-  cbind(residents_dry_facil,  tmp.df)
+    
+  }
+  
+  ## if it is a control model
+  else{
+    
+    ## same steps as above, just appended to different output dataframe
+    tmp.df <- data.frame(N_facil[i,,300])
+    names(tmp.df) <- sp_trt
+    residents_wet_facil <-  cbind(residents_wet_facil,  tmp.df)
+    
+  }
+}
+
+# This was sloppily done by Marina, remove first column
+residents_wet_facil <- residents_wet_facil[,-1] 
+residents_dry_facil <- residents_dry_facil[,-1]
+
+
+## Shuffle Params ea. Run ####
+
+
+
+
+# Check Equil Abundances ####
 ## change to long format for visualization
 residents_wet_long <- residents_wet %>%
   mutate(num = 1:length(PLER)) %>%
@@ -252,17 +367,17 @@ ggplot(residents_wet_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species) +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Ambient Conditions, Ricker Model, Filt Dat, 5/25/23")
+  ggtitle("Ambient Conditions, Ricker Model, Filt Dat, 6/09/23")
 
-ggsave("analyses/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_ambient_meanLpriors.png", height = 6, width = 10)
+ggsave(paste0("analyses/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_ambient_maxLpriors_consistent_params_per_run", date, ".png"), height = 6, width = 10)
 
 ggplot(residents_dry_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species) +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Drought Conditions, Ricker Model, Filt Dat, 5/25/23")
+  ggtitle("Drought Conditions, Ricker Model, Filt Dat, 6/09/23")
 
-ggsave("models/CW/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_drought_meanLpriors.png", height = 6, width = 10)
+ggsave(paste0("analyses/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_drought_maxLpriors_consistent_params_per_run", date, ".png"), height = 6, width = 10)
 
 
 
@@ -279,6 +394,8 @@ ggsave("models/CW/classic_MCT/preliminary_equil_abundance/equil_abund_ricker_dro
 ## Prep Loop ####
 #update species list
 #species <- species[!(species %in% rm)]
+species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+
 
 ## set number of replicates
 reps <- 200
@@ -390,7 +507,7 @@ for(i in 1:length(species)){
     geom_vline(xintercept = 0, linetype = "dashed") +
     ggtitle(paste0(species[i], "Invader Dry, Ricker"))
   
-  ggsave(p_dry, file=paste0("models/CW/classic_MCT/preliminary_GRWR/", species[i], "_ricker_dry.png"), width = 14, height = 10)
+  ggsave(p_dry, file=paste0("analyses/classic_MCT/preliminary_GRWR/Ricker_06092023/", species[i], "_ricker_dry_", date, ".png"), width = 14, height = 10)
   
   p_wet <- ggplot(invasion_wet_long[invasion_wet_long$invader == species[i],], aes(x=GRWR)) +
     geom_histogram(bins = 100) +  
@@ -398,7 +515,7 @@ for(i in 1:length(species)){
     geom_vline(xintercept = 0, linetype = "dashed") +
     ggtitle(paste0(species[i], "Invader Wet, Ricker"))
   
-  ggsave(p_wet, file=paste0("models/CW/classic_MCT/preliminary_GRWR/", species[i], "_ricker_wet.png"), width = 14, height = 10)
+  ggsave(p_wet, file=paste0("analyses/classic_MCT/preliminary_GRWR/Ricker_06092023/", species[i], "_ricker_wet_", date, ".png"), width = 14, height = 10)
   
 }
 
@@ -415,7 +532,7 @@ for(j in 1:length(species)) {
       facet_wrap(~scenario, scales = "free") +
       geom_vline(xintercept = 0, linetype = "dashed")
     
-    ggsave(p_dry, file=paste0("models/CW/classic_MCT/preliminary_GRWR/", species[j], "_", species[k], "_ricker_pairwise_dry.png"), width = 6, height = 3)
+    ggsave(p_dry, file=paste0("analyses/classic_MCT/preliminary_GRWR/", species[j], "_", species[k], "_ricker_pairwise_dry_", date, ".png"), width = 6, height = 3)
     
   }
 
@@ -423,7 +540,7 @@ for(j in 1:length(species)) {
 
 
 
-pdf("models/CW/classic_MCT/preliminary_GRWR/ricker_dry_pairwise_combos.pdf", width = 6, height = 3)
+pdf("analyses/classic_MCT/preliminary_GRWR/ricker_dry_pairwise_combos.pdf", width = 6, height = 3)
 
 for(j in 1:length(species)) {
   

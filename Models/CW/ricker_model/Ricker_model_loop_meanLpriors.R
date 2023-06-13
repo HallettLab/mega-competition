@@ -64,26 +64,43 @@ lambda_priors_mean_C <- lambda_priors_mean %>%
   mutate(sd_constrained = ifelse(phyto == "BRNI", sd_seeds/constrain, 
                                  ifelse(phyto == "ACAM" & treatment == "D", sd_seeds/constrain, 
                                         ifelse(phyto == "AMME" & treatment == "C", sd_seeds/constrain, 
-                                               ifelse(phyto == "MAEL" & treatment == "D", sd_seeds/constrain, sd_seeds)))))
+                                               ifelse(phyto == "MAEL" & treatment == "D", sd_seeds/constrain, sd_seeds)))),
+         sd_consistent_constraint = sd_seeds/50,
+         sd_consistent_constraint = ifelse(phyto %in% c("BRNI", "ANAR", "LENI"), sd_seeds/100, sd_consistent_constraint))
 
 # Loop thru ea Species ####
 #species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
-## does order matter here?
 
-#species <- c("ACAM", "AMME", "BRNI", "MAEL")
-species <- c("BRNI")
+species <- c("ANAR", "BRNI", "LENI")
+#species <- c("BRNI")
 
 ## "CLPU", "AVBA", 
 
-#trt <- c("C","D")
+constrained100 <- c("ANAR", "BRNI", "LENI")
+#constrained16 <- c("ACAM_D")
 
-trt <- c("D")
+trt <- c("C","D")
+
+#trt <- c("D")
 
 model.output <- list()
 warnings <- list()
 
 for(i in species){
   for(j in trt){
+    
+    ## set constraint value, k, to put in posterior file path
+    #sp_trt <- paste0(i, "_", j)
+    
+    if(i %in% constrained100) {
+      k <- 100
+   # } else if (sp_trt %in% constrained16) {
+    #  k <- 16
+    } else {
+      k <- 50
+    }
+    #k <- 50 
+    
     dat <- subset(model.dat.filtered, phyto == i)
     dat <- subset(dat, treatment == j)
     
@@ -123,7 +140,7 @@ for(i in species){
 
     mean_ctrl_seeds <- lambda_priors_mean_C[lambda_priors_mean_C$phyto == i & lambda_priors_mean_C$treatment == j,]$mean_seeds_ctrl
     
-    sd_ctrl_seeds <- lambda_priors_mean_C[lambda_priors_mean_C$phyto == i & lambda_priors_mean_C$treatment == j,]$sd_constrained
+    sd_ctrl_seeds <- lambda_priors_mean_C[lambda_priors_mean_C$phyto == i & lambda_priors_mean_C$treatment == j,]$sd_consistent_constraint
     
     print(i)
     print(j)
@@ -134,7 +151,7 @@ for(i in species){
     
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/seeds_",i,"_",j,"_posteriors_Ricker_meanLpriors_constrainedby_02.rdata"))
+    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/lambda_prior_mean/seeds_",i,"_",j,"_posteriors_Ricker_meanLpriors_constrainedby_", k, ".rdata"))
   }
 }
 
