@@ -1,4 +1,4 @@
-## This script combines phyto and background seeds in/out and gets data in a model ready format! 
+## Purpose: This script combines phyto and background seeds in/out and gets data in a model ready format! 
 
 # Read in Data ####
 ## phyto seeds in/out ####
@@ -9,24 +9,24 @@ source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_calculations.R")
 
 
 # Replicate Control Rows ####
+## replicate control rows in the df so that each phytometer has an associated set of control values during model runs; each replicated set of control rows will be saved with a phyto name
+
 all.phytos.info <- left_join(all.phytos, unique.key, by = c("unique.ID", "phyto")) %>%
   mutate(bkgrd = ifelse(bkgrd == "ERBO", "Control", bkgrd))
-## set ERBO backgrounds as controls
+## join with unique ID key
+## set ERBO backgrounds as controls, as several were used this way
 
-
+## create vectors
 blocks <- unique(all.phytos.info$block) 
 species <- unique(all.phytos.info$phyto)
 bkgrds <- unique(all.phytos.info$bkgrd)
-
 
 ## make column of backgrounds to join w/replicated control lines later
 bkgrd.df <- as.data.frame(bkgrds[bkgrds != "Control"])
 colnames(bkgrd.df) <- "bkgrd"
 
-## store outputs
+## make df to store outputs
 repeated.controls <- data.frame()
-
-
 
 ## loop through each species
 for (i in 1:length(species)) {
@@ -69,7 +69,6 @@ for (i in 1:length(species)) {
         all.reps <- rbind(all.reps, tmp.repeated.reps)
       }
       
-      
     ## if there isn't a control in a particular block, just make a blank df to combine
     } else {
       
@@ -86,8 +85,9 @@ for (i in 1:length(species)) {
   repeated.controls <- rbind(repeated.controls, all.blocks)
 }
 
+## join back with main phyto dataframe
 with.controls <- rbind(all.phytos.info, repeated.controls) %>%
-  filter(bkgrd != "Control")
+  filter(bkgrd != "Control") ## remove 'control' backgrounds as the controls are now saved as phytos; they are still identifiable as controls by their unique.ID
 
 unique.id.controls <- sort(unique(repeated.controls$unique.ID))
 ## make a vector of control unique.IDs
@@ -96,15 +96,14 @@ unique.id.controls <- sort(unique(repeated.controls$unique.ID))
 ## join phyto & bkgrd data ####
 bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkgrd")) %>%
   select(-phyto.n.indiv) %>%
-  mutate(bg.seeds.in = ifelse(is.na(bg.seeds.in) & unique.ID %in% unique.id.controls, 0, bg.seeds.in),
-         bg.seeds.out = ifelse(is.na(bg.seeds.out) & unique.ID %in% unique.id.controls, 0, bg.seeds.out))
+  mutate(bg.seeds.in = ifelse(is.na(bg.seeds.in) & unique.ID %in% unique.id.controls, 0, bg.seeds.in), ## if an observation is a control background, input 0 seeds
+         bg.seeds.out = ifelse(is.na(bg.seeds.out) & unique.ID %in% unique.id.controls, 0, bg.seeds.out)) ## if control background, output 0 seeds
 
 ## reorder columns
 bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
-
 # Replicate Info ####
-reps <- bg.phyto.seeds %>%
+reps <- bg.phyto.seeds %>% ## create df with number of replicates for each precip-background-phyto species combination
   filter(dens != "none") %>%
   mutate(bg.indiv.absent = ifelse(bg.seeds.out == 0, 1, 0)) %>%
   group_by(treatment, phyto, bkgrd) %>%
@@ -140,11 +139,8 @@ for(i in species){
 
 model.dat.init <- model.dat.init [,-10] ## get rid of phyto.seeds.in.final column
 
-### add in weed census ####
-model.dat <- left_join(model.dat.init, phyto.census[,c(1,5:11)], by = "unique.ID") #%>%
-  #mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
-  #filter(combos %in% ok.reps$combos)
-## don't filter by replicates here, filter afterwards because the model loops thru everything anyways.
+## add in weed census ####
+model.dat <- left_join(model.dat.init, phyto.census[,c(1,5:11)], by = "unique.ID")
 
 # Make Lambda Priors df ####
 lambda_priors_max <- all.phytos.info %>%
@@ -164,17 +160,6 @@ ctrl_seed_output_check <- all.phytos.info %>%
   group_by(phyto, treatment) %>%
   summarise(mean.seeds = mean(phyto.seed.out), 
             sd.seeds = sd(phyto.seed.out))
-
-## Fix CLPU sd ####
-#clpu.fix <- bg.phyto.seeds %>%
- # filter(bkgrd == "Control" | bkgrd == "AVBA", phyto == "CLPU") %>%
-  #group_by(phyto) %>%
-  #summarise(max_seeds_ctrl = max(phyto.seed.out), 
-   #         sd_seeds = sd(phyto.seed.out))
-## none of the AVBA backgrounds had any seeds in them, so it should be ok to use the CLPU phytos as controls here.
-
-#lambda_priors[lambda_priors$phyto == "CLPU",]$max_seeds_ctrl <- clpu.fix$max_seeds_ctrl
-#lambda_priors[lambda_priors$phyto == "CLPU",]$sd_seeds <- clpu.fix$sd_seeds
 
 # Clean Env ####
 rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks,  bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init)
