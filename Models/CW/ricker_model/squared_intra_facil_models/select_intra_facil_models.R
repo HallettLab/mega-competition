@@ -1,3 +1,5 @@
+source("Models/CW/ricker_model/import_ricker_posteriors.R")
+
 ## Select Intra-Facil Models ####
 ricker_posteriors_long <- ricker_posteriors2 %>%
   pivot_longer(2:24, names_to = "alpha_name", values_to = "alpha_value") %>%
