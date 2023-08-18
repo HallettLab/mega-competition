@@ -37,25 +37,7 @@ data{
 
 parameters{
   //real<lower = 0> lambda;
-  real<lower = 0, upper = 10000> lambda;
-  //real<lower = 0> alpha_pler;
-  //real<lower = 0> alpha_anar;
-  //real<lower = 0> alpha_acam;
-  //real<lower = 0> alpha_brni;
-  //real<lower = 0> alpha_clpu;
-  //real<lower = 0> alpha_brho;
-  //real<lower = 0> alpha_gitr;
-  //real<lower = 0> alpha_amme;
-  //real<lower = 0> alpha_plno;
-  //real<lower = 0> alpha_thir;
-  //real<lower = 0> alpha_mica;
-  //real<lower = 0> alpha_ceso;
-  //real<lower = 0> alpha_twil;
-  //real<lower = 0> alpha_lomu;
-  //real<lower = 0> alpha_taca;
-  //real<lower = 0> alpha_mael;
-  //real<lower = 0> alpha_leni;
-  //real<lower = 0> alpha_avba;
+  real<lower = 0, upper = 15000> lambda;
    real alpha_acam;
    real alpha_amme;
    real alpha_anar;
