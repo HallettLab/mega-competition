@@ -1,8 +1,8 @@
 // Ricker growth model
 
 data{
-  int<lower = 1> N;
-  int Fecundity[N];
+  int<lower = 1> N; // number of observations
+  int Fecundity[N]; // should this be a vector?
   vector[N] intra;
   real intra_g;
   real mean_ctrl_seeds; 
@@ -10,11 +10,9 @@ data{
   vector[N] acam;
   vector[N] amme;
   vector[N] anar;
-  //vector[N] avba;
   vector[N] brho;
   vector[N] brni;
   vector[N] ceso;
-  //vector[N] clpu;
   vector[N] gitr;
   vector[N] leni;
   vector[N] lomu;
@@ -68,7 +66,7 @@ parameters{
 
 model{
   // create a vector of predictions
-  vector[N] F_hat;
+  //vector[N] F_hat;
   // set priors
   alpha_acam ~ normal(0, 1);
   alpha_amme ~ normal(0, 1);
@@ -104,15 +102,13 @@ model{
   
   for(i in 1:N){
     
-    F_hat[i] = lambda*intra[i]*intra_g*exp( 
+    Fecundity[i] ~ neg_binomial_2(lambda*intra[i]*intra_g*exp( 
     - alpha_acam*acam[i]*0.66 -
     alpha_amme*amme[i]*0.88 -
     alpha_anar*anar[i]*0.15 - 
-    //alpha_avba*avba[i]*0.96 -
     alpha_brho*brho[i]*0.97 -
     alpha_brni*brni[i]*0.69 -
     alpha_ceso*ceso[i]*0.92 -
-    // alpha_clpu*clpu[i]*0.37 -
     alpha_gitr*gitr[i]*0.98 -
     alpha_leni*leni[i]*0.85 -
     alpha_lomu*lomu[i]*0.96 -
@@ -129,13 +125,13 @@ model{
     alpha_gamu*gamu[i] -
     alpha_hygl*hygl[i] -
     alpha_siga*siga[i] -
-    alpha_other*other[i]);
+    alpha_other*other[i]));
     
   }
 
   // this might be one place to change to a negative binomial distribution?
   // calculate the likelihood
-  Fecundity ~ neg_binomial2(F_hat);
+ // Fecundity ~ neg_binomial2(F_hat);
   
 }
 
