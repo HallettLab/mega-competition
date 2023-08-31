@@ -15,7 +15,6 @@ initials <- list(lambda=250,
                  alpha_anar=1, 
                  alpha_acam=1,
                  alpha_brni=1, 
-                 #alpha_clpu=1, 
                  alpha_brho=1,
                  alpha_gitr=1, 
                  alpha_amme=1, 
@@ -28,7 +27,6 @@ initials <- list(lambda=250,
                  alpha_taca=1,
                  alpha_mael=1, 
                  alpha_leni=1, 
-                # alpha_avba=1, 
                  alpha_crco=1,
                  alpha_erbo=1,
                  alpha_figa=1,
@@ -38,13 +36,9 @@ initials <- list(lambda=250,
                  alpha_other=1)
 
 initials1<- list(initials, initials, initials, initials)
+initials1 <- list(initials)
 
 ## Last minute data mods ####
-
-# replacing 0s with small number for now
-#model.dat[model.dat$phyto.seeds.out.final == 0,]$phyto.seeds.out.final <- 1
-# DO NOT DO THIS
-
 
 ## ok reps
 good.reps <- reps %>%
@@ -56,61 +50,32 @@ model.dat.filtered <- model.dat %>%
   mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
   filter(combos %in% good.reps.vec)
 
-# Constrain Priors ####
-## ACAM D, AMME C, BRNI C, BRNI D, and MAEL D.
-#constrain <- 50 ## what to divide sd by to constrain the full deviation
-
-#lambda_priors_mean_C <- lambda_priors_mean %>%
- # mutate(sd_constrained = ifelse(phyto == "BRNI", sd_seeds/constrain, 
-                             #    ifelse(phyto == "ACAM" & treatment == "D", sd_seeds/constrain, 
-                                    #    ifelse(phyto == "AMME" & treatment == "C", sd_seeds/constrain, 
-                                        #       ifelse(phyto == "MAEL" & treatment == "D", sd_seeds/constrain, sd_seeds)))),
-         #sd_consistent_constraint = sd_seeds/50,
-       #  sd_consistent_constraint = ifelse(phyto %in% c("BRNI", "ANAR", "LENI"), sd_seeds/100, sd_consistent_constraint))
-
 # Loop thru ea Species ####
 #species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
-species <- c("ANAR", "BRNI", "LENI")
-#species <- c("BRNI")
+species <- c("ACAM")
+## R keeps crashing when I run this.... not sure why
 
-## "CLPU", "AVBA", 
-
-#constrained100 <- c("ANAR", "BRNI", "LENI")
-#constrained16 <- c("ACAM_D")
-
-trt <- c("C","D")
-
-#trt <- c("D")
+#trt <- c("C","D")
+trt <- c("C")
 
 model.output <- list()
 warnings <- list()
 
 for(i in species){
   for(j in trt){
-    
-    ## set constraint value, k, to put in posterior file path
-    #sp_trt <- paste0(i, "_", j)
-    
-   # if(i %in% constrained100) {
-     # k <- 100
-   # } else if (sp_trt %in% constrained16) {
-    #  k <- 16
-   # } else {
-   #   k <- 50
-   # }
-    #k <- 50 
-    
+
     dat <- subset(model.dat.filtered, phyto == i)
     dat <- subset(dat, treatment == j)
     
     Fecundity <- as.integer(round(dat$phyto.seeds.out.final))
+    N_blocks <- length(unique(dat$block))
+    group <- as.integer(dat$block)
     
     pler <- as.integer(dat$PLER)
     anar <- as.integer(dat$ANAR)
     acam <- as.integer(dat$ACAM)
     brni <- as.integer(dat$BRNI)
-    #clpu <- as.integer(dat$CLPU)
     brho <- as.integer(dat$BRHO)
     gitr <- as.integer(dat$GITR)
     amme <- as.integer(dat$AMME)
@@ -123,7 +88,6 @@ for(i in species){
     taca <- as.integer(dat$TACA)
     mael <- as.integer(dat$MAEL)
     leni <- as.integer(dat$LENI)
-    #avba <- as.integer(dat$AVBA)
     crco <- as.integer(dat$CRCO)
     erbo <- as.integer(dat$ERBO)
     figa <- as.integer(dat$FIGA)
@@ -137,7 +101,7 @@ for(i in species){
     intra <- as.integer(unlist(dat[,i])) ## seeds in of focal species
     
     intra_g <- germ.sum.sp.DC[germ.sum.sp.DC$species == i & germ.sum.sp.DC$trt == j,]$avg.germ 
-
+    
     mean_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i & lambda_priors_mean$treatment == j,]$mean_seeds_ctrl
     
     sd_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i & lambda_priors_mean$treatment == j,]$sd_seeds
@@ -145,13 +109,11 @@ for(i in species){
     print(i)
     print(j)
     
-    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/ricker_model/18_species_Ricker_model_",j, ".stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "acam", "amme", "anar", "brho","brni", "ceso", "gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca", "thir","twil","crco", "erbo", "figa", "gamu", "hygl", "siga", "other"), iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
-                                                     init = initials1) 
-    ## "clpu","avba",
-    
+    model.output[[paste0("seeds_",i,"_",j)]] <- stan(file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_",j, "_random_effects_neg_binom.stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "N_blocks", "group", "acam", "amme", "anar", "brho","brni", "ceso", "gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca", "thir","twil","crco", "erbo", "figa", "gamu", "hygl", "siga", "other"), iter = 1000, chains = 1, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20), init = initials1) 
+   
     tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
     
-    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/lambda_prior_mean/seeds_",i,"_",j,"_posteriors_Ricker_meanLpriors_08282023.rdata"))
+    save(tmp, file = paste0("Models/CW/ricker_model/in_development/random_effects_block/posteriors/seeds_",i,"_",j,"_posteriors_Ricker_random_effects_neg_binom.rdata"))
   }
 }
 
