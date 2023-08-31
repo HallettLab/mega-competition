@@ -9,12 +9,9 @@ theme_set(theme_bw())
 
 # Extract Posteriors ####
 ## List Form ####
-species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
-## CLPU, AVBA
+#species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
-## problem models
-constrained100 <- c("ANAR", "BRNI", "LENI")
-#constrained16 <- c("ACAM_D")
+species <- c("PLER")
 
 trt <- c("C","D")
 ricker_posteriors <- list()
@@ -23,27 +20,13 @@ ricker_plots <- list()
 for(i in species){
   for(j in trt){
     
-    ## set k based on which model is being loaded
-    #sp_trt <- paste0(i, "_", j)
-    
-    if(i %in% constrained100) {
-      k <- 100
-    #} else if (sp_trt %in% constrained16) {
-     # k <- 16
-    } else {
-      k <- 50
-    }
-    
-    #k <- 50
-    
     ## load non-constrained models
-    load(paste0("models/CW/ricker_model/posteriors/lambda_prior_mean/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors_constrainedby_", k, ".rdata"))
+    load(paste0("models/CW/ricker_model/posteriors/lambda_prior_mean/seeds_", i, "_", j, "_posteriors_Ricker_meanLpriors_", date, ".rdata"))
     
     ## print to see model that is loading
     print(i)
     print(j)
-    print(k)
-
+   
     ## extract model info
     tmp2 <- rstan::extract(tmp)
 

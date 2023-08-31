@@ -1,6 +1,7 @@
 // Ricker growth model
 
 data{
+  
   int<lower = 1> N;
   int Fecundity[N];
   vector[N] intra;
@@ -10,11 +11,9 @@ data{
   vector[N] acam;
   vector[N] amme;
   vector[N] anar;
-  //vector[N] avba;
   vector[N] brho;
   vector[N] brni;
   vector[N] ceso;
-  //vector[N] clpu;
   vector[N] gitr;
   vector[N] leni;
   vector[N] lomu;
@@ -36,33 +35,31 @@ data{
 }
 
 parameters{
-  //real<lower = 0> lambda;
+  
   real<lower = 0, upper = 15000> lambda;
-   real alpha_acam;
-   real alpha_amme;
-   real alpha_anar;
-   //real alpha_avba;
-   real alpha_brho;
-   real alpha_brni;
-   real alpha_ceso;
-   //real alpha_clpu;
-   real alpha_gitr;
-   real alpha_leni;
-   real alpha_lomu;
-   real alpha_mael;
-   real alpha_mica;
-   real alpha_pler;
-   real alpha_plno;
-   real alpha_taca;
-   real alpha_thir;
-   real alpha_twil;
-   real alpha_crco; 
-   real alpha_erbo; 
-   real alpha_figa;
-   real alpha_gamu; 
-   real alpha_hygl;
-   real alpha_siga;
-   real alpha_other;
+  real alpha_acam;
+  real alpha_amme;
+  real alpha_anar;
+  real alpha_brho;
+  real alpha_brni;
+  real alpha_ceso;
+  real alpha_gitr;
+  real alpha_leni;
+  real alpha_lomu;
+  real alpha_mael;
+  real alpha_mica;
+  real alpha_pler;
+  real alpha_plno;
+  real alpha_taca;
+  real alpha_thir;
+  real alpha_twil;
+  real alpha_crco;
+  real alpha_erbo;
+  real alpha_figa;
+  real alpha_gamu;
+  real alpha_hygl;
+  real alpha_siga;
+  real alpha_other;
 
 }
 
@@ -73,11 +70,9 @@ model{
   alpha_acam ~ normal(0, 1);
   alpha_amme ~ normal(0, 1);
   alpha_anar ~ normal(0, 1);
-  //alpha_avba ~ normal(0, 1);
   alpha_brho ~ normal(0, 1);
   alpha_brni ~ normal(0, 1);
   alpha_ceso ~ normal(0, 1);
-  //alpha_clpu ~ normal(0, 1);
   alpha_gitr ~ normal(0, 1);
   alpha_leni ~ normal(0, 1);
   alpha_lomu ~ normal(0, 1);
@@ -95,24 +90,6 @@ model{
   alpha_hygl ~ normal(0, 1);
   alpha_siga ~ normal(0, 1);
   alpha_other ~ normal(0, 1);
-  // alpha_pler ~ gamma(0.001, 0.001);
-  // alpha_anar ~ gamma(0.001, 0.001);
-  // alpha_acam ~ gamma(0.001, 0.001);
-  // alpha_brni ~ gamma(0.001, 0.001);
-  // alpha_clpu ~ gamma(0.001, 0.001);
-  // alpha_brho ~ gamma(0.001, 0.001);
-  // alpha_gitr ~ gamma(0.001, 0.001);
-  // alpha_amme ~ gamma(0.001, 0.001);
-  // alpha_plno ~ gamma(0.001, 0.001);
-  // alpha_thir ~ gamma(0.001, 0.001);
-  // alpha_mica ~ gamma(0.001, 0.001);
-  // alpha_ceso ~ gamma(0.001, 0.001);
-  // alpha_twil ~ gamma(0.001, 0.001);
-  // alpha_lomu ~ gamma(0.001, 0.001);
-  // alpha_taca ~ gamma(0.001, 0.001);
-  // alpha_mael ~ gamma(0.001, 0.001);
-  // alpha_leni ~ gamma(0.001, 0.001);
-  // alpha_avba ~ gamma(0.001, 0.001);
   lambda ~ normal(mean_ctrl_seeds, sd_ctrl_seeds);
 
   // implement the biological model (control, germ rates taken from mean of temps, but using corresponding WP)
@@ -122,11 +99,9 @@ model{
     - alpha_acam*acam[i]*0.66 -
     alpha_amme*amme[i]*0.88 -
     alpha_anar*anar[i]*0.15 - 
-    //alpha_avba*avba[i]*0.96 -
     alpha_brho*brho[i]*0.97 -
     alpha_brni*brni[i]*0.69 -
     alpha_ceso*ceso[i]*0.92 -
-    // alpha_clpu*clpu[i]*0.37 -
     alpha_gitr*gitr[i]*0.98 -
     alpha_leni*leni[i]*0.85 -
     alpha_lomu*lomu[i]*0.96 -
