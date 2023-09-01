@@ -2,14 +2,14 @@
 
 # Prep ####
 source("data_cleaning/format_model_dat.R") ## get formatted model data
-
+#library(StanHeaders)
 library(rstan)
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
 
 library(here)
 
-date <- 08292023
+date <- 20230831
 
 # Set initials ####
 initials <- list(lambda=250, 
@@ -30,10 +30,12 @@ initials <- list(lambda=250,
                  alpha_thir=1, 
                  alpha_twil=1, 
                  alpha_weeds=1,
-                 group_effect=1) ## I think there might need to be an initial for every parameter specified in teh model? Or maybe it works better that way? Really don't know
-
+                 group_effect=0)
+initials <- list(lambda = 250, group_effect = 0)
 initials1<- list(initials, initials, initials, initials)
-initials1 <- list(initials)
+
+
+#initials1 <- list(initials)
 
 ## Last minute data mods ####
 ## ok reps
@@ -71,23 +73,23 @@ for(i in species){
     N_blocks <- length(unique(dat$block))
     group <- as.integer(dat$block)
     
-    pler <- as.integer(dat$PLER)
-    anar <- as.integer(dat$ANAR)
-    acam <- as.integer(dat$ACAM)
-    brni <- as.integer(dat$BRNI)
-    brho <- as.integer(dat$BRHO)
-    gitr <- as.integer(dat$GITR)
-    amme <- as.integer(dat$AMME)
-    plno <- as.integer(dat$PLNO)
-    thir <- as.integer(dat$THIR)
-    mica <- as.integer(dat$MICA)
-    ceso <- as.integer(dat$CESO)
-    twil <- as.integer(dat$TWIL)
-    lomu <- as.integer(dat$LOMU)
-    taca <- as.integer(dat$TACA)
-    mael <- as.integer(dat$MAEL)
-    leni <- as.integer(dat$LENI)
-    weeds <- as.integer(dat$weeds)
+    ##pler <- as.integer(dat$PLER)
+    ##anar <- as.integer(dat$ANAR)
+   ## acam <- as.integer(dat$ACAM)
+    ##brni <- as.integer(dat$BRNI)
+    ##brho <- as.integer(dat$BRHO)
+    ## gitr <- as.integer(dat$GITR)
+    ##amme <- as.integer(dat$AMME)
+    ##plno <- as.integer(dat$PLNO)
+    ## thir <- as.integer(dat$THIR)
+    ## mica <- as.integer(dat$MICA)
+    ## ceso <- as.integer(dat$CESO)
+    ##twil <- as.integer(dat$TWIL)
+    ## lomu <- as.integer(dat$LOMU)
+    ##taca <- as.integer(dat$TACA)
+    ## mael <- as.integer(dat$MAEL)
+    ## leni <- as.integer(dat$LENI)
+    ## weeds <- as.integer(dat$weeds)
 
     
     N <- as.integer(length(Fecundity)) ## number of observations
@@ -108,9 +110,7 @@ for(i in species){
     model.output[[paste0("seeds_",i,"_",j)]] <- stan(
       file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_",j, "_random_effects.stan"),
       data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", 
-               "sd_ctrl_seeds", "acam", "amme", "anar", "brho","brni", "ceso", 
-               "gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca", 
-               "thir","twil", "weeds", "N_blocks", "group"), 
+               "sd_ctrl_seeds", "N_blocks", "group"), 
       iter = 1000, chains = 4, thin = 3, 
       control = list(adapt_delta = 0.95, max_treedepth = 20),
                                                      init = initials1)
@@ -121,3 +121,6 @@ for(i in species){
   }
 }
 
+#"acam", "amme", "anar", "brho","brni", "ceso", 
+#"gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca", 
+#"thir","twil", "weeds",
