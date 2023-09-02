@@ -54,7 +54,7 @@ model.dat.filtered <- model.dat %>%
 #species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
 species <- c("PLER")
-trt <- c("C","D")
+trt <- c("C")
 
 model.output <- list()
 warnings <- list()
