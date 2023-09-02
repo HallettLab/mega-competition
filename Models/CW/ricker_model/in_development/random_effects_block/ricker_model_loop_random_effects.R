@@ -13,45 +13,45 @@ date <- 20230831
 
 # Set initials ####
 initials <- list(lambda_base=250,
-                 lambda_dev=0,
+                 lambda_dev=1,
                  alpha_acam_base=1,
-                 alpha_acam_dev=0,
+                 alpha_acam_dev=1,
                  alpha_amme_base=1, 
-                 alpha_amme_dev=0,
+                 alpha_amme_dev=1,
                  alpha_anar_base=1, 
-                 alpha_anar_dev=0,
+                 alpha_anar_dev=1,
                  alpha_brho_base=1,
-                 alpha_brho_dev=0,
+                 alpha_brho_dev=1,
                  alpha_brni_base=1, 
-                 alpha_brni_dev=0, 
+                 alpha_brni_dev=1, 
                  alpha_ceso_base=1,
                  alpha_ceso_dev=1,
                  alpha_gitr_base=1, 
-                 alpha_gitr_dev=0, 
+                 alpha_gitr_dev=1, 
                  alpha_leni_base=1, 
-                 alpha_leni_dev=0,
+                 alpha_leni_dev=1,
                  alpha_lomu_base=1, 
-                 alpha_lomu_dev=0,
+                 alpha_lomu_dev=1,
                  alpha_mael_base=1, 
-                 alpha_mael_dev=0,
+                 alpha_mael_dev=1,
                  alpha_mica_base=1,
-                 alpha_mica_dev=0,
+                 alpha_mica_dev=1,
                  alpha_pler_base=1, 
-                 alpha_pler_dev=0,
+                 alpha_pler_dev=1,
                  alpha_plno_base=1,
-                 alpha_plno_dev=0,
+                 alpha_plno_dev=1,
                  alpha_taca_base=1,
-                 alpha_taca_dev=0,
+                 alpha_taca_dev=1,
                  alpha_thir_base=1, 
-                 alpha_thir_dev=0,
+                 alpha_thir_dev=1,
                  alpha_twil_base=1, 
-                 alpha_twil_dev=0,
+                 alpha_twil_dev=1,
                  alpha_weeds_base=1,
-                 alpha_weeds_dev=0,
-                 epsilon=0)
+                 alpha_weeds_dev=1,
+                 epsilon=1)
 
 initials1<- list(initials, initials, initials, initials)
-
+initials1<-list(initials)
 # Loop thru ea Species ####
 #species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", 
 #"LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
@@ -71,7 +71,7 @@ for(i in species){
     N_blocks <- length(unique(dat$block)) ## number of blocks
     block <- as.integer(dat$block) ## vector of block vals
     N <- as.integer(length(Fecundity)) ## number of observations
-    N_t <- as.integer(dat$phyto.seed.in) ## seeds in of focal species
+    N_i <- as.integer(dat$phyto.seed.in) ## seeds in of focal species
     g_i <- as.integer(dat$mean.germ) ## germ of focal species
     trt <- as.integer(dat$trt) ## treatment (binary)
     
@@ -99,11 +99,11 @@ for(i in species){
     model.output[[paste0("ricker_",i)]] <- stan(
       file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_ppt_random_fx.stan"),
       
-      data = c("N", "Fecundity", "N_t", "g_i", "N_blocks", "block", "trt", 
+      data = c("N", "Fecundity", "N_i", "g_i", "N_blocks", "block", "trt", 
                "acam", "amme", "anar", "brho","brni", "ceso","gitr", "leni", 
                "lomu", "mael", "mica", "pler", "plno", "taca","thir","twil", "weeds"), 
       
-      iter = 5000, chains = 4, thin = 3, 
+      iter = 5000, chains = 1, thin = 3, 
       
       control = list(adapt_delta = 0.95, max_treedepth = 20), init = initials1)
     

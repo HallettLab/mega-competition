@@ -41,7 +41,8 @@ data{
 parameters{
   
   // lambda
-  real<lower = 0, upper = 10000> lambda;
+  real<lower = 0, upper = 10000> lambda_base; //_base;
+  real lambda_dev;
   
   // group-level random effects
   real epsilon[N_blocks];
@@ -89,7 +90,8 @@ parameters{
 model{
   
   // set priors
-  lambda ~ gamma(0.001, 0.001); // non-informative prior!
+  //lambda_base ~ gamma(0.001, 0.001); // non-informative prior!
+  lambda_base ~ gamma(0.001, 0.001);
   lambda_dev ~ normal(0,100); //if get errors with this running let Lauren know; lambda+lambda_dev can't be below 0; if it doesn't work, take it out and get alpha-dev running 
   
   sigma ~ gamma(0.001, 0.001);
@@ -139,7 +141,7 @@ model{
     
     // use stems data - NOT back calculated seeds in data
     // should model both precip conditions together
-    F_hat[i] = intra[i]*intra_g*(lambda_base + lambda_dev*trt[i])*
+    F_hat[i] = N_i[i]*g_i[i]*(lambda_base + lambda_dev*trt[i])*
     exp(-acam[i]*(alpha_acam_base + alpha_acam_dev*trt[i])-
     amme[i]*(alpha_amme_base + alpha_amme_dev*trt[i]) -
     anar[i]*(alpha_anar_base + alpha_anar_dev*trt[i]) - 
