@@ -132,7 +132,7 @@ acam.phyto <- acam_final %>%
          
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
   ## then, check for # indiv > 3, use # indiv as seeds.in here also
-  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 ggplot(acam.phyto, aes(x=phyto.seed.out)) +
   geom_histogram()

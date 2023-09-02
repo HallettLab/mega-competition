@@ -120,7 +120,7 @@ mael.phyto <- mael_final_dates %>%
   ## then, check for # indiv > 3, use # indiv as seeds.in here also
   
   
-  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
 #phyto.uniques.mael <- mael.phyto %>%

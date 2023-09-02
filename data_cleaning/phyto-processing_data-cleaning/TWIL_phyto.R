@@ -169,7 +169,7 @@ twil.phyto <- twil_final %>%
          
          ) %>%
   
-  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
 ggplot(twil.phyto, aes(x=phyto.seed.out)) +

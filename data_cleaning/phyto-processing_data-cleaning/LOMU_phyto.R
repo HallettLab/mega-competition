@@ -149,7 +149,7 @@ lomu.phyto <- lomu_final %>%
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
          ## then, check for # indiv > 3, use # indiv as seeds.in here also
   
-  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 # NOTE: ####
 ## there are probably several instances where the phyto collected was a recruit. We should check all collection notes for this possibility.

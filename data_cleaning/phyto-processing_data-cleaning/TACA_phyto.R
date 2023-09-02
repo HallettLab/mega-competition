@@ -29,7 +29,7 @@ source("data_cleaning/unique_key.R")
 # Clean Data ####
 tacaC <- basic_cleaning_func(taca)
 
-str(tacaC)
+#str(tacaC)
 ## total.biomass.g is a character
 ## ahh looks like one entry has a comma rather than a period.
 
@@ -99,7 +99,7 @@ taca.phyto <- taca_final %>%
          phyto.seed.in = ifelse(phyto.n.indiv > 3, phyto.n.indiv, phyto.seed.in)) %>%
         ## then, check for # indiv > 3, use # indiv as seeds.in here also
   
-  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
 ## check the seed.in numbers

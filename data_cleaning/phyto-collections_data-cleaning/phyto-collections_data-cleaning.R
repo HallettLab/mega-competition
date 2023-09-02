@@ -86,11 +86,6 @@ plotnotes <- collectionsC %>%
   filter(!is.na(plot.notes))
 ## no useful notes here.
 
-# Add in intra-phyto column ####
-
-
-
-
 # Separate Data ####
 # Pull out census data for clean data storage
 phyto.census <- collectionsC %>%

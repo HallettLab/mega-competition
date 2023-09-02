@@ -127,7 +127,7 @@ anar.phyto <- anar_final %>%
          ) %>%
   
   
-  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
 ggplot(anar.phyto, aes(x=phyto.seed.out)) +

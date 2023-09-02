@@ -1,25 +1,27 @@
 ## Purpose: This script combines phyto and background seeds in/out and gets data in a model ready format! 
 
 # Read in Data ####
-## phyto seeds in/out ####
+## phyto seeds in/out
 source("data_cleaning/phyto-processing_data-cleaning/compile_phyto-processing_data.R")
 
-## bkgrd seeds in/out ####
-source("data_cleaning/bkgrd-processing_data-cleaning/bkgrd_calculations.R")
+## bkgrd stems
+source("data_cleaning/phyto-collections_data-cleaning/phyto-collections_data-cleaning.R")
+## an update from 9/1/2023 when determined should use stems data, NOT back calculated seeds in
 
+## germination
+source("data_cleaning/germination_data-cleaning/germination_data_cleaning.R")
+
+all.phytos <- all.phytos %>%
+  mutate(bkgrd = ifelse(bkgrd == "ERBO", "Control", bkgrd))
+## set ERBO backgrounds as controls, as several were used this way
 
 # Replicate Control Rows ####
 ## replicate control rows in the df so that each phytometer has an associated set of control values during model runs; each replicated set of control rows will be saved with a phyto name
 
-all.phytos.info <- left_join(all.phytos, unique.key, by = c("unique.ID", "phyto")) %>%
-  mutate(bkgrd = ifelse(bkgrd == "ERBO", "Control", bkgrd))
-## join with unique ID key
-## set ERBO backgrounds as controls, as several were used this way
-
 ## create vectors
-blocks <- unique(all.phytos.info$block) 
-species <- unique(all.phytos.info$phyto)
-bkgrds <- unique(all.phytos.info$bkgrd)
+blocks <- unique(all.phytos$block) 
+species <- unique(all.phytos$phyto)
+bkgrds <- unique(all.phytos$bkgrd)
 
 ## make column of backgrounds to join w/replicated control lines later
 bkgrd.df <- as.data.frame(bkgrds[bkgrds != "Control"])
@@ -40,15 +42,17 @@ for (i in 1:length(species)) {
     
     tmp.block <- blocks[j] ## select the block
     
-    tmp.controls <- all.phytos.info %>% ## filter to controls of particular species
+    tmp.controls <- all.phytos %>% ## filter to controls of particular species
       filter(phyto == tmp.sp,
              bkgrd == "Control",
              block == tmp.block)
     
-    ## if there are controls in a particular block, replicate each row 18x and add in a unique background for each
+    ## if there are controls in a particular block, 
+    ## replicate each row 18x and add in a unique background for each
     if (nrow(tmp.controls) > 0 ) {
       
-      control.reps <- unique(tmp.controls$unique.ID) ## make vector of each rep in the block
+      ## make vector of each rep in the block
+      control.reps <- unique(tmp.controls$unique.ID) 
       
       ## create df to store output of all reps within a block
       all.reps <- data.frame()
@@ -56,7 +60,8 @@ for (i in 1:length(species)) {
       ## loop through each control sample in one block
       for (k in 1:length(control.reps)) {
         
-        tmp.rep <- control.reps[k] ## select rep
+        ## select rep
+        tmp.rep <- control.reps[k] 
         
         tmp.repeated.reps <- tmp.controls %>%
           filter(unique.ID == tmp.rep) %>% ## filter to correct rep
@@ -86,26 +91,34 @@ for (i in 1:length(species)) {
 }
 
 ## join back with main phyto dataframe
-with.controls <- rbind(all.phytos.info, repeated.controls) %>%
-  filter(bkgrd != "Control") ## remove 'control' backgrounds as the controls are now saved as phytos; they are still identifiable as controls by their unique.ID
+with.controls <- rbind(all.phytos, repeated.controls) %>%
+  filter(bkgrd != "Control") 
+    ## remove 'control' backgrounds as the controls are now saved as phytos; 
+    ## they are still identifiable as controls by their unique.ID
 
 unique.id.controls <- sort(unique(repeated.controls$unique.ID))
 ## make a vector of control unique.IDs
 
 # Join Data ####
-## join phyto & bkgrd data ####
-bg.phyto.seeds <- left_join(with.controls, bkgrd.seeds, by = c("unique.ID", "bkgrd")) %>%
-  select(-phyto.n.indiv) %>%
-  mutate(bg.seeds.in = ifelse(is.na(bg.seeds.in) & unique.ID %in% unique.id.controls, 0, bg.seeds.in), ## if an observation is a control background, input 0 seeds
-         bg.seeds.out = ifelse(is.na(bg.seeds.out) & unique.ID %in% unique.id.controls, 0, bg.seeds.out)) ## if control background, output 0 seeds
+## join phyto & bkgrd data
+phyto.bg.dat <- left_join(with.controls, phyto.census, by = c("unique.ID")) %>%
+  select(-phyto.n.indiv.x, -phyto.n.indiv.y) %>%
+  ## if an observation is a control background, input 0 seeds
+  mutate(bg.stems = ifelse(unique.ID %in% unique.id.controls, 0, bkgrd.n.indiv))
+
+## check to see if the merge caused any errors (likely due to mismatch b/w phyto.n.indiv)
+na.bg <- phyto.bg.dat %>%
+  filter(is.na(bg.stems))
+## all good!
 
 ## reorder columns
-bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
+#bg.phyto.seeds <- bg.phyto.seeds[,c(1,5:8,11,9:10,2:4,12:13)] 
 
 # Replicate Info ####
-reps <- bg.phyto.seeds %>% ## create df with number of replicates for each precip-background-phyto species combination
+## create df with number of reps for each precip-background-phyto species combo
+reps <- phyto.bg.dat %>%
   filter(dens != "none") %>%
-  mutate(bg.indiv.absent = ifelse(bg.seeds.out == 0, 1, 0)) %>%
+  mutate(bg.indiv.absent = ifelse(bg.stems == 0, 1, 0)) %>%
   group_by(treatment, phyto, bkgrd) %>%
   summarise(bad.reps = sum(bg.indiv.absent), 
             tot.reps = n()) %>%
@@ -114,52 +127,28 @@ reps <- bg.phyto.seeds %>% ## create df with number of replicates for each preci
          true.reps = tot.reps-bad.reps) 
 ## lose 122/640 pairwise by treatment combinations
 
-#write.csv(reps, "models/CW/replicate-info.csv")
+## filter good reps
+good.reps <- reps %>%
+  filter(true.reps > 3)
+
+## make vector 
+good.reps.vec <- unique(good.reps$combos)
 
 # Format for Models ####
-## pivot wider ####
-model.dat.init <- bg.phyto.seeds %>%
-  mutate(phyto.seeds.in.final = ifelse(bkgrd == phyto & dens != "none", bg.seeds.in, phyto.seed.in)) %>% ## if bg & phyto are the same, use bg.seeds in; intraspecific control phytos are a specific case - for these we need to use the phyto seeds in
-  
-  mutate(bkgrd.names.in = bkgrd) %>% ## make an extra bkgrd column bc will need 2
-  pivot_wider(names_from = "bkgrd.names.in", values_from = "bg.seeds.in", values_fill = 0) %>% ## seeds in for each background sp as a separate col
-  mutate(phyto.seeds.out.final = ifelse(bkgrd == phyto, phyto.seed.out + bg.seeds.out, phyto.seed.out)) %>% ## for intra phytos, add phyto & bg seeds out values
-  select(-phyto.seed.in, -phyto.seed.out, -bg.seeds.out) ## drop extraneous cols
+model.dat.init <- phyto.bg.dat %>%
+  mutate(bkgrd.names.in = bkgrd) %>%
+  pivot_wider(names_from = "bkgrd.names.in", values_from = "bg.stems", values_fill = 0) %>%
+  select(-bkgrd.n.indiv) %>% 
+  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
+  filter(combos %in% good.reps.vec) %>% ## filter by rep #
+  mutate(weeds = CRCO + ERBO + FIGA + GAMU + HYGL + SIGA + other, 
+         trt = ifelse(treatment == "D", 0, 1)) %>% ## lump all the weeds together
+  select(-CRCO, -ERBO, -FIGA, -GAMU, -HYGL, -SIGA, -other)
+## have decided to model intraspecific phytos as seeds out from the phytometer,
+## NOT the seeds out from the phyto + estimated bg seeds out
 
-model.dat.init <- model.dat.init[,c(1:10,29,11:28)] ## reorder
-
-## fill in phyto.seeds.in ####
-## create a vector of species names
-species <- colnames(model.dat.init)[12:ncol(model.dat.init)] 
-
-## for each species, when it is the phyto, fill in the appropriate seeds.in col with the values from phyto.seeds.in.final
-for(i in species){
-  model.dat.init[model.dat.init$phyto == i, i] <- model.dat.init[model.dat.init$phyto == i,]$phyto.seeds.in.final
-}
-
-model.dat.init <- model.dat.init [,-10] ## get rid of phyto.seeds.in.final column
-
-## add in weed census ####
-model.dat <- left_join(model.dat.init, phyto.census[,c(1,5:11)], by = "unique.ID")
-
-# Make Lambda Priors df ####
-lambda_priors_max <- all.phytos.info %>%
-  filter(bkgrd == "Control") %>%
-  group_by(phyto, treatment) %>%
-  summarise(max_seeds_ctrl = max(phyto.seed.out), 
-            sd_seeds = sd(phyto.seed.out))
-
-lambda_priors_mean <- all.phytos.info %>%
-  filter(bkgrd == "Control") %>%
-  group_by(phyto, treatment) %>%
-  summarise(mean_seeds_ctrl = mean(phyto.seed.out), 
-            sd_seeds = sd(phyto.seed.out))
-
-ctrl_seed_output_check <- all.phytos.info %>%
-  filter(bkgrd == "Control") %>%
-  group_by(phyto, treatment) %>%
-  summarise(mean.seeds = mean(phyto.seed.out), 
-            sd.seeds = sd(phyto.seed.out))
+# Join Germ Data ####
+model.dat <- left_join(model.dat.init, mean.germ, by = c("phyto", "treatment"))
 
 # Clean Env ####
-rm(all.phytos, allo.df, bg.phyto.seeds, bkgrd.seeds, block.plots, calcSE, collectionsC, i, lead, phyto.census, plot.dates, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks,  bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init)
+rm(all.phytos, allo.df, calcSE, collectionsC, i, lead, phyto.census, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks,  bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init, bkgrd.n.indiv, mean.germ, na.bg, phyto.bg.dat, reps, good.reps)

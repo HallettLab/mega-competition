@@ -128,7 +128,7 @@ pler.phyto <- pler_final2 %>%
   filter(!is.na(phyto.seed.out)) %>%
   ## remove 2 missing samples
   
-  select(unique.ID, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
+  select(unique.ID, treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.seed.in, phyto.seed.out)
 
 
 ggplot(pler.phyto, aes(x=phyto.seed.out)) +
