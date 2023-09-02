@@ -2,7 +2,7 @@
 
 # Prep ####
 source("data_cleaning/format_model_dat.R") ## get formatted model data
-#library(StanHeaders)
+
 library(rstan)
 options(mc.cores = parallel::detectCores())
 rstan_options(auto_write = TRUE)
@@ -12,115 +12,104 @@ library(here)
 date <- 20230831
 
 # Set initials ####
-initials <- list(lambda=250, 
-                 alpha_acam=1,
-                 alpha_amme=1, 
-                 alpha_anar=1, 
-                 alpha_brho=1,
-                 alpha_brni=1, 
-                 alpha_ceso=1,
-                 alpha_gitr=1, 
-                 alpha_leni=1, 
-                 alpha_lomu=1, 
-                 alpha_mael=1, 
-                 alpha_mica=1,
-                 alpha_pler=1, 
-                 alpha_plno=1,
-                 alpha_taca=1,
-                 alpha_thir=1, 
-                 alpha_twil=1, 
-                 alpha_weeds=1,
-                 group_effect=0)
-initials <- list(lambda = 250, group_effect = 0)
+initials <- list(lambda_base=250,
+                 lambda_dev=0,
+                 alpha_acam_base=1,
+                 alpha_acam_dev=0,
+                 alpha_amme_base=1, 
+                 alpha_amme_dev=0,
+                 alpha_anar_base=1, 
+                 alpha_anar_dev=0,
+                 alpha_brho_base=1,
+                 alpha_brho_dev=0,
+                 alpha_brni_base=1, 
+                 alpha_brni_dev=0, 
+                 alpha_ceso_base=1,
+                 alpha_ceso_dev=1,
+                 alpha_gitr_base=1, 
+                 alpha_gitr_dev=0, 
+                 alpha_leni_base=1, 
+                 alpha_leni_dev=0,
+                 alpha_lomu_base=1, 
+                 alpha_lomu_dev=0,
+                 alpha_mael_base=1, 
+                 alpha_mael_dev=0,
+                 alpha_mica_base=1,
+                 alpha_mica_dev=0,
+                 alpha_pler_base=1, 
+                 alpha_pler_dev=0,
+                 alpha_plno_base=1,
+                 alpha_plno_dev=0,
+                 alpha_taca_base=1,
+                 alpha_taca_dev=0,
+                 alpha_thir_base=1, 
+                 alpha_thir_dev=0,
+                 alpha_twil_base=1, 
+                 alpha_twil_dev=0,
+                 alpha_weeds_base=1,
+                 alpha_weeds_dev=0,
+                 epsilon=0)
+
 initials1<- list(initials, initials, initials, initials)
 
-
-#initials1 <- list(initials)
-
-## Last minute data mods ####
-## ok reps
-good.reps <- reps %>%
-  filter(true.reps > 3)
-
-good.reps.vec <- unique(good.reps$combos)
-
-model.dat.filtered <- model.dat %>%
-  mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
-  filter(combos %in% good.reps.vec) %>%
-  mutate(weeds = CRCO + ERBO + FIGA + GAMU + HYGL + SIGA + other) %>% ## lump all the weeds together
-  select(-CRCO, -ERBO, -FIGA, -GAMU, -HYGL, -SIGA, -other)
-
-# Constrain Priors ####
 # Loop thru ea Species ####
-#species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+#species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", 
+#"LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
 species <- c("BRHO")
-#trt <- c("C","D")
-trt <- c("C")
 
 model.output <- list()
 warnings <- list()
 
 for(i in species){
-  for(j in trt){
     
-    ## subset model data into data frame
-    dat <- subset(model.dat.filtered, phyto == i)
-    dat <- subset(dat, treatment == j)
+    ## subset model data by species
+    dat <- subset(model.dat, phyto == i)
     
-    ## create vectors of all the various data inputs
-    Fecundity <- as.integer(round(dat$phyto.seeds.out.final))
-    N_blocks <- length(unique(dat$block))
-    group <- as.integer(dat$block)
-    
-    ##pler <- as.integer(dat$PLER)
-    ##anar <- as.integer(dat$ANAR)
-   ## acam <- as.integer(dat$ACAM)
-    ##brni <- as.integer(dat$BRNI)
-    ##brho <- as.integer(dat$BRHO)
-    ## gitr <- as.integer(dat$GITR)
-    ##amme <- as.integer(dat$AMME)
-    ##plno <- as.integer(dat$PLNO)
-    ## thir <- as.integer(dat$THIR)
-    ## mica <- as.integer(dat$MICA)
-    ## ceso <- as.integer(dat$CESO)
-    ##twil <- as.integer(dat$TWIL)
-    ## lomu <- as.integer(dat$LOMU)
-    ##taca <- as.integer(dat$TACA)
-    ## mael <- as.integer(dat$MAEL)
-    ## leni <- as.integer(dat$LENI)
-    ## weeds <- as.integer(dat$weeds)
-
-    
+    ## create vectors of the various data inputs
+    Fecundity <- as.integer(round(dat$phyto.seed.out)) ## seeds out
+    N_blocks <- length(unique(dat$block)) ## number of blocks
+    block <- as.integer(dat$block) ## vector of block vals
     N <- as.integer(length(Fecundity)) ## number of observations
+    N_t <- as.integer(dat$phyto.seed.in) ## seeds in of focal species
+    g_i <- as.integer(dat$mean.germ) ## germ of focal species
+    trt <- as.integer(dat$trt) ## treatment (binary)
     
-    intra <- as.integer(unlist(dat[,i])) ## seeds in of focal species
-    
-    intra_g <- germ.sum.sp.DC[germ.sum.sp.DC$species == i & germ.sum.sp.DC$trt == j,]$avg.germ 
-    
-    mean_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i & 
-                                            lambda_priors_mean$treatment == j,]$mean_seeds_ctrl
-    
-    sd_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i & 
-                                          lambda_priors_mean$treatment == j,]$sd_seeds
+    ## stems data
+    acam <- as.integer(dat$ACAM)
+    amme <- as.integer(dat$AMME)
+    anar <- as.integer(dat$ANAR)
+    brho <- as.integer(dat$BRHO)
+    brni <- as.integer(dat$BRNI)
+    ceso <- as.integer(dat$CESO)
+    gitr <- as.integer(dat$GITR)
+    leni <- as.integer(dat$LENI)
+    lomu <- as.integer(dat$LOMU)
+    mael <- as.integer(dat$MAEL)
+    mica <- as.integer(dat$MICA)
+    pler <- as.integer(dat$PLER)
+    plno <- as.integer(dat$PLNO)
+    taca <- as.integer(dat$TACA)
+    thir <- as.integer(dat$THIR)
+    twil <- as.integer(dat$TWIL)
+    weeds <- as.integer(dat$weeds)
     
     print(i)
-    print(j)
+  
+    model.output[[paste0("ricker_",i)]] <- stan(
+      file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_ppt_random_fx.stan"),
+      
+      data = c("N", "Fecundity", "N_t", "g_i", "N_blocks", "block", "trt", 
+               "acam", "amme", "anar", "brho","brni", "ceso","gitr", "leni", 
+               "lomu", "mael", "mica", "pler", "plno", "taca","thir","twil", "weeds"), 
+      
+      iter = 5000, chains = 4, thin = 3, 
+      
+      control = list(adapt_delta = 0.95, max_treedepth = 20), init = initials1)
     
-    model.output[[paste0("seeds_",i,"_",j)]] <- stan(
-      file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_",j, "_random_effects.stan"),
-      data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", 
-               "sd_ctrl_seeds", "N_blocks", "group"), 
-      iter = 1000, chains = 4, thin = 3, 
-      control = list(adapt_delta = 0.95, max_treedepth = 20),
-                                                     init = initials1)
+    tmp <- model.output[[paste0("ricker_",i)]] 
     
-    tmp <- model.output[[paste0("seeds_",i,"_",j)]] 
-    
-    save(tmp, file = paste0("Models/CW/ricker_model/in_development/random_effects_block/posteriors/seeds_",i,"_",j,"_posteriors_Ricker_random_effects_", date, ".rdata"))
-  }
+    save(tmp, file = paste0("Models/CW/ricker_model/in_development/random_effects_block/posteriors/ricker_",i,"_posteriors_random_effects_", date, ".rdata"))
+
 }
 
-#"acam", "amme", "anar", "brho","brni", "ceso", 
-#"gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca", 
-#"thir","twil", "weeds",
