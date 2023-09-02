@@ -14,6 +14,7 @@ data{
 
 parameters{
   real<lower = 0, upper = 15000> lambda;
+  real<lower=0> phi;
   real alpha_weeds; 
   real<lower = -0.999> beta; // precipitation term; can't be lower than this, otherwise could get 0 or negative lambda
   
@@ -31,8 +32,10 @@ model{
   // implement the biological model 
   for(i in 1:N){
     
-    Fecundity[i] ~ poisson(intra[i]*intra_g*lambda*(1 + precip*beta)*exp(
-    -alpha_weeds*weeds[i]));
+    real lambda_t1 = intra[i]*intra_g*lambda*(1 + precip*beta)*exp(
+    -alpha_weeds*weeds[i]);
+    
+    Fecundity[i] ~ neg_binom_2(lambda_t1, phi);
    
   }
 

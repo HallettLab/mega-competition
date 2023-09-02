@@ -16,7 +16,9 @@ initials <- list(lambda=250,
 initials1<- list(initials, initials, initials, initials)
 
 # Loop thru ea Species ####
-species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+#species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+
+species <- c("BRHO")
 
 model.output <- list()
 warnings <- list()
@@ -44,12 +46,12 @@ for(i in species){
     
     print(i)
 
-    model.output[[paste0("seeds_",i, "_precip")]] <- stan(file = paste0("Models/CW/ricker_model/18_species_Ricker_model_with_precip_term.stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "weeds", "precip"), iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
+    model.output[[paste0("seeds_",i, "_precip")]] <- stan(file = paste0("Models/CW/ricker_model/in_development/precip_term_modeling_exercise/18_species_Ricker_model_with_precip_term_neg_binom.stan"), data = c("N", "Fecundity", "intra", "intra_g", "mean_ctrl_seeds", "sd_ctrl_seeds", "weeds", "precip"), iter = 5000, chains = 4, thin = 3, control = list(adapt_delta = 0.95, max_treedepth = 20),
                                                      init = initials1) 
     
     tmp <- model.output[[paste0("seeds_",i,"_precip")]] 
     
-    save(tmp, file = paste0("Models/CW/ricker_model/posteriors/controls_with_precip_term/seeds_",i,"_posteriors_Ricker_meanLpriors_precip_term.rdata"))
+    save(tmp, file = paste0("Models/CW/ricker_model/in_development/precip_term_modeling_exercise/posteriors/seeds_",i,"_posteriors_Ricker_meanLpriors_precip_term_neg_binom.rdata"))
 
     }
 
