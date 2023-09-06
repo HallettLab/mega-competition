@@ -29,7 +29,7 @@ for(i in species){
 
     Fecundity <- as.integer(round(dat$phyto.seed.out)) ## make seeds out an integer
     
-    precip <- dat$treat ## vector of precip treatment, 0 or 1
+    precip <- dat$trt ## vector of precip treatment, 0 or 1
     
     weeds <- as.integer(dat$weeds) ## weed stems in
     
@@ -40,9 +40,9 @@ for(i in species){
     intra_g <- germ.sum.sp.DC[germ.sum.sp.DC$species == i & germ.sum.sp.DC$trt == "C",]$avg.germ 
     ## use control for now, may need to readjust
     
-    mean_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i,]$mean_seeds_ctrl
+   # mean_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i,]$mean_seeds_ctrl
     
-    sd_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i,]$sd_seeds
+    #sd_ctrl_seeds <- lambda_priors_mean[lambda_priors_mean$phyto == i,]$sd_seeds
     
     print(i)
 

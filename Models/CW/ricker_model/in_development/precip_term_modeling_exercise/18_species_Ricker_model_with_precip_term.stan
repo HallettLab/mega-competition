@@ -5,8 +5,8 @@ data{
   int Fecundity[N]; // 
   vector[N] intra;
   real intra_g;
-  real mean_ctrl_seeds; 
-  real sd_ctrl_seeds;
+ // real mean_ctrl_seeds; 
+ // real sd_ctrl_seeds;
   vector[N] weeds;
   vector[N] precip;
   
@@ -25,19 +25,21 @@ model{
   
   // set priors
   alpha_weeds ~ normal(0, 1);
-  lambda ~ normal(mean_ctrl_seeds, sd_ctrl_seeds);
+  lambda ~ gamma(0.001, 0.001);
   beta ~ normal(0,1);
+  
+  vector[N] Fhat;
 
   // implement the biological model 
   for(i in 1:N){
     
-    Fecundity[i] ~ poisson(intra[i]*intra_g*lambda*(1 + precip*beta)*exp(
-    -alpha_weeds*weeds[i]));
+    Fhat[i] = intra[i]*intra_g*lambda*(1 + precip*beta)*exp(
+    -alpha_weeds*weeds[i]);
    
   }
 
   // calculate the likelihood
-  //Fecundity ~ neg_binomial(F_hat);
+  Fecundity ~ poisson(F_hat);
   
 }
 

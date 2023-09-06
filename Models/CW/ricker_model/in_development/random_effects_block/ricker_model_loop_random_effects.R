@@ -9,10 +9,10 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-date <- 20230831
+date <- 20230906
 
 # Set initials ####
-initials <- list(lambda_base=250,
+initials <- list(lambda_base=1,
                  lambda_dev=1,
                  alpha_acam_base=1,
                  alpha_acam_dev=1,
@@ -50,7 +50,7 @@ initials <- list(lambda_base=250,
                  alpha_weeds_dev=1,
                  epsilon=1)
 
-initials1<- list(initials, initials, initials, initials)
+#initials1<- list(initials, initials, initials, initials)
 initials1<-list(initials)
 # Loop thru ea Species ####
 #species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", 
@@ -68,7 +68,7 @@ for(i in species){
     
     ## create vectors of the various data inputs
     Fecundity <- as.integer(round(dat$phyto.seed.out)) ## seeds out
-    N_blocks <- length(unique(dat$block)) ## number of blocks
+    N_blocks <- as.integer(length(unique(dat$block))) ## number of blocks
     block <- as.integer(dat$block) ## vector of block vals
     N <- as.integer(length(Fecundity)) ## number of observations
     N_i <- as.integer(dat$phyto.seed.in) ## seeds in of focal species

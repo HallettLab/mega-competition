@@ -2,7 +2,6 @@
 // Incorporating random effects of block
 // Models both precip treatments together
 
-
 data{
   
   int<lower = 1> N; // number of observations
@@ -41,12 +40,13 @@ data{
 parameters{
   
   // lambda
-  real<lower = 0, upper = 10000> lambda_base; //_base;
+  real<lower = 0, upper = 10000> lambda_base;
   real lambda_dev;
   
   // group-level random effects
-  real epsilon[N_blocks];
-  real<lower = 0> sigma; 
+  real epsilon[N_blocks]; // added in a lower bound of epsilon to see if this helps the error evaluating log probability at the initial value?
+  //real<lower=0> sigma; // needs the lower bound
+  real sigma_0;
   
   // all the alphas
    real alpha_acam_base;
@@ -87,6 +87,12 @@ parameters{
 }
 
 
+transformed parameters{
+  real<lower = 0> sigma;
+  sigma = exp(sigma_0);
+}
+
+
 model{
   
   // set priors
@@ -94,43 +100,43 @@ model{
   lambda_base ~ gamma(0.001, 0.001);
   lambda_dev ~ normal(0,100); //if get errors with this running let Lauren know; lambda+lambda_dev can't be below 0; if it doesn't work, take it out and get alpha-dev running 
   
-  sigma ~ gamma(0.001, 0.001);
+  sigma_0 ~ normal(0, 1000);
   epsilon ~ gamma(sigma, sigma); // prior for group level random effects
 
-  alpha_acam_base ~ normal(0, 1);
-  alpha_acam_dev ~ normal(0,1);
-  alpha_amme_base ~ normal(0, 1);
-  alpha_amme_dev ~ normal(0, 1);
-  alpha_anar_base ~ normal(0, 1);
-  alpha_anar_dev ~ normal(0, 1);
-  alpha_brho_base ~ normal(0, 1);
-  alpha_brho_dev ~ normal(0, 1);
-  alpha_brni_base ~ normal(0, 1);
-  alpha_brni_base ~ normal(0, 1);
-  alpha_ceso_base ~ normal(0, 1);
-  alpha_ceso_dev ~ normal(0, 1);
-  alpha_gitr_base ~ normal(0, 1);
-  alpha_gitr_dev ~ normal(0, 1);
-  alpha_leni_base ~ normal(0, 1);
-  alpha_leni_dev ~ normal(0, 1);
-  alpha_lomu_base ~ normal(0, 1);
-  alpha_lomu_dev ~ normal(0, 1);
-  alpha_mael_base ~ normal(0, 1);
-  alpha_mael_dev ~ normal(0, 1);
-  alpha_mica_base ~ normal(0, 1);
-  alpha_mica_dev ~ normal(0, 1);
-  alpha_pler_base ~ normal(0, 1);
-  alpha_pler_dev ~ normal(0, 1);
-  alpha_plno_base ~ normal(0, 1);
-  alpha_plno_dev ~ normal(0, 1);
-  alpha_taca_base ~ normal(0, 1);
-  alpha_taca_dev ~ normal(0, 1);
-  alpha_thir_base ~ normal(0, 1);
-  alpha_thir_dev ~ normal(0, 1);
-  alpha_twil_base ~ normal(0, 1);
-  alpha_twil_dev ~ normal(0, 1);
-  alpha_weeds_base ~ normal(0,1);
-  alpha_weeds_dev ~ normal(0,1);
+  alpha_acam_base ~ normal(0, 1000);
+  alpha_acam_dev ~ normal(0,1000);
+  alpha_amme_base ~ normal(0, 1000);
+  alpha_amme_dev ~ normal(0, 1000);
+  alpha_anar_base ~ normal(0, 1000);
+  alpha_anar_dev ~ normal(0, 1000);
+  alpha_brho_base ~ normal(0, 1000);
+  alpha_brho_dev ~ normal(0, 1000);
+  alpha_brni_base ~ normal(0, 1000);
+  alpha_brni_base ~ normal(0, 1000);
+  alpha_ceso_base ~ normal(0, 1000);
+  alpha_ceso_dev ~ normal(0, 1000);
+  alpha_gitr_base ~ normal(0, 1000);
+  alpha_gitr_dev ~ normal(0, 1000);
+  alpha_leni_base ~ normal(0, 1000);
+  alpha_leni_dev ~ normal(0, 1000);
+  alpha_lomu_base ~ normal(0, 1000);
+  alpha_lomu_dev ~ normal(0, 1000);
+  alpha_mael_base ~ normal(0, 1000);
+  alpha_mael_dev ~ normal(0, 1000);
+  alpha_mica_base ~ normal(0, 1000);
+  alpha_mica_dev ~ normal(0, 1000);
+  alpha_pler_base ~ normal(0, 1000);
+  alpha_pler_dev ~ normal(0, 1000);
+  alpha_plno_base ~ normal(0, 1000);
+  alpha_plno_dev ~ normal(0, 1000);
+  alpha_taca_base ~ normal(0, 1000);
+  alpha_taca_dev ~ normal(0, 1000);
+  alpha_thir_base ~ normal(0, 1000);
+  alpha_thir_dev ~ normal(0, 1000);
+  alpha_twil_base ~ normal(0, 1000);
+  alpha_twil_dev ~ normal(0, 1000);
+  alpha_weeds_base ~ normal(0,1000);
+  alpha_weeds_dev ~ normal(0,1000);
 
   // create vector of predictions
   vector[N] F_hat;
@@ -169,5 +175,6 @@ model{
   Fecundity ~ poisson(F_hat2);
   // likelihood outside of for-loop
   // could think of this as observation error term
+  
 }
 
