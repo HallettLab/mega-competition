@@ -1,7 +1,12 @@
 ## Model loop 
 
 # Prep ####
-source("data_cleaning/format_model_dat.R") ## get formatted model data
+#source("data_cleaning/format_model_dat.R") ## get formatted model data
+
+## Save a copy of data
+#write.csv(model.dat, "data/model_dat.csv")
+
+model.dat <- read.csv("data/model_dat.csv")
 
 library(rstan)
 options(mc.cores = parallel::detectCores())
