@@ -77,7 +77,7 @@ for(i in species){
     block <- as.integer(dat$block) ## vector of block vals
     N <- as.integer(length(Fecundity)) ## number of observations
     N_i <- as.integer(dat$phyto.seed.in) ## seeds in of focal species
-    g_i <- as.integer(dat$mean.germ) ## germ of focal species
+    g_i <- dat$mean.germ ## germ of focal species; FIX by removing as.integer()
     trt <- as.integer(dat$trt) ## treatment (binary)
     
     ## stems data
