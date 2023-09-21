@@ -44,7 +44,7 @@ parameters{
   real lambda_dev;
   
   // group-level random effects
-  real<lower=0> epsilon[N_blocks]; // added in a lower bound of epsilon to see if this helps the error evaluating log probability at the initial value?
+  real epsilon[N_blocks]; // added in a lower bound of epsilon to see if this helps the error evaluating log probability at the initial value?
   //real<lower = 0> sigma; // needs the lower bound? removed for the moment...yeah it seems to need it
   real<lower=0> sigma_0;
   
