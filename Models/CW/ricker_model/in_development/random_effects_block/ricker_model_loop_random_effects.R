@@ -14,7 +14,7 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-date <- 20230906
+date <- 20230920
 
 # Set initials ####
 initials <- list(lambda_base=1,
@@ -53,7 +53,9 @@ initials <- list(lambda_base=1,
                  alpha_twil_dev=1,
                  alpha_weeds_base=1,
                  alpha_weeds_dev=1,
-                 epsilon=1)
+                 epsilon=1, 
+                 sigma = 1,
+                 sigma_0 = 1)
 
 #initials1<- list(initials, initials, initials, initials)
 initials1<-list(initials)
@@ -61,7 +63,7 @@ initials1<-list(initials)
 #species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", 
 #"LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
-species <- c("BRHO")
+species <- c("GITR")
 
 model.output <- list()
 warnings <- list()
@@ -102,7 +104,7 @@ for(i in species){
     print(i)
   
     model.output[[paste0("ricker_",i)]] <- stan(
-      file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_ppt_random_fx.stan"),
+      file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_ppt_RE.stan"),
       
       data = c("N", "Fecundity", "N_i", "g_i", "N_blocks", "block", "trt", 
                "acam", "amme", "anar", "brho","brni", "ceso","gitr", "leni", 

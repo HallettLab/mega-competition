@@ -15,7 +15,7 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-date <- 20230914
+date <- 20230920
 
 # check data for issues
 #str(model.dat)
@@ -60,17 +60,21 @@ initials <- list(lambda_base=200,
                  alpha_twil_base=1, 
                  alpha_twil_dev=1,
                  alpha_weeds_base=1, 
-                 alpha_weeds_dev=1)
-                 #epsilon=1)
+                 alpha_weeds_dev=1)# ,
+                 #epsilon=1, 
+                 #sigma=1)
 
 initials1<- list(initials, initials, initials, initials)
 #initials1<-list(initials)
 
 # Loop thru ea Species ####
-#species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", 
-#"LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+species <- c("GITR")
 
-species <- c("ANAR")
+#"ACAM", "AMME",  "BRNI", "LOMU", "TWIL", "MAEL", "PLNO" these species are taking hours and not running
+
+
+#"ANAR", "BRHO", "GITR", "LENI", "MICA", "PLER",  "TACA", "THIR", "CESO", already done
+
 
 model.output <- list()
 warnings <- list()
@@ -111,9 +115,9 @@ for(i in species){
   print(i)
   
   model.output[[paste0("ricker_",i)]] <- stan(
-    file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_tweaks.stan"),
+    file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_tweaks_current_noRE.stan"),
     
-    data = c("N", "Fecundity", "N_i", "trt", "g_i",
+    data = c("N", "Fecundity", "N_i", "trt", "g_i", 
              "acam", "amme", "anar", "brho","brni", "ceso","gitr", "leni", 
              "lomu", "mael", "mica", "pler", "plno", "taca","thir","twil", "weeds"), 
     
