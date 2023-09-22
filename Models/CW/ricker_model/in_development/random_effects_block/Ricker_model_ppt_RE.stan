@@ -45,8 +45,8 @@ parameters{
   
   // group-level random effects
   real epsilon[N_blocks]; // added in a lower bound of epsilon to see if this helps the error evaluating log probability at the initial value?
-  //real<lower = 0> sigma; // needs the lower bound? removed for the moment...yeah it seems to need it
-  real<lower=0> sigma_0;
+  real<lower = 0> sigma; // needs the lower bound? removed for the moment...yeah it seems to need it
+  //real<lower=0> sigma_0;
   
   // all the alphas
    real alpha_acam_base;
@@ -86,11 +86,12 @@ parameters{
 
 }
 
-
-transformed parameters{
-  real<lower = 0> sigma;
-  sigma = exp(sigma_0);
-}
+// found this transformed parameter section in models from Bowler 2022
+// not sure what the reasoning is here for doing the transformation? Still doesn't run with this included
+//transformed parameters{
+  //real<lower = 0> sigma;
+  //sigma = exp(sigma_0);
+//}
 
 
 model{
@@ -100,7 +101,7 @@ model{
   //lambda_base ~ normal(200, 50);
   lambda_dev ~ normal(0,100); //if get errors with this running let Lauren know; lambda+lambda_dev can't be below 0; if it doesn't work, take it out and get alpha-dev running 
   
-  sigma_0 ~ normal(0, 1000);
+  //sigma_0 ~ normal(0, 1000);
   sigma ~ gamma(0.001, 0.001);
   epsilon ~ gamma(sigma, sigma); // prior for group level random effects
 

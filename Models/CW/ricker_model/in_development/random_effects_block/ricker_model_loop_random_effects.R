@@ -14,7 +14,7 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-date <- 20230920
+date <- 20230922
 
 # Set initials ####
 initials <- list(lambda_base=1,
@@ -54,8 +54,8 @@ initials <- list(lambda_base=1,
                  alpha_weeds_base=1,
                  alpha_weeds_dev=1,
                  epsilon=1, 
-                 sigma = 1,
-                 sigma_0 = 1)
+                 sigma = 1) #,
+                 #sigma_0 = 1)
 
 #initials1<- list(initials, initials, initials, initials)
 initials1<-list(initials)
