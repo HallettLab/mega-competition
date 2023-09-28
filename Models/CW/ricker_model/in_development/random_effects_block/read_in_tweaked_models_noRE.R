@@ -6,7 +6,7 @@ library(bayesplot)
 library(ggplot2)
 library(tidyverse)
 
-model.date <- 20230914
+model.date <- 20230928
 
 # Extract Posteriors ####
 ## List Form ####

@@ -23,7 +23,7 @@ for(i in species){
 # Traceplots ####
 sp_trt <- names(ricker_plots)
 
-pdf("models/CW/ricker_model/ricker_model_diagnostics/ricker_model_trace_plots_meanLpriors_constrained.pdf", width = 12, height = 8)
+pdf("Models/CW/ricker_model/in_development/random_effects_block/posterior_diagnostics/ppt_dev_NO_RE_20230914_models/trace_plots.pdf", width = 12, height = 8)
 
 for(i in 1:length(sp_trt)){
   
