@@ -1,3 +1,6 @@
+
+
+# Set up ####
 library(ggfortify)
 library(ggpubr)
 
@@ -20,18 +23,23 @@ source("data_cleaning/seed-survival_data-cleaning/seed-survival_data-cleaning.R"
 ## get germination data
 source("data_cleaning/germination_data-cleaning/germination_rates.R")
 
-
+# Clean ####
 sort(unique(traits$ID))
-colnames(MC.traits)
+colnames(traits)
 
-str(MC.traits)
+str(traits)
+
+## subset mega-comp species
+## make vector of species
 MC.sp <- c("LOPU", "AMME", "ANAR", "AVEBAR", "BRHOp", "BRNIp", "CESO", "CLPUp", "ERBO", "GITRp", "LENIp", "LOMU", "MAELp", "MICA", "PLERp", "PLNO", "TACA", "TRHI", "TRWIp")
 
+## filter
 MC.traits <- traits %>%
   filter(ID %in% MC.sp,
-         !is.na(RMF),
-         !is.na(LDMC))
+         !is.na(RMF), ## remove NAs
+         !is.na(LDMC)) ## remove NAs
 
+# PCAs ####
 all.traits <- c("Height..cm.", "LDMC", "SLA..cm2.g.", "RMF", "Root.density..g.cm3.", "Coarse.root.specific.length..cm.g.", "Fine.root.specific.length..cm.g.", "Proportion.fine.roots")
 
 MC.pca <- prcomp(MC.traits[,all.traits], scale = T)
@@ -45,7 +53,7 @@ autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadin
   #scale_color_manual(values = c("#24796C","#99C945"), labels=c('E. elymoides', 'P. spicata'), name = "") +
   
   #geom_text(aes(label = code, col = Rating)) +
-  stat_ellipse(aes(group = ID, col = ID)) + 
+ # stat_ellipse(aes(group = ID, col = ID)) + 
   theme(
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
     legend.title = element_blank())
@@ -75,9 +83,6 @@ autoplot(GH.pca, x = 1, y = 2, data = GH.pca.ID, frame = F, loadings = T, loadin
     legend.title = element_blank())
 #66C5CC,#F6CF71,#F89C74,#DCB0F2,#87C55F,#9EB9F3,#FE88B1,#C9DB74,#8BE0A4,#B497E7,#D3B484,#B3B3B3
 #E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
-
-
-
 
 GH.forbs <- c("LOPU", "ANAR", "ERBO", "GITRp", "LENIp", "MICA", "PLERp", "TRHI", "TRWIp")
 
