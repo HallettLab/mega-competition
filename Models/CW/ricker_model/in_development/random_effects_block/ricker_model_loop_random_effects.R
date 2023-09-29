@@ -14,7 +14,17 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-date <- 20230922
+date <- 20230928
+
+
+#list.init <- function(...)list(lambdas = array(abs(as.numeric(rnorm(1,mean=log(mean(Fecundity))/U,
+ #                                                                   sd = abs(log(Fecundity)/U)
+#))),
+#dim = 1))
+
+## missing data problem?
+which(is.na(dat))
+
 
 # Set initials ####
 initials <- list(lambda_base=1,
@@ -53,15 +63,62 @@ initials <- list(lambda_base=1,
                  alpha_twil_dev=1,
                  alpha_weeds_base=1,
                  alpha_weeds_dev=1,
-                 epsilon=1, 
+                 epsilon=100, 
                  sigma = 1) #,
                  #sigma_0 = 1)
 
+
+initials2 <- list(lambda_base = 100,
+                  lambda_dev = 1,
+                  epsilon=rep(1,11), ## does there need to be a prior for each block? 
+                  sigma=.01,
+                  alpha_acam_base=1,
+                  alpha_acam_dev=1,
+                  alpha_amme_base=1,
+                  alpha_amme_dev=1,
+                  alpha_anar_base=1,
+                  alpha_anar_dev=1,
+                  alpha_brho_base=1,
+                  alpha_brho_dev=1,
+                  alpha_brni_base=1,
+                  alpha_brni_dev=1,
+                  alpha_ceso_base=1,
+                  alpha_ceso_dev=1,
+                  alpha_gitr_base=1,
+                  alpha_gitr_dev=1,
+                  alpha_leni_base=1,
+                  alpha_leni_dev=1,
+                  alpha_lomu_base=1,
+                  alpha_lomu_dev=1,
+                  alpha_mael_base=1,
+                  alpha_mael_dev=1,
+                  alpha_mica_base=1,
+                  alpha_mica_dev=1,
+                  alpha_pler_base=1,
+                  alpha_pler_dev=1,
+                  alpha_plno_base=1,
+                  alpha_plno_dev=1,
+                  alpha_taca_base=1,
+                  alpha_taca_dev=1,
+                  alpha_thir_base=1,
+                  alpha_thir_dev=1,
+                  alpha_twil_base=1,
+                  alpha_twil_dev=1,
+                  alpha_weeds_base=1,
+                  alpha_weeds_dev=1)
+
+initials3 <- list(epsilon=rep(1,11), ## does there need to be a prior for each block? 
+                  sigma=.01
+  
+)
+
 #initials1<- list(initials, initials, initials, initials)
-initials1<-list(initials)
+initials1<-list(initials2)
 # Loop thru ea Species ####
 #species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", 
 #"LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+
+data_vec <- c("N", "Fecundity", "N_i", "g_i", "N_blocks", "block", "trt", "acam", "amme", "anar", "brho","brni", "ceso","gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca","thir","twil", "weeds")
 
 species <- c("GITR")
 
@@ -106,13 +163,13 @@ for(i in species){
     model.output[[paste0("ricker_",i)]] <- stan(
       file = paste0("Models/CW/ricker_model/in_development/random_effects_block/Ricker_model_ppt_RE.stan"),
       
-      data = c("N", "Fecundity", "N_i", "g_i", "N_blocks", "block", "trt", 
-               "acam", "amme", "anar", "brho","brni", "ceso","gitr", "leni", 
-               "lomu", "mael", "mica", "pler", "plno", "taca","thir","twil", "weeds"), 
-      
-      iter = 5000, chains = 1, thin = 3, 
-      
-      control = list(adapt_delta = 0.95, max_treedepth = 20), init = initials1)
+      data = data_vec, 
+      iter = 5000, 
+      chains = 1, 
+      thin = 3, ## apparently this should rarely be necessary - maybe look into this further?
+      control = list(adapt_delta = 0.95, max_treedepth = 20), 
+      init = initials1, 
+      init_r = 2)
     
     tmp <- model.output[[paste0("ricker_",i)]] 
     

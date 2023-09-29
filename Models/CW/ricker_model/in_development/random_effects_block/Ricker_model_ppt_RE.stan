@@ -44,7 +44,7 @@ parameters{
   real lambda_dev;
   
   // group-level random effects
-  real epsilon[N_blocks]; // added in a lower bound of epsilon to see if this helps the error evaluating log probability at the initial value?
+  real<lower=0> epsilon[N_blocks]; // added in a lower bound of epsilon to see if this helps the error evaluating log probability at the initial value?
   real<lower = 0> sigma; // needs the lower bound? removed for the moment...yeah it seems to need it
   //real<lower=0> sigma_0;
   
@@ -172,10 +172,12 @@ model{
     F_hat2[i] = F_hat[i]*epsilon[block[i]]; // effect of block 
     // because drawing from poisson need to multiply rather than add the block effect
     
+    //F_hat2[i] = F_hat[i]+epsilon[block[i]]; // crashes R session
+    
   }
   
   // calculate the likelihood
-  Fecundity ~ poisson(F_hat2);
+ Fecundity ~ poisson(F_hat2[i]);
   // likelihood outside of for-loop
   // could think of this as observation error term
   
