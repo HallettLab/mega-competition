@@ -1,6 +1,6 @@
 // Ricker growth model
 // Incorporating random effects of block
-// Models both precip treatments together
+// Models both precip treatments together - currently just drought
 
 data{
   
@@ -9,7 +9,7 @@ data{
   
   // add in random effects
   int<lower=1> N_blocks; // Number of groups
-  int block[N]; // block indicator
+  int Blocks[N]; // block column
   
   vector[N] N_i; // population size of species i at time t
   vector[N] g_i; //germination of the focal species
@@ -39,14 +39,14 @@ data{
 
 parameters{
   
+  // group-level random effects
+  real<lower=0> epsilon[N_blocks]; // added in a lower bound of epsilon to see if this helps the error evaluating log probability at the initial value?
+  //real<lower = 0> sigma; // needs the lower bound? removed for the moment...yeah it seems to need it
+  real sigma_0;
+  
   // lambda
   real<lower = 0, upper = 10000> lambda_base;
   //real lambda_dev;
-  
-  // group-level random effects
-  real<lower=1> epsilon[N_blocks]; // added in a lower bound of epsilon to see if this helps the error evaluating log probability at the initial value?
-  real<lower = 1> sigma; // needs the lower bound? removed for the moment...yeah it seems to need it
-  //real<lower=0> sigma_0;
   
   // all the alphas
    real alpha_acam_base;
@@ -88,24 +88,27 @@ parameters{
 
 // found this transformed parameter section in models from Bowler 2022
 // not sure what the reasoning is here for doing the transformation? Still doesn't run with this included
-//transformed parameters{
-  //real<lower = 0> sigma;
-  //sigma = exp(sigma_0);
-//}
+transformed parameters{
+  real<lower = 0> sigma;
+  sigma = exp(sigma_0);
+}
 
 
 model{
   
+  // create vector of predictions
+  vector[N] F_hat;
+  vector[N] F_hat2;
+  
   // set priors
+  sigma_0 ~ normal(0, 1000);
+  //sigma ~ gamma(0.001, 0.001);
+  epsilon ~ gamma(sigma, sigma); // prior for group level random effects
+  
   lambda_base ~ gamma(0.001, 0.001); // non-informative prior!
   //lambda_base ~ normal(200, 50);
  // lambda_dev ~ normal(0,100); //if get errors with this running let Lauren know; lambda+lambda_dev can't be below 0; if it doesn't work, take it out and get alpha-dev running 
   
-  //sigma_0 ~ normal(0, 1000);
-  sigma ~ gamma(0.001, 0.001);
-  epsilon ~ gamma(sigma, sigma); // prior for group level random effects
-
-
   alpha_acam_base ~ normal(0, 1);
   //alpha_acam_dev ~ normal(0,1000);
   alpha_amme_base ~ normal(0, 1);
@@ -140,14 +143,9 @@ model{
   //alpha_twil_dev ~ normal(0, 1000);
   alpha_weeds_base ~ normal(0,1);
   //alpha_weeds_dev ~ normal(0,1000);
-
-  // create vector of predictions
-  vector[N] F_hat;
-  vector[N] F_hat2;
   
   // Biological model
   for(i in 1:N){
-    
     // use stems data - NOT back calculated seeds in data
     // should model both precip conditions together
     F_hat[i] = N_i[i]*g_i[i]*lambda_base* //+ lambda_dev*trt[i])* 
@@ -169,10 +167,11 @@ model{
     twil[i]*(alpha_twil_base)- // + alpha_twil_dev*trt[i]) -
     weeds[i]*(alpha_weeds_base)); // + alpha_weeds_dev*trt[i]));
     
-    F_hat2[i] = F_hat[i]*epsilon[i]; // effect of block 
+    F_hat2[i] = F_hat[i]*epsilon[Blocks[i]]; // effect of block 
     // because drawing from poisson need to multiply rather than add the block effect
     //block[i]
     //F_hat2[i] = F_hat[i]+epsilon[block[i]]; // crashes R session
+    print("epsilon: ", epsilon[Blocks[i]]);
     
   }
   
