@@ -3,6 +3,7 @@
 # Set up ####
 library(ggfortify)
 library(ggpubr)
+library(tidyverse)
 
 # specify dropbox pathway 
 if(file.exists("/Users/carme/Dropbox (University of Oregon)/Greenhouse_Traits/")){
@@ -14,10 +15,27 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Greenhouse_Traits/")
   #lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Processing/Background-Processing/Background-Processing_entered/"
 } 
 
+
+## specify dropbox pathway 
+if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Traits/")){
+  # Carmen
+  lead <- "/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Traits/"
+  
+} else {
+  # Marina
+  lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Traits/"
+} 
+
 ## load trait data
+trait.seed <- read.csv(paste0(lead, "20230202_Seed-Traits_cleaning.csv"))
+
+
+
+
 traits <- read.csv(paste0(lead.traits, "GreenhouseTraits.csv"))
 
 # Clean ####
+## AG/BG ####
 ## subset mega-comp species
 ## make vector of species
 MC.sp <- c("LOPU", "AMME", "ANAR", "BRHOp", "BRNIp", "CESO", "GITRp", "LENIp", "LOMU", "MAELp", "MICA", "PLERp", "PLNO", "TACA", "TRHI", "TRWIp")
@@ -41,6 +59,13 @@ MC.traits <- traits %>%
 
 colnames(MC.traits) <- c("Taxon", "ID", "Rep", "Date.harvest", "Height.cm", "Fresh.leaf.mass.g", "Dry.leaf.mass.g", "LDMC", "Leaf.Area.cm2", "SLA.cm2.g", "Shoot.dry.biomass.g", "Root.dry.biomass.g", "Total.biomass.g", "RMF", "Root.volume.cm3", "Root.density.g.cm3", "Coarse.root.diameter.mm", "Length.mm", "Fine.root.length.mm", "Coarse.root.length.mm", "Coarse.root.specific.length.cm.g", "Fine.root.specific.length.cm.g", "Proportion.fine.roots", "phyto")
 
+## Seed Data ####
+trait.seed <- trait.seed[,-10] # get rid of height because we have better height data for adults 
+colnames(trait.seed)[17] <- "cn.seed"
+trait <- merge(trait.seed, trait.adult, by.x = "code", by.y = "Code", all.x = F, all.y = T)
+trait[trait$code_4 == "PLER",]$E.S <- 0.8946559
+trait[trait$code_4 == "PLER",]$coat.thick <- 0.0104
+
 
 # PCAs ####
 all.traits <- c("Height.cm", "LDMC", "SLA.cm2.g", "RMF", "Root.density.g.cm3", "Coarse.root.specific.length.cm.g", "Fine.root.specific.length.cm.g", "Proportion.fine.roots")
@@ -56,7 +81,31 @@ autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadin
   #scale_color_manual(values = c("#24796C","#99C945"), labels=c('E. elymoides', 'P. spicata'), name = "") +
   
   #geom_text(aes(label = code, col = Rating)) +
-  # stat_ellipse(aes(group = ID, col = ID)) + 
+   #stat_ellipse(aes(group = phyto, col = phyto)) + 
   theme(
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
     legend.title = element_blank())
+
+ggsave("analyses/traits/preliminary_figures/pca_alltraits.png", width = 6, height = 4)
+
+
+## Seed Trait PCAs ####
+seeds <- c("code_4", "nativity", "growth_form", "FunGroup", "ldd2", "wing.loading", "coat.perm", "E.S", "coat.thick",  "mass.mg", "set.time.mpsec", "shape",  "size", "appendage.type", "prop.C", "prop.N", "cn.seed")
+
+seeds.pca <- c("wing.loading", "coat.perm", "E.S", "coat.thick",  "mass.mg", "set.time.mpsec", "shape",  "size", "cn.seed")
+
+pca <- prcomp(trait[, seeds.pca], scale = T)
+summary(pca)
+
+seeds.pca <- cbind(trait, pca$x[,1:4])
+
+
+autoplot(pca, x = 1, y = 2, data = seeds.pca, frame = F, loadings = T, loadings.label = T, label = F, col = "FunGroup", size = 2) +
+  theme_classic() +
+  #geom_text(aes(label = code, col = Rating)) +
+  #stat_ellipse(aes(group = group)) + 
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, size = 1),
+    legend.title = element_blank())
+
+ggsave("seed-trait_pca.png", height = 3, width = 6)
