@@ -9,12 +9,12 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-date <- 20231010
+date <- 20231018
 
 # Set initials ####
 initials <- list(lambda_base=100,
                  epsilon=1,
-                 sigma_0 = 1) 
+                 sigma_0= 0.01) 
 
 #lambda_dev=1,
 #alpha_acam_base=1,
