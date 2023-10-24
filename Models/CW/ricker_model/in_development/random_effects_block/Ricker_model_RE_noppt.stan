@@ -101,7 +101,7 @@ model{
   vector[N] F_hat2;
   
   // set priors
-  sigma_0 ~ normal(0, 1000);
+  sigma_0 ~ normal(0, 10);
   //sigma ~ gamma(0.001, 0.001);
   epsilon ~ gamma(sigma, sigma); // prior for group level random effects
   
