@@ -45,7 +45,7 @@ parameters{
   
   // lambda
   real<lower = 0, upper = 10000> lambda_base;
-  //real lambda_dev;
+  real lambda_dev;
   
   // all the alphas
    real alpha_acam_base;
@@ -83,8 +83,6 @@ parameters{
    real alpha_thir_dev;
    real alpha_twil_dev;
    real alpha_weeds_dev;
-   
-   
 
 }
 
@@ -100,7 +98,7 @@ model{
   epsilon ~ gamma(sigma, sigma); // prior for group level random effects
   
   lambda_base ~ gamma(0.001, 0.001); // non-informative prior
-  //lambda_dev ~ normal(0, 100);
+  lambda_dev ~ normal(0, 100);
 
   alpha_acam_base ~ normal(0, 5);
   alpha_acam_dev ~ normal(0,5);
@@ -141,8 +139,8 @@ model{
   for(i in 1:N){
     // use stems data - NOT back calculated seeds in data
     // should model both precip conditions together
-    F_hat[i] = N_i[i]*g_i[i]*(lambda_base)* //+ lambda_dev*trt[i])* 
-    exp(-acam[i]*(alpha_acam_base + alpha_acam_dev*trt[i])-
+    F_hat[i] = N_i[i]*g_i[i]*(lambda_base + lambda_dev*trt[i])* 
+    exp(-acam[i]*(alpha_acam_base + alpha_acam_dev*trt[i]) -
     amme[i]*(alpha_amme_base + alpha_amme_dev*trt[i]) -
     anar[i]*(alpha_anar_base + alpha_anar_dev*trt[i]) - 
     brho[i]*(alpha_brho_base + alpha_brho_dev*trt[i]) -
