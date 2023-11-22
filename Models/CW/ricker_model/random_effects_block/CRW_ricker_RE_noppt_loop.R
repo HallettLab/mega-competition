@@ -1,6 +1,6 @@
 ## Model BROMUS 
 model.dat <- read.csv("data/model_dat.csv")
-date <- 20231108
+date <- 20231110
 
 library(tidyverse)
 library(bayesplot)
@@ -13,6 +13,7 @@ library(here)
 # Set up ####
 i <- "BRHO"
 dat <- subset(model.dat, phyto == i)
+dat <- subset(dat, trt == 0)
 
 species <- "BRHO"
 
@@ -74,7 +75,7 @@ PrelimFit <- stan(file = 'Models/CW/ricker_model/random_effects_block/CRW_ricker
                   init = initials1, iter = 6000, chains = 3, thin = 2, control = list(adapt_delta = 0.95)) 
 
 ## save model output
-save(PrelimFit, file = paste0("Models/CW/ricker_model/random_effects_block/posteriors/ricker_",species,"_posteriors_random_effects_noppt", date, ".rdata"))
+save(PrelimFit, file = paste0("Models/CW/ricker_model/random_effects_block/posteriors/ricker_",species,"_posteriors_random_effects_noppt_drought_only", date, ".rdata"))
 
 ## load model back in if needed
 load(paste0("Models/CW/ricker_model/random_effects_block/posteriors/ricker_BRHO_posteriors_random_effects_", date, ".rdata"))
@@ -85,9 +86,9 @@ print(PrelimFit)
 
 ## Traceplots ####
 ### epsilon/sigma
-traceplot(PrelimFit, pars = c("epsilon[1]", "epsilon[2]", "epsilon[3]", "epsilon[4]", "epsilon[5]", "epsilon[6]", "epsilon[7]", "epsilon[8]", "epsilon[9]", "epsilon[10]", "epsilon[11]", "sigma"))
+traceplot(PrelimFit, pars = c("epsilon[1]", "epsilon[2]", "epsilon[3]", "epsilon[4]", "epsilon[5]", "epsilon[6]","sigma"))
 
-ggsave("Models/CW/ricker_model/random_effects_block/posterior_diagnostics/20231108/BRHO_random_effects_traceplot_20231108.png", width = 8, height = 4)
+ggsave("Models/CW/ricker_model/random_effects_block/posterior_diagnostics/20231110/BRHO_random_effects_traceplot_20231110.png", width = 8, height = 4)
 
 ### lambda_base
 traceplot(PrelimFit, pars = c("lambda_base"))
@@ -108,9 +109,9 @@ ggsave("Models/CW/ricker_model/random_effects_block/posterior_diagnostics/202311
 
 ## Pairs plots ####
 ### epsilon/sigma/lambda
-pdf(file = "Models/CW/ricker_model/random_effects_block/posterior_diagnostics/20231108/pairs_plot_epsilon_sigma_lambda.pdf", width = 12, height = 12)
+pdf(file = "Models/CW/ricker_model/random_effects_block/posterior_diagnostics/20231110/pairs_plot_epsilon_sigma_lambda.pdf", width = 12, height = 12)
 
-pairs(PrelimFit, pars = c("epsilon[1]", "epsilon[2]", "epsilon[3]", "epsilon[4]", "epsilon[5]", "epsilon[6]", "epsilon[7]", "epsilon[8]", "epsilon[9]", "epsilon[10]", "epsilon[11]", "sigma", "lambda_base"))
+pairs(PrelimFit, pars = c("epsilon[1]", "epsilon[2]", "epsilon[3]", "epsilon[4]", "epsilon[5]", "epsilon[6]", "sigma", "lambda_base"))
 
 dev.off()
 
