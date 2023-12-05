@@ -43,6 +43,9 @@ parameters{
   real epsilon[N_blocks]; 
   real<lower = 0> sigma;
   
+  real<lower=0> disp_dev; // dispersion deviation parameter, 
+
+  
   // lambda
   real<lower = 0, upper = 10000> lambda_base;
   real lambda_dev;
@@ -163,7 +166,7 @@ model{
   }
   
   // calculate the likelihood
- Fecundity ~ poisson(F_hat2);
+ Fecundity ~ neg_binomial_2(F_hat2, disp_dev);
   // likelihood outside of for-loop
   // could think of this as observation error term
   

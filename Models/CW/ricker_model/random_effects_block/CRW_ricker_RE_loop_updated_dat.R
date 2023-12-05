@@ -1,9 +1,7 @@
 ## Model 
-model.dat2 <- read.csv("data/model_dat.csv")
+model.dat <- read.csv("data/model_dat.csv")
 
-source("data_cleaning/format_model_dat_updated.R")
-
-date <- 20231201
+date <- 20231204
 
 library(tidyverse)
 library(bayesplot)
@@ -43,7 +41,6 @@ for (i in 1:length(Blocks_OLD)) {
 
 N <- as.integer(length(Fecundity)) ## number of observations
 N_i <- as.integer(dat$phyto.n.indiv) ## seeds in of focal species
-#g_i <- dat$mean.germ ## germ of focal species; FIX by removing as.integer()
 trt <- as.integer(dat$trt) ## treatment (binary)
 
 ## stems data
@@ -73,7 +70,7 @@ initials1<- list(initials, initials, initials)
 
 # Model ####
 PrelimFit <- stan(file = 'Models/CW/ricker_model/random_effects_block/CRW_ricker_RE_update_priors.stan', data = data_vec,
-                  init = initials1, iter = 3000, chains = 3, thin = 2, control = list(adapt_delta = 0.9, max_treedepth = 10)) 
+                  init = initials1, iter = 1000, chains = 3, thin = 2, control = list(adapt_delta = 0.9, max_treedepth = 10)) 
 
 ## save model output
 save(PrelimFit, file = paste0("Models/CW/ricker_model/random_effects_block/posteriors/ricker_",species,"_posteriors_random_effects_updated_priors", date, ".rdata"))

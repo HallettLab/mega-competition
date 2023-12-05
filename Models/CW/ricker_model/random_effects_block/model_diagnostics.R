@@ -1,6 +1,6 @@
 ## Model diagnostics
 
-date <- 20231201
+date <- 20231204
 species <- "BRHO"
 
 ## load model back in if needed
@@ -17,9 +17,9 @@ traceplot(PrelimFit, pars = c("epsilon[1]", "epsilon[2]", "epsilon[3]", "epsilon
 ggsave(paste0("Models/CW/ricker_model/random_effects_block/posterior_diagnostics/", date, "/", species, "_random_effects_traceplot_", date, ".png"), width = 8, height = 4)
 
 ### lambda_base
-traceplot(PrelimFit, pars = c("lambda_base", "lambda_dev"))
+traceplot(PrelimFit, pars = c("lambda_base", "lambda_dev", "disp_dev"))
 
-ggsave(paste0("Models/CW/ricker_model/random_effects_block/posterior_diagnostics/", date, "/", species, "lambda_traceplot_", date, ".png"), width = 4, height = 3)
+ggsave(paste0("Models/CW/ricker_model/random_effects_block/posterior_diagnostics/", date, "/", species, "lambda_traceplot_", date, ".png"), width = 6, height = 3)
 
 ### alphas 
 #### part 1
