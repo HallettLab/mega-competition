@@ -7,7 +7,7 @@ Fecundity <- as.integer(round(dat$phyto.seed.out)) ## seeds out
 
 hist(Fecundity)
 
-a <- 1
+a <- .001
 eps <- rgamma(1000, a, a)
 
 sig <- rgamma(1000, eps, eps)
