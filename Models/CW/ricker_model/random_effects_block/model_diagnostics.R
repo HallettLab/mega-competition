@@ -1,7 +1,7 @@
 ## Model diagnostics
 
 date <- 20231204
-species <- "BRHO"
+species <- "GITR"
 
 ## load model back in if needed
 load(paste0("Models/CW/ricker_model/random_effects_block/posteriors/ricker_BRHO_posteriors_random_effects_", date, ".rdata"))

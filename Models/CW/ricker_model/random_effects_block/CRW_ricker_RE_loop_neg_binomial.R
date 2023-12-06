@@ -1,7 +1,7 @@
 ## Model 
 model.dat <- read.csv("data/model_dat.csv")
 
-date <- 20231204
+date <- 20231205
 
 library(tidyverse)
 library(bayesplot)
@@ -12,10 +12,10 @@ rstan_options(auto_write = TRUE)
 library(here)
 
 # Set up ####
-i <- "BRHO"
+i <- "ACAM"
 dat <- subset(model.dat, phyto == i)
 
-species <- "BRHO"
+species <- "ACAM"
 
 ## create vectors of the various data inputs
 Fecundity <- as.integer(round(dat$phyto.seed.out)) ## seeds out
@@ -40,7 +40,7 @@ for (i in 1:length(Blocks_OLD)) {
 }
 
 N <- as.integer(length(Fecundity)) ## number of observations
-N_i <- as.integer(dat$phyto.n.indiv) ## seeds in of focal species
+N_i <- as.integer(dat$phyto.n.indiv) ## stem # of focal species
 trt <- as.integer(dat$trt) ## treatment (binary)
 
 ## stems data
@@ -62,18 +62,20 @@ thir <- as.integer(dat$THIR)
 twil <- as.integer(dat$TWIL)
 weeds <- as.integer(dat$weeds)
 
+## make a vector of data inputs to model
 data_vec <- c("N", "Fecundity", "N_i", "N_blocks", "Blocks", "trt", "acam", "amme", "anar", "brho","brni", "ceso", "gitr", "leni", "lomu", "mael", "mica", "pler", "plno", "taca","thir","twil", "weeds")
 
+## create initials for epsilon and sigma
 initials <- list(epsilon=rep(1,N_blocks), sigma = 1)
 initials1<- list(initials, initials, initials)
-#initials1 <- list(initials)
 
 # Model ####
-PrelimFit <- stan(file = 'Models/CW/ricker_model/random_effects_block/CRW_ricker_RE_update_priors.stan', data = data_vec,
-                  init = initials1, iter = 1000, chains = 3, thin = 2, control = list(adapt_delta = 0.9, max_treedepth = 10)) 
+PrelimFit <- stan(file = 'Models/CW/ricker_model/random_effects_block/CRW_ricker_RE_neg_binomial.stan', 
+                  data = data_vec, init = initials1, iter = 3000, chains = 3, thin = 2, 
+                  control = list(adapt_delta = 0.9, max_treedepth = 10)) 
 
 ## save model output
-save(PrelimFit, file = paste0("Models/CW/ricker_model/random_effects_block/posteriors/ricker_",species,"_posteriors_random_effects_updated_priors", date, ".rdata"))
+save(PrelimFit, file = paste0("Models/CW/ricker_model/random_effects_block/posteriors/ricker_",species,"_posteriors_random_effects_neg_binomial", date, ".rdata"))
 
 
 
@@ -101,18 +103,7 @@ cor(Pfit$alpha_thir_base, Pfit$alpha_thir_dev) ## higher
 cor(Pfit$alpha_twil_base, Pfit$alpha_twil_dev) ## higher
 
 
-
-
-
 # OLD ####
-
-np_cp <- nuts_params(PrelimFit)
-
-color_scheme_set("darkgray")
-mcmc_parcoord(PrelimFit, np = np_cp)
-
-mcmc_pairs(PrelimFit, np = np_cp, pars = c(""))
-
 #model.output <- list()
 #warnings <- list()
 

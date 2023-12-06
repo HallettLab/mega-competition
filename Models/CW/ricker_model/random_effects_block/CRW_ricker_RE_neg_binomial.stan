@@ -1,6 +1,7 @@
 // Ricker growth model
-// Incorporating random effects of block
-// Models both precip treatments together - currently just drought
+// Model as a negative binomial
+// Incorporate random effects of blocks
+// Models both precip treatments together
 
 data{
   
@@ -12,7 +13,6 @@ data{
   int Blocks[N]; // block column
   
   vector[N] N_i; // population size of species i at time t
-  //vector[N] g_i; //germination of the focal species
   vector[N] trt; // precip treatment
 
 // population sizes of interacting species at time t
@@ -43,9 +43,9 @@ parameters{
   real epsilon[N_blocks]; 
   real<lower = 0> sigma;
   
-  real<lower=0> disp_dev; // dispersion deviation parameter, 
+  // dispersion deviation parameter 
+  real<lower=0> disp_dev; 
 
-  
   // lambda
   real<lower = 0, upper = 10000> lambda_base;
   real lambda_dev;
@@ -69,6 +69,7 @@ parameters{
    real alpha_twil_base;
    real alpha_weeds_base;
    
+   // alpha deviations
    real alpha_acam_dev;
    real alpha_amme_dev;
    real alpha_anar_dev;
@@ -140,9 +141,8 @@ model{
   
   // Biological model
   for(i in 1:N){
-    // use stems data - NOT back calculated seeds in data
-    // should model both precip conditions together
-    F_hat[i] = N_i[i]*(lambda_base + lambda_dev*trt[i])* //g_i[i]*
+
+    F_hat[i] = N_i[i]*(lambda_base + lambda_dev*trt[i])* 
     exp(-acam[i]*(alpha_acam_base + alpha_acam_dev*trt[i]) -
     amme[i]*(alpha_amme_base + alpha_amme_dev*trt[i]) -
     anar[i]*(alpha_anar_base + alpha_anar_dev*trt[i]) - 
@@ -171,5 +171,4 @@ model{
   // could think of this as observation error term
   
 }
-
 
