@@ -2,14 +2,14 @@
 
 ## set up env
 library(tidyverse)
-theme_set(theme_bw())
+library(ggpubr)
+theme_set(theme_classic())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
   x2<-na.omit(x)
   sd(x2)/sqrt(length(x2))
 }
-
 
 # Read in Data ####
 # specify dropbox pathway 
@@ -27,7 +27,6 @@ brni_allo <- read.csv(paste0(allo_lead, "BRNI_allometry-processing_20230315.csv"
 
 brni_seeds <- read.csv(paste0(allo_lead, "BRNI-seeds_allometry-processing_20230315.csv"))
 
-
 ## phyto-processing data
 ## specify dropbox pathway 
 if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Data/Processing/Phytometer-Processing/Phytometer-Processing_entered/")){
@@ -41,9 +40,6 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 
 brni_phyto <- read.csv(paste0(lead, "BRNI_phyto-processing_20230315.csv"))
 
-
-
-
 # Clean ####
 brni_allo2 <- brni_allo %>%
   mutate(total.flower.num = pod.num + flower.num, ## calc total flowers out
@@ -51,7 +47,6 @@ brni_allo2 <- brni_allo %>%
 
 ## merge with phyto data for exploration with viability
 brni.allo.phyto <- left_join(brni_allo2, brni_phyto, by = c("block", "plot", "sub", "phyto.unique"))
-
 
 # Bio-Flower Relationship ####
 ## Visualize ####
@@ -70,15 +65,15 @@ ggplot(brni_allo2, aes(x=total.biomass.g, y=total.flower.num, color = treatment)
 ## the two treatments have pretty different slopes, the D treatment appears largely driven by one large sample though.
 
 ### polynomial ####
-ggplot(brni_allo2, aes(x = total.biomass.g, y = total.flower.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2)) +
-  ggtitle("BRNI poly")
+#ggplot(brni_allo2, aes(x = total.biomass.g, y = total.flower.num)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2)) +
+  #ggtitle("BRNI poly")
 #ggsave("allometry/preliminary_figs/TWIL_flowers_poly.png", width = 4, height = 2.5)
 
-ggplot(brni_allo2, aes(x = total.biomass.g, y = total.flower.num, color = treatment)) +
-  geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
+#ggplot(brni_allo2, aes(x = total.biomass.g, y = total.flower.num, color = treatment)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
 
 ## Model ####
 ### linear ####
@@ -86,10 +81,9 @@ brni_allo_lin <- lm(total.flower.num~total.biomass.g, data = brni_allo2)
 summary(brni_allo_lin)
 ## r2 = 0.9425
 
-
 ### poly ####
-brni_allo_pol <- lm(total.flower.num ~ total.biomass.g + I(total.biomass.g^2) + treatment, data = brni_allo2)
-summary(brni_allo_pol) 
+#brni_allo_pol <- lm(total.flower.num ~ total.biomass.g + I(total.biomass.g^2) + treatment, data = brni_allo2)
+#summary(brni_allo_pol) 
 # r2 = 0.9426
 ## no signif effect of the poly treatment, so use linear
 
@@ -104,7 +98,7 @@ summary(brni_allo_lin_trt)
 ## visually explore ####
 
 ## check distribution
-ggplot(brni_allo2, aes(x=prop.viable)) +
+final5 <- ggplot(brni_allo2, aes(x=prop.viable)) +
   geom_histogram()
 
 ## distribution by treatment
@@ -112,7 +106,6 @@ ggplot(brni_allo2, aes(x=prop.viable)) +
   geom_histogram() +
   facet_wrap(~treatment)
 ## control distribution has a peak closer to 0.25; drought distribution is fairly even all the way across...
-
 
 ## viability prop by bio
 ggplot(brni_allo2, aes(x=total.biomass.g, y=prop.viable)) +
@@ -193,8 +186,12 @@ ggplot(viability_calcs, aes(x=total.biomass.g.x, y=total.viable.flowers)) +
   geom_point() +
   geom_smooth(method = "lm")
 
-
 # Seeds/flower ####
+final1 <- ggplot(brni_seeds, aes(x=seeds.per.one.pod)) +
+  geom_histogram() +
+  xlab("Seeds per Flower") +
+  ylab("Count")
+
 brni_mean_seeds_trt <- brni_seeds %>%
   group_by(treatment) %>%
   summarise(mean_seeds = mean(seeds.per.one.pod), se_seeds = calcSE(seeds.per.one.pod))
@@ -202,14 +199,27 @@ brni_mean_seeds_trt <- brni_seeds %>%
 brni_mean_seeds <- brni_seeds %>%
   summarise(mean_seeds = mean(seeds.per.one.pod), se_seeds = calcSE(seeds.per.one.pod))
 
-ggplot(brni_mean_seeds_trt, aes(x=treatment, y=mean_seeds)) +
+final2 <- ggplot(brni_mean_seeds_trt, aes(x=treatment, y=mean_seeds)) +
   geom_point(size = 4) +
-  geom_errorbar(aes(ymin = mean_seeds - se_seeds, ymax = mean_seeds + se_seeds), width = 0.25)
+  geom_errorbar(aes(ymin = mean_seeds - se_seeds, ymax = mean_seeds + se_seeds), width = 0.25) +
+  xlab("Precipitation Treatment") +
+  ylab("Seeds per Flower")
 ## interestingly, drought has higher average seeds/pod; some mild overlap of error bars
 
 seed.test <- aov(seeds.per.one.pod ~ treatment, data = brni_seeds)
 summary(seed.test)
 ## no significant effect of treatment, use the same mean for both treatments
+
+nrow(brni_seeds[brni_seeds$treatment == "D",])
+nrow(brni_seeds[brni_seeds$treatment == "C",])
+
+# Methods Figure ####
+plot <- ggarrange(final1, final2, final3, final4, labels = "AUTO", ncol = 2, nrow = 2)
+
+annotate_figure(plot, top = text_grob("ACAM", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/ACAM.png", height = 5, width = 6.5)
 
 
 

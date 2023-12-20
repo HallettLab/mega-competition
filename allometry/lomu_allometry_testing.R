@@ -2,7 +2,8 @@
 
 ## set up env
 library(tidyverse)
-theme_set(theme_bw())
+library(ggpubr)
+theme_set(theme_classic())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -21,7 +22,6 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
   # Marina
   allo_lead <- "/Users/Marina/Documents/Dropbox/Mega_Competition/Data/Allometry/Allometry_entered/"
 } 
-
 
 lomu_allo <- read.csv(paste0(allo_lead, "LOMU_allometry-processing_20230202.csv")) %>%
   mutate(phyto.unique = unique, 
@@ -79,29 +79,45 @@ ggplot(lomu_alloC, aes(x=final.total.biomass.g, y=allo.total.biomass.g)) +
 
 
 # Visualize ####
+final1 <- ggplot(lomu_alloC, aes(x=allo.total.biomass.g)) +
+  geom_histogram() +
+  xlab("Aboveground Biomass (g)") +
+  ylab("Count")
+  
 ## Linear ####
 ggplot(lomu_alloC, aes(x=allo.total.biomass.g, y=seeds.num, color = treatment)) +
   geom_point() +
   geom_smooth(method = "lm")
 ## relationships look very similar b/w treats! 
-ggplot(lomu_alloC, aes(x=allo.total.biomass.g, y=seeds.num)) +
+
+final2 <- ggplot(lomu_alloC, aes(x=allo.total.biomass.g, y=seeds.num)) +
   geom_point() +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ x) +
+  xlab("Aboveground Biomass (g)") +
+  ylab("Seed Number")
 
 ## Polynomial ####
 ## plot as polynomial
-ggplot(lomu_alloC, aes(x = allo.total.biomass.g, y = seeds.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
+#ggplot(lomu_alloC, aes(x = allo.total.biomass.g, y = seeds.num)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
 
 # Model ####
 lomu_allo_rel_lin <- lm(seeds.num ~ allo.total.biomass.g, data = lomu_alloC)
 summary(lomu_allo_rel_lin) # r2 = 0.9511
 
-lomu_allo_rel_pol <- lm(seeds.num ~ allo.total.biomass.g + I(allo.total.biomass.g^2), data = lomu_alloC)
-summary(lomu_allo_rel_pol) # r2 = 0.9592
+#lomu_allo_rel_pol <- lm(seeds.num ~ allo.total.biomass.g + I(allo.total.biomass.g^2), data = lomu_alloC)
+#summary(lomu_allo_rel_pol) # r2 = 0.9592
 
 ## polynomial is slightly better.
+
+# Methods Figure ####
+plot <- ggarrange(final1, final2, labels = "AUTO", ncol = 2, nrow = 1)
+
+annotate_figure(plot, top = text_grob("LOMU", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/LOMU.png", height = 3, width = 6.5)
 
 # Save Output ####
 ## save the model outputs
@@ -125,4 +141,4 @@ LOMU.allo.output <- data.frame(Species = "LOMU",
                                viability_D_se = NA)
 
 ## clean env
-rm(list = c("lomu_allo", "lomu_allo_rel_lin", "lomu_allo_rel_pol", "allo_lead", "lomu_alloC", "lomu_combined", "lomu_phyto", "lomu_phytoC", "lomu_phytoC2", "mismatch"))
+rm(list = c("lomu_allo", "lomu_allo_rel_lin", "allo_lead", "lomu_alloC", "lomu_combined", "lomu_phyto", "lomu_phytoC", "lomu_phytoC2", "mismatch", "final1", "final2", "plot", "lead"))

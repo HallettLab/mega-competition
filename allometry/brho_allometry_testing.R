@@ -8,7 +8,7 @@
 # set up env
 library(tidyverse)
 library(ggpubr)
-theme_set(theme_bw())
+theme_set(theme_classic())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -37,7 +37,6 @@ brho_allo <- read.csv(paste0(allo_lead, "BRHO_allometry-processing_", date, ".cs
   mutate(inflor.g = inflorescence.weight.g, seed.num = seeds.num) %>% ## standardize column names
   mutate(treatment = ifelse(treatment == "ambient", "C", "D")) ## standardize treatment values
 
-
 # Dat Range ####
 #brho_dat <- all_dat_final %>%
  # filter(phyto == "BRHO")
@@ -56,10 +55,8 @@ brho_allo <- read.csv(paste0(allo_lead, "BRHO_allometry-processing_", date, ".cs
 
 #ggsave("allometry/preliminary_figs/allometric_relationship_fits/brho_allometry_check.png", height = 4, width = 6)
 
-
 ## To-Do ####
   ## Looks like BRHO control could use a few more samples in the lower range.
-
 
 # Inflor-Seed Rel. ####
 ## Visualize ####
@@ -68,21 +65,27 @@ ggplot(brho_allo, aes(x=inflor.g, y=seed.num, color = treatment)) +
   geom_smooth(method = "lm")
 ## the error bars on the lines overlap for most of it - so probably not separate relationships here
 
-ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
+final1 <- ggplot(brho_allo, aes(x=inflor.g)) +
+  geom_histogram() +
+  xlab("Inflorescence Biomass (g)") +
+  ylab("Count")
+  
+final2 <- ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
   geom_point() +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ x) +
+  xlab("Inflorescence Biomass (g)") + ylab("Seed Number")
 
-ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ poly(x,2))
+#ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", formula = y ~ poly(x,2))
 
-ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x)
+#ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", formula = y ~ x)
 
-ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ log(x))
+#ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", formula = y ~ log(x))
 
 
 ## Model ####
@@ -93,6 +96,15 @@ summary(brho_fallo_rel)
 
 # inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = brho_allo)
 # summary(inflorseeds2)
+
+# Methods Figure ####
+plot <- ggarrange(final1, final2, labels = "AUTO", ncol = 2, nrow = 1)
+
+annotate_figure(plot, top = text_grob("BRHO", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/BRHO.png", height = 3, width = 6.5)
+
 
 # Save Output ####
 ## save the model outputs
@@ -116,4 +128,4 @@ BRHO.allo.output <- data.frame(Species = "BRHO",
            viability_D_se = NA)
 
 # Clean Env ####
-rm(allo_lead, brho_allo, date, brho_fallo_rel)
+rm(allo_lead, brho_allo, date, brho_fallo_rel, final1, final2, plot)

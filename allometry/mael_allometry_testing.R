@@ -2,6 +2,8 @@
 
 # set up env
 library(tidyverse)
+library(ggpubr)
+theme_set(theme_classic())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -24,16 +26,20 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 mael_allo <- read.csv(paste0(allo_lead, "MAEL_allometry-processing_20221128.csv")) %>%
   select(-X, -X.1, -X.2)
 
-
 # Seed Distrib ####
 ggplot(mael_allo, aes(x = seeds.num)) +
   geom_histogram()
 
-## separate by treatment
-ggplot(mael_allo, aes(x = seeds.num)) +
-  geom_histogram()+
-  facet_wrap(~treatment)
+nrow(mael_allo[mael_allo$treatment == "C",])
+nrow(mael_allo[mael_allo$treatment == "D",])
 
+
+## separate by treatment
+final1 <- ggplot(mael_allo, aes(x = seeds.num)) +
+  geom_histogram()+
+  facet_wrap(~treatment) +
+  xlab("Seeds per Flower") +
+  ylab("Count")
 
 # Calc Seeds/Flower ####
 ## calc overall mean
@@ -45,22 +51,26 @@ mael_seed_means <- mael_allo %>%
   group_by(treatment) %>%
   summarise(mean_seeds = mean(seeds.num, na.rm = T), SE_seeds = calcSE(seeds.num))
 
-
 ## plot this
-ggplot(mael_seed_means, aes(x=treatment, y = mean_seeds)) +
+final2 <- ggplot(mael_seed_means, aes(x=treatment, y = mean_seeds)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = mean_seeds - SE_seeds, ymax = mean_seeds + SE_seeds), width = 0.25) +
-  ylab("Mean Seeds per Flower") + xlab ("Treatment")
+  ylab("Seeds per Flower") + xlab ("Precipitation Treatment")
 
 ## use an anova to test signif differences b/w categories
 seedtrt <- aov(seeds.num ~ treatment, data = mael_allo)
-
 summary(seedtrt)
 TukeyHSD(seedtrt)
 
-
 ## Use separate means for drought & control since they are significantly different
 
+# Methods Figure ####
+plot <- ggarrange(final1, final2, labels = "AUTO", ncol = 2, nrow = 1)
+
+annotate_figure(plot, top = text_grob("MAEL", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/MAEL.png", height = 3, width = 6.5)
 
 # Save Output ####
 MAEL.allo.output <- data.frame(Species = "MAEL", 
@@ -82,4 +92,4 @@ MAEL.allo.output <- data.frame(Species = "MAEL",
            viability_D = NA,
            viability_D_se = NA)
 
-rm(mael_allo, seedtrt, allo_lead, mael_seed_means)
+rm(mael_allo, seedtrt, allo_lead, mael_seed_means, final1, final2, plot)

@@ -2,7 +2,8 @@
 
 # set up env
 library(tidyverse)
-theme_set(theme_bw())
+library(ggpubr)
+theme_set(theme_classic())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -24,14 +25,15 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 ## Allometry data
 ceso_allo <- read.csv(paste0(allo_lead, "CESO_allometry-processing_20230123.csv")) 
 
-
 # Seed Distrib ####
 ggplot(ceso_allo, aes(x=seeds.num)) +
   geom_histogram()
-ggplot(ceso_allo, aes(x=seeds.num)) +
-  geom_histogram() +
-  facet_wrap(~treatment)
 
+final1 <- ggplot(ceso_allo, aes(x=seeds.num)) +
+  geom_histogram() +
+  facet_wrap(~treatment) +
+  xlab("Seeds per Flower") +
+  ylab("Count")
 
 # Calc Seeds/Flower ####
 mean(ceso_allo$seeds.num, na.rm = T)
@@ -43,25 +45,33 @@ ceso_seed_means <- ceso_allo %>%
   summarise(mean_seeds = mean(seeds.num, na.rm = T), SE_seeds = calcSE(seeds.num))
 
 ## visualize
-ggplot(ceso_seed_means, aes(x=treatment, y=mean_seeds)) +
+final2 <- ggplot(ceso_seed_means, aes(x=treatment, y=mean_seeds)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = mean_seeds - SE_seeds, ymax = mean_seeds + SE_seeds), width = 0.25) +
-  theme_bw() +
-  ylab("Avg Seeds per Flower") + xlab("Treatment")
-
+  ylab("Seeds per Flower") + xlab("Precipitation Treatment")
 
 ## do an anova to test whether seeds/flower is different in control vs. drought
 seedtrt <- aov(seeds.num ~ treatment, data = ceso_allo)
-
 summary(seedtrt)
 TukeyHSD(seedtrt)
 ## marginally significant differences
 
+nrow(ceso_allo[ceso_allo$treatment == "C",])
+nrow(ceso_allo[ceso_allo$treatment == "D",])
 
 # Q here ####
 ## should we use different C and D estimates since they are only marginally significantly different? 
 ## do we need more samples?
 
+# Methods Figure ####
+plot <- ggarrange(final1, final2, labels = "AUTO", ncol = 2, nrow = 1)
+
+annotate_figure(plot, top = text_grob("CESO", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/CESO.png", height = 3, width = 6.5)
+
+# Save Output ####
 CESO.allo.output <- data.frame(Species = "CESO", 
                                intercept = 0, 
                                intercept_pval = NA, 
@@ -81,4 +91,4 @@ CESO.allo.output <- data.frame(Species = "CESO",
                                viability_D = NA,
                                viability_D_se = NA)
 
-rm(ceso_allo, seedtrt, allo_lead, ceso_seed_means)
+rm(ceso_allo, seedtrt, allo_lead, ceso_seed_means, final1, final2, plot)

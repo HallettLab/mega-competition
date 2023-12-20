@@ -1,5 +1,7 @@
 ## ACAM Allometry
 library(tidyverse)
+library(ggpubr)
+theme_set(theme_classic())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -28,9 +30,11 @@ ggplot(acam_seed_allo, aes(x=seed.num)) +
   geom_histogram()
 
 ## separate by treatment
-ggplot(acam_seed_allo, aes(x=seed.num)) +
+final1 <- ggplot(acam_seed_allo, aes(x=seed.num)) +
   geom_histogram()+
-  facet_wrap(~treatment)
+  facet_wrap(~treatment) +
+  xlab("Seeds per Flower") +
+  ylab("Count")
 
 ## look at sample num per treatment
 nrow(acam_seed_allo[acam_seed_allo$treatment == "D",]) ## 36
@@ -48,10 +52,10 @@ acam_seed_means <- acam_seed_allo %>%
   summarise(mean_seeds = mean(seed.num, na.rm = T), SE_seeds = calcSE(seed.num))
 
 ## plot this
-ggplot(acam_seed_means, aes(x=treatment, y = mean_seeds)) +
+final2 <- ggplot(acam_seed_means, aes(x=treatment, y = mean_seeds)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = mean_seeds - SE_seeds, ymax = mean_seeds + SE_seeds), width = 0.25) +
-  ylab("ACAM Mean Seeds per Flower") + xlab ("Treatment")
+  ylab("Seeds per Flower") + xlab ("Precipitation Treatment")
 
 #ggsave("ACAM_seeds_per_flower.png", width = 3, height = 3)
 
@@ -66,10 +70,15 @@ TukeyHSD(seedtrt) # they differ but this seems to be because of empty pods
 ## Combine drought and controls together for biomass-flower relationship
 
 ## Visualize ####
-ggplot(acam_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
+final3 <- ggplot(acam_flower_allo, aes(x=total.biomass.g)) +
+  geom_histogram() +
+  xlab("Aboveground Biomass (g)") +
+  ylab("Count")
+
+final4 <- ggplot(acam_flower_allo, aes(x=total.biomass.g, y=flower.num)) +
   geom_point() +
   geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ x) +
-  ylab("ACAM flower number") + xlab("Total AG Bio (g)")
+  ylab("Flower number") + xlab("Aboveground Biomass (g)")
 
 #ggsave("acam_flower_linear.png", width = 3, height = 3)
 
@@ -88,6 +97,13 @@ summary(acam_fallo_rel) # r2 = 0.962
 # acam_fallo_rel <- lm(flower.num ~ total.biomass.g + I(total.biomass.g^2), data = acam_flower_allo)
 # summary(acam_fallo_rel) # r2 = 0.963
 
+# Methods Figure ####
+plot <- ggarrange(final1, final2, final3, final4, labels = "AUTO", ncol = 2, nrow = 2)
+
+annotate_figure(plot, top = text_grob("ACAM", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/ACAM.png", height = 5, width = 6.5)
 
 # Save Output ####
 ## save the model outputs
@@ -111,4 +127,4 @@ ACAM.allo.output <- data.frame(Species = "ACAM",
            viability_D_se = NA)
 
 ## clean up env
-rm(list = c("allo_lead", "acam_fallo_rel", "acam_flower_allo", "acam_mean_seeds",  "acam_seed_allo", "seedtrt", "acam_seed_means"))
+rm(list = c("allo_lead", "acam_fallo_rel", "acam_flower_allo", "acam_mean_seeds",  "acam_seed_allo", "seedtrt", "acam_seed_means", "final1", "final2", "final3", "final4", "plot"))

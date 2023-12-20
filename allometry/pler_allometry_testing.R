@@ -8,6 +8,7 @@
 # set up env
 library(tidyverse)
 library(ggpubr)
+theme_set(theme_classic())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -36,17 +37,24 @@ ggplot(pler_allo, aes(x=inflor.g, y=seed.num, color = treatment)) +
   geom_smooth(method = "lm")
 ## the error bars on the lines overlap for most of it - so probably not separate relationships here
 
-ggplot(pler_allo, aes(x=inflor.g, y=seed.num)) +
-  geom_point() +
-  geom_smooth(method = "lm")
+final1 <- ggplot(pler_allo, aes(x=inflor.g)) +
+  geom_histogram() +
+  xlab("Inflorescence Biomass (g)") +
+  ylab("Count")
 
-ggplot(pler_allo, aes(x=inflor.g, y=seed.num)) +
+final2 <- ggplot(pler_allo, aes(x=inflor.g, y=seed.num)) +
   geom_point() +
-  geom_smooth(method = "lm", formula = y ~ poly(x,2))
+  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ x) +
+  xlab("Inflorescence Biomass (g)") +
+  ylab("Seed Number")
 
-ggplot(pler_allo[pler_allo$inflor.g > 0,], aes(x=inflor.g, y=seed.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ log(x))
+#ggplot(pler_allo, aes(x=inflor.g, y=seed.num)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", formula = y ~ poly(x,2))
+
+#ggplot(pler_allo[pler_allo$inflor.g > 0,], aes(x=inflor.g, y=seed.num)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", formula = y ~ log(x))
 
 ## Model ####
 ### *linear ####
@@ -55,11 +63,9 @@ summary(inflorseeds)
 ## R2 = 0.9669
 
 ### poly ####
-inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = pler_allo)
-summary(inflorseeds2)
+#inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = pler_allo)
+#summary(inflorseeds2)
 ## 0.967, but poly term is not signif; stick with linear
-
-
 
 # Explored tot bio to seeds, but can't use since we didn't measure tot bio for all samples
 
@@ -88,6 +94,13 @@ summary(inflorseeds2)
 # bioseeds2 <- lm(seed.num ~ total.biomass.g + I(total.biomass.g^2), data = pler_allo)
 # summary(bioseeds2)
 
+# Methods Figure ####
+plot <- ggarrange(final1, final2, labels = "AUTO", ncol = 2, nrow = 1)
+
+annotate_figure(plot, top = text_grob("PLER", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/PLER.png", height = 3, width = 6.5)
 
 # Save Output ####
 ## save the model outputs
@@ -111,4 +124,4 @@ PLER.allo.output <- data.frame(Species = "PLER",
            viability_D_se = NA)
 
 # Clean Env ####
-rm(list = c("allo_lead", "pler_allo","inflorseeds", "inflorseeds2"))
+rm(list = c("allo_lead", "pler_allo","inflorseeds", "final1", "final2", "plot"))

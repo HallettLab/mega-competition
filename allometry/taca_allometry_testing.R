@@ -6,6 +6,8 @@
     ## 3. saves the output from the final best model for use later in predicting seed output.
 
 library(tidyverse)
+library(ggpubr)
+theme_set(theme_classic())
 
 ## create a function to calculate standard error
 calcSE<-function(x){
@@ -26,44 +28,49 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 ## Allometry data
 taca_allo <- read.csv(paste0(allo_lead, "TACA_allometry-processing_20230116.csv"))
 
+## Phyto data
+#taca_phyto <- read.csv(paste0(allo_lead, "TACA_phyto-processing_20221108.csv"))
+
 nrow(taca_allo[taca_allo$treatment == "D",]) ## 20
 nrow(taca_allo[taca_allo$treatment == "C",]) ## 20
+
+## visualize ####
+final1 <- ggplot(taca_allo, aes(x=total.biomass.g)) +
+  geom_histogram() +
+  xlab("Aboveground Biomass (g)") +
+  ylab("Count")
 
 ggplot(taca_allo, aes(x = total.biomass.g, y = seeds.num, color = treatment)) +
   geom_point() +
   geom_smooth(method = "lm")
 
-## use an anova to test signif differences b/w categories
-seedtrt <- aov(seeds.num ~ treatment, data = taca_allo)
-
-summary(seedtrt)
-TukeyHSD(seedtrt) # no difference between treatments
-
-## is this a better way to test if there are slope differences?
-seedtrt2 <- lm(seeds.num ~ total.biomass.g + treatment, data = taca_allo)
-summary(seedtrt2)
-
-## Phyto data
-#taca_phyto <- read.csv(paste0(allo_lead, "TACA_phyto-processing_20221108.csv"))
-
-## visualize ####
-ggplot(taca_allo, aes(x = total.biomass.g, y = seeds.num)) +
+final2 <- ggplot(taca_allo, aes(x = total.biomass.g, y = seeds.num)) +
   geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ x)
+  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ x) +
+  xlab("Aboveground Biomass (g)") +
+  ylab("Seed Number")
+  
 
 ## plot as polynomial
-ggplot(taca_allo[taca_allo$total.biomass.g<20,], aes(x = total.biomass.g, y = seeds.num)) +
-  geom_point() +
-  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
+#ggplot(taca_allo[taca_allo$total.biomass.g<20,], aes(x = total.biomass.g, y = seeds.num)) +
+ # geom_point() +
+  #geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ poly(x, 2))
 
 ## model ####
 ### *linear ####
 taca_allo_rel_lin <- lm(seeds.num ~ total.biomass.g, data = taca_allo)
 summary(taca_allo_rel_lin) # r2 = 0.9731
 
+## is this a better way to test if there are slope differences?
+taca_allo_rel_lin2 <- lm(seeds.num ~ total.biomass.g + treatment, data = taca_allo)
+summary(taca_allo_rel_lin2)
+
+anova(taca_allo_rel_lin, 
+      taca_allo_rel_lin2)
+
 ### poly ####
-taca_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo)
-summary(taca_allo_rel_pol) # r2 = 0.9973
+#taca_allo_rel_pol <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo)
+#summary(taca_allo_rel_pol) # r2 = 0.9973
 
 # what about without outliers?
 ## test linear model first
@@ -73,6 +80,14 @@ summary(taca_allo_rel_pol) # r2 = 0.9973
 ## test polynomial model
 #taca_allo_rel <- lm(seeds.num ~ total.biomass.g + I(total.biomass.g^2), data = taca_allo[taca_allo$total.biomass.g<20,])
 #summary(taca_allo_rel) # r2 = 0.9668
+
+# Methods Figure ####
+plot <- ggarrange(final1, final2, labels = "AUTO", ncol = 2, nrow = 1)
+
+annotate_figure(plot, top = text_grob("TACA", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/TACA.png", height = 3, width = 6.5)
 
 # Save Outputs ####
 TACA.allo.output <- data.frame(Species = "TACA", 
@@ -95,4 +110,4 @@ TACA.allo.output <- data.frame(Species = "TACA",
                                viability_D_se = NA)
 
 # Clean Env ####
-rm(list = c("allo_lead", "taca_allo", "taca_allo_rel_lin", "taca_allo_rel_pol", "seedtrt", "seedtrt2"))
+rm(list = c("allo_lead", "taca_allo", "taca_allo_rel_lin", "taca_allo_rel_lin2", "final1", "final2", "plot"))
