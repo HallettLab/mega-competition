@@ -214,12 +214,12 @@ nrow(brni_seeds[brni_seeds$treatment == "D",])
 nrow(brni_seeds[brni_seeds$treatment == "C",])
 
 # Methods Figure ####
-plot <- ggarrange(final1, final2, final3, final4, labels = "AUTO", ncol = 2, nrow = 2)
+#plot <- ggarrange(final1, final2, final3, final4, labels = "AUTO", ncol = 2, nrow = 2)
 
-annotate_figure(plot, top = text_grob("ACAM", 
-                                      color = "black", face = "bold", size = 14))
+#annotate_figure(plot, top = text_grob("ACAM", 
+ #                                     color = "black", face = "bold", size = 14))
 
-ggsave("allometry/methods_figures/ACAM.png", height = 5, width = 6.5)
+#ggsave("allometry/methods_figures/ACAM.png", height = 5, width = 6.5)
 
 
 

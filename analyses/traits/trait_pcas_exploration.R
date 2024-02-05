@@ -5,6 +5,7 @@ library(ggfortify)
 library(ggpubr)
 library(tidyverse)
 
+## Read in data ####
 # specify dropbox pathway 
 if(file.exists("/Users/carme/Dropbox (University of Oregon)/Greenhouse_Traits/")){
   # Carmen
@@ -28,9 +29,6 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 
 ## load trait data
 trait.seed <- read.csv(paste0(lead, "20230202_Seed-Traits_cleaning.csv"))
-
-
-
 
 traits <- read.csv(paste0(lead.traits, "GreenhouseTraits.csv"))
 
@@ -62,12 +60,20 @@ colnames(MC.traits) <- c("Taxon", "ID", "Rep", "Date.harvest", "Height.cm", "Fre
 ## Seed Data ####
 trait.seed <- trait.seed[,-10] # get rid of height because we have better height data for adults 
 colnames(trait.seed)[17] <- "cn.seed"
-trait <- merge(trait.seed, trait.adult, by.x = "code", by.y = "Code", all.x = F, all.y = T)
-trait[trait$code_4 == "PLER",]$E.S <- 0.8946559
-trait[trait$code_4 == "PLER",]$coat.thick <- 0.0104
+
+#trait <- merge(trait.seed, trait.adult, by.x = "code", by.y = "Code", all.x = F, all.y = T)
+
+MC.sp2 <- c("ACMAME", "AMSMEN", "ANAARV", "BROHOR", "BRANIG", "CENSOL", "GILTRI", "LEPNIT", "FESPER", "MADELE", "MICCAL", "PLAERE", "PLANOT", "ELYCAP", "TRIHIR", "TRIWIL")
+
+trait.seed2 <- trait.seed %>%
+  filter(code %in% MC.sp2)
+  
+trait.seed2[trait.seed2$code == "PLAERE",]$E.S <- 0.8946559
+trait.seed2[trait.seed2$code == "PLAERE",]$coat.thick <- 0.0104
 
 
 # PCAs ####
+## AG - BG traits ####
 all.traits <- c("Height.cm", "LDMC", "SLA.cm2.g", "RMF", "Root.density.g.cm3", "Coarse.root.specific.length.cm.g", "Fine.root.specific.length.cm.g", "Proportion.fine.roots")
 
 MC.pca <- prcomp(MC.traits[,all.traits], scale = T)
@@ -94,13 +100,13 @@ seeds <- c("code_4", "nativity", "growth_form", "FunGroup", "ldd2", "wing.loadin
 
 seeds.pca <- c("wing.loading", "coat.perm", "E.S", "coat.thick",  "mass.mg", "set.time.mpsec", "shape",  "size", "cn.seed")
 
-pca <- prcomp(trait[, seeds.pca], scale = T)
+pca <- prcomp(trait.seed2[, seeds.pca], scale = T)
 summary(pca)
 
-seeds.pca <- cbind(trait, pca$x[,1:4])
+seeds.pca <- cbind(trait.seed2, pca$x[,1:4])
 
 
-autoplot(pca, x = 1, y = 2, data = seeds.pca, frame = F, loadings = T, loadings.label = T, label = F, col = "FunGroup", size = 2) +
+autoplot(pca, x = 1, y = 2, data = seeds.pca, frame = F, loadings = T, loadings.label = T, label = F,  size = 2, col = "Species", loadings.colour = "black", loadings.label.colour="black") + #col = "FunGroup",
   theme_classic() +
   #geom_text(aes(label = code, col = Rating)) +
   #stat_ellipse(aes(group = group)) + 
@@ -108,4 +114,4 @@ autoplot(pca, x = 1, y = 2, data = seeds.pca, frame = F, loadings = T, loadings.
     panel.border = element_rect(colour = "black", fill = NA, size = 1),
     legend.title = element_blank())
 
-ggsave("seed-trait_pca.png", height = 3, width = 6)
+ggsave("analyses/traits/preliminary_figures/seed-trait_pca.png", height = 4, width = 7)
