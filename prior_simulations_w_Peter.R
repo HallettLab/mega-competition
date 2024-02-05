@@ -18,7 +18,7 @@ plot(sig)
 hist(sig)
 hist(log(rgamma(10000, 0.001, 0.001 )))
 
-b <- 0.001
+b <- 0.0009
 lambda <- rexp(1000, b)
 plot(lambda)
 

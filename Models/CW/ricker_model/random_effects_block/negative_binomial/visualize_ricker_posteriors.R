@@ -1,4 +1,4 @@
-source("models/CW/ricker_model/random_effects_block/import_ricker_posteriors_neg_binom.R")
+source("models/CW/ricker_model/random_effects_block/negative_binomial/import_ricker_posteriors_neg_binom.R")
 
 reps <- read.csv("models/CW/replicate-info.csv")
 theme_set(theme_classic())
@@ -8,19 +8,9 @@ theme_set(theme_classic())
 
 # Format Data ####
 ## add deviation terms to base terms
-
 ricker_post <- ricker_posteriors2 %>%
   mutate(lambda_d = lambda_base, 
          lambda_c = lambda_base + lambda_dev)
-
-## look at epsilons
-random_fx <- ricker_post[, c(1:11,50:52)] %>%
-  pivot_longer(1:11, names_to = "block", values_to = "random_effects")
-
-ggplot(random_fx, aes(x= random_effects, color = species)) +
-  geom_density() +
-  facet_wrap(~block)
-
 
 alphas_post <- ricker_post %>%
   mutate(alpha_acam_d = alpha_acam_base,
@@ -53,23 +43,38 @@ alphas_post <- ricker_post %>%
          alpha_taca_c = alpha_taca_base + alpha_taca_dev,
          alpha_twil_d = alpha_twil_base,
          alpha_twil_c = alpha_twil_base + alpha_twil_dev,
-         #alpha_thir_d = alpha_thir_base,
-        # alpha_thir_c = alpha_thir_base + alpha_thir_dev,
+         alpha_thir_d = alpha_thir_base,
+         alpha_thir_c = alpha_thir_base + alpha_thir_dev,
          alpha_weeds_d = alpha_weeds_base,
          alpha_weeds_c = alpha_weeds_base + alpha_weeds_dev)
 
-alphas_post <- alphas_post[,50:84]
+alphas_post <- alphas_post[,51:87]
 
 ## change to long data format
 ricker_posteriors_long <- alphas_post %>%
-  pivot_longer(4:35, names_to = "alpha_name", values_to = "alpha_value") %>%
+  pivot_longer(4:37, names_to = "alpha_name", values_to = "alpha_value") %>%
   filter(!alpha_name %in% c("alpha_weeds_c", "alpha_weeds_d")) %>%
   mutate(treatment = substr(alpha_name, 12,12),
          alpha_name = substr(alpha_name, 1,10))
 
+# Random Effects ####
+## look at epsilons
+random_fx <- ricker_post[, c(1:11,51:53)] %>%
+  pivot_longer(1:11, names_to = "block", values_to = "random_effects") %>%
+  mutate(ppt = ifelse(block %in% c("V1", "V2", "V3", "V4", "V5", "V6"), "D", "C"),
+         block = fct_relevel(block, c("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11")))
+
+ggplot(random_fx, aes(x= random_effects, color = species)) +
+  geom_density() +
+  facet_wrap(~block, ncol = 6, nrow = 2) +
+  xlab("Random effect of block")
+
+ggsave(paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/block_random_effects.png"), width = 7, height = 4.5)
+
+
 # Vis Distributions ####
 ## Alphas ####
-species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "TWIL")
+species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
 for(i in species){
   
@@ -80,11 +85,9 @@ for(i in species){
     ggtitle("Ricker Model") + xlab(paste0("alpha_", tolower(i))) +
     geom_vline(xintercept = 0, linetype = "dashed")
   
-  ggsave(alpha, file=paste0("models/CW/ricker_model/random_effects_block/posterior_figures/neg_binomial/", "alpha_", tolower(i), "_", date, ".png"), width = 12, height = 9)
+  ggsave(alpha, file=paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/alpha_", tolower(i), "_", date, ".png"), width = 12, height = 9)
   
 }
-
-species <- c("ACAM")
 
 for(i in species){
   
@@ -95,7 +98,7 @@ for(i in species){
     ggtitle(paste0(i, " invader")) +
     geom_vline(xintercept = 0, linetype = "dashed")
   
-  ggsave(invader, file=paste0("models/CW/ricker_model/random_effects_block/posterior_figures/", "invader_", i, "_inter_alphas_ricker_", date, ".png"), width = 12, height = 8)
+  ggsave(invader, file=paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/invader_", i, "_inter_alphas_ricker_", date, ".png"), width = 12, height = 8)
   
 }
 
@@ -104,13 +107,13 @@ for(i in species){
 ggplot(ricker_post, aes()) + 
   geom_density(aes(x = lambda_d), linetype = "dashed") +
   geom_density(aes(x=lambda_c))+
-  facet_wrap(~species, ncol = 4) +
-  xlab("Lambda") +
+  facet_wrap(~species, ncol = 4, scales = "free") +
+  xlab("Lambda, (dashed = D, solid = C)") +
   ylab("Density") +
   #scale_fill_manual(values = c("#003366", "#FFA630")) +
   ggtitle("Lambda, Neg binom w/random effects")
 
-
+ggsave(paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/lambda.png"), width = 12, height = 8)
 
 
 
