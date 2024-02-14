@@ -1,3 +1,5 @@
+## Posterior processing for MCT analyses
+
 ## load models
 source("Models/CW/ricker_model/random_effects_block/negative_binomial/import_ricker_posteriors_neg_binom.R")
 
@@ -47,19 +49,19 @@ for(i in 1:length(names(ricker_posteriors))) {
   tmp.wet$alpha_acam <- datset$alpha_acam_base + datset$alpha_acam_dev
   tmp.wet$alpha_amme <- datset$alpha_amme_base + datset$alpha_amme_dev
   tmp.wet$alpha_anar <- datset$alpha_anar_base + datset$alpha_anar_dev
-  tmp.wet$alpha_brho <- datset$alpha_brho_base + datset$alpha_brho_base
-  tmp.wet$alpha_brni <- datset$alpha_brni_base + datset$alpha_brni_base
-  tmp.wet$alpha_ceso <- datset$alpha_ceso_base + datset$alpha_ceso_base
-  tmp.wet$alpha_gitr <- datset$alpha_gitr_base + datset$alpha_gitr_base
-  tmp.wet$alpha_leni <- datset$alpha_leni_base + datset$alpha_leni_base
-  tmp.wet$alpha_lomu <- datset$alpha_lomu_base + datset$alpha_lomu_base
-  tmp.wet$alpha_mael <- datset$alpha_mael_base + datset$alpha_mael_base
-  tmp.wet$alpha_mica <- datset$alpha_mica_base + datset$alpha_mica_base
-  tmp.wet$alpha_pler <- datset$alpha_pler_base + datset$alpha_pler_base
-  tmp.wet$alpha_plno <- datset$alpha_plno_base + datset$alpha_plno_base
-  tmp.wet$alpha_taca <- datset$alpha_taca_base + datset$alpha_taca_base
-  tmp.wet$alpha_thir <- datset$alpha_thir_base + datset$alpha_thir_base
-  tmp.wet$alpha_twil <- datset$alpha_twil_base + datset$alpha_twil_base
+  tmp.wet$alpha_brho <- datset$alpha_brho_base + datset$alpha_brho_dev
+  tmp.wet$alpha_brni <- datset$alpha_brni_base + datset$alpha_brni_dev
+  tmp.wet$alpha_ceso <- datset$alpha_ceso_base + datset$alpha_ceso_dev
+  tmp.wet$alpha_gitr <- datset$alpha_gitr_base + datset$alpha_gitr_dev
+  tmp.wet$alpha_leni <- datset$alpha_leni_base + datset$alpha_leni_dev
+  tmp.wet$alpha_lomu <- datset$alpha_lomu_base + datset$alpha_lomu_dev
+  tmp.wet$alpha_mael <- datset$alpha_mael_base + datset$alpha_mael_dev
+  tmp.wet$alpha_mica <- datset$alpha_mica_base + datset$alpha_mica_dev
+  tmp.wet$alpha_pler <- datset$alpha_pler_base + datset$alpha_pler_dev
+  tmp.wet$alpha_plno <- datset$alpha_plno_base + datset$alpha_plno_dev
+  tmp.wet$alpha_taca <- datset$alpha_taca_base + datset$alpha_taca_dev
+  tmp.wet$alpha_thir <- datset$alpha_thir_base + datset$alpha_thir_dev
+  tmp.wet$alpha_twil <- datset$alpha_twil_base + datset$alpha_twil_dev
   
   wet[[paste0(names(ricker_posteriors))[i]]] <- tmp.wet
   

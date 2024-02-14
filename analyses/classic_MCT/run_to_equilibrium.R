@@ -29,6 +29,12 @@ run.to.equilibrium <- function(surv, germ, lambda, alpha_intra, Nt, alpha_inter,
   return(Ntp1)
 }
 
+
+#run.to.eqbrm.link <- function(surv, germ, lambda, alpha_intra, Nt, alpha_inter, germ_inter, inter_abund) {
+ # Ntp1 <- (1-germ)*surv*Nt + germ*Nt*exp(lambda*exp(-alpha_intra *germ* Nt - alpha_inter*germ_inter*inter_abund))
+ # return(Ntp1)
+#}
+
 # Set params ####
 ## Germ Rates ####
 # germ rates dry
@@ -128,7 +134,7 @@ time <- 300
 runs <- 200
 
 N <- array(NA, c(options, runs, time))
-N[,,1] <- 10 # start with 100 individuals in every case
+N[,,1] <- 100 # start with 100 individuals in every case
 ## create an array where each of the rows is one of the species-treatment combos arranged in the order of all_intra. 
 ## Each of the columns is one separate run of the model
 ## Each of the stacked matrices represents a particular time slice
@@ -137,7 +143,7 @@ N[,,1] <- 10 # start with 100 individuals in every case
 residents_dry <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
 residents_wet <- as.data.frame(matrix(data = NA, nrow = 200, ncol = 1))
 
-set.seed(40)
+set.seed(42)
 
 ### Loop thru all posteriors ####
 #### DRY ####
@@ -167,8 +173,11 @@ for(i in 1:length(names(dry))) {
     ## use again to select 200 intra_alpha values
     alpha_intra <- all_intras[posts]
     
-    ## for each sp x treat combo use the run to equil function to fill one row of data that uses the abundance at time t and outputs the abundance at time t+1
-    ## as the model loops thru sp x treat combos, more rows of the array are filled out
+    ## for each sp, use the run to equil function to fill one row of data that uses the abundance at time t and outputs the abundance at time t+1
+   
+    ## loops through 300 time steps; at each time step, 200 new lambda/alpha vals are sampled and used
+    
+    ## this should then fill out all cols (independent runs) in one row (sp) in all the matrices (time steps) before going to the next row (sp)
     N[i, ,t+1] <- run.to.equilibrium(germ = datset$germ, 
                                      surv = datset$surv,
                                      lambda = lambda, 
@@ -180,7 +189,7 @@ for(i in 1:length(names(dry))) {
     
   }
   
-  tmp.df <- data.frame(N[i,,300])
+  tmp.df <- data.frame(N[i,,300]) ## selecting time 300, the final run of the run.to.equil function thru time
   
   ## change the column name to be the species
   names(tmp.df) <- substr(names(ricker_posteriors)[i], 1, 4)
@@ -200,7 +209,7 @@ for(i in 1:length(names(wet))) {
   datset <- wet[[i]] 
   
   ## set the intraspecific alpha name
-  intra <- paste0("alpha_", tolower(substr(names(dry)[i], 1, 4)))
+  intra <- paste0("alpha_", tolower(substr(names(wet)[i], 1, 4)))
   
   ## make a vector of the length of the posterior distribution
   post_length <- length(datset$lambda)
@@ -261,14 +270,14 @@ ggplot(residents_wet_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species, scales = "free") +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Ambient Conditions, Equilibrium, Nt1 = 10, 12/18/23")
+  ggtitle("Ambient Conditions, Equilibrium, Nt1 = 100, 12/18/23")
 
-ggsave(paste0("analyses/classic_MCT/preliminary_equil_abundance/", date, "/equil_abund_ricker_negbinom_C_Nt10_", date, ".png"), height = 6, width = 10)
+ggsave(paste0("analyses/classic_MCT/preliminary_equil_abundance/", date, "/equil_abund_ricker_negbinom_C_Nt100_", date, ".png"), height = 6, width = 10)
 
 ggplot(residents_dry_long, aes(x=num, y=equil_abund)) +
   geom_point() +
   facet_wrap(~species, scales = "free") +
   xlab("Run Number") + ylab("Equilibrium Abundance") +
-  ggtitle("Drought Conditions, Equilibrium, Nt1 = 1000, 12/18/23")
+  ggtitle("Drought Conditions, Equilibrium, Nt1 = 100, 12/18/23")
 
-ggsave(paste0("analyses/classic_MCT/preliminary_equil_abundance/", date, "/equil_abund_ricker_negbinom_D_Nt1000", date, ".png"), height = 6, width = 10)
+ggsave(paste0("analyses/classic_MCT/preliminary_equil_abundance/", date, "/equil_abund_ricker_negbinom_D_Nt100", date, ".png"), height = 6, width = 10)
