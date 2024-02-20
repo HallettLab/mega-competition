@@ -3,6 +3,12 @@ source("models/CW/ricker_model/random_effects_block/negative_binomial/import_ric
 reps <- read.csv("models/CW/replicate-info.csv")
 theme_set(theme_classic())
 
+## create a function to calculate standard error
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
+
 ## set date for figures
 #date <- 20231204
 
@@ -116,13 +122,30 @@ ggplot(ricker_post, aes()) +
 ggsave(paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/lambda.png"), width = 12, height = 8)
 
 
+mean_alphas <- ricker_posteriors_long %>%
+  group_by(alpha_name, species, treatment) %>%
+  summarise(mean_alpha = mean(alpha_value),
+            se_alpha = calcSE(alpha_value))
 
+ggplot(mean_alphas, aes(x=alpha_name, y=mean_alpha, color = treatment)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = mean_alpha-se_alpha, ymax=mean_alpha+se_alpha)) +
+  scale_color_manual(values = c("#003366", "#FFA630"))+
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  facet_wrap(~species) +
+  theme(axis.text.x = element_text(angle = 50, hjust = 0.95))
 
+ggsave(paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/mean_alphas_facet_sp.png"), width = 14, height = 8)
 
+ggplot(mean_alphas, aes(x=species, y=mean_alpha, color = treatment)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = mean_alpha-se_alpha, ymax=mean_alpha+se_alpha)) +
+  scale_color_manual(values = c("#003366", "#FFA630"))+
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  facet_wrap(~alpha_name) +
+  theme(axis.text.x = element_text(angle = 50, hjust = 0.95))
 
-
-
-
+ggsave(paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/mean_alphas_facet_alpha.png"), width = 14, height = 8)
 
 
 

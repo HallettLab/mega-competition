@@ -92,7 +92,7 @@ autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadin
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
     legend.title = element_blank())
 
-ggsave("analyses/traits/preliminary_figures/pca_alltraits.png", width = 6, height = 4)
+#ggsave("analyses/traits/preliminary_figures/pca_alltraits.png", width = 6, height = 4)
 
 
 ## Seed Trait PCAs ####
@@ -114,4 +114,4 @@ autoplot(pca, x = 1, y = 2, data = seeds.pca, frame = F, loadings = T, loadings.
     panel.border = element_rect(colour = "black", fill = NA, size = 1),
     legend.title = element_blank())
 
-ggsave("analyses/traits/preliminary_figures/seed-trait_pca.png", height = 4, width = 7)
+#ggsave("analyses/traits/preliminary_figures/seed-trait_pca.png", height = 4, width = 7)
