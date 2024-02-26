@@ -2,7 +2,7 @@
 
 
 ## reps
-replicates <- read.csv("models/CW/replicate-info.csv")
+replicates <- read.csv("data/replicate-info.csv")
 
 
 ### calc invasion GR 

@@ -15,7 +15,7 @@ germ.sum <- germ.sum.sp.DC ## rename so it's easier to use later on
 rm(germ.sum.sp.DC)
 
 ## replicate information
-reps <- read.csv("models/CW/replicate-info.csv")
+reps <- read.csv("data/replicate-info.csv")
 
 theme_set(theme_classic())
 

@@ -1,6 +1,6 @@
 source("models/CW/ricker_model/random_effects_block/negative_binomial/import_ricker_posteriors_neg_binom.R")
 
-reps <- read.csv("models/CW/replicate-info.csv")
+reps <- read.csv("data/replicate-info.csv")
 theme_set(theme_classic())
 
 ## create a function to calculate standard error
