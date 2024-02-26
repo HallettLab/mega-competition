@@ -56,6 +56,8 @@ alphas_post <- ricker_post %>%
 
 alphas_post <- alphas_post[,51:87]
 
+#write.csv(alphas_post, "data/posteriors_20231218_models.csv")
+
 ## change to long data format
 ricker_posteriors_long <- alphas_post %>%
   pivot_longer(4:37, names_to = "alpha_name", values_to = "alpha_value") %>%
