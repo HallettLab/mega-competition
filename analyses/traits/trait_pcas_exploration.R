@@ -39,6 +39,12 @@ traits <- read.csv(paste0(lead.traits, "GreenhouseTraits.csv"))
 MC.sp <- c("LOPU", "AMME", "ANAR", "BRHOp", "BRNIp", "CESO", "GITRp", "LENIp", "LOMU", "MAELp", "MICA", "PLERp", "PLNO", "TACA", "TRHI", "TRWIp")
   ## "AVEBAR", "ERBO", "CLPUp",
 
+nonnative <- c("ANAR", "BRHO", "BRNI", "CESO", "LOMU", "TACA", "THIR")
+grass <- c("BRHO", "TACA", "LOMU")
+legume <- c("ACAM", "THIR", "TWIL")
+
+facilitator <- c("ACAM", "AMME", "MAEL", "PLNO", "THIR", "TWIL")
+
 ## filter
 MC.traits <- traits %>%
   filter(ID %in% MC.sp,
@@ -52,10 +58,15 @@ MC.traits <- traits %>%
                                                     ifelse(ID == "MAELp", "MAEL",
                                                            ifelse(ID == "PLERp", "PLER", 
                                                                   ifelse(ID == "TRHI", "THIR", 
-                                                                         ifelse(ID == "TRWIp","TWIL", ID))))))))))
+                                                                         ifelse(ID == "TRWIp","TWIL", ID)))))))))) %>%
+  mutate(origin = ifelse(phyto %in% nonnative, "non-native", "native"),
+         funct_group = ifelse(phyto %in% grass, "grass",
+                              ifelse(phyto %in% legume, "legume", "forb")),
+         fg_origin = paste(origin, funct_group, sep = "_"),
+         interaction_type = ifelse(phyto %in% facilitator, "facilitative", "competitive"))
 
 
-colnames(MC.traits) <- c("Taxon", "ID", "Rep", "Date.harvest", "Height.cm", "Fresh.leaf.mass.g", "Dry.leaf.mass.g", "LDMC", "Leaf.Area.cm2", "SLA.cm2.g", "Shoot.dry.biomass.g", "Root.dry.biomass.g", "Total.biomass.g", "RMF", "Root.volume.cm3", "Root.density.g.cm3", "Coarse.root.diameter.mm", "Length.mm", "Fine.root.length.mm", "Coarse.root.length.mm", "Coarse.root.specific.length.cm.g", "Fine.root.specific.length.cm.g", "Proportion.fine.roots", "phyto")
+colnames(MC.traits) <- c("Taxon", "ID", "Rep", "Date.harvest", "Height.cm", "Fresh.leaf.mass.g", "Dry.leaf.mass.g", "LDMC", "Leaf.Area.cm2", "SLA.cm2.g", "Shoot.dry.biomass.g", "Root.dry.biomass.g", "Total.biomass.g", "RMF", "Root.volume.cm3", "Root.density.g.cm3", "Coarse.root.diameter.mm", "Length.mm", "Fine.root.length.mm", "Coarse.root.length.mm", "Coarse.root.specific.length.cm.g", "Fine.root.specific.length.cm.g", "Proportion.fine.roots", "phyto", "origin", "funct_group", "fg_origin", "interaction_type")
 
 ## Seed Data ####
 trait.seed <- trait.seed[,-10] # get rid of height because we have better height data for adults 
@@ -81,10 +92,10 @@ summary(MC.pca)
 
 MC.pca.ID <- cbind(MC.traits, MC.pca$x[,1:8])
 
-autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "phyto", size = 1.5, loadings.colour = "black",
+autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "fg_origin", size = 1.75, loadings.colour = "black",
          loadings.label.colour="black", loadings.label.repel=TRUE) +
   theme_classic() +
-  #scale_color_manual(values = c("#24796C","#99C945"), labels=c('E. elymoides', 'P. spicata'), name = "") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
   
   #geom_text(aes(label = code, col = Rating)) +
    #stat_ellipse(aes(group = phyto, col = phyto)) + 
@@ -92,8 +103,20 @@ autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadin
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
     legend.title = element_blank())
 
-#ggsave("analyses/traits/preliminary_figures/pca_alltraits.png", width = 6, height = 4)
+#ggsave("analyses/traits/preliminary_figures/pca_alltraits_fg.png", width = 7, height = 4)
 
+autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "interaction_type", size = 1.75, loadings.colour = "black",
+         loadings.label.colour="black", loadings.label.repel=TRUE) +
+  theme_classic() +
+  scale_color_manual(values = c("#5D69B1","#52BCA3", "#E58606", "#99C945","#CC3A8E")) +
+  
+  #geom_text(aes(label = code, col = Rating)) +
+  stat_ellipse(aes(group = interaction_type, col = interaction_type)) + 
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank())
+#E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
+#ggsave("analyses/traits/preliminary_figures/pca_alltraits_interaction_type.png", width = 7, height = 4)
 
 ## Seed Trait PCAs ####
 seeds <- c("code_4", "nativity", "growth_form", "FunGroup", "ldd2", "wing.loading", "coat.perm", "E.S", "coat.thick",  "mass.mg", "set.time.mpsec", "shape",  "size", "appendage.type", "prop.C", "prop.N", "cn.seed")
