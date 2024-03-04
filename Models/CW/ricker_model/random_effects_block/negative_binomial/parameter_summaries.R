@@ -1,4 +1,6 @@
 
+library(bayestestR)
+
 ## load models
 source("Models/CW/ricker_model/random_effects_block/negative_binomial/import_ricker_posteriors_neg_binom.R")
 
@@ -92,7 +94,9 @@ alphas <- ricker_posteriors2 %>%
             hdi_lo = hdi(alpha_value, ci = 0.95)$CI_low, 
             hdi_hi = hdi(alpha_value, ci = 0.95)$CI_high) %>%
   mutate(parameter_type = alpha_name) %>%
-  select(-alpha_name)
+  select(-alpha_name) %>%
+  mutate(combo = paste0(species, toupper(substr(parameter_type, 6,10)), "_", treatment)) %>%
+  filter(combo %in% good_reps$combos)
 
 # Join lambda & alphas ####
 model_params <- rbind(lambdas_sum, alphas) %>%
