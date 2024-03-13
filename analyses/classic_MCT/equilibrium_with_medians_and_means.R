@@ -1,13 +1,9 @@
-
 ## run equilibriums with median param values
 
-theme_set(theme_classic())
-
-## read in data
-posteriors <- read.csv("data/posteriors_20231218_models.csv")
-
+# Set up Env ####
+## Read in Data ####
+## posteriors
 median_posts <- read.csv("data/parameter_summaries_20231218_models.csv")
-
 
 ## seed survival data
 source("data_cleaning/seed-survival_data-cleaning/seed-survival_data-cleaning.R")
@@ -15,23 +11,24 @@ source("data_cleaning/seed-survival_data-cleaning/seed-survival_data-cleaning.R"
 ## germination data
 source("data_cleaning/germination_data-cleaning/germination_rates.R")
 
+## Clean Data ####
 germ.sum <- germ.sum.sp.DC %>% ## rename so it's easier to use later on
   mutate(treatment = trt) %>%
   select(-trt)
 
 rm(germ.sum.sp.DC)
 
-
 ## join with germ & survival data
 median_posts_g <- left_join(median_posts, germ.sum[,c(1,3,5)], by = c("species", "treatment"))
-
-median_posts_gs <- left_join(median_posts_g, surv.sum[,1:2], by = c("species"))
+median_posts_gs <- left_join(median_posts_g, surv.sum[,1:2], by = c("species")) 
 
 ### equilibrium abundance of resident sp
 run.to.equilibrium <- function(surv, germ, lambda, alpha_intra, Nt, alpha_inter, germ_inter, inter_abund) {
   Ntp1 <- (1-germ)*surv*Nt + germ*lambda*Nt*exp(-alpha_intra *germ* Nt - alpha_inter*germ_inter*inter_abund)
   return(Ntp1)
 }
+
+theme_set(theme_classic())
 
 # Median Params ####
 ## set up loop
