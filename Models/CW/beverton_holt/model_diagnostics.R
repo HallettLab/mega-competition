@@ -3,11 +3,11 @@ library(rstan)
 library(bayesplot)
 library(tidyverse)
 
-date <- 20231218
-species <- "TWIL"
+date <- 20240401
+species <- "BRHO"
 
 ## load model back in if needed
-load(paste0("Models/CW/ricker_model/random_effects_block/negative_binomial/posteriors/ricker_", species, "_posteriors_random_effects_neg_binomial", date, ".rdata"))
+load(paste0("Models/CW/beverton_holt/posteriors/BH_", species, "_posteriors_random_effects_neg_binomial", date, ".rdata"))
 
 # Diagnostics ####
 ## check Rhat vals ####

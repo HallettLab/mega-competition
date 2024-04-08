@@ -1,7 +1,7 @@
 ## Model 
 model.dat <- read.csv("data/model_dat.csv")
 
-date <- 20240212
+date <- 20240401
 
 library(tidyverse)
 library(bayesplot)
@@ -76,12 +76,12 @@ for(i in species){
 
 ## create initials for epsilon and sigma
   initials <- list(epsilon=rep(1,N_blocks), sigma = 1)
-  initials1<- list(initials, initials, initials)
+  initials1<- list(initials) #, initials, initials)
 
 # Model ####
-  model.output[[paste0("ricker_",i)]] <- stan(file = 'Models/CW/beverton_holt/CRW_bh_RE_neg_binomial.stan', 
-                  data = data_vec, init = initials1, iter = 5000, chains = 3, thin = 2, 
-                  control = list(adapt_delta = 0.9, max_treedepth = 15)) 
+  model.output[[paste0("BH_",i)]] <- stan(file = 'Models/CW/beverton_holt/CRW_bh_RE_neg_binomial.stan', 
+                  data = data_vec, init = initials1, iter = 5000, chains = 1, thin = 2, 
+                  control = list(adapt_delta = 0.9999, max_treedepth = 15)) 
 
   PrelimFit <- model.output[[paste0("BH_",i)]] 
 
