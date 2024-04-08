@@ -1,7 +1,7 @@
 ## Model 
 model.dat <- read.csv("data/model_dat.csv")
 
-date <- 20231218
+date <- 20240401
 
 library(tidyverse)
 library(bayesplot)
@@ -11,7 +11,9 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-species <- c("ACAM", "ANAR", "AMME", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+#species <- c("ACAM", "ANAR", "AMME", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
+
+species <- "BRHO"
 
 model.output <- list()
 warnings <- list()
