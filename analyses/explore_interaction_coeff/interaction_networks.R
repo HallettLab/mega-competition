@@ -17,8 +17,32 @@ el.nw.C <- sums.info %>%
   filter(parameter_type != "lambda", treatment == "C") %>%
   select(-mean_parameter, -hdi_lo, -hdi_hi, -treatment, -X) %>% ## keep only median alphas, discard rest of info
   mutate(alpha = toupper(substr(parameter_type, 7, 10))) %>%
-  select(alpha, species, median_parameter)
+  select(alpha, species, median_parameter) %>%
+  mutate(species = fct_relevel(species, "ACAM", "TWIL", "THIR", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "CESO", "ANAR", "BRNI"))
 
+grpsC <- c("native_legume", "native_forb", "non-native_forb", "non-native_forb", "native_forb", "native_forb", "non-native_grass", "native_forb", "native_forb", "native_forb", "native_forb", "non-native_grass", "native_legume", "non-native_grass", "non-native_forb", "non-native_legume")
+
+png("analyses/explore_interaction_coeff/preliminary_figures/network_C_springlayout.png", width = 2000, height = 1400, units = 'px')
+
+qgraph(el.nw.C, 
+       layout = 'spring',
+       groups = grpsC,
+       negCol = '#5D69B1',   # facilitation = blue
+       posCol = '#E58606',
+       asize = 4,
+       vsize = 4,
+       vTrans = 100,
+       fade = T,
+       trans = 0.5,
+       maximum = 0,
+       color = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E"),
+      # title = "Control",
+       GLratio = 4,
+       legend.cex = 1.5
+      )
+
+dev.off()
+#E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
 ## visualize network
 png("analyses/explore_interaction_coeff/preliminary_figures/network_C.png", width = 1200, height = 1200, units = 'px')
 
@@ -50,6 +74,31 @@ qgraph(el.nw.D,
        vTrans = 100,
        fade = T,
        trans = 0.5, maximum = 0)
+dev.off()
+
+
+grpsD <- c("native_legume", "native_forb", "non-native_forb",  "non-native_grass", "non-native_forb", "non-native_forb",  "native_forb", "native_forb", "non-native_grass",  "native_forb", "native_forb", "non-native_grass", "non-native_legume", "native_legume", "native_forb", "native_forb")
+
+
+png("analyses/explore_interaction_coeff/preliminary_figures/network_D_springlayout.png", width = 2000, height = 1400, units = 'px')
+
+qgraph(el.nw.D, 
+       layout = 'spring',
+       groups = grpsD,
+       negCol = '#5D69B1',   # facilitation = blue
+       posCol = '#E58606',
+       asize = 4,
+       vsize = 4,
+       vTrans = 100,
+       fade = T,
+       trans = 0.5,
+       maximum = 0,
+       color = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E"),
+       # title = "Control",
+       GLratio = 4,
+       legend.cex = 1.5
+)
+
 dev.off()
 
 ## might need to set the 'strongest' edge in order to compare between graphs?
