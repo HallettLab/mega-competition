@@ -85,12 +85,17 @@ trait.seed2[trait.seed2$code == "PLAERE",]$coat.thick <- 0.0104
 
 # PCAs ####
 ## AG - BG traits ####
-all.traits <- c("Height.cm", "LDMC", "SLA.cm2.g", "RMF", "Root.density.g.cm3", "Coarse.root.specific.length.cm.g", "Fine.root.specific.length.cm.g", "Proportion.fine.roots")
+all.traits <- c("Height.cm", "LDMC", "SLA.cm2.g", "RMF",  "Coarse.root.specific.length.cm.g", "Proportion.fine.roots", "Coarse.root.diameter.mm")
 
-MC.pca <- prcomp(MC.traits[,all.traits], scale = T)
+temp <- MC.traits %>%
+  select(phyto, fg_origin, Height.cm, LDMC, SLA.cm2.g, RMF, Coarse.root.specific.length.cm.g, Proportion.fine.roots, Coarse.root.diameter.mm)
+
+names(temp) <- c("phyto", "fg_origin", "Height", "LDMC", "SLA", "RMF", "CRSL", "PF", "D")
+
+MC.pca <- prcomp(temp[,3:9], scale = T)
 summary(MC.pca)
 
-MC.pca.ID <- cbind(MC.traits, MC.pca$x[,1:8])
+MC.pca.ID <- cbind(temp, MC.pca$x[,1:7])
 
 autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "fg_origin", size = 1.75, loadings.colour = "black",
          loadings.label.colour="black", loadings.label.repel=TRUE) +
@@ -101,20 +106,21 @@ autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadin
    #stat_ellipse(aes(group = phyto, col = phyto)) + 
   theme(
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
-    legend.title = element_blank())
+    legend.title = element_blank()) #+
+  #labs(loadings = c("1"))
 
-#ggsave("analyses/traits/preliminary_figures/pca_alltraits_fg.png", width = 7, height = 4)
+ggsave("analyses/traits/preliminary_figures/pca_updatedtraits_fg.png", width = 7, height = 5)
 
-autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "interaction_type", size = 1.75, loadings.colour = "black",
-         loadings.label.colour="black", loadings.label.repel=TRUE) +
-  theme_classic() +
-  scale_color_manual(values = c("#5D69B1","#52BCA3", "#E58606", "#99C945","#CC3A8E")) +
+#autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "interaction_type", size = 1.75, loadings.colour = "black",
+   #      loadings.label.colour="black", loadings.label.repel=TRUE) +
+ # theme_classic() +
+  #scale_color_manual(values = c("#5D69B1","#52BCA3", "#E58606", "#99C945","#CC3A8E")) +
   
   #geom_text(aes(label = code, col = Rating)) +
-  stat_ellipse(aes(group = interaction_type, col = interaction_type)) + 
-  theme(
-    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
-    legend.title = element_blank())
+  #stat_ellipse(aes(group = interaction_type, col = interaction_type)) + 
+  #theme(
+  #  panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+   # legend.title = element_blank())
 #E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
 #ggsave("analyses/traits/preliminary_figures/pca_alltraits_interaction_type.png", width = 7, height = 4)
 

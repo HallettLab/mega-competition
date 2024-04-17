@@ -17,38 +17,223 @@ source("analyses/traits/trait_pcas_exploration.R")
 trait_sums <- MC.pca.ID %>%
   mutate(species = phyto) %>%
   group_by(fg_origin, species) %>%
-  summarise(mean.height = mean(Height.cm), se.height = calcSE(Height.cm),
+  ## calculate mean trait values
+  summarise(mean.height = mean(Height), se.height = calcSE(Height),
             mean.LDMC = mean(LDMC), se.LDMC = calcSE(LDMC),
-            mean.SLA = mean(SLA.cm2.g), se.SLA = calcSE(SLA.cm2.g),
+            mean.SLA = mean(SLA), se.SLA = calcSE(SLA),
             mean.RMF = mean(RMF), se.RMF = calcSE(RMF),
-            mean.CRSL = mean(Coarse.root.specific.length.cm.g), se.CRSL = calcSE(Coarse.root.specific.length.cm.g),
-            mean.FRSL = mean(Fine.root.specific.length.cm.g), se.FRSL = calcSE(Fine.root.specific.length.cm.g))
+            mean.CRSL = mean(CRSL), se.CRSL = calcSE(CRSL),
+            mean.D = mean(D), se.D = calcSE(D),
+            mean.PF = mean(PF), se.PF = calcSE(PF),
+            mean.PC1 = mean(PC1), se.PC1 = calcSE(PC1),
+            mean.PC2 = mean(PC2), se.PC2 = calcSE(PC2))
+            #mean.FRSL = mean(Fine.root.specific.length.cm.g), se.FRSL = calcSE(Fine.root.specific.length.cm.g))
 
-psums_t <- left_join(psums, trait_sums, by = c("species")) %>%
-  mutate(phyto.fg.origin = fg_origin,
-         phyto.mean.height = mean.height,
-         phyto.se.height = se.height,
-         phyto.mean.LDMC = mean.LDMC,
-         phyto.se.LDMC = se.LDMC,
-         phyto.mean.SLA = mean.SLA,
-         phyto.se.SLA = se.SLA,
-         phyto.mean.RMF = mean.RMF,
-         phyto.se.RMF = se.RMF,
-         phyto.mean.CRSL = mean.CRSL,
-         phyto.se.CRSL = se.CRSL,
-         phyto.mean.FRSL = mean.FRSL,
-         phyto.se.FRSL = se.FRSL) %>%
-  select(species, treatment, parameter_type, median_parameter, hdi_lo, hdi_hi, phyto.fg.origin, phyto.mean.height, phyto.se.height, phyto.mean.LDMC, phyto.se.LDMC, phyto.mean.SLA, phyto.se.SLA, phyto.mean.RMF, phyto.se.RMF, phyto.mean.CRSL, phyto.se.CRSL, phyto.mean.FRSL, phyto.se.FRSL)
+#psums_t <- left_join(psums, trait_sums, by = c("species")) %>%
+  ## join by phyto / 'invader' species 
+ # mutate(phyto.fg.origin = fg_origin,
+   #      phyto.mean.height = mean.height,
+    #     phyto.se.height = se.height,
+    #     phyto.mean.LDMC = mean.LDMC,
+    #     phyto.se.LDMC = se.LDMC,
+    #     phyto.mean.SLA = mean.SLA,
+    #     phyto.se.SLA = se.SLA,
+     #    phyto.mean.RMF = mean.RMF,
+     #    phyto.se.RMF = se.RMF,
+     #    phyto.mean.CRSL = mean.CRSL,
+     #    phyto.se.CRSL = se.CRSL,
+     #    phyto.mean.FRSL = mean.FRSL,
+      #   phyto.se.FRSL = se.FRSL) %>%
+  #select(species, treatment, parameter_type, median_parameter, hdi_lo, hdi_hi, phyto.fg.origin, phyto.mean.height, phyto.se.height, phyto.mean.LDMC, phyto.se.LDMC, phyto.mean.SLA, phyto.se.SLA, phyto.mean.RMF, phyto.se.RMF, phyto.mean.CRSL, phyto.se.CRSL, phyto.mean.FRSL, phyto.se.FRSL)
   
-psums_t_alphas <- psums_t %>%
-  filter(parameter_type != "lambda") %>%
+psums2 <- psums %>%
+  filter(parameter_type != "lambda") %>% ## remove lambda
   mutate(phyto = species,
-         resident = toupper(substr(parameter_type, start = 7, stop = 10)),
+         resident = toupper(substr(parameter_type, start = 7, stop = 10)), ## create resident species column
          species = resident)
 
-psums_t2_alphas <- left_join(psums_t_alphas, trait_sums, by = c("species"))
+## join traits again to get resident species trait values
+psums_t2_alphas <- left_join(psums2, trait_sums, by = c("species"))
 
 # Visualize ####
+ggplot(psums_t2_alphas, aes(x=parameter_type, y=median_parameter, color = treatment)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_boxplot()
+  
+
+
+## Traits v Alphas ####
+ldmc <- ggplot(psums_t2_alphas, aes(x=mean.LDMC, y=median_parameter)) +
+  ylab("Alpha") + xlab("Resident LDMC") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+height <- ggplot(psums_t2_alphas, aes(x=mean.height, y=median_parameter)) +
+  ylab("Alpha") + xlab("Resident Height") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+sla <- ggplot(psums_t2_alphas, aes(x=mean.SLA, y=median_parameter)) +
+  ylab("Alpha") + xlab("Resident SLA") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+crsl <- ggplot(psums_t2_alphas, aes(x=mean.CRSL, y=median_parameter)) +
+  ylab("Alpha") + xlab("Resident CRSL") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+rmf <- ggplot(psums_t2_alphas, aes(x=mean.RMF, y=median_parameter)) +
+  ylab("Alpha") + xlab("Resident RMF") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+d <- ggplot(psums_t2_alphas, aes(x=mean.D, y=median_parameter)) +
+  ylab("Alpha") + xlab("Resident D") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+pf <- ggplot(psums_t2_alphas, aes(x=mean.PF, y=median_parameter)) +
+  ylab("Alpha") + xlab("Resident PF") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+## arrange all separate traits into one figure
+ggarrange(height, sla, ldmc,
+          #rmf, crsl, d, pf,
+          ncol = 3, nrow = 1,
+          common.legend = T,
+          labels= "AUTO",
+          legend = "bottom")
+
+## save output
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/alpha_resident_AGtraits.png", width = 8, height = 3.5)
+
+ggarrange(#height, sla, ldmc,
+          rmf, crsl, d, pf,
+          ncol = 4, nrow = 1,
+          common.legend = T,
+          labels= "AUTO",
+          legend = "bottom")
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/alpha_resident_BGtraits.png", width = 10, height = 3.25)
+
+## PCA scores v Alphas ####
+pc1 <- ggplot(psums_t2_alphas, aes(x=mean.PC1, y=median_parameter)) +
+  ylab("Alpha") + xlab("PC1") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+pc2 <- ggplot(psums_t2_alphas, aes(x=mean.PC2, y=median_parameter)) +
+  ylab("Alpha") + xlab("PC2") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed")
+
+ggarrange(pc1, pc2,
+  ncol = 2, nrow = 1,
+  common.legend = T,
+  labels= "AUTO",
+  legend = "right")
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/alpha_resident_PCscores.png", width = 7, height = 3)
+
+ggplot(psums_t2_alphas, aes(x=mean.PC2, y=median_parameter)) +
+  ylab("Alpha") + xlab("PC2") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  facet_wrap(~treatment)
+
+ggplot(psums_t2_alphas, aes(x=mean.PC1, y=median_parameter)) +
+  ylab("Alpha") + xlab("PC1") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = fg_origin), size = 1.5) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
+  labs(color = "Resident FG") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  facet_wrap(~treatment)
+
+
+
+
+
+
+
+
+## Interaction Input ####
+ggplot(psums_t_alphas, aes(x=phyto.mean.LDMC, y=median_parameter)) +
+ # geom_errorbarh(aes(xmin = mean.LDMC - se.LDMC, xmax = mean.LDMC + se.LDMC)) +
+  ylab("Alpha") + xlab("Phytometer LDMC") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_point(aes(color = phyto.fg.origin), size = 2) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.15) +
+  labs(color = "Phytometer FG") +
+  ggtitle("Interaction Input")
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/alpha_input_LDMC.png", width = 6, height = 3)
+
+ggplot(psums_t_alphas, aes(x=mean.RMF, y=median_parameter, color = fg_origin)) +
+  geom_point() +
+  #geom_errorbarh(aes(xmin = mean.RMF - se.RMF, xmax = mean.RMF + se.RMF)) +
+  ylab("Alpha") + xlab("RMF") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.15) +
+  labs(color = "Resident FG")
+
+
+ggplot(psums_t[psums_t$parameter_type == "lambda",], aes(x=mean.CRSL, y=median_parameter, color = fg_origin)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = mean.CRSL - se.CRSL, xmax = mean.CRSL + se.CRSL)) +
+  ylab("Lambda") + xlab("CRSL") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.15)
+
+ggplot(psums_t[psums_t$parameter_type != "lambda",], aes(x=mean.FRSL, y=median_parameter, color = fg_origin)) +
+  geom_point() +
+  #geom_errorbarh(aes(xmin = mean.FRSL - se.FRSL, xmax = mean.FRSL + se.FRSL)) +
+  ylab("Lambda") + xlab("FRSL") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.15)
+
+
+## try one species at a time
+
+ggplot(psums_t[psums_t$parameter_type != "lambda" & psums_t$species == "ACAM",], aes(x=mean.FRSL, y=median_parameter, color = fg_origin)) +
+  geom_point() +
+  #geom_errorbarh(aes(xmin = mean.FRSL - se.FRSL, xmax = mean.FRSL + se.FRSL)) +
+  ylab("Alpha") + xlab("FRSL") +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_smooth(method = "lm", color = "black", alpha = 0.15)
+
 ## Lambda ####
 ggplot(psums_t[psums_t$parameter_type == "lambda",], aes(x=mean.SLA, y=median_parameter, color = fg_origin)) +
   geom_point() +
@@ -103,114 +288,6 @@ ggplot(psums_t[psums_t$parameter_type == "lambda",], aes(x=mean.FRSL, y=median_p
   geom_smooth(method = "lm", color = "black", alpha = 0.15)
 
 ggsave("analyses/explore_interaction_coeff/preliminary_figures/lambda_FRSL.png", width = 6, height = 3)
-
-
-## Interaction Output ####
-ldmc <- ggplot(psums_t2_alphas, aes(x=mean.LDMC, y=median_parameter)) +
-  ylab("Alpha") + xlab("Resident LDMC") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_point(aes(color = fg_origin), size = 1.5) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
-  labs(color = "Resident FG") +
-  geom_hline(yintercept = 0, linetype = "dashed")
-
-height <- ggplot(psums_t2_alphas, aes(x=mean.height, y=median_parameter)) +
-  ylab("Alpha") + xlab("Resident Height") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_point(aes(color = fg_origin), size = 1.5) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
-  labs(color = "Resident FG") +
-  geom_hline(yintercept = 0, linetype = "dashed")
-
-sla <- ggplot(psums_t2_alphas, aes(x=mean.SLA, y=median_parameter)) +
-  ylab("Alpha") + xlab("Resident SLA") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_point(aes(color = fg_origin), size = 1.5) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
-  labs(color = "Resident FG") +
-  geom_hline(yintercept = 0, linetype = "dashed")
-
-crsl <- ggplot(psums_t2_alphas, aes(x=mean.CRSL, y=median_parameter)) +
-  ylab("Alpha") + xlab("Resident CRSL") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_point(aes(color = fg_origin), size = 1.5) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
-  labs(color = "Resident FG") +
-  geom_hline(yintercept = 0, linetype = "dashed")
-
-rmf <- ggplot(psums_t2_alphas, aes(x=mean.RMF, y=median_parameter)) +
-  ylab("Alpha") + xlab("Resident RMF") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_point(aes(color = fg_origin), size = 1.5) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
-  labs(color = "Resident FG") +
-  geom_hline(yintercept = 0, linetype = "dashed")
-
-frsl <- ggplot(psums_t2_alphas, aes(x=mean.CRSL, y=median_parameter)) +
-  ylab("Alpha") + xlab("Resident FRSL") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_point(aes(color = fg_origin), size = 1.5) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.5) +
-  labs(color = "Resident FG") +
-  geom_hline(yintercept = 0, linetype = "dashed")
-
-
-ggarrange(height, sla, ldmc,
-          rmf, crsl, frsl,
-          ncol = 3, nrow = 2,
-          common.legend = T,
-          labels= "AUTO",
-          legend = "bottom")
-
-ggsave("analyses/explore_interaction_coeff/preliminary_figures/alpha_resident_traits.png", width = 8, height = 6)
-
-
-
-## Interaction Input ####
-ggplot(psums_t_alphas, aes(x=phyto.mean.LDMC, y=median_parameter)) +
- # geom_errorbarh(aes(xmin = mean.LDMC - se.LDMC, xmax = mean.LDMC + se.LDMC)) +
-  ylab("Alpha") + xlab("Phytometer LDMC") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_point(aes(color = phyto.fg.origin), size = 2) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.15) +
-  labs(color = "Phytometer FG") +
-  ggtitle("Interaction Input")
-
-ggsave("analyses/explore_interaction_coeff/preliminary_figures/alpha_input_LDMC.png", width = 6, height = 3)
-
-ggplot(psums_t_alphas, aes(x=mean.RMF, y=median_parameter, color = fg_origin)) +
-  geom_point() +
-  #geom_errorbarh(aes(xmin = mean.RMF - se.RMF, xmax = mean.RMF + se.RMF)) +
-  ylab("Alpha") + xlab("RMF") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.15) +
-  labs(color = "Resident FG")
-
-
-ggplot(psums_t[psums_t$parameter_type == "lambda",], aes(x=mean.CRSL, y=median_parameter, color = fg_origin)) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = mean.CRSL - se.CRSL, xmax = mean.CRSL + se.CRSL)) +
-  ylab("Lambda") + xlab("CRSL") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.15)
-
-ggplot(psums_t[psums_t$parameter_type != "lambda",], aes(x=mean.FRSL, y=median_parameter, color = fg_origin)) +
-  geom_point() +
-  #geom_errorbarh(aes(xmin = mean.FRSL - se.FRSL, xmax = mean.FRSL + se.FRSL)) +
-  ylab("Lambda") + xlab("FRSL") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.15)
-
-
-## try one species at a time
-
-ggplot(psums_t[psums_t$parameter_type != "lambda" & psums_t$species == "ACAM",], aes(x=mean.FRSL, y=median_parameter, color = fg_origin)) +
-  geom_point() +
-  #geom_errorbarh(aes(xmin = mean.FRSL - se.FRSL, xmax = mean.FRSL + se.FRSL)) +
-  ylab("Alpha") + xlab("FRSL") +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  geom_smooth(method = "lm", color = "black", alpha = 0.15)
-
 
 
 
