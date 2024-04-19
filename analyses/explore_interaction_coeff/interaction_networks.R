@@ -22,10 +22,10 @@ el.nw.C <- sums.info %>%
 
 grpsC <- c("native_legume", "native_forb", "non-native_forb", "non-native_forb", "native_forb", "native_forb", "non-native_grass", "native_forb", "native_forb", "native_forb", "native_forb", "non-native_grass", "native_legume", "non-native_grass", "non-native_forb", "non-native_legume")
 
-png("analyses/explore_interaction_coeff/preliminary_figures/network_C_springlayout.png", width = 2000, height = 1400, units = 'px')
+png("analyses/explore_interaction_coeff/preliminary_figures/network_C_circlelayout.png", width = 2000, height = 1400, units = 'px')
 
 qgraph(el.nw.C, 
-       layout = 'spring',
+       layout = 'circle',
        groups = grpsC,
        negCol = '#5D69B1',   # facilitation = blue
        posCol = '#E58606',
@@ -62,7 +62,9 @@ el.nw.D <- sums.info %>%
   filter(parameter_type != "lambda", treatment == "D") %>%
   select(-mean_parameter, -hdi_lo, -hdi_hi, -treatment, -X) %>%
   mutate(alpha = toupper(substr(parameter_type, 7, 10))) %>%
-  select(alpha, species, median_parameter)
+  select(alpha, species, median_parameter) %>%
+  mutate(alpha = fct_relevel(alpha, "ACAM", "TWIL", "THIR", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "CESO", "ANAR", "BRNI")) %>%
+  mutate(species = fct_relevel(species, "ACAM", "TWIL", "THIR", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "CESO", "ANAR", "BRNI"))
 
 ## visualize network
 png("analyses/explore_interaction_coeff/preliminary_figures/network_D.png", width = 1200, height = 1200, units = 'px')
@@ -74,16 +76,17 @@ qgraph(el.nw.D,
        vTrans = 100,
        fade = T,
        trans = 0.5, maximum = 0)
-dev.off()
+dev.off() 
 
 
-grpsD <- c("native_legume", "native_forb", "non-native_forb",  "non-native_grass", "non-native_forb", "non-native_forb",  "native_forb", "native_forb", "non-native_grass",  "native_forb", "native_forb", "non-native_grass", "non-native_legume", "native_legume", "native_forb", "native_forb")
+grpsD <- c("native_legume", "native_forb", "non-native_forb", "non-native_grass", "non-native_forb", "non-native_forb", "native_forb", "native_forb", "non-native_grass", "native_forb", "native_forb",  "non-native_grass", "non-native_legume", "native_legume", "native_forb", "native_forb")
 
 
-png("analyses/explore_interaction_coeff/preliminary_figures/network_D_springlayout.png", width = 2000, height = 1400, units = 'px')
+
+png("analyses/explore_interaction_coeff/preliminary_figures/network_D_circlelayout.png", width = 2000, height = 1400, units = 'px')
 
 qgraph(el.nw.D, 
-       layout = 'spring',
+       layout = 'circle',
        groups = grpsD,
        negCol = '#5D69B1',   # facilitation = blue
        posCol = '#E58606',

@@ -27,24 +27,6 @@ trait_sums <- MC.pca.ID %>%
             mean.PF = mean(PF), se.PF = calcSE(PF),
             mean.PC1 = mean(PC1), se.PC1 = calcSE(PC1),
             mean.PC2 = mean(PC2), se.PC2 = calcSE(PC2))
-            #mean.FRSL = mean(Fine.root.specific.length.cm.g), se.FRSL = calcSE(Fine.root.specific.length.cm.g))
-
-#psums_t <- left_join(psums, trait_sums, by = c("species")) %>%
-  ## join by phyto / 'invader' species 
- # mutate(phyto.fg.origin = fg_origin,
-   #      phyto.mean.height = mean.height,
-    #     phyto.se.height = se.height,
-    #     phyto.mean.LDMC = mean.LDMC,
-    #     phyto.se.LDMC = se.LDMC,
-    #     phyto.mean.SLA = mean.SLA,
-    #     phyto.se.SLA = se.SLA,
-     #    phyto.mean.RMF = mean.RMF,
-     #    phyto.se.RMF = se.RMF,
-     #    phyto.mean.CRSL = mean.CRSL,
-     #    phyto.se.CRSL = se.CRSL,
-     #    phyto.mean.FRSL = mean.FRSL,
-      #   phyto.se.FRSL = se.FRSL) %>%
-  #select(species, treatment, parameter_type, median_parameter, hdi_lo, hdi_hi, phyto.fg.origin, phyto.mean.height, phyto.se.height, phyto.mean.LDMC, phyto.se.LDMC, phyto.mean.SLA, phyto.se.SLA, phyto.mean.RMF, phyto.se.RMF, phyto.mean.CRSL, phyto.se.CRSL, phyto.mean.FRSL, phyto.se.FRSL)
   
 psums2 <- psums %>%
   filter(parameter_type != "lambda") %>% ## remove lambda
@@ -55,12 +37,93 @@ psums2 <- psums %>%
 ## join traits again to get resident species trait values
 psums_t2_alphas <- left_join(psums2, trait_sums, by = c("species"))
 
-# Visualize ####
-ggplot(psums_t2_alphas, aes(x=parameter_type, y=median_parameter, color = treatment)) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_boxplot()
-  
+## Scale alphas ####
+lambda.temp <- psums %>%
+  filter(parameter_type == "lambda")%>%
+  mutate(lambda = median_parameter, 
+         phyto = species) %>%
+  select(phyto, treatment, lambda)
 
+alpha_sc <- left_join(psums2, lambda.temp, by = c("phyto", "treatment")) %>%
+  mutate(alpha_scaled = median_parameter/lambda)
+
+alpha_sc2 <- left_join(alpha_sc, trait_sums, by = c("species"))
+
+# Visualize ####
+## Median Lambdas ####
+lambda <- psums %>%
+  filter(parameter_type == "lambda")
+
+ggplot(lambda, aes(x=species, y=median_parameter, color = treatment)) +
+  geom_point(size = 3)+
+  geom_errorbar(aes(ymin = hdi_lo, ymax = hdi_hi)) +
+  ylab("Lambda") +
+  xlab(NULL) + 
+  scale_color_manual(values = c("#70a494", "#de8a5a")) +
+  labs(color = "Rainfall") +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1))
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/median_lambda_by_rainfall.png", width = 6, height = 4)
+
+## Median Alpha by FG ####
+### raw alphas ####
+intra <- psums_t2_alphas %>%
+  filter(phyto == resident)
+
+inter <- psums_t2_alphas %>%
+  filter(phyto != resident)
+
+### intra specific interactions
+ggplot(intra, aes(x=parameter_type, y=median_parameter, color = fg_origin, shape = treatment)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  geom_errorbar(aes(ymin = hdi_lo, ymax = hdi_hi), width = 0.25) +
+  xlab(NULL) + ylab("Intraspecific Median Alpha Values") +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1)) +
+  labs(color = "Functional Group") +
+  scale_shape_manual(values = c(16, 1))
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/intra_alpha_byFG.png", width = 6.5, height = 4)
+
+### inter specific interactions
+ggplot(inter, aes(x=parameter_type, y=median_parameter, color = fg_origin)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_boxplot() +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) + xlab(NULL) + ylab("Interspecific Median Alpha Values") +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1)) +
+  labs(color = "Functional Group")
+  
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/inter_alpha_byFG.png", width = 6.5, height = 4)
+
+### scaled alphas ####
+intra_sc <- alpha_sc2 %>%
+  filter(phyto == resident)
+
+inter_sc <- alpha_sc2 %>%
+  filter(phyto != resident)
+
+#### not transformed
+ggplot(inter_sc, aes(x=parameter_type, y=alpha_scaled, color = fg_origin)) +
+  #  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_boxplot() +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) + xlab(NULL) + ylab("Interspecific Scaled Median Alphas") +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1)) +
+  labs(color = "Functional Group")
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/inter_alpha_scaled_byFG.png", width = 6.5, height = 4)
+
+ggplot(intra_sc, aes(x=parameter_type, y=alpha_scaled, color = fg_origin, shape = treatment)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_point(size = 3) +
+  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+ # geom_errorbar(aes(ymin = hdi_lo, ymax = hdi_hi), width = 0.25) +
+  xlab(NULL) + ylab("Intraspecific Median Alpha Values") +
+  theme(axis.text.x = element_text(angle = 45,  hjust=1)) +
+  labs(color = "Functional Group") +
+  scale_shape_manual(values = c(16, 1))
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/intra_alpha_scaled_byFG.png", width = 6.5, height = 4)
 
 ## Traits v Alphas ####
 ldmc <- ggplot(psums_t2_alphas, aes(x=mean.LDMC, y=median_parameter)) +
