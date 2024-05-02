@@ -60,8 +60,8 @@ MC.traits <- traits %>%
                                                                   ifelse(ID == "TRHI", "THIR", 
                                                                          ifelse(ID == "TRWIp","TWIL", ID)))))))))) %>%
   mutate(origin = ifelse(phyto %in% nonnative, "non-native", "native"),
-         funct_group = ifelse(phyto %in% grass, "grass",
-                              ifelse(phyto %in% legume, "legume", "forb")),
+         funct_group = ifelse(phyto %in% grass, "Grass",
+                              ifelse(phyto %in% legume, "Legume", "Forb")),
          fg_origin = paste(origin, funct_group, sep = "_"),
          interaction_type = ifelse(phyto %in% facilitator, "facilitative", "competitive"))
 
@@ -88,11 +88,11 @@ trait.seed2[trait.seed2$code == "PLAERE",]$coat.thick <- 0.0104
 all.traits <- c("Height.cm", "LDMC", "SLA.cm2.g", "RMF",  "Coarse.root.specific.length.cm.g", "Proportion.fine.roots", "Coarse.root.diameter.mm")
 
 temp <- MC.traits %>%
-  select(phyto, fg_origin, Height.cm, LDMC, SLA.cm2.g, RMF, Coarse.root.specific.length.cm.g, Proportion.fine.roots, Coarse.root.diameter.mm)
+  select(phyto, fg_origin, funct_group, Height.cm, LDMC, SLA.cm2.g, RMF, Coarse.root.specific.length.cm.g, Proportion.fine.roots, Coarse.root.diameter.mm)
 
-names(temp) <- c("phyto", "fg_origin", "Height", "LDMC", "SLA", "RMF", "CRSL", "PF", "D")
+names(temp) <- c("phyto", "fg_origin", "fg", "Height", "LDMC", "SLA", "RMF", "CRSL", "PF", "D")
 
-MC.pca <- prcomp(temp[,3:9], scale = T)
+MC.pca <- prcomp(temp[,4:10], scale = T)
 summary(MC.pca)
 
 MC.pca.ID <- cbind(temp, MC.pca$x[,1:7])
@@ -110,6 +110,28 @@ autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadin
   #labs(loadings = c("1"))
 
 ggsave("analyses/traits/preliminary_figures/pca_updatedtraits_fg.png", width = 7, height = 5)
+
+autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T,  col = "fg", size = 3.5, loadings.colour = "black",
+         ) +
+  theme_classic() +
+  scale_color_manual(values = c( "#ECB159", "#8CB9BD", "#156882")) +
+#  scale_color_manual(values = c( "#ECB159", "#8CB9BD",  "#B67352")) +
+  #geom_text(aes(label = code, col = Rating)) +
+  #stat_ellipse(aes(group = phyto, col = phyto)) + 
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank()) +
+  theme(text = element_text(size = 20)) +
+  theme(plot.background = element_rect(fill = "#FEFBF6"),
+        panel.background = element_rect(fill = "#FEFBF6",
+                                        colour = "#FEFBF6"),
+        legend.key = element_rect(fill = "#FEFBF6"),
+        legend.background = element_rect(fill = "#FEFBF6")
+       ) +
+  theme(legend.position="bottom")
+
+ggsave("analyses/traits/preliminary_figures/pca_newcolors_fg.png", width = 7, height = 5.5)
+
 
 #autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "interaction_type", size = 1.75, loadings.colour = "black",
    #      loadings.label.colour="black", loadings.label.repel=TRUE) +

@@ -1,8 +1,8 @@
 
 # Set up ####
 library(fundiversity)
-
-source()
+library(ggpubr)
+#source()
 
 # Calc Dissim ####
 ## calculate trait dissimilarities
@@ -50,10 +50,10 @@ alpha_sc_tmp <- alpha_sc %>%
   select(combo, phyto, resident, treatment, median_parameter, parameter_type, alpha_scaled)
 
 dissim.params <- left_join(alpha_sc_tmp, dissim.long, by = c("combo")) %>%
-  mutate(resident.fg = ifelse(resident %in% c("TACA", "BRHO", "LOMU"), "grass",
-                     ifelse(resident %in% c("TWIL", "THIR", "ACAM"), "legume", "forb")),
-         phyto.fg = ifelse(phyto %in% c("TACA", "BRHO", "LOMU"), "grass",
-                             ifelse(phyto %in% c("TWIL", "THIR", "ACAM"), "legume", "forb")),
+  mutate(resident.fg = ifelse(resident %in% c("TACA", "BRHO", "LOMU"), "Grass",
+                     ifelse(resident %in% c("TWIL", "THIR", "ACAM"), "Legume", "Forb")),
+         phyto.fg = ifelse(phyto %in% c("TACA", "BRHO", "LOMU"), "Grass",
+                             ifelse(phyto %in% c("TWIL", "THIR", "ACAM"), "Legume", "Forb")),
          resident = fct_relevel(resident, "ACAM", "THIR", "TWIL", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "ANAR", "BRNI", "CESO"), 
          phyto = fct_relevel(phyto, "ACAM", "THIR", "TWIL", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "ANAR", "BRNI", "CESO")) %>%
   filter(dissimilarity != 0) ## remove intra-specific alphas
@@ -121,15 +121,121 @@ ggplot(dissim.params, aes(x=dissimilarity, y=alpha_scaled, color = resident.fg))
   scale_color_manual(values = c("#5D69B1","#99C945", "#CC61B0"))
 ggsave("analyses/explore_interaction_coeff/preliminary_figures/dissim_scaled_alpha_residentfacet_fg.png", width = 7, height = 6)
 
-ggplot(dissim.params, aes(x=dissimilarity, y=alpha_scaled, color = phyto.fg)) +
-  geom_point() +
+ggplot(dissim.params, aes(x=dissimilarity, y=alpha_scaled)) +
+  geom_point(aes(color = resident.fg)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_smooth(method = "lm") +
+  geom_smooth(method = "lm", color = "black", alpha = 0.15) +
   facet_wrap(~phyto, scales = "free") +
   ylab("Scaled intersp alpha value") + xlab("Trait Dissimilarity") +
   ggtitle("Faceted by 'Invader' Species") +
   scale_color_manual(values = c("#5D69B1","#99C945", "#CC61B0"))
 
-ggsave("analyses/explore_interaction_coeff/preliminary_figures/dissim_scaled_alpha_invaderfacet_fg.png", width = 7, height = 6)
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/dissim_scaled_alpha_invaderfacet_residentfg.png", width = 7, height = 6)
+
+## FG FACET ####
+forb <- ggplot(dissim.params[dissim.params$phyto.fg == "Forb",], aes(x=dissimilarity, y=alpha_scaled, shape = treatment)) +
+  geom_point(aes(color = resident.fg), size = 3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "lm", aes(linetype = treatment), color = "black", alpha = 0.15) +
+  facet_wrap(~phyto.fg, scales = "free") +
+  ylab("Interaction Coefficient") + xlab("") +
+ # ggtitle("Faceted by 'Invader' FG") +
+  scale_color_manual(values = c("#ECB159", "#8CB9BD", "#156882")) +
+  scale_shape_manual(values = c(15,16)) +
+  theme(legend.position="bottom") +
+  labs(color = "Resident FG", shape = "Rainfall", linetype = "Rainfall") +
+  theme(text = element_text(size = 15)) +
+  theme(plot.background = element_rect(fill = "#FEFBF6"),
+        panel.background = element_rect(fill = "#FEFBF6",
+                                        colour = "#FEFBF6"),
+        legend.key = element_rect(fill = "#FEFBF6"),
+        legend.background = element_rect(fill = "#FEFBF6")) + 
+  annotate(geom="text", x =1.05, y=0.001, label = "competition", size = 4, angle='90') +
+  annotate(geom="text", x =1.05, y=-0.001, label = "facilitation", size = 4, angle='90') 
+
+grass <- ggplot(dissim.params[dissim.params$phyto.fg == "Grass",], aes(x=dissimilarity, y=alpha_scaled, shape = treatment)) +
+  geom_point(aes(color = resident.fg), size = 3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "lm", aes(linetype = treatment), color = "black", alpha = 0.15) +
+  facet_wrap(~phyto.fg, scales = "free") +
+  ylab(NULL) + xlab("Trait Dissimilarity") +
+  # ggtitle("Faceted by 'Invader' FG") +
+  scale_color_manual(values = c("#ECB159", "#8CB9BD", "#156882")) +
+  scale_shape_manual(values = c(15,16)) +
+  theme(legend.position="bottom") +
+  labs(color = "Resident FG", shape = "Rainfall", linetype = "Rainfall") +
+  theme(text = element_text(size = 15)) +
+  theme(plot.background = element_rect(fill = "#FEFBF6"),
+        panel.background = element_rect(fill = "#FEFBF6",
+                                        colour = "#FEFBF6"),
+        legend.key = element_rect(fill = "#FEFBF6"),
+        legend.background = element_rect(fill = "#FEFBF6"))# + 
+  #annotate(geom="text", x =1.25, y=0.0008, label = "competition", size = 4, angle='90') +
+  #annotate(geom="text", x =1.25, y=-0.0008, label = "facilitation", size = 4, angle='90') 
+
+legume <- ggplot(dissim.params[dissim.params$phyto.fg == "Legume",], aes(x=dissimilarity, y=alpha_scaled, shape = treatment)) +
+  geom_point(aes(color = resident.fg), size = 3) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "lm", aes(linetype = treatment), color = "black", alpha = 0.15) +
+  facet_wrap(~phyto.fg, scales = "free") +
+  ylab(NULL) + xlab("") +
+  # ggtitle("Faceted by 'Invader' FG") +
+  scale_color_manual(values = c("#ECB159", "#8CB9BD", "#156882")) +
+  scale_shape_manual(values = c(15,16)) +
+  theme(legend.position="bottom") +
+  labs(color = NULL, shape = "Rainfall", linetype = "Rainfall") +
+  theme(text = element_text(size = 15)) +
+  theme(plot.background = element_rect(fill = "#FEFBF6"),
+        panel.background = element_rect(fill = "#FEFBF6",
+                                        colour = "#FEFBF6"),
+        legend.key = element_rect(fill = "#FEFBF6"),
+        legend.background = element_rect(fill = "#FEFBF6")) #+ 
+  #annotate(geom="text", x =1.25, y=0.009, label = "competition", size = 4, angle='90') +
+  #annotate(geom="text", x =1.25, y=-0.009, label = "facilitation", size = 4, angle='90') 
+
+ggarrange(forb, grass, legume,
+          nrow = 1, ncol = 3,
+          common.legend = TRUE,
+          legend = "bottom",
+          labels = "AUTO")
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/storyboard_v2/dissim_v_scaled_median_alphas_fg_facet_newcolor.png", width = 10, height = 4)
+
+t <- lm(alpha_scaled ~ dissimilarity + phyto.fg, data = dissim.params)
+summary(t)
+
+## FG x TRT FACET ####
+ggplot(dissim.params, aes(x=dissimilarity, y=alpha_scaled, shape = treatment)) +
+  geom_point(aes(color = resident.fg)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "lm", aes(linetype = treatment), alpha = 0.15) +
+  facet_grid(treatment~phyto.fg, scales = "free") +
+  ylab("Scaled intersp median alpha value") + xlab("Trait Dissimilarity") +
+  ggtitle("Faceted by 'Invader' FG") +
+  scale_color_manual(values = c("#ECB159", "#8CB9BD", "#156882")) +
+  labs(color = "Resident FG")
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/storyboard_v2/dissim_v_scaled_median_alphas_trt_fg_facet.png", width = 9, height = 3)
 
 
+ggplot(dissim.params, aes(x=dissimilarity, y=median_parameter, shape = treatment)) +
+  geom_point(aes(color = resident.fg)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "lm", aes(linetype = treatment), alpha = 0.15) +
+  facet_grid(treatment~phyto.fg, scales = "free") +
+  ylab("Scaled intersp median alpha value") + xlab("Trait Dissimilarity") +
+  ggtitle("Faceted by 'Invader' FG") +
+  scale_color_manual(values = c("#ECB159", "#8CB9BD", "#156882")) +
+  labs(color = "Resident FG")
+
+ggplot(dissim.params, aes(x=dissimilarity, y=median_parameter, shape = treatment)) +
+  geom_point(aes(color = resident.fg)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "lm", aes(linetype = treatment), color = "black", alpha = 0.15) +
+  facet_wrap(~phyto.fg, scales = "free") +
+  ylab("Raw intersp median alpha value") + xlab("Trait Dissimilarity") +
+  ggtitle("Faceted by 'Invader' FG") +
+  scale_color_manual(values = c("#5D69B1","#99C945", "#CC61B0")) +
+  labs(color = "Resident FG")
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/storyboard_v2/dissim_v_raw_median_alphas_trt_fg_facet.png", width = 9, height = 3)
