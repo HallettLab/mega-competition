@@ -122,12 +122,12 @@ autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T,  col =
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
     legend.title = element_blank()) +
   theme(text = element_text(size = 20)) +
-  theme(plot.background = element_rect(fill = "#FEFBF6"),
-        panel.background = element_rect(fill = "#FEFBF6",
-                                        colour = "#FEFBF6"),
-        legend.key = element_rect(fill = "#FEFBF6"),
-        legend.background = element_rect(fill = "#FEFBF6")
-       ) +
+  #theme(plot.background = element_rect(fill = "#FEFBF6"),
+   #     panel.background = element_rect(fill = "#FEFBF6",
+    #                                    colour = "#FEFBF6"),
+     #   legend.key = element_rect(fill = "#FEFBF6"),
+      #  legend.background = element_rect(fill = "#FEFBF6")
+       #) +
   theme(legend.position="bottom")
 
 ggsave("analyses/traits/preliminary_figures/pca_newcolors_fg.png", width = 7, height = 5.5)

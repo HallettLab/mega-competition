@@ -2,7 +2,8 @@
 # Set up ####
 library(fundiversity)
 library(ggpubr)
-#source()
+
+source("analyses/traits/trait_pcas_exploration.R")
 
 # Calc Dissim ####
 ## calculate trait dissimilarities
@@ -47,7 +48,7 @@ dissim.long <- dissim.matrix %>%
 # Join with params data ####
 alpha_sc_tmp <- alpha_sc %>%
   mutate(combo = paste(phyto, resident, sep = "_")) %>%
-  select(combo, phyto, resident, treatment, median_parameter, parameter_type, alpha_scaled)
+  select(combo, phyto, resident, treatment, median_parameter, parameter_type, alpha_scaled, hdi_hi_scaled, hdi_lo_scaled)
 
 dissim.params <- left_join(alpha_sc_tmp, dissim.long, by = c("combo")) %>%
   mutate(resident.fg = ifelse(resident %in% c("TACA", "BRHO", "LOMU"), "Grass",
@@ -132,7 +133,7 @@ ggplot(dissim.params, aes(x=dissimilarity, y=alpha_scaled)) +
 
 ggsave("analyses/explore_interaction_coeff/preliminary_figures/dissim_scaled_alpha_invaderfacet_residentfg.png", width = 7, height = 6)
 
-## FG FACET ####
+## FG FACET POSTER FIG ####
 forb <- ggplot(dissim.params[dissim.params$phyto.fg == "Forb",], aes(x=dissimilarity, y=alpha_scaled, shape = treatment)) +
   geom_point(aes(color = resident.fg), size = 3) +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -144,12 +145,12 @@ forb <- ggplot(dissim.params[dissim.params$phyto.fg == "Forb",], aes(x=dissimila
   scale_shape_manual(values = c(15,16)) +
   theme(legend.position="bottom") +
   labs(color = "Resident FG", shape = "Rainfall", linetype = "Rainfall") +
-  theme(text = element_text(size = 15)) +
-  theme(plot.background = element_rect(fill = "#FEFBF6"),
-        panel.background = element_rect(fill = "#FEFBF6",
-                                        colour = "#FEFBF6"),
-        legend.key = element_rect(fill = "#FEFBF6"),
-        legend.background = element_rect(fill = "#FEFBF6")) + 
+ # theme(text = element_text(size = 15)) +
+  #theme(plot.background = element_rect(fill = "#FEFBF6"),
+   #     panel.background = element_rect(fill = "#FEFBF6",
+    #                                    colour = "#FEFBF6"),
+     #   legend.key = element_rect(fill = "#FEFBF6"),
+      #  legend.background = element_rect(fill = "#FEFBF6")) + 
   annotate(geom="text", x =1.05, y=0.001, label = "competition", size = 4, angle='90') +
   annotate(geom="text", x =1.05, y=-0.001, label = "facilitation", size = 4, angle='90') 
 
@@ -203,6 +204,24 @@ ggsave("analyses/explore_interaction_coeff/preliminary_figures/storyboard_v2/dis
 
 t <- lm(alpha_scaled ~ dissimilarity + phyto.fg, data = dissim.params)
 summary(t)
+
+## FG FACET TALK ####
+ggplot(dissim.params, aes(x=dissimilarity, y=alpha_scaled, shape = treatment, color = resident.fg)) +
+  geom_errorbar(aes(ymin = hdi_lo_scaled, ymax = hdi_hi_scaled), width = 0.15) +
+  geom_point(size = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_smooth(method = "lm", aes(linetype = treatment), color = "black", alpha = 0.15) +
+  facet_wrap(~phyto.fg, scales = "free") +
+  ylab("Interaction Coefficient") + xlab("") +
+  
+  scale_color_manual(values = c("#ECB159", "#8CB9BD", "#156882")) +
+  scale_shape_manual(values = c(15,16)) +
+  theme(legend.position="bottom") +
+  labs(color = "Resident FG", shape = "Rainfall", linetype = "Rainfall") +
+  theme(text = element_text(size = 15)) +
+  facet_wrap(~phyto.fg, scales = "free")
+
+ggsave("analyses/explore_interaction_coeff/preliminary_figures/storyboard_v2/dissim_v_scaled_median_alphas_fg_facet_w_error.png", width = 10, height = 4)
 
 ## FG x TRT FACET ####
 ggplot(dissim.params, aes(x=dissimilarity, y=alpha_scaled, shape = treatment)) +

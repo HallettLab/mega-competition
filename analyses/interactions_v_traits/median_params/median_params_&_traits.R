@@ -46,7 +46,9 @@ lambda.temp <- psums %>%
 
 ## scale alphas by lambdas
 alpha_sc <- left_join(psums2, lambda.temp, by = c("phyto", "treatment")) %>%
-  mutate(alpha_scaled = median_parameter/lambda)
+  mutate(alpha_scaled = median_parameter/lambda,
+         hdi_hi_scaled = hdi_hi/lambda,
+         hdi_lo_scaled = hdi_lo/lambda)
 
 ## join with mean traits
 alpha_sc2 <- left_join(alpha_sc, trait_sums, by = c("species"))
