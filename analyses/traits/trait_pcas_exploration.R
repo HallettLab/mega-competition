@@ -82,6 +82,8 @@ trait.seed2 <- trait.seed %>%
 trait.seed2[trait.seed2$code == "PLAERE",]$E.S <- 0.8946559
 trait.seed2[trait.seed2$code == "PLAERE",]$coat.thick <- 0.0104
 
+seed.mass <- trait.seed2 %>%
+  select(Species, code, mass.mg)
 
 # PCAs ####
 ## AG - BG traits ####
