@@ -60,6 +60,15 @@ dissim.params <- left_join(alpha_sc_tmp, dissim.long, by = c("combo")) %>%
          phyto = fct_relevel(phyto, "ACAM", "THIR", "TWIL", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "ANAR", "BRNI", "CESO")) %>%
   filter(dissimilarity != 0) ## remove intra-specific alphas
 
+bad.combos = unique(bad.reps$combos)
+
+## filter out bad reps
+dissim.params.filt = dissim.params %>%
+  mutate(combo2 = paste(combo, treatment, sep = "_")) %>%
+  filter(!combo2 %in% bad.combos)
+
+
+
 # Visualize ####
 ## raw alpha v dissim ####
 ggplot(dissim.params, aes(x=dissimilarity, y=median_parameter)) +
