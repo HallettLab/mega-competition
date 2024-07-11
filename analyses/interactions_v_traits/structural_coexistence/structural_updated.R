@@ -12,6 +12,15 @@ source(paste0(code_loc, "toolbox_figure.R"))
 ## load posteriors
 source("analyses/interactions_v_traits/random_draws/clean_posteriors.R")
 
+# Trouble shooting ####
+## try  just invasive species - far fewer combinations, may be able to figure out why the NAs are popping up
+
+## invasives: 
+  ## ANAR, BRHO, CESO, LOMU, TACA, THIR
+  ## this misses BRNI, which probably need to go back to the samples for this to determine why no intraspecific coeff
+
+
+
 # Prep DF ####
 
 ## Ideal data format for this... matrix of interaction coeff? from one model run
@@ -30,8 +39,13 @@ draws <- sample(posts, 200, replace = FALSE)
 ## species vector
 sp <- unique(posts_clean$species)
 
+inv = c("ANAR", "BRHO", "CESO", "TACA", "THIR", "LOMU")
 ## create all possible combinations of composition at a given richness level
 comp6 <- data.frame(comboGeneral(sp, m=6, freqs = 1))
+
+comp6 = comp6 %>%
+  filter(X1 %in% inv, X2 %in% inv, X3 %in% inv, X4 %in% inv, X5 %in% inv, X6 %in% inv)
+
 
 ## create empty dataframe
 allcommC <- data.frame(ACAM = NA, AMME = NA, ANAR = NA, BRHO = NA, CESO=NA, GITR=NA, LOMU= NA, MAEL= NA, MICA= NA, PLER= NA, PLNO= NA, TACA= NA, THIR= NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
