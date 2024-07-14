@@ -245,4 +245,6 @@ BRNI.allo.output <- data.frame(Species = "BRNI",
                                viability_D_se = NA)
 
 # Clean Env ####
-rm(list = c("brni.allo.phyto", "brni_phyto", "brni_allo", "brni_allo_lin", "brni_allo_lin_trt", "brni_allo_pol", "brni_allo2", "brni_mean_seeds", "brni_mean_seeds_trt", "brni_seeds",  "brni_via_lin", "brni_via_lin3", "lead", "seed.test", "viability.test", "viability.test2", "viability.test3", "viability_calcs"))
+rm(list = c("brni.allo.phyto", "brni_phyto", "brni_allo", "brni_allo_lin", "brni_allo_lin_trt", "brni_allo2", "brni_mean_seeds", "brni_mean_seeds_trt", "brni_seeds",  "brni_via_lin", "brni_via_lin3", "lead", "seed.test", "viability.test", "viability.test2", "viability.test3", "viability_calcs"))
+
+## "brni_allo_pol",

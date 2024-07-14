@@ -127,11 +127,11 @@ reps <- phyto.bg.dat %>%
 ## lose 122/640 pairwise by treatment combinations
 
 ## filter good reps
-good.reps <- reps %>%
-  filter(true.reps > 3)
+#good.reps <- reps %>%
+  #filter(true.reps > 3)
 
 ## make vector 
-good.reps.vec <- unique(good.reps$combos)
+#good.reps.vec <- unique(good.reps$combos)
 
 # Format for Models ####
 model.dat <- phyto.bg.dat %>%
@@ -139,14 +139,14 @@ model.dat <- phyto.bg.dat %>%
   pivot_wider(names_from = "bkgrd.names.in", values_from = "bkgrd.n.indiv", values_fill = 0) %>%
   #select(-bkgrd.n.indiv) %>% 
   mutate(combos = paste(phyto, bkgrd, treatment, sep = "_")) %>%
-  filter(combos %in% good.reps.vec) %>% ## filter by rep #
+ # filter(combos %in% good.reps.vec) %>% ## filter by rep ## REMOVE THIS FILTER; KEEP ALL DATA FOR MODELING & AT END CHECK WHETHER POSTERIOR ESTIMATES ARE OK
   mutate(weeds = CRCO + ERBO + FIGA + GAMU + HYGL + SIGA + other, 
          trt = ifelse(treatment == "D", 0, 1)) %>% ## lump all the weeds together
   select(-CRCO, -ERBO, -FIGA, -GAMU, -HYGL, -SIGA, -other, -phyto.seed.in)
 ## have decided to model intraspecific phytos as seeds out from the phytometer,
 ## NOT the seeds out from the phyto + estimated bg seeds out
 
-write.csv(model.dat, "data/model_dat.csv")
+write.csv(model.dat, "data/model_dat_unfilt.csv")
 
 # Clean Env ####
 rm(all.phytos, allo.df, calcSE, collectionsC, i, lead, phyto.census, unique.key, with.controls, tmp.repeated.reps, tmp.controls, repeated.controls, bkgrd.df, all.blocks,  bkgrds, blocks, control.reps, j, k, tmp.block, tmp.rep, tmp.sp, all.reps, model.dat.init, bkgrd.n.indiv, mean.germ, na.bg, phyto.bg.dat, reps, good.reps)

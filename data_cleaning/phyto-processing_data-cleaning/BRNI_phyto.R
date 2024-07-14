@@ -27,6 +27,8 @@ source("data_cleaning/unique_key.R")
 
 # Clean Data ####
 
+## check 
+
 ## fix the lost sample before cleaning the data...
 brni[brni$block == 6 & brni$plot == 9 & brni$sub == 7,]$bkgrd <- "GITR"
 brni[brni$block == 6 & brni$plot == 9 & brni$sub == 7,]$unique <- 4375
@@ -66,6 +68,9 @@ brniC2 <- brniC %>%
          
          
  # )
+
+tbd = brniC %>%
+  filter(complete.sample == "TBD")
 
 seeds <- brniC2 %>%
   filter(phenology == "Seeds")
@@ -128,10 +133,6 @@ brni_final <- brniC %>%
   select(treatment, block, plot, sub, bkgrd, dens, phyto, phyto.n.indiv, phyto.unique, complete.sample, phenology, seeds.missing, leaves.present, total.biomass.g, scale.ID, process.notes, collect.notes, unique.ID) 
 
 
-
-  
-  
-  
 ggplot(brni_final, aes(x=total.biomass.g)) +
     geom_histogram()
   
@@ -173,4 +174,4 @@ brni.phyto <- brni_final %>%
 
 
 
-rm(list = c("brni", "brni_final", "brniC", "brniC2", "df", "drought", "flowers", "i", "incompletes", "lead", "na.pheno", "seeds", "tmp", "veg"))
+rm(list = c("brni", "brni_final", "brniC", "brniC2", "df", "drought", "flowers", "i", "incompletes", "lead", "na.pheno", "seeds", "tmp", "veg", "tbd"))

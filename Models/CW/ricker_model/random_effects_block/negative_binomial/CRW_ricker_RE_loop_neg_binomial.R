@@ -1,7 +1,7 @@
 ## Model 
-model.dat <- read.csv("data/model_dat.csv")
+model.dat <- read.csv("data/model_dat_unfilt.csv")
 
-date <- 20240401
+date <- 20240714
 
 library(tidyverse)
 library(bayesplot)
@@ -11,9 +11,7 @@ rstan_options(auto_write = TRUE)
 
 library(here)
 
-#species <- c("ACAM", "ANAR", "AMME", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
-
-species <- "BRHO"
+species <- c("ACAM", "ANAR", "AMME", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
 model.output <- list()
 warnings <- list()
@@ -86,6 +84,6 @@ for(i in species){
   PrelimFit <- model.output[[paste0("ricker_",i)]] 
 
 ## save model output
-  save(PrelimFit, file = paste0("Models/CW/ricker_model/random_effects_block/negative_binomial/posteriors/ricker_", i, "_posteriors_random_effects_neg_binomial", date, ".rdata"))
+  save(PrelimFit, file = paste0("Models/CW/ricker_model/random_effects_block/negative_binomial/posteriors/ricker_", i, "_posteriors_random_effects_neg_binomial_unfilt", date, ".rdata"))
 
 }
