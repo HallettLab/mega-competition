@@ -2,8 +2,10 @@
 # Set up Env ####
 library(tidyverse)
 
+date = 20240714
+
 ## read in posterior data
-posts <- read.csv("data/posteriors_20231218_models.csv")
+posts <- read.csv(paste0("data/posteriors_", date, "_models.csv"))
 
 ## read in replicate info to filter out params that were not estimated using enough data
 reps <- read.csv("data/replicate-info.csv")
@@ -26,12 +28,30 @@ ACAM_reps <- bad.reps %>%
 unique(ACAM_reps$combos)
 
 ACAM_filt <- posts %>%
-  filter(species == "ACAM") %>%
+  filter(species == "ACAM")
+
+## explore
+ggplot(ACAM_filt, aes(x=alpha_brho_c))+
+  geom_histogram()
+ggplot(ACAM_filt, aes(x=alpha_ceso_c))+
+  geom_histogram()
+ggplot(ACAM_filt, aes(x=alpha_thir_c))+
+  geom_histogram()
+ggplot(ACAM_filt, aes(x=alpha_mael_d))+
+  geom_histogram()
+ggplot(ACAM_filt, aes(x=alpha_plno_d))+
+  geom_histogram()
+
+## yep, all still have a very wide range of values, usu -10 to 10 centered on 0; so these are not good estimates. 
+
+## change vals to NA
+ACAM_filt2 = ACAM_filt %>%
   mutate(alpha_brho_c = NA, 
          alpha_ceso_c = NA, 
          alpha_thir_c = NA, 
          alpha_mael_d = NA,
          alpha_plno_d = NA)
+
 
 ## AMME ####
 AMME_reps <- bad.reps %>%
@@ -40,7 +60,36 @@ AMME_reps <- bad.reps %>%
 unique(AMME_reps$combos)
 
 AMME_filt <- posts %>%
-  filter(species == "AMME") %>%
+  filter(species == "AMME") 
+
+ggplot(AMME_filt, aes(x=alpha_acam_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_ceso_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_gitr_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_mael_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_pler_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_plno_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_taca_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_thir_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_twil_c))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_acam_d))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_lomu_d))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_mica_d))+
+  geom_histogram()
+ggplot(AMME_filt, aes(x=alpha_plno_d))+
+  geom_histogram()
+
+AMME_filt2 = AMME_filt %>%
   mutate(alpha_acam_c = NA, 
          alpha_acam_d = NA,
          alpha_ceso_c = NA,

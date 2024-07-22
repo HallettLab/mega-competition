@@ -10,7 +10,7 @@ calcSE<-function(x){
 }
 
 ## set date for figures
-#date <- 20231204
+date <- 20240714
 
 # Format Data ####
 ## add deviation terms to base terms
@@ -84,18 +84,18 @@ ggsave(paste0("models/CW/ricker_model/random_effects_block/negative_binomial/pos
 ## Alphas ####
 species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
-for(i in species){
+#for(i in species){
   
-  alpha <- ggplot(ricker_posteriors_long[ricker_posteriors_long$alpha_name == paste0("alpha_", tolower(i)),], aes(x = alpha_value, fill = treatment, line = treatment)) + 
-    geom_density() + 
-    facet_wrap(~species, ncol = 4, scales = "free")+
-    scale_fill_manual(values = c("#003366", "#FFA630")) +
-    ggtitle("Ricker Model") + xlab(paste0("alpha_", tolower(i))) +
-    geom_vline(xintercept = 0, linetype = "dashed")
+ # alpha <- ggplot(ricker_posteriors_long[ricker_posteriors_long$alpha_name == paste0("alpha_", tolower(i)),], aes(x = alpha_value, fill = treatment, line = treatment)) + 
+  #  geom_density() + 
+   # facet_wrap(~species, ncol = 4, scales = "free")+
+    #scale_fill_manual(values = c("#003366", "#FFA630")) +
+#    ggtitle("Ricker Model") + xlab(paste0("alpha_", tolower(i))) +
+ #   geom_vline(xintercept = 0, linetype = "dashed")
   
-  ggsave(alpha, file=paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/alpha_", tolower(i), "_", date, ".png"), width = 12, height = 9)
+  #ggsave(alpha, file=paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posterior_figures/", date, "/alpha_", tolower(i), "_", date, ".png"), width = 12, height = 9)
   
-}
+#}
 
 for(i in species){
   

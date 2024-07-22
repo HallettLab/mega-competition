@@ -1,5 +1,6 @@
 ## Model 
 model.dat <- read.csv("data/model_dat_unfilt.csv")
+#model.dat.filt <- read.csv("data/model_dat.csv")
 
 date <- 20240714
 
