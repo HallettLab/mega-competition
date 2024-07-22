@@ -1,13 +1,11 @@
 write.csv(natcommC_vis, "analyses/interactions_v_traits/structural_coexistence/nat_only_structural_results_20240713.csv")
 
-
 fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/"
 
 calcSE<-function(x){
   x2<-na.omit(x)
   sd(x2)/sqrt(length(x2))
 }
-
 
 ## set up for visualisation
 natcommC_vis = allcommC %>%
@@ -17,21 +15,21 @@ natcommC_vis = allcommC %>%
 ## Explore native sp structural results
 ggplot(allcommC, aes(x=feasibility)) +
   geom_bar()
-## 22601 NAs for feasibility, N diff, and Fitness diff
+## 20401 NAs for feasibility, N diff, and Fitness diff
 
 ggsave(paste0(fig_loc, "nat_sp_feasibility_barchart.png"), width = 4, height = 3)
 
 nrow(natcommC_vis[natcommC_vis$feasibility == 1 & !is.na(natcommC_vis$feasibility),])
-## 34 feasible comm 
+## 175 feasible comm 
 nrow(natcommC_vis[!is.na(natcommC_vis$feasibility),])
-## 2000 rows that are not NAs for feasibility, etc. 
+## 4800 rows that are not NAs for feasibility, etc. 
 
 nat_comms_filt = natcommC_vis %>%
   filter(!is.na(feasibility))
 ## all sp present in these comms
 
 unique(nat_comms_filt$comp)
-## 10 unique communities; 10x200 = 2000; calculations for these communities worked every time & the ones that did not work didn't work any of the 200 times
+## 24 unique communities; 24x200 = 4800; calculations for these communities worked every time & the ones that did not work didn't work any of the 200 times
 
 ## comm with NAs
 nat_comms_NA = natcommC_vis %>%
@@ -74,15 +72,43 @@ prop_feas = natcommC_vis %>%
             se_niche = calcSE(niche_diff),
             se_fitness = calcSE(fitness_diff)) %>%
   mutate(w_legume = ifelse(substr(comp, start = 5, stop = 5) == 1, 1, 
-                           ifelse(substr(comp, start = 9, stop = 9) == 1, 1, 0))) %>%
+                           ifelse(substr(comp, start = 9, stop = 9) == 1, 1, 0)),
+         w_ACAM = ifelse(substr(comp, start = 5, stop = 5) == 1, 1, 0),
+         w_TWIL = ifelse(substr(comp, start = 9, stop = 9) == 1, 1, 0)) %>%
   filter(!is.na(num_feas))
 
-ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_legume))) +
+ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible)) +
   geom_bar(stat = 'identity') +
-  ggtitle("Invasive only 4sp Comm") +
+  ggtitle("Native only 4sp Comm, D") +
   xlab("Composition") +
   ylab("Prop Feasible Comm (200 draws)")
 ggsave(paste0(fig_loc, "nat_only_D_4spcomm.png"), width = 10, height = 3)
+
+ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_legume))) +
+  geom_bar(stat = 'identity') +
+  ggtitle("Native only 4sp Comm, D") +
+  xlab("Composition") +
+  ylab("Prop Feasible Comm (200 draws)") +
+  scale_fill_manual(values = c("#A5AA99", "#24796C"))
+ggsave(paste0(fig_loc, "nat_only_D_4spcomm_legume.png"), width = 10, height = 3)
+
+ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_ACAM))) +
+  geom_bar(stat = 'identity') +
+  ggtitle("Native only 4sp Comm, D") +
+  xlab("Composition") +
+  ylab("Prop Feasible Comm (200 draws)") +
+  scale_fill_manual(values = c("#A5AA99", "#24796C"))
+ggsave(paste0(fig_loc, "nat_only_D_4spcomm_ACAM.png"), width = 10, height = 3)
+
+ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_TWIL))) +
+  geom_bar(stat = 'identity') +
+  ggtitle("Native only 4sp Comm, D") +
+  xlab("Composition") +
+  ylab("Prop Feasible Comm (200 draws)") +
+  scale_fill_manual(values = c("#A5AA99", "#24796C"))
+ggsave(paste0(fig_loc, "nat_only_D_4spcomm_TWIL.png"), width = 10, height = 3)
+
+#E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
 
 ggplot(prop_feas, aes(x=mean_niche, y=mean_fitness, color = as.factor(w_legume))) +
   geom_point() +

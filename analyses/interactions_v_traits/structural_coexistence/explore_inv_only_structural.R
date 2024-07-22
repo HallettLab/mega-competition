@@ -23,6 +23,11 @@ ggsave(paste0(fig_loc, "inv_only_D_feasibility_barchart.png"), width = 4, height
 nrow(invcommC[invcommC$feasibility == 1,])
 ## 54 feasible comm out of total of 3000
 
+invcommC_vis_filt = invcommC_vis %>%
+  filter(is.na(feasibility))
+
+unique(invcommC_vis_filt$comp)
+
 ## niche diffs
 ggplot(invcommC, aes(x=niche_diff)) +
   geom_histogram()
