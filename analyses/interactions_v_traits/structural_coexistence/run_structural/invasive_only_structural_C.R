@@ -17,21 +17,6 @@ source(paste0(code_loc, "toolbox_figure.R"))
 ## load posteriors
 source("analyses/interactions_v_traits/random_draws/clean_posteriors.R")
 
-# Trouble shooting ####
-## try  just invasive species - far fewer combinations, may be able to figure out why the NAs are popping up
-
-## invasives: 
-## ANAR, BRHO, CESO, LOMU, TACA, THIR
-## this misses BRNI, which probably need to go back to the samples for this to determine why no intraspecific coeff
-
-# Prep DF ####
-
-## Ideal data format for this... matrix of interaction coeff? from one model run
-## need to select the same phyto species and background species 
-## for instance, GITR, PLER, MICA and alpha_gitr, alpha_pler, alpha_mica
-
-## need an if-else statement to handle NAs
-
 # Set up Loop ####
 ## create a vector of the number of posterior draws
 posts <- 1:3750
@@ -51,21 +36,21 @@ invcommC <- data.frame(ANAR = NA, BRHO = NA, CESO=NA, LOMU= NA, TACA= NA, THIR= 
 
 ## function for N-diff errors ####
 #n_diff_error_catch <- function(alpha){
- # tryCatch(
-    
-  #  {## try the n-diff function from Saavedra 2017
-   #   n <- Omega(alpha=alpha)
-    #  return(n)
-    #},
-    #if an error occurs, tell me the error
-    #error=function(e) {
-     # message('An Error Occurred')
-      #print(e)
-      
-      #return(NA)
-      
-    #}
-  #)
+# tryCatch(
+
+#  {## try the n-diff function from Saavedra 2017
+#   n <- Omega(alpha=alpha)
+#  return(n)
+#},
+#if an error occurs, tell me the error
+#error=function(e) {
+# message('An Error Occurred')
+#print(e)
+
+#return(NA)
+
+#}
+#)
 #}
 
 # 4 Sp Calcs ####
@@ -78,7 +63,7 @@ for(j in 1:nrow(comp4)){
   ## filter data
   prep <- posts_clean %>%
     filter(species %in% cc) %>%
-    select(species, lambda_c, paste0("alpha_", tolower(cc[1]), "_d"), paste0("alpha_", tolower(cc[2]), "_d"), paste0("alpha_", tolower(cc[3]), "_d"), paste0("alpha_", tolower(cc[4]), "_d"))
+    select(species, lambda_c, paste0("alpha_", tolower(cc[1]), "_c"), paste0("alpha_", tolower(cc[2]), "_c"), paste0("alpha_", tolower(cc[3]), "_c"), paste0("alpha_", tolower(cc[4]), "_c"))
   
   ## iterate over posterior draws
   for (i in 1:length(draws)) {
@@ -142,15 +127,17 @@ for(j in 1:nrow(comp4)){
     ## get comm composition back into dataframe
     temp <- temp %>%
       mutate(ANAR = ifelse("ANAR" %in% colnames(tmp_alphas), 1, 0),
-        BRHO = ifelse("BRHO" %in% colnames(tmp_alphas), 1, 0),
-        CESO = ifelse("CESO" %in% colnames(tmp_alphas), 1, 0), 
-        LOMU = ifelse("LOMU" %in% colnames(tmp_alphas), 1, 0),
-        TACA = ifelse("TACA" %in% colnames(tmp_alphas), 1, 0),
-        THIR = ifelse("THIR" %in% colnames(tmp_alphas), 1, 0),
-        draw = d) ## add treatment column
+             BRHO = ifelse("BRHO" %in% colnames(tmp_alphas), 1, 0),
+             CESO = ifelse("CESO" %in% colnames(tmp_alphas), 1, 0), 
+             LOMU = ifelse("LOMU" %in% colnames(tmp_alphas), 1, 0),
+             TACA = ifelse("TACA" %in% colnames(tmp_alphas), 1, 0),
+             THIR = ifelse("THIR" %in% colnames(tmp_alphas), 1, 0),
+             draw = d) ## add treatment column
     
     ## join with original dataframe
     invcommC <- rbind(invcommC, temp)
     
   }
 }
+
+write.csv(invcommC, "analyses/interactions_v_traits/structural_coexistence/inv_only_C_structural_results_20240729.csv")

@@ -1,69 +1,63 @@
-write.csv(natcommC_vis, "analyses/interactions_v_traits/structural_coexistence/nat_only_structural_results_20240713.csv")
 
-fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/"
+# Set up Env ####
+library(tidyverse)
 
 calcSE<-function(x){
   x2<-na.omit(x)
   sd(x2)/sqrt(length(x2))
 }
 
-## set up for visualisation
-natcommC_vis = allcommC %>%
+fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/"
+theme_set(theme_classic())
+
+# Read in data ####
+natcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/nat_only_D_structural_results_20240729.csv")
+
+# Clean data ####
+natcommD_vis = natcommD %>%
   filter(!is.na(GITR))%>%
-  mutate(comp = paste0(GITR, LENI, MICA, PLER, ACAM, AMME, MAEL, PLNO, TWIL))
+  mutate(comp = paste0(GITR, LENI, MICA, PLER, ACAM, AMME, PLNO, TWIL),
+         treatment = "D")
 
-## Explore native sp structural results
-ggplot(allcommC, aes(x=feasibility)) +
+## Explore missing data ####
+ggplot(natcommD_vis, aes(x=feasibility)) +
   geom_bar()
-## 20401 NAs for feasibility, N diff, and Fitness diff
+## 9400 NAs for feasibility, N diff, and Fitness diff
 
-ggsave(paste0(fig_loc, "nat_sp_feasibility_barchart.png"), width = 4, height = 3)
+nrow(natcommD_vis[natcommD_vis$feasibility == 1 & !is.na(natcommD_vis$feasibility),])
+## 163 feasible comm 
+nrow(natcommD_vis[!is.na(natcommD_vis$feasibility),])
+## 4600 rows that are not NAs for feasibility, etc. 
 
-nrow(natcommC_vis[natcommC_vis$feasibility == 1 & !is.na(natcommC_vis$feasibility),])
-## 175 feasible comm 
-nrow(natcommC_vis[!is.na(natcommC_vis$feasibility),])
-## 4800 rows that are not NAs for feasibility, etc. 
-
-nat_comms_filt = natcommC_vis %>%
+natcommD_filt = natcommD_vis %>%
   filter(!is.na(feasibility))
 ## all sp present in these comms
 
-unique(nat_comms_filt$comp)
-## 24 unique communities; 24x200 = 4800; calculations for these communities worked every time & the ones that did not work didn't work any of the 200 times
+unique(natcommD_filt$comp)
+## 23 unique communities; 23x200 = 4600; calculations for these communities worked every time & the ones that did not work didn't work any of the 200 times
 
-## comm with NAs
-nat_comms_NA = natcommC_vis %>%
-  filter(is.na(feasibility))
-
-
-
-
-
+# Explore Raw Outputs ####
 ## niche diffs
-ggplot(natcommC_vis, aes(x=niche_diff)) +
+ggplot(natcommD_filt, aes(x=niche_diff)) +
   geom_histogram()
-ggsave(paste0(fig_loc, "nat_only_D_niche_diffs_hist.png"), width = 4, height = 3)
 
 ## fitness diffs
-ggplot(natcommC_vis, aes(x=fitness_diff)) +
+ggplot(natcommD_filt, aes(x=fitness_diff)) +
   geom_histogram()
-ggsave(paste0(fig_loc, "nat_only_D_fitness_diffs_hist.png"), width = 4, height = 3)
 
 ## by composition & legume presence
-ggplot(natcommC_vis, aes(x=niche_diff, fill = as.factor(ACAM))) +
+ggplot(natcommD_filt, aes(x=niche_diff, fill = as.factor(ACAM))) +
   geom_histogram() +
   facet_wrap(~comp, scales = "free") +
   geom_vline(xintercept = 0, linetype = "dashed")
-#ggsave(paste0(fig_loc, "niche_diffs_hist.png"), width = 10, height = 6)
 
-ggplot(natcommC_vis, aes(x=niche_diff, color = as.factor(comp))) +
+## by composition
+ggplot(natcommD_filt, aes(x=niche_diff, color = as.factor(comp))) +
   geom_density()   
-ggsave(paste0(fig_loc, "nat_only_D_niche_diffs_densplot_comps.png"), width = 6, height = 4)
 
-## calculate proportion feasible
-prop_feas = natcommC_vis %>%
-  #filter(niche_diff != -Inf) %>%
- # mutate(comp = paste0(ANAR, BRHO, CESO, LOMU, TACA, THIR)) %>%
+# Summarise ####
+## Prop Feasible ####
+prop_feas = natcommD_filt %>%
   group_by(comp) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),
@@ -82,7 +76,7 @@ ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible)) +
   ggtitle("Native only 4sp Comm, D") +
   xlab("Composition") +
   ylab("Prop Feasible Comm (200 draws)")
-ggsave(paste0(fig_loc, "nat_only_D_4spcomm.png"), width = 10, height = 3)
+#ggsave(paste0(fig_loc, "nat_only_C_4spcomm.png"), width = 10, height = 3)
 
 ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_legume))) +
   geom_bar(stat = 'identity') +
@@ -90,23 +84,23 @@ ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_leg
   xlab("Composition") +
   ylab("Prop Feasible Comm (200 draws)") +
   scale_fill_manual(values = c("#A5AA99", "#24796C"))
-ggsave(paste0(fig_loc, "nat_only_D_4spcomm_legume.png"), width = 10, height = 3)
+#ggsave(paste0(fig_loc, "nat_only_C_4spcomm_legume.png"), width = 10, height = 3)
 
 ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_ACAM))) +
   geom_bar(stat = 'identity') +
-  ggtitle("Native only 4sp Comm, D") +
+  ggtitle("Native only 4sp Comm, C") +
   xlab("Composition") +
   ylab("Prop Feasible Comm (200 draws)") +
   scale_fill_manual(values = c("#A5AA99", "#24796C"))
-ggsave(paste0(fig_loc, "nat_only_D_4spcomm_ACAM.png"), width = 10, height = 3)
+#ggsave(paste0(fig_loc, "nat_only_C_4spcomm_ACAM.png"), width = 10, height = 3)
 
 ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_TWIL))) +
   geom_bar(stat = 'identity') +
-  ggtitle("Native only 4sp Comm, D") +
+  ggtitle("Native only 4sp Comm, C") +
   xlab("Composition") +
   ylab("Prop Feasible Comm (200 draws)") +
   scale_fill_manual(values = c("#A5AA99", "#24796C"))
-ggsave(paste0(fig_loc, "nat_only_D_4spcomm_TWIL.png"), width = 10, height = 3)
+#ggsave(paste0(fig_loc, "nat_only_C_4spcomm_TWIL.png"), width = 10, height = 3)
 
 #E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
 
@@ -114,4 +108,21 @@ ggplot(prop_feas, aes(x=mean_niche, y=mean_fitness, color = as.factor(w_legume))
   geom_point() +
   geom_errorbar(aes(ymin = mean_fitness - se_fitness, ymax = mean_fitness + se_fitness), width = 0.05)+
   geom_errorbarh(aes(xmax = mean_niche + se_niche, xmin = mean_niche - se_niche), height = 1)
-ggsave(paste0(fig_loc, "nat_only_D_niche_fitness_diffs_scatter.png"), width = 6, height = 3)
+#ggsave(paste0(fig_loc, "nat_only_D_niche_fitness_diffs_scatter.png"), width = 6, height = 3)
+
+
+## Prop Feasible by Sp ####
+num_pres = natcommD_filt %>%
+  pivot_longer(c(2:9), names_to = "species", values_to = "PA") %>%
+  select(-X) %>%
+  filter(PA != 0) %>%
+  group_by(species, comp) %>%
+  summarise(num_feas = sum(feasibility)) %>%
+  mutate(feas_PA = ifelse(num_feas > 0, 1, 0)) %>%
+  ungroup() %>%
+  group_by(species) %>%
+  summarise(num_feas_present = sum(feas_PA))
+  
+ggplot(num_pres, aes(x=species, y=num_feas_present)) +
+  geom_bar(stat = 'identity')
+

@@ -2,10 +2,11 @@
 ## structural coexistence
 ## for 4 species communities
 
-# Set up ####
+# Set up Env ####
 set.seed(10)
 
 library(RcppAlgos)
+library(tidyverse)
 
 code_loc <- "analyses/interactions_v_traits/structural_coexistence/Saavedra_2017_code/"
 
@@ -15,14 +16,6 @@ source(paste0(code_loc, "toolbox_figure.R"))
 
 ## load posteriors
 source("analyses/interactions_v_traits/random_draws/clean_posteriors.R")
-
-# Prep DF ####
-
-## Ideal data format for this... matrix of interaction coeff? from one model run
-## need to select the same phyto species and background species 
-## for instance, GITR, PLER, MICA and alpha_gitr, alpha_pler, alpha_mica
-
-## need an if-else statement to handle NAs
 
 # Set up Loop ####
 ## create a vector of the number of posterior draws
@@ -34,16 +27,16 @@ draws <- sample(posts, 200, replace = FALSE)
 ## species vector
 all.sp <- unique(posts_clean$species) 
 
-inv.sp = c("ANAR", "BRHO", "CESO", "TACA", "THIR", "LOMU")
+rm.sp = c("ANAR", "BRHO", "CESO", "TACA", "THIR", "LOMU", "BRNI", "MAEL")
+## taking out invasive species and MAEL currently because it is missing a lot of the interaction data
 
-sp1 = setdiff(all.sp, inv.sp)
-sp = sp1[-7]
+sp = setdiff(all.sp, rm.sp)
 
 ## create all possible combinations of composition at a given richness level
 comp4 <- data.frame(comboGeneral(sp, m=4, freqs = 1))
 
 ## create empty dataframe
-allcommC <- data.frame(GITR = NA, LENI = NA, MICA=NA, PLER= NA, ACAM= NA, AMME= NA, MAEL = NA, PLNO = NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
+natcommD <- data.frame(GITR = NA, LENI = NA, MICA=NA, PLER= NA, ACAM= NA, AMME= NA, PLNO = NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
 
 ## function for N-diff errors ####
 #n_diff_error_catch <- function(alpha){
@@ -64,7 +57,7 @@ allcommC <- data.frame(GITR = NA, LENI = NA, MICA=NA, PLER= NA, ACAM= NA, AMME= 
   #)
 #}
 
-# 4 Sp Calcs ####
+# Run Loop: 4 Sp Calcs ####
 ## iterate over each possible community composition
 for(j in 1:nrow(comp4)){
   
@@ -117,7 +110,6 @@ for(j in 1:nrow(comp4)){
       ## calculate structural fitness differences
       fitness <- theta(alpha = tmp_alphas, r=tmp_igr) 
       
-      
     } else {
       
       f <- NA
@@ -125,7 +117,6 @@ for(j in 1:nrow(comp4)){
       fitness <- NA
       
     }
-    
     
     ## create dataframe
     temp <- data.frame(feasibility=NA)
@@ -139,31 +130,19 @@ for(j in 1:nrow(comp4)){
     temp <- temp %>%
       mutate(ACAM = ifelse("ACAM" %in% colnames(tmp_alphas), 1, 0), 
              AMME = ifelse("AMME" %in% colnames(tmp_alphas), 1, 0),
-             #ANAR = ifelse("ANAR" %in% colnames(tmp_alphas), 1, 0),
-             #BRHO = ifelse("BRHO" %in% colnames(tmp_alphas), 1, 0),
-             #CESO = ifelse("CESO" %in% colnames(tmp_alphas), 1, 0), 
              GITR = ifelse("GITR" %in% colnames(tmp_alphas), 1, 0), 
              LENI = ifelse("LENI" %in% colnames(tmp_alphas), 1, 0),
-             #LOMU = ifelse("LOMU" %in% colnames(tmp_alphas), 1, 0),
-             MAEL = ifelse("MAEL" %in% colnames(tmp_alphas), 1, 0),
+             #MAEL = ifelse("MAEL" %in% colnames(tmp_alphas), 1, 0),
              MICA = ifelse("MICA" %in% colnames(tmp_alphas), 1, 0),
              PLER = ifelse("PLER" %in% colnames(tmp_alphas), 1, 0),
              PLNO = ifelse("PLNO" %in% colnames(tmp_alphas), 1, 0), 
-             #TACA = ifelse("TACA" %in% colnames(tmp_alphas), 1, 0),
-             #THIR = ifelse("THIR" %in% colnames(tmp_alphas), 1, 0),
              TWIL = ifelse("TWIL" %in% colnames(tmp_alphas), 1, 0), 
-             draw = d) ## add treatment column
+             draw = d)
     
     ## join with original dataframe
-    allcommC <- rbind(allcommC, temp)
+    natcommD <- rbind(natcommD, temp)
     
   }
 }
 
-#allcomm <- allcomm[-1,]
-
-ggplot(allcommC, aes(x=feasibility)) +
-  geom_bar()
-
-ggplot(allcommC, aes(x=niche_diff)) +
-  geom_density()
+write.csv(natcommD, "analyses/interactions_v_traits/structural_coexistence/nat_only_D_structural_results_20240729.csv")

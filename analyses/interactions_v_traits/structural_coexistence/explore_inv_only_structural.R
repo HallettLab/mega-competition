@@ -8,6 +8,8 @@ calcSE<-function(x){
   sd(x2)/sqrt(length(x2))
 }
 
+theme_set(theme_classic())
+
 
 ## set up for visualisation
 invcommC_vis = invcommC %>%
@@ -24,7 +26,7 @@ nrow(invcommC[invcommC$feasibility == 1,])
 ## 54 feasible comm out of total of 3000
 
 invcommC_vis_filt = invcommC_vis %>%
-  filter(is.na(feasibility))
+  filter(!is.na(feasibility))
 
 unique(invcommC_vis_filt$comp)
 
@@ -67,8 +69,18 @@ ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_leg
   geom_bar(stat = 'identity') +
   ggtitle("Invasive only 4sp Comm") +
   xlab("Composition") +
+  scale_fill_manual(values = c("#A5AA99", "#24796C")) +
   ylab("Prop Feasible Comm (200 draws)")
-ggsave(paste0(fig_loc, "inv_only_D_4spcomm.png"), width = 10, height = 3)
+ggsave(paste0(fig_loc, "inv_only_C_4spcomm_legume.png"), width = 10, height = 3)
+
+ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible)) +
+  geom_bar(stat = 'identity') +
+  ggtitle("Invasive only 4sp Comm") +
+  xlab("Composition") +
+  ylab("Prop Feasible Comm (200 draws)")
+ggsave(paste0(fig_loc, "inv_only_C_4spcomm.png"), width = 7, height = 3)
+
+
 
 ggplot(prop_feas, aes(x=mean_niche, y=mean_fitness, color = as.factor(w_legume))) +
   geom_point() +
