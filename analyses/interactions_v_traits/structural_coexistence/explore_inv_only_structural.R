@@ -1,61 +1,59 @@
-## save the invasive only structural dat
-write.csv(invcommC, "analyses/interactions_v_traits/structural_coexistence/inv_only_structural_results_D_20240713.csv")
 
-fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/"
+# Set up Env ####
+library(tidyverse)
 
 calcSE<-function(x){
   x2<-na.omit(x)
   sd(x2)/sqrt(length(x2))
 }
 
+fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/"
 theme_set(theme_classic())
 
+# Read in data ####
+invcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/inv_only_D_structural_results_20240729.csv")
+
+invcommC = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/inv_only_C_structural_results_20240729.csv")
+
+# Clean data ####
+invcommD_vis = invcommD %>%
+  filter(!is.na(ANAR))%>%
+  mutate(comp = paste0(ANAR, BRHO, CESO, LOMU, TACA, THIR),
+         treatment = "D")
 
 ## set up for visualisation
 invcommC_vis = invcommC %>%
   filter(!is.na(BRHO))%>%
-  mutate(comp = paste0(ANAR, BRHO, CESO, LOMU, TACA, THIR))
+  mutate(comp = paste0(ANAR, BRHO, CESO, LOMU, TACA, THIR),
+         treatment = "C")
 
-## Explore invasive sp structural results
-ggplot(invcommC, aes(x=feasibility)) +
-  geom_bar()
+## join together
+allinv = rbind(invcommC_vis, invcommD_vis) %>%
+  select(-X)
 
-ggsave(paste0(fig_loc, "inv_only_D_feasibility_barchart.png"), width = 4, height = 3)
+## Explore Raw Data ####
+ggplot(allinv, aes(x=feasibility)) +
+  geom_bar() +
+  facet_wrap(~treatment)
 
-nrow(invcommC[invcommC$feasibility == 1,])
-## 54 feasible comm out of total of 3000
-
-invcommC_vis_filt = invcommC_vis %>%
-  filter(!is.na(feasibility))
-
-unique(invcommC_vis_filt$comp)
+nrow(allinv[allinv$feasibility == 1,])
+## 107 feasible comm out of total of 6000
 
 ## niche diffs
-ggplot(invcommC, aes(x=niche_diff)) +
-  geom_histogram()
-ggsave(paste0(fig_loc, "inv_only_D_niche_diffs_hist.png"), width = 4, height = 3)
+ggplot(allinv, aes(x=niche_diff)) +
+  geom_histogram() +
+  facet_wrap(~treatment)
 
 ## fitness diffs
-ggplot(invcommC, aes(x=fitness_diff)) +
-  geom_histogram()
-ggsave(paste0(fig_loc, "inv_only_D_fitness_diffs_hist.png"), width = 4, height = 3)
-
-## by composition & legume presence
-ggplot(invcommC_vis, aes(x=niche_diff, fill = as.factor(THIR))) +
+ggplot(allinv, aes(x=fitness_diff)) +
   geom_histogram() +
-  facet_wrap(~comp, ncol = 5, nrow = 3, scales = "free") +
-  geom_vline(xintercept = 0, linetype = "dashed")
-ggsave(paste0(fig_loc, "inv_only_D_niche_diffs_hist.png"), width = 10, height = 6)
+  facet_wrap(~treatment)
 
-ggplot(invcommC_vis, aes(x=niche_diff, color = as.factor(comp))) +
-  geom_density()   
-ggsave(paste0(fig_loc, "inv_only_D_niche_diffs_densplot_comps.png"), width = 6, height = 4)
-  
-## calculate proportion feasible
-prop_feas = invcommC %>%
-  filter(niche_diff != -Inf) %>%
+# Summarise ####
+## Prop Feasible ####
+prop_feas = allinv %>%
   mutate(comp = paste0(ANAR, BRHO, CESO, LOMU, TACA, THIR)) %>%
-  group_by(comp) %>%
+  group_by(comp, treatment) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),
             mean_niche = mean(niche_diff),
@@ -67,6 +65,7 @@ prop_feas = invcommC %>%
 
 ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_legume))) +
   geom_bar(stat = 'identity') +
+  facet_wrap(~treatment, nrow = 2, ncol = 1)+
   ggtitle("Invasive only 4sp Comm") +
   xlab("Composition") +
   scale_fill_manual(values = c("#A5AA99", "#24796C")) +
@@ -87,3 +86,22 @@ ggplot(prop_feas, aes(x=mean_niche, y=mean_fitness, color = as.factor(w_legume))
   geom_errorbar(aes(ymin = mean_fitness - se_fitness, ymax = mean_fitness + se_fitness), width = 0.05)+
   geom_errorbarh(aes(xmax = mean_niche + se_niche, xmin = mean_niche - se_niche), height = 1)
 ggsave(paste0(fig_loc, "inv_only_D_niche_fitness_diffs_scatter.png"), width = 6, height = 3)
+
+## Prop Feasible by Sp ####
+num_pres = allinv %>%
+  pivot_longer(c(1:6), names_to = "species", values_to = "PA") %>%
+  filter(PA != 0) %>%
+  group_by(species, comp, treatment) %>%
+  summarise(num_feas = sum(feasibility)) %>%
+  mutate(feas_PA = ifelse(num_feas > 0, 1, 0)) %>%
+  ungroup() %>%
+  group_by(species, treatment) %>%
+  summarise(num_feas_present = sum(feas_PA))
+
+ggplot(num_pres, aes(x=species, y=num_feas_present)) +
+  geom_bar(stat = 'identity') +
+  facet_wrap(~treatment) +
+  ylab("Number of Feasible Communities where Present") +
+  xlab("Species")
+
+ggsave(paste0(fig_loc, "inv_num_comm_present.png"), width = 10, height = 4)

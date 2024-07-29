@@ -11,13 +11,26 @@ fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/"
 theme_set(theme_classic())
 
 # Read in data ####
-natcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/nat_only_D_structural_results_20240729.csv")
+natcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/nat_only_D_structural_results_20240729.csv")
+
+natcommC = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/nat_only_C_structural_results_20240729.csv")
 
 # Clean data ####
 natcommD_vis = natcommD %>%
   filter(!is.na(GITR))%>%
-  mutate(comp = paste0(GITR, LENI, MICA, PLER, ACAM, AMME, PLNO, TWIL),
+  mutate(MAEL = 0,
+    comp = paste0(GITR, LENI, MICA, PLER, ACAM, AMME, PLNO, TWIL, MAEL),
          treatment = "D")
+
+natcommC_vis = natcommC %>%
+  filter(!is.na(GITR))%>%
+  mutate(AMME = 0, TWIL = 0,
+    comp = paste0(GITR, LENI, MICA, PLER, ACAM, AMME, PLNO, TWIL, MAEL),
+         treatment = "C")
+
+## join together
+allnat = rbind(natcommC_vis, natcommD_vis) %>%
+  select(-X)
 
 ## Explore missing data ####
 ggplot(natcommD_vis, aes(x=feasibility)) +
@@ -110,19 +123,24 @@ ggplot(prop_feas, aes(x=mean_niche, y=mean_fitness, color = as.factor(w_legume))
   geom_errorbarh(aes(xmax = mean_niche + se_niche, xmin = mean_niche - se_niche), height = 1)
 #ggsave(paste0(fig_loc, "nat_only_D_niche_fitness_diffs_scatter.png"), width = 6, height = 3)
 
-
 ## Prop Feasible by Sp ####
-num_pres = natcommD_filt %>%
-  pivot_longer(c(2:9), names_to = "species", values_to = "PA") %>%
-  select(-X) %>%
+num_pres = allnat %>%
+  pivot_longer(c(1:7,12,13), names_to = "species", values_to = "PA") %>%
   filter(PA != 0) %>%
-  group_by(species, comp) %>%
-  summarise(num_feas = sum(feasibility)) %>%
+  group_by(species, comp, treatment) %>%
+  summarise(num_feas = sum(feasibility, na.rm = T)) %>%
   mutate(feas_PA = ifelse(num_feas > 0, 1, 0)) %>%
   ungroup() %>%
-  group_by(species) %>%
-  summarise(num_feas_present = sum(feas_PA))
+  group_by(species, treatment) %>%
+  summarise(num_feas_present = sum(feas_PA)) %>%
+  mutate(legume = ifelse(species %in% c("ACAM", "TWIL"), 1, 0))
   
-ggplot(num_pres, aes(x=species, y=num_feas_present)) +
-  geom_bar(stat = 'identity')
+ggplot(num_pres, aes(x=species, y=num_feas_present, fill = as.factor(legume))) +
+  geom_bar(stat = 'identity') +
+  facet_wrap(~treatment) +
+  ylab("Number of Feasible Communities where Present") +
+  xlab("Species") +
+  scale_fill_manual(values = c("#A5AA99", "#24796C"))
+
+ggsave(paste0(fig_loc, "nat_num_comm_present.png"), width = 10, height = 4)
 
