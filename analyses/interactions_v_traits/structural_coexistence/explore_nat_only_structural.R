@@ -18,14 +18,12 @@ natcommC = read.csv("analyses/interactions_v_traits/structural_coexistence/run_s
 # Clean data ####
 natcommD_vis = natcommD %>%
   filter(!is.na(GITR))%>%
-  mutate(MAEL = 0,
-    comp = paste0(GITR, LENI, MICA, PLER, ACAM, AMME, PLNO, TWIL, MAEL),
+  mutate(comp = paste0(ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
          treatment = "D")
 
 natcommC_vis = natcommC %>%
   filter(!is.na(GITR))%>%
-  mutate(AMME = 0, TWIL = 0,
-    comp = paste0(GITR, LENI, MICA, PLER, ACAM, AMME, PLNO, TWIL, MAEL),
+  mutate(comp = paste0(ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
          treatment = "C")
 
 ## join together
@@ -33,99 +31,58 @@ allnat = rbind(natcommC_vis, natcommD_vis) %>%
   select(-X)
 
 ## Explore missing data ####
-ggplot(natcommD_vis, aes(x=feasibility)) +
+ggplot(allnat, aes(x=feasibility)) +
   geom_bar()
-## 9400 NAs for feasibility, N diff, and Fitness diff
+## 26400 NAs for feasibility, N diff, and Fitness diff
+26400/200 ## 132 NAs out of 252
+132/252
 
-nrow(natcommD_vis[natcommD_vis$feasibility == 1 & !is.na(natcommD_vis$feasibility),])
-## 163 feasible comm 
-nrow(natcommD_vis[!is.na(natcommD_vis$feasibility),])
-## 4600 rows that are not NAs for feasibility, etc. 
-
-natcommD_filt = natcommD_vis %>%
+allnat_filt = allnat %>%
   filter(!is.na(feasibility))
 ## all sp present in these comms
 
-unique(natcommD_filt$comp)
+unique(allnat_filt$comp)
 ## 23 unique communities; 23x200 = 4600; calculations for these communities worked every time & the ones that did not work didn't work any of the 200 times
-
-# Explore Raw Outputs ####
-## niche diffs
-ggplot(natcommD_filt, aes(x=niche_diff)) +
-  geom_histogram()
-
-## fitness diffs
-ggplot(natcommD_filt, aes(x=fitness_diff)) +
-  geom_histogram()
-
-## by composition & legume presence
-ggplot(natcommD_filt, aes(x=niche_diff, fill = as.factor(ACAM))) +
-  geom_histogram() +
-  facet_wrap(~comp, scales = "free") +
-  geom_vline(xintercept = 0, linetype = "dashed")
-
-## by composition
-ggplot(natcommD_filt, aes(x=niche_diff, color = as.factor(comp))) +
-  geom_density()   
 
 # Summarise ####
 ## Prop Feasible ####
-prop_feas = natcommD_filt %>%
-  group_by(comp) %>%
+prop_feas = allnat %>%
+  group_by(comp, treatment) %>%
+  filter(!is.na(feasibility)) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),
             mean_niche = mean(niche_diff),
             mean_fitness = mean(fitness_diff),
             se_niche = calcSE(niche_diff),
             se_fitness = calcSE(fitness_diff)) %>%
-  mutate(w_legume = ifelse(substr(comp, start = 5, stop = 5) == 1, 1, 
-                           ifelse(substr(comp, start = 9, stop = 9) == 1, 1, 0)),
-         w_ACAM = ifelse(substr(comp, start = 5, stop = 5) == 1, 1, 0),
-         w_TWIL = ifelse(substr(comp, start = 9, stop = 9) == 1, 1, 0)) %>%
-  filter(!is.na(num_feas))
+  mutate(w_legume = ifelse(substr(comp, start = 1, stop = 1) == 1, 1, 
+                           ifelse(substr(comp, start = 9, stop = 9) == 1, 1, 0)))
 
 ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible)) +
   geom_bar(stat = 'identity') +
-  ggtitle("Native only 4sp Comm, D") +
+  ggtitle("Native only 4sp Comm") +
   xlab("Composition") +
-  ylab("Prop Feasible Comm (200 draws)")
-#ggsave(paste0(fig_loc, "nat_only_C_4spcomm.png"), width = 10, height = 3)
+  ylab("Prop Feasible Comm (200 draws)") +
+  facet_wrap(~treatment, ncol = 1, nrow = 2)
 
 ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_legume))) +
   geom_bar(stat = 'identity') +
-  ggtitle("Native only 4sp Comm, D") +
+  ggtitle("Native only 4sp Comm") +
   xlab("Composition") +
   ylab("Prop Feasible Comm (200 draws)") +
-  scale_fill_manual(values = c("#A5AA99", "#24796C"))
-#ggsave(paste0(fig_loc, "nat_only_C_4spcomm_legume.png"), width = 10, height = 3)
+  scale_fill_manual(values = c("#A5AA99", "#24796C")) +
+  facet_wrap(~treatment, ncol = 1, nrow = 2)
+ggsave(paste0(fig_loc, "nat_only_4spcomm_legume.png"), width = 10, height = 6)
 
-ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_ACAM))) +
-  geom_bar(stat = 'identity') +
-  ggtitle("Native only 4sp Comm, C") +
-  xlab("Composition") +
-  ylab("Prop Feasible Comm (200 draws)") +
-  scale_fill_manual(values = c("#A5AA99", "#24796C"))
-#ggsave(paste0(fig_loc, "nat_only_C_4spcomm_ACAM.png"), width = 10, height = 3)
-
-ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_TWIL))) +
-  geom_bar(stat = 'identity') +
-  ggtitle("Native only 4sp Comm, C") +
-  xlab("Composition") +
-  ylab("Prop Feasible Comm (200 draws)") +
-  scale_fill_manual(values = c("#A5AA99", "#24796C"))
-#ggsave(paste0(fig_loc, "nat_only_C_4spcomm_TWIL.png"), width = 10, height = 3)
-
-#E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
-
-ggplot(prop_feas, aes(x=mean_niche, y=mean_fitness, color = as.factor(w_legume))) +
-  geom_point() +
+ggplot(prop_feas, aes(x=mean_niche, y=mean_fitness, color = treatment)) +
+  geom_point(aes(size = prop_feasible)) +
   geom_errorbar(aes(ymin = mean_fitness - se_fitness, ymax = mean_fitness + se_fitness), width = 0.05)+
   geom_errorbarh(aes(xmax = mean_niche + se_niche, xmin = mean_niche - se_niche), height = 1)
 #ggsave(paste0(fig_loc, "nat_only_D_niche_fitness_diffs_scatter.png"), width = 6, height = 3)
 
 ## Prop Feasible by Sp ####
 num_pres = allnat %>%
-  pivot_longer(c(1:7,12,13), names_to = "species", values_to = "PA") %>%
+  pivot_longer(c(1:9), names_to = "species", values_to = "PA") %>%
   filter(PA != 0) %>%
   group_by(species, comp, treatment) %>%
   summarise(num_feas = sum(feasibility, na.rm = T)) %>%
@@ -135,7 +92,7 @@ num_pres = allnat %>%
   summarise(num_feas_present = sum(feas_PA)) %>%
   mutate(legume = ifelse(species %in% c("ACAM", "TWIL"), 1, 0))
   
-ggplot(num_pres, aes(x=species, y=num_feas_present, fill = as.factor(legume))) +
+ggplot(num_pres, aes(x=species, y=num_feas_present)) +
   geom_bar(stat = 'identity') +
   facet_wrap(~treatment) +
   ylab("Number of Feasible Communities where Present") +

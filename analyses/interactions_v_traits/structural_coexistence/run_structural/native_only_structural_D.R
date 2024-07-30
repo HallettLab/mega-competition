@@ -27,8 +27,8 @@ draws <- sample(posts, 200, replace = FALSE)
 ## species vector
 all.sp <- unique(posts_clean$species) 
 
-rm.sp = c("ANAR", "BRHO", "CESO", "TACA", "THIR", "LOMU", "BRNI", "MAEL")
-## taking out invasive species and MAEL currently because it is missing a lot of the interaction data
+rm.sp = c("ANAR", "BRHO", "CESO", "TACA", "THIR", "LOMU", "BRNI")
+## taking out invasive species 
 
 sp = setdiff(all.sp, rm.sp)
 
@@ -36,26 +36,7 @@ sp = setdiff(all.sp, rm.sp)
 comp4 <- data.frame(comboGeneral(sp, m=4, freqs = 1))
 
 ## create empty dataframe
-natcommD <- data.frame(GITR = NA, LENI = NA, MICA=NA, PLER= NA, ACAM= NA, AMME= NA, PLNO = NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
-
-## function for N-diff errors ####
-#n_diff_error_catch <- function(alpha){
- # tryCatch(
-    
-  #  {## try the n-diff function from Saavedra 2017
-   #   n <- Omega(alpha=alpha)
-    #  return(n)
-    #},
-    #if an error occurs, tell me the error
-    #error=function(e) {
-     # message('An Error Occurred')
-      #print(e)
-      
-      #return(NA)
-      
-    #}
-  #)
-#}
+natcommD <- data.frame(ACAM= NA, AMME = NA, GITR = NA, LENI = NA, MAEL = NA, MICA=NA, PLER= NA, PLNO = NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
 
 # Run Loop: 4 Sp Calcs ####
 ## iterate over each possible community composition
@@ -132,7 +113,7 @@ for(j in 1:nrow(comp4)){
              AMME = ifelse("AMME" %in% colnames(tmp_alphas), 1, 0),
              GITR = ifelse("GITR" %in% colnames(tmp_alphas), 1, 0), 
              LENI = ifelse("LENI" %in% colnames(tmp_alphas), 1, 0),
-             #MAEL = ifelse("MAEL" %in% colnames(tmp_alphas), 1, 0),
+             MAEL = ifelse("MAEL" %in% colnames(tmp_alphas), 1, 0),
              MICA = ifelse("MICA" %in% colnames(tmp_alphas), 1, 0),
              PLER = ifelse("PLER" %in% colnames(tmp_alphas), 1, 0),
              PLNO = ifelse("PLNO" %in% colnames(tmp_alphas), 1, 0), 
@@ -145,4 +126,4 @@ for(j in 1:nrow(comp4)){
   }
 }
 
-write.csv(natcommD, "analyses/interactions_v_traits/structural_coexistence/nat_only_D_structural_results_20240729.csv")
+write.csv(natcommD, "analyses/interactions_v_traits/structural_coexistence/run_structural/nat_only_D_structural_results_20240729.csv")

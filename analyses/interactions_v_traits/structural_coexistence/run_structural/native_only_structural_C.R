@@ -26,7 +26,7 @@ draws <- sample(posts, 200, replace = FALSE)
 ## species vector
 all.sp <- unique(posts_clean$species) 
 
-rm.sp = c("ANAR", "BRHO", "CESO", "TACA", "THIR", "LOMU", "AMME", "TWIL", "BRNI")
+rm.sp = c("ANAR", "BRHO", "CESO", "TACA", "THIR", "LOMU", "BRNI")
 
 sp = setdiff(all.sp, rm.sp)
 
@@ -34,7 +34,7 @@ sp = setdiff(all.sp, rm.sp)
 comp4 <- data.frame(comboGeneral(sp, m=4, freqs = 1))
 
 ## create empty dataframe
-natcommC <- data.frame(GITR = NA, LENI = NA, MICA=NA, PLER= NA, ACAM= NA, MAEL = NA, PLNO = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
+natcommC <- data.frame(ACAM= NA, AMME = NA, GITR = NA, LENI = NA, MAEL = NA, MICA=NA, PLER= NA, PLNO = NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
 
 # 4 Sp Calcs ####
 ## iterate over each possible community composition
@@ -110,14 +110,14 @@ for(j in 1:nrow(comp4)){
     ## get comm composition back into dataframe
     temp <- temp %>%
       mutate(ACAM = ifelse("ACAM" %in% colnames(tmp_alphas), 1, 0), 
-        #AMME = ifelse("AMME" %in% colnames(tmp_alphas), 1, 0),
+        AMME = ifelse("AMME" %in% colnames(tmp_alphas), 1, 0),
         GITR = ifelse("GITR" %in% colnames(tmp_alphas), 1, 0), 
         LENI = ifelse("LENI" %in% colnames(tmp_alphas), 1, 0),
         MAEL = ifelse("MAEL" %in% colnames(tmp_alphas), 1, 0),
         MICA = ifelse("MICA" %in% colnames(tmp_alphas), 1, 0),
         PLER = ifelse("PLER" %in% colnames(tmp_alphas), 1, 0),
         PLNO = ifelse("PLNO" %in% colnames(tmp_alphas), 1, 0), 
-        #TWIL = ifelse("TWIL" %in% colnames(tmp_alphas), 1, 0), 
+        TWIL = ifelse("TWIL" %in% colnames(tmp_alphas), 1, 0), 
         draw = d) ## add treatment column
     
     ## join with original dataframe

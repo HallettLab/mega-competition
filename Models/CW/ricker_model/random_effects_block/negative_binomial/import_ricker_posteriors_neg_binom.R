@@ -11,14 +11,14 @@ theme_set(theme_classic())
 ## List Form ####
 species <- c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL")
 
-date <- 20231218
+date <- 20240714
 
 ricker_posteriors <- list()
 
 for(i in species){
 
     ## load non-constrained models
-    load(paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posteriors/ricker_",i, "_posteriors_random_effects_neg_binomial", date, ".rdata"))
+    load(paste0("models/CW/ricker_model/random_effects_block/negative_binomial/posteriors/ricker_",i, "_posteriors_random_effects_neg_binomial_unfilt", date, ".rdata"))
     
     ## print to see model that is loading
     print(i)
