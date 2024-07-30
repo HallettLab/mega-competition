@@ -25,33 +25,13 @@ posts <- 1:3750
 draws <- sample(posts, 200, replace = FALSE)
 
 ## species vector
-#sp <- unique(posts_clean$species)
+sp = c("ANAR", "BRHO", "BRNI", "CESO", "LOMU", "TACA", "THIR")
 
-sp = c("ANAR", "BRHO", "CESO", "TACA", "THIR", "LOMU")
 ## create all possible combinations of composition at a given richness level
 comp4 <- data.frame(comboGeneral(sp, m=4, freqs = 1))
 
 ## create empty dataframe
-invcommD <- data.frame(ANAR = NA, BRHO = NA, CESO=NA, LOMU= NA, TACA= NA, THIR= NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
-
-## function for N-diff errors ####
-#n_diff_error_catch <- function(alpha){
- # tryCatch(
-    
-  #  {## try the n-diff function from Saavedra 2017
-   #   n <- Omega(alpha=alpha)
-    #  return(n)
-    #},
-    #if an error occurs, tell me the error
-    #error=function(e) {
-     # message('An Error Occurred')
-      #print(e)
-      
-      #return(NA)
-      
-    #}
-  #)
-#}
+invcommD <- data.frame(ANAR = NA, BRHO = NA, BRNI = NA, CESO=NA, LOMU= NA, TACA= NA, THIR= NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, draw = NA)
 
 # 4 Sp Calcs ####
 ## iterate over each possible community composition
@@ -128,6 +108,7 @@ for(j in 1:nrow(comp4)){
     temp <- temp %>%
       mutate(ANAR = ifelse("ANAR" %in% colnames(tmp_alphas), 1, 0),
         BRHO = ifelse("BRHO" %in% colnames(tmp_alphas), 1, 0),
+        BRNI = ifelse("BRNI" %in% colnames(tmp_alphas), 1, 0),
         CESO = ifelse("CESO" %in% colnames(tmp_alphas), 1, 0), 
         LOMU = ifelse("LOMU" %in% colnames(tmp_alphas), 1, 0),
         TACA = ifelse("TACA" %in% colnames(tmp_alphas), 1, 0),
@@ -140,4 +121,4 @@ for(j in 1:nrow(comp4)){
   }
 }
 
-write.csv(invcommD, "analyses/interactions_v_traits/structural_coexistence/inv_only_D_structural_results_20240729.csv")
+write.csv(invcommD, "analyses/interactions_v_traits/structural_coexistence/run_structural/inv_only_D_structural_results_20240730.csv")
