@@ -3,6 +3,11 @@ fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/"
 theme_set(theme_classic())
 library(mFD)
 
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
+
 ## following instructions from this https://cmlmagneville.github.io/mFD/articles/Continuous_traits_framework.html#load-dataset to calculate functional diversity. 
 ## associated with paper: Magneville et al. 2022; Ecography
 
@@ -32,7 +37,7 @@ trait_sum = traits %>%
          m.d = mean(D)) 
 
 ## create matrix of traits with species as row-names
-sp = unique(trait_sum$phyto)
+sp = sort(unique(trait_sum$phyto))
 trait_sum = trait_sum[,-1]
 rownames(trait_sum) = sp
 
@@ -208,4 +213,77 @@ ggplot(allcomm, aes(x=fdiv, y=mean_fitness, color = origin))+
   facet_wrap(~treatment)
 
 ggsave(paste0(fig_loc, "fdiv_fitness.png"), width = 10, height = 4)
+
+## mixed communities ####
+mixcommC_vis = mixcommC %>%
+  filter(!is.na(GITR))%>%
+  mutate(comp = paste0(ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL),
+         treatment = "C")
+
+## select distinct community compositions
+mixcomms = mixcommC_vis[,c(1:16, 21)] %>%
+  distinct()
+
+## get names of compositions to save as rownames
+mix_cn = mixcomms$comp
+
+## create a matrix of P/A data with rownames of diff compositions
+mix_cmat = as.matrix(mixcomms[1:16])
+rownames(mix_cmat) = mix_cn
+
+## run final functional diversity calculation for each community
+mix_fdiv = alpha.fd.hill(
+  asb_sp_w = mix_cmat,
+  sp_dist = dist_mat_trait,
+  q=0, ## defines relative importance given to species weights compared to species distances; increasing q gives increasing importance to species weights rather than trait-based distances
+  tau = "mean"  ## defines threshold level applied to functional distances b/w species to determine functionally distinct sets of species
+  ## minimum would yield taxonomic div; maximum & q=2 would yield Rao's Q
+)
+
+## extract functional div metric
+mixcommfdiv = mix_fdiv$asb_FD_Hill
+
+## view
+hist(mixcommfdiv)
+
+## save into data frame
+mixcomms$fdiv = mixcommfdiv
+
+## join with structural output
+mix_fdiv = left_join(mixcommC_vis, mixcomms[, 17:18], by = "comp")
+
+names(mix_fdiv)
+
+mix_prop_feas = mix_fdiv %>%
+  filter(!is.na(feasibility)) %>%
+  mutate(num.inv = ANAR + BRHO + BRNI + CESO + LOMU + TACA + THIR) %>%
+  group_by(comp, treatment, fdiv, num.inv) %>%
+  summarise(num_feas = sum(feasibility),
+            prop_feasible = num_feas/n(),
+            mean_niche = mean(niche_diff),
+            mean_fitness = mean(fitness_diff),
+            se_niche = calcSE(niche_diff),
+            se_fitness = calcSE(fitness_diff)) %>%
+  filter(num.inv < 4)
+
+ggplot(mix_prop_feas, aes(x=as.factor(num.inv), y=prop_feasible)) +
+  geom_jitter() +
+  geom_boxplot()
+  
+
+ggplot(mix_prop_feas, aes(x=fdiv, y=prop_feasible))+
+  geom_point() +
+  geom_smooth(method = "lm") +
+  facet_wrap(~num.inv)
+
+ggplot(mix_prop_feas, aes(x=fdiv, y=mean_niche))+
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(mix_prop_feas, aes(x=fdiv, y=mean_fitness))+
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+
 
