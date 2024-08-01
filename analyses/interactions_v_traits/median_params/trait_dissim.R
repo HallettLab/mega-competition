@@ -1,28 +1,20 @@
 # Set up ####
 library(ggpubr)
 
-source("analyses/traits/trait_pcas_exploration.R")
+source("analyses/traits/clean_trait_data.R")
 source("analyses/interactions_v_traits/median_params/median_params_&_traits.R")
 
 # Calc Dissim ####
 ## calculate trait dissimilarities
-trait_sums <- MC.pca.ID %>%
-  mutate(species = phyto) %>%
-  group_by(species) %>%
-  ## calculate mean trait values
-  summarise(mean.height = mean(Height), 
-            mean.LDMC = mean(LDMC),
-            mean.SLA = mean(SLA), 
-            mean.RMF = mean(RMF), 
-            mean.CRSL = mean(CRSL), 
-            mean.D = mean(D),
-            mean.PF = mean(PF))
+trait_sums2 <- trait_sums %>%
+  ungroup() %>%
+  select(species, mean.height, mean.LDMC, mean.SLA, mean.RMF, mean.CRSL, mean.D, mean.PF)
 
 ## change data to matrix format
-trait.matrix <- as.matrix(trait_sums[,-1])
+trait.matrix <- as.matrix(trait_sums2[,-1])
 
 ## set rownames
-rownames(trait.matrix) <- unique(trait_sums$species) 
+rownames(trait.matrix) <- unique(trait_sums2$species) 
 
 ## scale trait data
 trait.matrix.sc <- scale(trait.matrix)
@@ -53,9 +45,9 @@ dissim.params <- left_join(alpha_sc_tmp, dissim.long, by = c("combo")) %>%
                              ifelse(phyto %in% c("TWIL", "THIR", "ACAM"), "Legume", "Forb")),
          resident = fct_relevel(resident, "ACAM", "THIR", "TWIL", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "ANAR", "BRNI", "CESO"), 
          phyto = fct_relevel(phyto, "ACAM", "THIR", "TWIL", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "ANAR", "BRNI", "CESO")) %>%
-  filter(dissimilarity != 0) %>% ## remove intra-specific alphas
-  mutate(phyto.fg = ifelse(phyto %in% c("AMME", "BRNI", "CESO", "MAEL", "PLNO"), "Large Forb", phyto.fg), 
-         resident.fg = ifelse(resident %in% c("AMME", "BRNI", "CESO", "MAEL", "PLNO"), "Large Forb", phyto.fg))
+  filter(dissimilarity != 0) #%>% ## remove intra-specific alphas
+  #mutate(phyto.fg = ifelse(phyto %in% c("AMME", "BRNI", "CESO", "MAEL", "PLNO"), "Large Forb", phyto.fg), 
+         #resident.fg = ifelse(resident %in% c("AMME", "BRNI", "CESO", "MAEL", "PLNO"), "Large Forb", phyto.fg))
 
 # Visualize ####
 ## Figure 1: ####
@@ -134,7 +126,7 @@ ggarrange(forb, grass, legume,
           legend = "bottom",
           labels = "AUTO")
 
-ggsave(paste0(fig_loc, "dissim_v_scaled_median_alphas_fg_facet_newcolor.png"), width = 10, height = 4)
+#ggsave(paste0(fig_loc, "dissim_v_scaled_median_alphas_fg_facet_newcolor.png"), width = 10, height = 4)
 
 t <- lm(alpha_scaled ~ dissimilarity + phyto.fg, data = dissim.params)
 summary(t)

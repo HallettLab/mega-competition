@@ -1,9 +1,14 @@
 ## the purpose of this script is to explore the greenhouse trait data and get PCA values for each species
 
 # Set up ####
+library(tidyverse)
 library(ggfortify)
 library(ggpubr)
-library(tidyverse)
+
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
 
 ## Read in data ####
 # specify dropbox pathway 
@@ -31,6 +36,8 @@ if(file.exists("/Users/carme/Dropbox (University of Oregon)/Mega_Competition/Dat
 trait.seed <- read.csv(paste0(lead, "20230202_Seed-Traits_cleaning.csv"))
 
 traits <- read.csv(paste0(lead.traits, "GreenhouseTraits.csv"))
+
+adult_trait_field_dat = read.csv(paste0(lead, "Megacomp_adult-traits.csv"))
 
 # Clean ####
 ## AG/BG ####
@@ -68,11 +75,15 @@ MC.traits <- traits %>%
 
 colnames(MC.traits) <- c("Taxon", "ID", "Rep", "Date.harvest", "Height.cm", "Fresh.leaf.mass.g", "Dry.leaf.mass.g", "LDMC", "Leaf.Area.cm2", "SLA.cm2.g", "Shoot.dry.biomass.g", "Root.dry.biomass.g", "Total.biomass.g", "RMF", "Root.volume.cm3", "Root.density.g.cm3", "Coarse.root.diameter.mm", "Length.mm", "Fine.root.length.mm", "Coarse.root.length.mm", "Coarse.root.specific.length.cm.g", "Fine.root.specific.length.cm.g", "Proportion.fine.roots", "phyto", "origin", "funct_group", "fg_origin", "interaction_type")
 
+height = adult_trait_field_dat %>%
+  select(code_4, Height_cm) %>%
+  mutate(phyto = code_4)
+
+MC.traits2 = left_join(MC.traits, height[2:3], by = c("phyto"))
+
 ## Seed Data ####
 trait.seed <- trait.seed[,-10] # get rid of height because we have better height data for adults 
 colnames(trait.seed)[17] <- "cn.seed"
-
-#trait <- merge(trait.seed, trait.adult, by.x = "code", by.y = "Code", all.x = F, all.y = T)
 
 MC.sp2 <- c("ACMAME", "AMSMEN", "ANAARV", "BROHOR", "BRANIG", "CENSOL", "GILTRI", "LEPNIT", "FESPER", "MADELE", "MICCAL", "PLAERE", "PLANOT", "ELYCAP", "TRIHIR", "TRIWIL")
 
@@ -85,12 +96,13 @@ trait.seed2[trait.seed2$code == "PLAERE",]$coat.thick <- 0.0104
 seed.mass <- trait.seed2 %>%
   select(Species, code, mass.mg)
 
+# Run PCAs ####
 # PCAs ####
 ## AG - BG traits ####
-all.traits <- c("Height.cm", "LDMC", "SLA.cm2.g", "RMF",  "Coarse.root.specific.length.cm.g", "Proportion.fine.roots", "Coarse.root.diameter.mm")
+all.traits <- c("Height_cm", "LDMC", "SLA.cm2.g", "RMF",  "Coarse.root.specific.length.cm.g", "Proportion.fine.roots", "Coarse.root.diameter.mm")
 
-temp <- MC.traits %>%
-  select(phyto, fg_origin, funct_group, Height.cm, LDMC, SLA.cm2.g, RMF, Coarse.root.specific.length.cm.g, Proportion.fine.roots, Coarse.root.diameter.mm)
+temp <- MC.traits2 %>%
+  select(phyto, fg_origin, funct_group, Height_cm, LDMC, SLA.cm2.g, RMF, Coarse.root.specific.length.cm.g, Proportion.fine.roots, Coarse.root.diameter.mm)
 
 names(temp) <- c("phyto", "fg_origin", "fg", "Height", "LDMC", "SLA", "RMF", "CRSL", "PF", "D")
 
@@ -103,50 +115,23 @@ autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadin
          loadings.label.colour="black", loadings.label.repel=TRUE) +
   theme_classic() +
   scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
-  
-  #geom_text(aes(label = code, col = Rating)) +
-   #stat_ellipse(aes(group = phyto, col = phyto)) + 
   theme(
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
-    legend.title = element_blank()) #+
-  #labs(loadings = c("1"))
+    legend.title = element_blank())
 
-ggsave("analyses/traits/preliminary_figures/pca_updatedtraits_fg.png", width = 7, height = 5)
+ggsave("analyses/traits/preliminary_figures/pca_updatedheight_fg.png", width = 7, height = 5)
 
 autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T,  col = "fg", size = 3.5, loadings.colour = "black",
-         ) +
+) +
   theme_classic() +
   scale_color_manual(values = c( "#ECB159", "#8CB9BD", "#156882")) +
-#  scale_color_manual(values = c( "#ECB159", "#8CB9BD",  "#B67352")) +
-  #geom_text(aes(label = code, col = Rating)) +
-  #stat_ellipse(aes(group = phyto, col = phyto)) + 
   theme(
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
     legend.title = element_blank()) +
   theme(text = element_text(size = 20)) +
-  #theme(plot.background = element_rect(fill = "#FEFBF6"),
-   #     panel.background = element_rect(fill = "#FEFBF6",
-    #                                    colour = "#FEFBF6"),
-     #   legend.key = element_rect(fill = "#FEFBF6"),
-      #  legend.background = element_rect(fill = "#FEFBF6")
-       #) +
   theme(legend.position="bottom")
 
-ggsave("analyses/traits/preliminary_figures/pca_newcolors_fg.png", width = 7, height = 5.5)
-
-
-#autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "interaction_type", size = 1.75, loadings.colour = "black",
-   #      loadings.label.colour="black", loadings.label.repel=TRUE) +
- # theme_classic() +
-  #scale_color_manual(values = c("#5D69B1","#52BCA3", "#E58606", "#99C945","#CC3A8E")) +
-  
-  #geom_text(aes(label = code, col = Rating)) +
-  #stat_ellipse(aes(group = interaction_type, col = interaction_type)) + 
-  #theme(
-  #  panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
-   # legend.title = element_blank())
-#E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
-#ggsave("analyses/traits/preliminary_figures/pca_alltraits_interaction_type.png", width = 7, height = 4)
+ggsave("analyses/traits/preliminary_figures/pca_newcolors_updatedheight_fg.png", width = 7, height = 5.5)
 
 ## Seed Trait PCAs ####
 seeds <- c("code_4", "nativity", "growth_form", "FunGroup", "ldd2", "wing.loading", "coat.perm", "E.S", "coat.thick",  "mass.mg", "set.time.mpsec", "shape",  "size", "appendage.type", "prop.C", "prop.N", "cn.seed")
@@ -159,12 +144,36 @@ summary(pca)
 seeds.pca <- cbind(trait.seed2, pca$x[,1:4])
 
 
-autoplot(pca, x = 1, y = 2, data = seeds.pca, frame = F, loadings = T, loadings.label = T, label = F,  size = 2, col = "Species", loadings.colour = "black", loadings.label.colour="black") + #col = "FunGroup",
+autoplot(pca, x = 1, y = 2, data = seeds.pca, frame = F, loadings = T, loadings.label = T, label = F,  size = 2, col = "Species", loadings.colour = "black", loadings.label.colour="black") + 
   theme_classic() +
-  #geom_text(aes(label = code, col = Rating)) +
-  #stat_ellipse(aes(group = group)) + 
   theme(
     panel.border = element_rect(colour = "black", fill = NA, size = 1),
     legend.title = element_blank())
 
-#ggsave("analyses/traits/preliminary_figures/seed-trait_pca.png", height = 4, width = 7)
+# Summarise ####
+## calculate mean trait values
+trait_sums <- MC.pca.ID %>%
+  mutate(species = phyto) %>%
+ # select(-PC3, -PC4, -PC5, -PC6, -PC7) %>%
+  group_by(fg_origin, fg, species) %>%
+  summarise(mean.height = median(Height), se.height = NA, ## no reps, just an average already
+            mean.LDMC = mean(LDMC), se.LDMC = calcSE(LDMC),
+            mean.SLA = mean(SLA), se.SLA = calcSE(SLA),
+            mean.RMF = mean(RMF), se.RMF = calcSE(RMF),
+            mean.CRSL = mean(CRSL), se.CRSL = calcSE(CRSL),
+            mean.D = mean(D), se.D = calcSE(D),
+            mean.PF = mean(PF), se.PF = calcSE(PF),
+            mean.PC1 = mean(PC1), se.PC1 = calcSE(PC1),
+            mean.PC2 = mean(PC2), se.PC2 = calcSE(PC2))
+
+## seed mass cleaning
+seed.sums = seed.mass %>%
+  mutate(phyto = paste0(substr(code, start = 1, stop = 2), substr(code, start = 4, stop = 5)),
+         phyto = ifelse(phyto == "TRHI", "THIR", phyto),
+         phyto = ifelse(phyto == "TRWI", "TWIL", phyto),
+         phyto = ifelse(phyto == "FEPE", "LOMU", phyto),
+         phyto = ifelse(phyto == "ELCA", "TACA", phyto)) %>%
+  mutate(mass.per.cap = mass.mg/10)
+
+# Clean up Env ####
+rm(height, trait.seed, trait.seed2, traits, facilitator, grass, lead, lead.traits, legume, MC.sp, MC.sp2, nonnative, adult_trait_field_dat, MC.pca, MC.traits, MC.traits2, pca, seed.mass, seeds.pca, temp, all.traits, seeds)

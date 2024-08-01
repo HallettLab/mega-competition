@@ -16,63 +16,31 @@ library(ggpattern)
 theme_set(theme_classic())
 
 psums <- read.csv("data/parameter_summaries_20240714_models.csv")
-source("analyses/traits/trait_pcas_exploration.R")
+source("analyses/traits/clean_trait_data.R")
 
 # Clean data ####
-## calculate mean trait values
-trait_sums <- MC.pca.ID %>%
-  mutate(species = phyto) %>%
-  group_by(fg_origin, fg, species) %>%
-  summarise(mean.height = mean(Height), se.height = calcSE(Height),
-            mean.LDMC = mean(LDMC), se.LDMC = calcSE(LDMC),
-            mean.SLA = mean(SLA), se.SLA = calcSE(SLA),
-            mean.RMF = mean(RMF), se.RMF = calcSE(RMF),
-            mean.CRSL = mean(CRSL), se.CRSL = calcSE(CRSL),
-            mean.D = mean(D), se.D = calcSE(D),
-            mean.PF = mean(PF), se.PF = calcSE(PF),
-            mean.PC1 = mean(PC1), se.PC1 = calcSE(PC1),
-            mean.PC2 = mean(PC2), se.PC2 = calcSE(PC2))
-
-## seed mass cleaning
-seed.sums = seed.mass %>%
-  mutate(phyto = paste0(substr(code, start = 1, stop = 2), substr(code, start = 4, stop = 5)),
-         phyto = ifelse(phyto == "TRHI", "THIR", phyto),
-         phyto = ifelse(phyto == "TRWI", "TWIL", phyto),
-         phyto = ifelse(phyto == "FEPE", "LOMU", phyto),
-         phyto = ifelse(phyto == "ELCA", "TACA", phyto)) %>%
-  mutate(mass.per.cap = mass.mg/10)
-
-## separate out alphas from lambdas in summary df
 psums2 <- psums %>%
-  filter(parameter_type != "lambda") %>% ## remove lambda
+  filter(parameter_type != "lambda") %>% ## remove lambda from alphas
   mutate(phyto = species,
          resident = toupper(substr(parameter_type, start = 7, stop = 10)), ## create resident species column
-         species = resident)
+         species = resident) ## change species to be the resident to match trait joins later on
 
-## create temporary lambda df to join later for scaling
-lambda.temp <- psums %>%
-  filter(parameter_type == "lambda")%>%
-  mutate(lambda = median_parameter, 
-         phyto = species) %>%
-  select(phyto, treatment, lambda)
-
-## scale alphas by seed mass ####
+## Scale alphas by seed mass ####
 alpha_sc <- left_join(psums2, seed.sums, by = c("phyto")) %>%
   mutate(alpha_scaled = median_parameter/mass.per.cap,
          hdi_hi_scaled = hdi_hi/mass.per.cap,
          hdi_lo_scaled = hdi_lo/mass.per.cap)
 
-## join with mean traits
+## WHICH WAY TO SCALE?? ####
+
+## join with traits ####
 alpha_sc2 <- left_join(alpha_sc, trait_sums, by = c("species"))
 
-#intra_sc <- alpha_sc2 %>%
- # filter(phyto == resident) #%>%
-  #mutate(resident = fct_relevel(resident, "ACAM", "THIR", "TWIL", "AMME", "MAEL", "PLNO", "ANAR", "MICA", "GITR", "LENI", "PLER", "BRNI", "CESO", "BRHO", "LOMU", "TACA"))
-
+## change cols to factor
 alpha_sc2$parameter_type = as.factor(alpha_sc2$parameter_type)
 alpha_sc2$resident = as.factor(alpha_sc2$resident)
-alpha_sc2$Origin = as.factor(alpha_sc2$Origin)
 
+## filter & re-order cols for plotting
 inter_sc <- alpha_sc2 %>%
   filter(phyto != resident, species != "WEED") %>%
   mutate(parameter_type = substr(parameter_type, start = 1, stop = 10)) %>%
