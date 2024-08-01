@@ -85,21 +85,27 @@ alphas <- ricker_posteriors2 %>%
          alpha_weeds_d = alpha_weeds_base,
          alpha_weeds_c = alpha_weeds_base + alpha_weeds_dev) %>%
   select(1, 36:69) %>%
-  pivot_longer("alpha_acam_d":"alpha_weeds_c", names_to = "alpha_name", values_to = "alpha_value") %>% ## change to long format
-  mutate(treatment = ifelse(substr(alpha_name, 12, 13) == "d", "D", "C"),
-         alpha_name = substr(alpha_name, 1, 10)) %>%
-  group_by(species, treatment, alpha_name) %>%
+  pivot_longer("alpha_acam_d":"alpha_weeds_c", names_to = "parameter_type", values_to = "alpha_value") %>% ## change to long format
+  mutate(treatment = ifelse(substr(parameter_type, 12, 13) == "d", "D", "C"),
+         alpha_name = substr(parameter_type, 1, 10)) %>%
+  group_by(species, treatment, parameter_type) %>%
   summarise(mean_parameter = mean(alpha_value), 
             median_parameter = median(alpha_value),
             hdi_lo = hdi(alpha_value, ci = 0.95)$CI_low, 
             hdi_hi = hdi(alpha_value, ci = 0.95)$CI_high) %>%
-  mutate(parameter_type = alpha_name) %>%
-  select(-alpha_name) %>%
-  mutate(combo = paste0(species, toupper(substr(parameter_type, 6,10)), "_", treatment)) %>%
-  filter(combo %in% good_reps$combos)
+  mutate(hdi_width = abs(hdi_hi - hdi_lo)) %>%
+  filter(hdi_width < 1)
+
+## filter based on the width of hdi, not based on reps
+
+#%>%
+  #mutate(parameter_type = alpha_name) %>%
+  #select(-alpha_name) %>%
+  #mutate(combo = paste0(species, toupper(substr(parameter_type, 6,10)), "_", treatment)) %>%
+  #filter(combo %in% good_reps$combos)
 
 # Join lambda & alphas ####
 model_params <- rbind(lambdas_sum, alphas) %>%
   select(species, treatment, parameter_type, mean_parameter, median_parameter, hdi_lo, hdi_hi)
 
-write.csv(model_params, "data/parameter_summaries_20231218_models.csv")
+write.csv(model_params, "data/parameter_summaries_20240714_models.csv")

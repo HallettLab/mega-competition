@@ -9,13 +9,13 @@ calcSE<-function(x){
 ## set up figure pathway
 fig_loc <- "analyses/interactions_v_traits/median_params/preliminary_figs/"
 
-
+## load packages
 library(tidyverse)
 library(ggpattern)
 
 theme_set(theme_classic())
 
-psums <- read.csv("data/parameter_summaries_20231218_models.csv")
+psums <- read.csv("data/parameter_summaries_20240714_models.csv")
 source("analyses/traits/trait_pcas_exploration.R")
 
 # Clean data ####
@@ -69,8 +69,13 @@ alpha_sc2 <- left_join(alpha_sc, trait_sums, by = c("species"))
  # filter(phyto == resident) #%>%
   #mutate(resident = fct_relevel(resident, "ACAM", "THIR", "TWIL", "AMME", "MAEL", "PLNO", "ANAR", "MICA", "GITR", "LENI", "PLER", "BRNI", "CESO", "BRHO", "LOMU", "TACA"))
 
+alpha_sc2$parameter_type = as.factor(alpha_sc2$parameter_type)
+alpha_sc2$resident = as.factor(alpha_sc2$resident)
+alpha_sc2$Origin = as.factor(alpha_sc2$Origin)
+
 inter_sc <- alpha_sc2 %>%
-  filter(phyto != resident) %>%
+  filter(phyto != resident, species != "WEED") %>%
+  mutate(parameter_type = substr(parameter_type, start = 1, stop = 10)) %>%
   mutate(parameter_type = fct_relevel(parameter_type, "alpha_brho", "alpha_lomu", "alpha_taca", "alpha_thir", "alpha_acam",  "alpha_twil", "alpha_amme", "alpha_mael", "alpha_plno", "alpha_mica", "alpha_gitr", "alpha_leni", "alpha_pler", "alpha_anar", "alpha_brni", "alpha_ceso"),
          resident = fct_relevel(resident, "BRHO", "LOMU", "TACA", "THIR", "ACAM",  "TWIL", "AMME", "MAEL", "PLNO", "MICA", "GITR", "LENI", "PLER", "ANAR", "BRNI", "CESO"),
          Origin = ifelse(resident %in% c("BRHO", "LOMU", "TACA", "THIR","ANAR", "BRNI", "CESO"), "Non-native", "Native"))
@@ -78,10 +83,10 @@ inter_sc <- alpha_sc2 %>%
 # Visualize ####
 ## Fig 2: Alphas by FG ####
 ggplot(inter_sc, aes(x=resident, y=alpha_scaled, fill = fg)) +
-  geom_boxplot_pattern(aes(pattern = Origin, fill = fg)) +
+  geom_boxplot() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   scale_fill_manual(values = c("#ECB159", "#8CB9BD", "#156882")) +
-  scale_pattern_manual(values = c("Native" = "none", "Non-native" = "stripe")) +
+#  scale_pattern_manual(values = c("Native" = "none", "Non-native" = "stripe")) +
   xlab(NULL) + ylab("Interaction Coefficient") +
   theme(axis.text.x = element_text(angle = 45,  hjust=1)) +
   labs(fill = NULL, pattern = NULL) +
@@ -201,17 +206,6 @@ ggplot(lambda, aes(x=species, y=median_parameter, color = treatment)) +
 
 ggsave(paste0(fig_loc, "median_lambda_by_rainfall.png"), width = 6, height = 4)
 
-## Median Alpha by FG ####
-ggplot(inter_sc, aes(x=parameter_type, y=alpha_scaled, color = fg_origin)) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_boxplot() +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) + xlab(NULL) + ylab("Interspecific Scaled Median Alphas") +
-  theme(axis.text.x = element_text(angle = 45,  hjust=1)) +
-  labs(color = "Functional Group") +
-  ggtitle("scaled by seed mass (mg)")
-
-ggsave(paste0(fig_loc, "inter_alpha_FG_scaled_seedmass.png"), width = 6.5, height = 4)
-
 # Poster Figs ####
 ## Alphas by FG ####
 ggplot(inter_sc, aes(x=resident, y=alpha_scaled, fill = fg)) +
@@ -234,4 +228,4 @@ ggplot(inter_sc, aes(x=resident, y=alpha_scaled, fill = fg)) +
   theme(text = element_text(size = 13)) +
   theme(legend.position="bottom")
 
-ggsave(paste0(fig_loc, "inter_alpha_byFG.png"), width = 7, height = 4)
+ggsave(paste0(fig_loc, "inter_alpha_byFG_poster.png"), width = 7, height = 4)
