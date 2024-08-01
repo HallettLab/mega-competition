@@ -1,35 +1,9 @@
 
-# Set up Env ####
-library(tidyverse)
-
-calcSE<-function(x){
-  x2<-na.omit(x)
-  sd(x2)/sqrt(length(x2))
-}
-
-fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/"
-theme_set(theme_classic())
-
-# Read in data ####
-invcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/inv_only_D_structural_results_20240729.csv")
-
-invcommC = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/inv_only_C_structural_results_20240729.csv")
+## In progress transferring over to explore_nat_only_structural so there is only one script
 
 # Clean data ####
-invcommD_vis = invcommD %>%
-  filter(!is.na(ANAR))%>%
-  mutate(comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR),
-         treatment = "D")
 
-## set up for visualisation
-invcommC_vis = invcommC %>%
-  filter(!is.na(BRHO))%>%
-  mutate(comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR),
-         treatment = "C")
 
-## join together
-allinv = rbind(invcommC_vis, invcommD_vis) %>%
-  select(-X)
 
 ## Explore Raw Data ####
 ggplot(allinv, aes(x=feasibility)) +
@@ -51,16 +25,28 @@ ggplot(allinv, aes(x=fitness_diff)) +
 
 # Summarise ####
 ## Prop Feasible ####
-prop_feas = allinv %>%
-  #mutate(comp = paste0(ANAR, BRHO, CESO, LOMU, TACA, THIR)) %>%
-  group_by(comp, treatment) %>%
-  summarise(num_feas = sum(feasibility),
-            prop_feasible = num_feas/n(),
-            mean_niche = mean(niche_diff),
-            mean_fitness = mean(fitness_diff),
-            se_niche = calcSE(niche_diff),
-            se_fitness = calcSE(fitness_diff)) %>%
-  mutate(w_legume = ifelse(substr(comp, start = 7, stop = 7) == 1, 1, 0))
+
+
+
+
+
+ggplot(invmean_feas, aes(x=treatment, y=mean_prop_feas)) +
+  geom_col(color = "black", fill = "lightgray") +
+  geom_errorbar(aes(ymin = mean_prop_feas - se_prop_feas, ymax = mean_prop_feas + se_prop_feas), width = 0.25) +
+  ylab("Mean Proportion of Feasible Communities")
+
+
+
+
+hist(invdiff_prop_feas$feas_diff)
+
+### visualise ####
+ggplot(invdiff_prop_feas, aes(x=feas_diff)) +
+  geom_histogram(color = "black", fill = "lightgray", bins = 20) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  xlab("Difference in Feasibility (D-C)") 
+
+
 
 ggplot(prop_feas, aes(x=as.factor(comp), y=prop_feasible, fill = as.factor(w_legume))) +
   geom_bar(stat = 'identity') +
