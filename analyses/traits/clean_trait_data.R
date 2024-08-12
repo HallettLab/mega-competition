@@ -66,7 +66,7 @@ MC.traits <- traits %>%
                                                            ifelse(ID == "PLERp", "PLER", 
                                                                   ifelse(ID == "TRHI", "THIR", 
                                                                          ifelse(ID == "TRWIp","TWIL", ID)))))))))) %>%
-  mutate(origin = ifelse(phyto %in% nonnative, "non-native", "native"),
+  mutate(origin = ifelse(phyto %in% nonnative, "Non-native", "Native"),
          funct_group = ifelse(phyto %in% grass, "Grass",
                               ifelse(phyto %in% legume, "Legume", "Forb")),
          fg_origin = paste(origin, funct_group, sep = "_"),
@@ -102,24 +102,37 @@ seed.mass <- trait.seed2 %>%
 all.traits <- c("Height_cm", "LDMC", "SLA.cm2.g", "RMF",  "Coarse.root.specific.length.cm.g", "Proportion.fine.roots", "Coarse.root.diameter.mm")
 
 temp <- MC.traits2 %>%
-  select(phyto, fg_origin, funct_group, Height_cm, LDMC, SLA.cm2.g, RMF, Coarse.root.specific.length.cm.g, Proportion.fine.roots, Coarse.root.diameter.mm)
+  select(phyto, origin, fg_origin, funct_group, Height_cm, LDMC, SLA.cm2.g, RMF, Coarse.root.specific.length.cm.g, Proportion.fine.roots, Coarse.root.diameter.mm)
 
-names(temp) <- c("phyto", "fg_origin", "fg", "Height", "LDMC", "SLA", "RMF", "CRSL", "PF", "D")
+names(temp) <- c("phyto", "origin", "fg_origin", "fg", "Height", "LDMC", "SLA", "RMF", "CRSL", "PF", "D")
 
-MC.pca <- prcomp(temp[,4:10], scale = T)
+MC.pca <- prcomp(temp[,5:11], scale = T)
 summary(MC.pca)
 
 MC.pca.ID <- cbind(temp, MC.pca$x[,1:7])
 
-autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "fg_origin", size = 1.75, loadings.colour = "black",
+autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "origin", size = 1.75, loadings.colour = "black",
          loadings.label.colour="black", loadings.label.repel=TRUE) +
   theme_classic() +
-  scale_color_manual(values = c("#5D69B1","#CC61B0", "#E58606", "#99C945","#CC3A8E")) +
+  scale_color_manual(values = c("#5D69B1", "#E58606")) +
   theme(
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
     legend.title = element_blank())
 
 ggsave("analyses/traits/preliminary_figures/pca_updatedheight_fg.png", width = 7, height = 5)
+
+### POSTER FIG ####
+autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = F, label = F, col = "origin", size = 3, loadings.colour = "black") +
+  theme_classic() +
+  scale_color_manual(values = c("#5D69B1", "#fab14f")) +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank()) +
+  theme(text = element_text(size = 20)) +
+  theme(legend.position="bottom")
+
+ggsave("analyses/traits/preliminary_figures/ESA_pca_updatedheight_origin.png", width = 7, height = 5.5)
+
 
 autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T,  col = "fg", size = 3.5, loadings.colour = "black",
 ) +
@@ -176,4 +189,4 @@ seed.sums = seed.mass %>%
   mutate(mass.per.cap = mass.mg/10)
 
 # Clean up Env ####
-rm(height, trait.seed, trait.seed2, traits, facilitator, grass, lead, lead.traits, legume, MC.sp, MC.sp2, nonnative, adult_trait_field_dat, MC.pca, MC.traits, MC.traits2, pca, seed.mass, seeds.pca, temp, all.traits, seeds)
+rm(height, trait.seed, trait.seed2, traits, facilitator, grass, lead, lead.traits, legume, MC.sp, MC.sp2, nonnative, adult_trait_field_dat, MC.pca, MC.traits, pca, seed.mass, seeds.pca, temp, all.traits, seeds)

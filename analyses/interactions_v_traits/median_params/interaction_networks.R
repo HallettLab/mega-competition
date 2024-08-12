@@ -8,7 +8,7 @@ library(qgraph)
 library(igraph)
 
 ## read in data
-sums.info <- read.csv("data/parameter_summaries_20231218_models.csv")
+sums.info <- read.csv("data/parameter_summaries_20240714_models.csv")
 
 # Format data ###
 ## try data format as edgelist
@@ -22,7 +22,7 @@ el.nw.C <- sums.info %>%
 
 grpsC <- c("native_legume", "native_forb", "non-native_forb", "non-native_forb", "native_forb", "native_forb", "non-native_grass", "native_forb", "native_forb", "native_forb", "native_forb", "non-native_grass", "native_legume", "non-native_grass", "non-native_forb", "non-native_legume")
 
-png("analyses/explore_interaction_coeff/preliminary_figures/network_C_circlelayout.png", width = 2000, height = 1400, units = 'px')
+png("analyses/interactions_v_traits/median_params/preliminary_figs/network_C_circlelayout.png", width = 2000, height = 1400, units = 'px')
 
 qgraph(el.nw.C, 
        layout = 'circle',
@@ -44,7 +44,7 @@ qgraph(el.nw.C,
 dev.off()
 #E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
 ## visualize network
-png("analyses/explore_interaction_coeff/preliminary_figures/network_C.png", width = 1200, height = 1200, units = 'px')
+png("analyses/interactions_v_traits/median_params/preliminary_figs/network_C.png", width = 1200, height = 1200, units = 'px')
 
 qgraph(el.nw.C, 
        layout = 'circle',
@@ -67,7 +67,7 @@ el.nw.D <- sums.info %>%
   mutate(species = fct_relevel(species, "ACAM", "TWIL", "THIR", "BRHO", "LOMU", "TACA", "AMME", "GITR", "LENI", "MAEL", "MICA", "PLER", "PLNO", "CESO", "ANAR", "BRNI"))
 
 ## visualize network
-png("analyses/explore_interaction_coeff/preliminary_figures/network_D.png", width = 1200, height = 1200, units = 'px')
+png("analyses/interactions_v_traits/median_params/preliminary_figs/network_D.png", width = 1200, height = 1200, units = 'px')
 qgraph(el.nw.D, 
        layout = 'circle',
        negCol = '#78d0fd',   # facilitation = blue
@@ -83,7 +83,7 @@ grpsD <- c("native_legume", "native_forb", "non-native_forb", "non-native_grass"
 
 
 
-png("analyses/explore_interaction_coeff/preliminary_figures/network_D_circlelayout.png", width = 2000, height = 1400, units = 'px')
+png("analyses/interactions_v_traits/median_params/preliminary_figs/network_D_circlelayout.png", width = 2000, height = 1400, units = 'px')
 
 qgraph(el.nw.D, 
        layout = 'circle',

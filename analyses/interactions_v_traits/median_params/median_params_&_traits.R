@@ -197,3 +197,6 @@ ggplot(inter_sc, aes(x=resident, y=alpha_scaled, fill = fg)) +
   theme(legend.position="bottom")
 
 ggsave(paste0(fig_loc, "inter_alpha_byFG_poster.png"), width = 7, height = 4)
+
+# Clean Env ####
+rm(crsl, d, height, inter_sc, lambda, ldmc, pc1, pc2, pf, psums, psums2, rmf, sla)

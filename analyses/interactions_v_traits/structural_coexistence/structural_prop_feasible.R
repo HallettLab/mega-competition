@@ -69,7 +69,7 @@ natprop_feas = allnat %>%
          origin = "Native")
 
 ### Difference in Feasibility ####
-diff_prop_feas = prop_feas %>% 
+diff_prop_feas = natprop_feas %>% 
   select(treatment, prop_feasible, comp) %>%
   pivot_wider(names_from = "treatment", values_from = "prop_feasible") %>%
   mutate(feas_diff = D - C)
@@ -85,7 +85,7 @@ invprop_feas = allinv %>%
             se_niche = calcSE(niche_diff),
             se_fitness = calcSE(fitness_diff)) %>%
   mutate(w_legume = ifelse(substr(comp, start = 7, stop = 7) == 1, 1, 0),
-         origin = "Invasive")
+         origin = "Non-Native")
 
 ### Difference in Feasibility ####
 invdiff_prop_feas = invprop_feas %>% 
@@ -98,21 +98,27 @@ invdiff_prop_feas = invprop_feas %>%
 ## diff feasibility ####
 ## mean feasibility ####
 
-allprop_feas = rbind(invprop_feas, natprop_feas) 
+allprop_feas = rbind(invprop_feas, natprop_feas) %>%
+  mutate(treatment = ifelse(treatment == "C", "Ambient", "Drought"))
 
 allprop_feas$origin = as.factor(allprop_feas$origin)
 
 allprop_feas = allprop_feas %>%
-  mutate(origin = fct_relevel(origin, "Native", "Invasive"))
+  mutate(origin = fct_relevel(origin, "Native", "Non-Native"))
 
-ggplot(allprop_feas, aes(x=treatment, y=prop_feasible, color = origin)) +
-  geom_boxplot() +
-  geom_jitter() +
-  ylab("Proportion of Feasible Communities") +
-  scale_color_manual(values = c("#E58606","#5D69B1")) +
+### POSTER FIG ####
+ggplot(allprop_feas, aes(x=treatment, y=prop_feasible)) +
+  geom_jitter(size = 3, aes(color = origin, shape = treatment)) +
+  geom_boxplot(alpha = .001, linewidth = 0.75) +
+  ylab("Coexistence Probability") +
+ # scale_color_manual(values = c("#5D69B1", "#E58606")) +
+  scale_color_manual(values = c("#5D69B1", "#fab14f")) +
+  scale_shape_manual(values = c(16, 1)) +
+  theme(text = element_text(size = 15)) +
   xlab("Rainfall Treatment") +
-  facet_wrap(~origin)
-ggsave(paste0(fig_loc, "prop_feas_allcomm_rainfall.png"), width = 6, height = 3)
+  facet_wrap(~origin) +
+  labs(color = "Origin", shape = "Rainfall")
+ggsave(paste0(fig_loc, "ESA_poster_prop_feas_allcomm_rainfall.png"), width = 6, height = 4)
 
 
 
