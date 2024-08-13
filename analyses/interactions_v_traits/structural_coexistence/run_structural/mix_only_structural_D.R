@@ -155,4 +155,4 @@ for(j in 1:nrow(comp4)){
   }
 }
 
-write.csv(mixcommC, "analyses/interactions_v_traits/structural_coexistence/run_structural/mix_D_structural_results_20240801.csv")
+write.csv(mixcommC, "analyses/interactions_v_traits/structural_coexistence/run_structural/mix_D_structural_results_20240812.csv")
