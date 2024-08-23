@@ -29,47 +29,54 @@ mixcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/run_s
 ## native ####
 natcommD_vis = natcommD %>%
   filter(!is.na(GITR), MAEL == 0)%>%
-  mutate(comp = paste0(ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
+  mutate(#comp = paste0(ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
          treatment = "D")
 
 natcommC_vis = natcommC %>%
   filter(!is.na(GITR), MAEL == 0)%>%
-  mutate(comp = paste0(ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
+  mutate(#comp = paste0(ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
          treatment = "C")
 
 ## join together
 allnat = rbind(natcommC_vis, natcommD_vis) %>%
-  select(-X)
+  select(-X) %>%
+  mutate(ANAR = 0, BRHO = 0, BRNI = 0, CESO = 0, LOMU = 0, TACA = 0, THIR = 0, 
+         origin = "Native") 
 
 ## invasive ####
 invcommD_vis = invcommD %>%
   filter(!is.na(ANAR))%>%
-  mutate(comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR),
+  mutate(#comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR),
          treatment = "D")
 
 invcommC_vis = invcommC %>%
   filter(!is.na(BRHO))%>%
-  mutate(comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR),
+  mutate(#comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR),
          treatment = "C")
 
 ## join together
 allinv = rbind(invcommC_vis, invcommD_vis) %>%
-  select(-X)
+  select(-X) %>%
+  mutate(ACAM = 0, AMME = 0, GITR = 0, LENI = 0, MAEL = 0, MICA = 0, PLER = 0, PLNO = 0, TWIL = 0, 
+         origin = "Invasive")
 
 ## mixed ####
 mixcommC_vis = mixcommC %>%
   filter(!is.na(GITR))%>%
-  mutate(comp = paste0(ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL),
-         treatment = "C")
+  mutate(treatment = "C")
 
 mixcommD_vis = mixcommD %>%
   filter(!is.na(GITR))%>%
-  mutate(comp = paste0(ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL),
-         treatment = "D")
+  mutate(treatment = "D")
 
 ## join together
 allmix = rbind(mixcommC_vis, mixcommD_vis) %>%
-  select(-X)
+  select(-X) %>%
+  mutate(origin = "Mixed")
+
+allcomm = rbind(allmix, allinv, allnat) %>%
+  mutate(num.inv = ANAR + BRHO + BRNI + CESO + LOMU + TACA + THIR, 
+         comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR, ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL))
 
 # Clean Env ####
-rm(invcommC, invcommC_vis, invcommD, invcommD_vis, natcommC, natcommC_vis, natcommD, natcommD_vis, mixcommC, mixcommD, mixcommC_vis, mixcommD_vis)
+rm(allinv, allnat, allmix, invcommC, invcommC_vis, invcommD, invcommD_vis, natcommC, natcommC_vis, natcommD, natcommD_vis, mixcommC, mixcommD, mixcommC_vis, mixcommD_vis)
