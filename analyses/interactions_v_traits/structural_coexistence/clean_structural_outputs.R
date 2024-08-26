@@ -10,9 +10,11 @@ calcSE<-function(x){
 
 # Read in data ####
 ## native ####
-natcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/nat_only_D_structural_results_20240729.csv")
+#natcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/nat_only_D_structural_results_20240729.csv")
 
-natcommC = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/nat_only_C_structural_results_20240729.csv")
+#natcommC = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/nat_only_C_structural_results_20240729.csv")
+
+natcomm = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/nat_only_structural_results_20240823.csv")
 
 ## invasive ####
 invcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/run_structural/inv_only_D_structural_results_20240730.csv")
@@ -27,15 +29,8 @@ mixcommD = read.csv("analyses/interactions_v_traits/structural_coexistence/run_s
 
 # Clean data ####
 ## native ####
-natcommD_vis = natcommD %>%
-  filter(!is.na(GITR), MAEL == 0)%>%
-  mutate(#comp = paste0(ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
-         treatment = "D")
-
-natcommC_vis = natcommC %>%
-  filter(!is.na(GITR), MAEL == 0)%>%
-  mutate(#comp = paste0(ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
-         treatment = "C")
+natcomm_vis = natcomm %>%
+  filter(!is.na(GITR), MAEL == 0)
 
 ## join together
 allnat = rbind(natcommC_vis, natcommD_vis) %>%
