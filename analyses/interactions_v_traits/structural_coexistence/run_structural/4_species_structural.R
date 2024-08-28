@@ -10,7 +10,6 @@ code_loc <- "analyses/interactions_v_traits/structural_coexistence/Saavedra_2017
 
 ## load structural coexistence functions from Saavedra 2017
 source(paste0(code_loc, "toolbox_coexistence.R"))
-source(paste0(code_loc, "toolbox_figure.R"))
 
 ## load posteriors
 source("analyses/interactions_v_traits/random_draws/clean_posteriors.R")
@@ -19,8 +18,8 @@ source("analyses/interactions_v_traits/random_draws/clean_posteriors.R")
 ## create a vector of the number of posterior draws
 posts <- 1:3750
 
-## draw 200 posteriors
-draws <- sample(posts, 200, replace = FALSE)
+## draw 100 posteriors
+draws <- sample(posts, 100, replace = FALSE)
 
 ## species vector
 all.sp <- unique(posts_clean$species) 
@@ -32,7 +31,12 @@ comp4 <- data.frame(comboGeneral(all.sp, m=4, freqs = 1))
 rainfall = c("_c", "_d")
 
 ## create empty dataframe
-allcomm <- data.frame(ACAM= NA, AMME = NA, GITR = NA, LENI = NA, MAEL = NA, MICA=NA, PLER= NA, PLNO = NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, niche_diff_cpd = NA, omega_all = NA, comm_pair_overlap = NA, comm_pair_diff = NA, rainfall = NA, draw = NA)
+#allcomm <- data.frame(ACAM= NA, AMME = NA, ANAR = NA, BRHO = NA, BRNI = NA, CESO = NA, GITR = NA, LENI = NA, LOMU = NA, MAEL = NA, MICA=NA, PLER= NA, PLNO = NA, TACA = NA, THIR = NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, niche_diff_cpd = NA, omega_all = NA, comm_pair_overlap = NA, comm_pair_diff = NA, rainfall = NA, draw = NA)
+
+comp4 = comp4[1:2,]
+
+## set index
+write_cntr = 0
 
 # 4 Sp Calcs ####
 ## iterate over each possible community composition
@@ -59,15 +63,11 @@ for(j in 1:nrow(comp4)){
       d <- draws[i]
       
       ## select one row for every species
-      prep2 <- prep[c(d, (d + 3750), (d+(2*3750)), (d+(3*3750)), (d+(4*3750))),] 
+      prep2 <- prep[c(d, (d + 3750), (d+(2*3750)), (d+(3*3750))),] 
     
       ## rename
       names(prep2) <- c("sp", "lambda", cc[1], cc[2], cc[3], cc[4])
-      
-      ## remove row of NAs that keeps showing up
-      prep2 <- prep2 %>%
-        filter(!is.na(lambda))
-    
+
       ## select the matching columns
       tmp_alphas <- prep2 %>%
         ungroup() %>%
@@ -111,38 +111,51 @@ for(j in 1:nrow(comp4)){
           }
     
       ## create dataframe
-      temp <- data.frame(feasibility=NA)
+      output_row <- data.frame(feasibility=NA)
    
       ## put back into dataframe
-      temp$feasibility <- f
-      temp$niche_diff <- niche
-      temp$fitness_diff <- fitness
+      output_row$feasibility <- f
+      output_row$niche_diff <- niche
+      output_row$fitness_diff <- fitness
     
-      temp$niche_diff_cpd = niche_cpd
-      temp$omega_all = omega_all
-      temp$comm_pair_overlap = overlap_cpd
-      temp$comm_pair_diff = niche_cpd-omega_all
+      output_row$niche_diff_cpd = niche_cpd
+      output_row$omega_all = omega_all
+      output_row$comm_pair_overlap = overlap_cpd
+      output_row$comm_pair_diff = niche_cpd-omega_all
     
       ## get comm composition back into dataframe
-      temp <- temp %>%
+      output_row <- output_row %>%
         mutate(ACAM = ifelse("ACAM" %in% colnames(tmp_alphas), 1, 0),
                AMME = ifelse("AMME" %in% colnames(tmp_alphas), 1, 0),
+               ANAR = ifelse("ANAR" %in% colnames(tmp_alphas), 1, 0),
+               BRHO = ifelse("BRHO" %in% colnames(tmp_alphas), 1, 0),
+               BRNI = ifelse("BRNI" %in% colnames(tmp_alphas), 1, 0),
+               CESO = ifelse("CESO" %in% colnames(tmp_alphas), 1, 0),
                GITR = ifelse("GITR" %in% colnames(tmp_alphas), 1, 0),
                LENI = ifelse("LENI" %in% colnames(tmp_alphas), 1, 0),
+               LOMU = ifelse("LOMU" %in% colnames(tmp_alphas), 1, 0),
                MAEL = ifelse("MAEL" %in% colnames(tmp_alphas), 1, 0),
                MICA = ifelse("MICA" %in% colnames(tmp_alphas), 1, 0),
                PLER = ifelse("PLER" %in% colnames(tmp_alphas), 1, 0),
                PLNO = ifelse("PLNO" %in% colnames(tmp_alphas), 1, 0),
+               TACA = ifelse("TACA" %in% colnames(tmp_alphas), 1, 0),
+               THIR = ifelse("THIR" %in% colnames(tmp_alphas), 1, 0),
                TWIL = ifelse("TWIL" %in% colnames(tmp_alphas), 1, 0),
                rainfall = toupper(substr(rain, start = 2, stop = 2)),
-               draw = d) ## add treatment column
-    
-    ## join with original dataframe
-      allcomm <- rbind(allcomm, temp)
+               draw = d,
+               iteration_num = write_cntr) ## add treatment column
+      
+      write_cntr=write_cntr+1
+      
+      # Save Output ####
+      ## need to do this one row at a time
+      ## need to APPEND to the file, not write over
+      write.table(output_row, "analyses/interactions_v_traits/structural_coexistence/run_structural/4_sp_structural_results_20240828.csv", append = TRUE, row.names = FALSE, sep = ",", col.names = c("feasibility", "niche_diff", "fitness_diff", "niche_diff_cpd", "omega_all", "comm_pair_overlap", "comm_pair_diff", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "rainfall", "draw", "iteration_num"))
+      
+      
   }
   
   }
+  
 }
 
-# Save Output ####
-write.csv(allcomm, "analyses/interactions_v_traits/structural_coexistence/run_structural/4_sp_structural_results_20240823.csv")

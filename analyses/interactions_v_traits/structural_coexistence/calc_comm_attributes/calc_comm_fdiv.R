@@ -110,9 +110,9 @@ for(r in 1:length(richness)) {
            TACA = ifelse("TACA" %in% comp_list, 1, 0),
            THIR = ifelse("THIR" %in% comp_list, 1, 0),
            TWIL = ifelse("TWIL" %in% comp_list, 1, 0),
-           comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR, ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL),
+           comp = paste0(ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL),
            richness = rich) %>%
-    select(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR, ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL, comp, richness)
+    select(ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL, comp, richness)
   
   ## append to list
   comp_lists[[r]] = comp

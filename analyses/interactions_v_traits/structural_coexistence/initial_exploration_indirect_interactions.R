@@ -1,4 +1,26 @@
 
+file_path = "analyses/interactions_v_traits/structural_coexistence/"
+
+source(paste0(file_path, "calc_comm_attributes/calc_comm_fdiv.R"))
+
+ii_dat = read.csv("analyses/interactions_v_traits/structural_coexistence/4sp_structural_indirect_not_finished.csv")
+
+hist(ii_dat$comm_pair_diff)
+hist(ii_dat$comm_pair_overlap)
+
+ii_dat2 = ii_dat %>%
+  mutate(comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR, ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL))
+
+fd_dat = fdiv_list[[1]]
+
+
+
+
+
+
+
+
+
 
 ggplot(allcomm_fdiv, aes(x=fdiv, y=comm_pair_overlap))+
   geom_point()
