@@ -30,11 +30,6 @@ comp4 <- data.frame(comboGeneral(all.sp, m=4, freqs = 1))
 ## make vector of rainfall treatments
 rainfall = c("_c", "_d")
 
-## create empty dataframe
-#allcomm <- data.frame(ACAM= NA, AMME = NA, ANAR = NA, BRHO = NA, BRNI = NA, CESO = NA, GITR = NA, LENI = NA, LOMU = NA, MAEL = NA, MICA=NA, PLER= NA, PLNO = NA, TACA = NA, THIR = NA, TWIL = NA, feasibility=NA, niche_diff = NA, fitness_diff = NA, niche_diff_cpd = NA, omega_all = NA, comm_pair_overlap = NA, comm_pair_diff = NA, rainfall = NA, draw = NA)
-
-comp4 = comp4[1:2,]
-
 ## set index
 write_cntr = 0
 
@@ -150,7 +145,7 @@ for(j in 1:nrow(comp4)){
       # Save Output ####
       ## need to do this one row at a time
       ## need to APPEND to the file, not write over
-      write.table(output_row, "analyses/interactions_v_traits/structural_coexistence/run_structural/4_sp_structural_results_20240828.csv", append = TRUE, row.names = FALSE, sep = ",", col.names = c("feasibility", "niche_diff", "fitness_diff", "niche_diff_cpd", "omega_all", "comm_pair_overlap", "comm_pair_diff", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "rainfall", "draw", "iteration_num"))
+      write.table(output_row, "analyses/interactions_v_traits/structural_coexistence/run_structural/4_sp_structural_results_20240828.csv", append = TRUE, row.names = FALSE, sep = ",", col.names = FALSE)
       
       
   }
