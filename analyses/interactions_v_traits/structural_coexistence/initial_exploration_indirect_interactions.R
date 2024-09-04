@@ -3,34 +3,14 @@ file_path = "analyses/interactions_v_traits/structural_coexistence/"
 
 source(paste0(file_path, "calc_comm_attributes/calc_comm_fdiv.R"))
 
-ii_dat = read.csv("analyses/interactions_v_traits/structural_coexistence/4sp_structural_indirect_not_finished.csv")
+source(paste0(file_path, "reformat_structural_outputs.R"))
 
-hist(ii_dat$comm_pair_diff)
-hist(ii_dat$comm_pair_overlap)
+fdiv_4 = fdiv_list[[1]]
 
-ii_dat2 = ii_dat %>%
-  mutate(comp = paste0(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR, ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL))
+sp4_fdiv = left_join(sp4_clean, fdiv_4, by = c("comp", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
 
-fd_dat = fdiv_list[[1]]
-
-
-
-
-
-
-
-
-
-
-ggplot(allcomm_fdiv, aes(x=fdiv, y=comm_pair_overlap))+
-  geom_point()
-
-
-ggplot(allcomm_fdiv, aes(x=fdiv, y=comm_pair_diff))+
-  geom_point()
-
-allcomm_sum = allcomm_fdiv %>%
-  group_by(comp, rainfall, fdiv, ACAM, AMME, GITR, LENI, MAEL, MICA, PLER, PLNO, TWIL) %>%
+sp4_sum = sp4_fdiv %>%
+  group_by(comp, rainfall, fdiv, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),
             mean_niche = mean(niche_diff),
@@ -40,25 +20,32 @@ allcomm_sum = allcomm_fdiv %>%
             mean_cpo = mean(comm_pair_overlap),
             se_cpo = calcSE(comm_pair_overlap),
             mean_cpd = mean(comm_pair_diff),
-            se_cpd = calcSE(comm_pair_diff)) #%>%
-  #filter(!(origin == "Mixed" & num.inv == 4))
+            se_cpd = calcSE(comm_pair_diff))  %>%
+  mutate(num.inv = sum(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR),
+         origin = ifelse(num.inv == 0, "Native",
+                         ifelse(num.inv == 4, "Invasive", "Mixed")))
 
-ggplot(allcomm_sum, aes(x=rainfall, y=mean_cpo)) +
+ggplot(sp4_sum, aes(x=as.factor(num.inv), y=log(mean_cpo))) +
+  geom_boxplot()
+ggplot(sp4_sum, aes(x=rainfall, y=log(mean_cpo))) +
   geom_boxplot()
 
-ggplot(allcomm_sum, aes(x=rainfall, y=mean_cpd)) +
+ggplot(sp4_sum, aes(x=rainfall, y=log(mean_cpd))) +
+  geom_boxplot()
+ggplot(sp4_sum, aes(x=as.factor(num.inv), y=log(mean_cpd))) +
+  geom_boxplot()
+ggplot(sp4_sum, aes(x=as.factor(num.inv), y=mean_cpd)) +
   geom_boxplot()
 
-
-ggplot(allcomm_sum, aes(x=fdiv, y=mean_cpd)) +
+ggplot(sp4_sum, aes(x=fdiv, y=mean_cpd)) +
   geom_point() +
   geom_smooth(method = "lm")
 
-ggplot(allcomm_sum, aes(x=fdiv, y=mean_cpo)) +
+ggplot(sp4_sum, aes(x=fdiv, y=mean_cpo)) +
   geom_point() +
   geom_smooth(method = "lm")
 
-ggplot(allcomm_sum, aes(x=mean_cpo, y=prop_feasible, color = rainfall))+
+ggplot(sp4_sum, aes(x=mean_cpo, y=prop_feasible, color = rainfall))+
   geom_point() +
   geom_smooth(method = "lm") +
   xlab("Community Pair Overlap") +
@@ -67,7 +54,7 @@ ggplot(allcomm_sum, aes(x=mean_cpo, y=prop_feasible, color = rainfall))+
 ggsave(paste0(fig_loc, "cpo_initfig.png"), width= 5, height = 3.5)
 
 
-ggplot(allcomm_sum, aes(x=mean_cpd, y=prop_feasible, color = rainfall))+
+ggplot(sp4_sum, aes(x=mean_cpd, y=prop_feasible, color = rainfall))+
   geom_point() +
   geom_smooth(method = "lm") +
   xlab("Community Pair Differential") +
