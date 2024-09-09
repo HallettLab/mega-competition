@@ -41,7 +41,8 @@ row1.12.correct = data.frame(feasibility = NA, niche_diff = NA, fitness_diff = N
                           ACAM = 1, AMME = 1, ANAR = 1, BRHO = 1, BRNI = 1, CESO = 1, GITR = 1, LENI = 1, LOMU = 0, MAEL = 0, MICA = 1, PLER = 1, PLNO = 0, TACA = 1, THIR = 1, TWIL = 0, rainfall = "C", draw = 491, iteration_num = 0)
 
 ## add row 1 back into the dataframe
-sp12_clean = rbind(row1.12.correct, sp12)
+sp12_clean = rbind(row1.12.correct, sp12) %>%
+  mutate(comp = paste0(ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL))
 
 unique(sp12_clean$feasibility)
 
