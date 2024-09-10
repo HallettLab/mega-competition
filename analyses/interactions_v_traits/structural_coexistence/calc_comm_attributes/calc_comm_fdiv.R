@@ -160,4 +160,21 @@ for(r in 1:length(richness)) {
 }
 
 # Clean Env ####
-rm(allcomm, comms, comms_fdiv, commsmat, dist_mat_pca, dist_mat_trait, fdiv, fspace, MC.pca.ID, MC.traits2, seed.sums, test, trait_mdat, trait_sum, trait_sums, traits, all.traits, cn, sp_dist)
+rm(comms_fdiv, commsmat, dist_mat_pca, dist_mat_trait, fdiv, fspace, MC.pca.ID, MC.traits2, seed.sums, trait_mdat, trait_sum, trait_sums, traits, all.traits, cn, sp_dist)
+
+# Save Outputs to CSV ####
+path = "analyses/interactions_v_traits/structural_coexistence/calc_comm_attributes/"
+
+write.csv(fdiv_list[[1]], paste0(path, "sp4_fdiv.csv"))
+write.csv(fdiv_list[[2]], paste0(path, "sp5_fdiv.csv"))
+write.csv(fdiv_list[[3]], paste0(path, "sp6_fdiv.csv"))
+write.csv(fdiv_list[[4]], paste0(path, "sp7_fdiv.csv"))
+write.csv(fdiv_list[[5]], paste0(path, "sp8_fdiv.csv"))
+write.csv(fdiv_list[[6]], paste0(path, "sp9_fdiv.csv"))
+write.csv(fdiv_list[[7]], paste0(path, "sp10_fdiv.csv"))
+write.csv(fdiv_list[[8]], paste0(path, "sp11_fdiv.csv"))
+write.csv(fdiv_list[[9]], paste0(path, "sp12_fdiv.csv"))
+write.csv(fdiv_list[[10]], paste0(path, "sp13_fdiv.csv"))
+write.csv(fdiv_list[[11]], paste0(path, "sp14_fdiv.csv"))
+write.csv(fdiv_list[[12]], paste0(path, "sp15_fdiv.csv"))
+write.csv(fdiv_list[[13]], paste0(path, "sp16_fdiv.csv"))
