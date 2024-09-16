@@ -15,13 +15,17 @@ library(bipartite)
 
 dominance <- function(alpha){
   
-  ## try out the calculation
+  ## separate intra alphas
   ii = alpha[row(alpha) == col(alpha)]
   
   ## set alpha_ii's to 0 in the matrix to avoid messing up future calcs
   diag(alpha) = 0
   
-  test = as.data.frame(cbind(ii, alpha)) %>%
+  ## make a column of intra alphas in the matrix
+  test = as.data.frame(cbind(ii, alpha))
+  
+  ## calc dominance index
+  test2 = test %>%
     mutate(d = abs(test[,1]), ## get abs value of alpha_ii
            sp1 = abs(test[,2]), ## get abs value
            sp2 = abs(test[,3]), ## get abs value
@@ -30,7 +34,7 @@ dominance <- function(alpha){
            d2=rowSums(across(sp1:sp4)), ## sum all alpha_ij for a species
            dom = d - d2) ## calc dominance for a species
   
-  return(mean(test$dom))
+  return(mean(test2$dom))
   
 }
 
@@ -38,7 +42,7 @@ dominance <- function(alpha){
 # Asymmetry ####
 ## metric taken from Daniel et al. 2024 who cite Vasquez et al 2007
 
-A = sum(abs(alpha_ij) - abs(alpha_ji))/n
+## A = sum(abs(alpha_ij) - abs(alpha_ji))/n
 
 ## need to be able to extract pairwise combinations of all sp in the network
 
@@ -99,7 +103,7 @@ skew = function(alpha) {
 
 
 # Modularity ####
-test = graph_from_adjacency_matrix(alpha)
+# test = graph_from_adjacency_matrix(alpha)
 
 # Intransitivity ####
 

@@ -10,7 +10,7 @@ library(RcppAlgos)
 source("analyses/interactions_v_traits/random_draws/clean_posteriors.R")
 
 ## load network metric functions
-
+source("analyses/interactions_v_traits/structural_coexistence/calc_comm_attributes/network_metric_functions.R")
 # Set up Loop ####
 ## create a vector of the number of posterior draws
 posts <- 1:3750
