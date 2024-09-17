@@ -1,5 +1,6 @@
 ## Comm weighted mean traits
 
+## load trait data
 source("analyses/traits/clean_trait_data.R")
 
 # Prep Trait Data ####
@@ -25,16 +26,19 @@ trait_sum = traits %>%
             m.pf = mean(PF),
             m.d = mean(D)) 
 
+## prep loop
 all.sp = unique(trait_sum$phyto)
 
 comp4 = data.frame(comboGeneral(all.sp, m=4, freqs = 1))
 
 comp15 = data.frame(comboGeneral(all.sp, m=15, freqs = 1))
 
-## empty df for output
-#output = data.frame(cwm.height = NA, cwm.ldmc = NA, cwm.sla = NA, cwm.rmf = NA, cwm.crsl = NA, cwm.pf = NA, cwm.d = NA,
-                #       ACAM = NA, AMME = NA, ANAR = NA, BRHO = NA, BRNI = NA, CESO = NA, GITR = NA, LENI = NA, LOMU = NA, MAEL = NA, MICA = NA, PLER = NA, PLNO = NA, TACA = NA, THIR = NA, TWIL = NA)
 
+for(r in 1:length(richness)) {
+
+  
+  
+  
 for(j in 1:nrow(comp4)){
 
   cc = as.character(comp4[j,])
@@ -67,6 +71,8 @@ for(j in 1:nrow(comp4)){
   
   write.table(cwm, "analyses/interactions_v_traits/structural_coexistence/calc_comm_attributes/4_sp_cwm_20240916.csv", append = TRUE, row.names = FALSE, sep = ",", col.names = FALSE)
   
+
+  }
 }
 
 
