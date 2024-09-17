@@ -1,4 +1,4 @@
-## 4 species analyses
+## 8 species analyses
 ## explore how rainfall, origin, functional diversity, indirect interactions, and network metrics influence coexistence, niche differences, and fitness differences
 
 # Set up ####
@@ -8,7 +8,7 @@ library(ggpubr)
 ## set file paths
 file_path = "analyses/interactions_v_traits/structural_coexistence/"
 
-fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sept_2024/sp4/"
+fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sept_2024/sp8/"
 
 ## read in data
 sp4 = read.csv(paste0(file_path, "run_structural/structural_results_files/4_sp_structural_results_20240828.csv"))
