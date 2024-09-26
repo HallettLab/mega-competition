@@ -5,25 +5,36 @@
 ## load packages
 library(ggpubr)
 
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
+
 ## set file paths
 file_path = "analyses/interactions_v_traits/structural_coexistence/"
 
 fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sept_2024/sp8/"
 
 ## read in data
-sp4 = read.csv(paste0(file_path, "run_structural/structural_results_files/4_sp_structural_results_20240828.csv"))
+sp8 = source(paste0(file_path, "structural_analysis/sp8_analyses/sp8_clean_structural.R"))
 
-source(paste0(file_path, "calc_comm_attributes/calc_comm_fdiv.R"))
+fdiv8 = read.csv(paste0(file_path, "calc_comm_attributes/sp8_fdiv.csv"))
+
+fdiv8$comp = as.character(fdiv8$comp)
 
 ## set plot theme
 theme_set(theme_classic())
 
 # Format Data ####
-fdiv_4 = fdiv_list[[1]]
+sp8fdiv = left_join(sp8_clean, fdiv8, by = c("comp", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
 
-sp4_fdiv = left_join(sp4_clean, fdiv_4, by = c("comp", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
+sp8fdiv$niche_diff = as.numeric(sp8fdiv$niche_diff)
 
-sp4_sum = sp4_fdiv %>%
+check_NAs = sp8fdiv %>%
+  filter(is.na(niche_diff))
+## need to figure out why there were 161 non-numeric values.
+
+sp8_sum = sp8fdiv %>%
   group_by(comp, rainfall, fdiv, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),
@@ -35,108 +46,105 @@ sp4_sum = sp4_fdiv %>%
             se_cpo = calcSE(comm_pair_overlap),
             mean_cpd = mean(comm_pair_diff),
             se_cpd = calcSE(comm_pair_diff))  %>%
-  mutate(num.inv = sum(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR),
-         origin = ifelse(num.inv == 0, "Native",
-                         ifelse(num.inv == 4, "Invasive", "Mixed")))
+  mutate(num.inv = sum(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR))
 
-sp4_allpred = left_join(sp4_sum, netsums, by = c("comp", "rainfall", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
-
-sp4_allpred$origin = as.factor(sp4_allpred$origin)
-
-sp4_allpred = sp4_allpred %>%
-  mutate(origin = fct_relevel(origin, "Mixed", "Native", "Invasive"))
+#sp8_allpred = left_join(sp8_sum, netsums, by = c("comp", "rainfall", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
 
 # Visualize ####
-ggplot(sp4_allpred, aes(x=rainfall, y=log(prop_feasible), color = origin)) +
-  scale_color_manual(values = c("#fab14f", "#52BCA3", "#5D69B1")) +
-  geom_violin() +
+## RAINFALL ####
+pf = ggplot(sp8_sum, aes(x=rainfall, y=prop_feasible)) +
   geom_jitter(alpha = 0.15) +
-  geom_boxplot(width=0.1) +
-  facet_wrap(~origin) +
-  ylab("Log(Proportion of Coexistence)") +
-  xlab("Origin") +
-  labs(color = "Origin") +
-  ggtitle("4 Species") +
+  ylab("Proportion of Coexistence") +
+  xlab("") +
+  theme(text = element_text(size = 15)) +
+  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
+  geom_boxplot(width = 0.1) +
+  stat_summary(fun.y=median, geom="point", size=3) +
+  ggtitle("8 Species")
+
+nd = ggplot(sp8_sum, aes(x=rainfall, y=mean_niche)) +
+  geom_jitter(alpha = 0.15) +
+  ylab("Niche Differences") +
+  xlab("Rainfall Treatment") +
+  theme(text = element_text(size = 15)) +
+  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
+  geom_boxplot(width = 0.1) +
+  stat_summary(fun.y=median, geom="point", size=3) +
+  ggtitle(" ")
+
+fd = ggplot(sp8_sum, aes(x=rainfall, y=mean_fitness)) +
+  geom_jitter(alpha = 0.15) +
+  ylab("Fitness Differences") +
+  xlab("") +
+  theme(text = element_text(size = 15)) +
+  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
+  geom_boxplot(width = 0.1) +
+  stat_summary(fun.y=median, geom="point", size=3) +
+  ggtitle(" ")
+
+ggarrange(pf, nd, fd, ncol = 3, nrow = 1, common.legend = TRUE, legend = "bottom", labels = "AUTO")
+
+ggsave(paste0(fig_loc, "rain_origin_violin_plots_sp8.png"), width = 9, height = 3.5)
+
+## ORIGIN ####
+lpfo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=log(prop_feasible))) +
+  geom_jitter(alpha = 0.15) +
+  ylab("Log(Prop. Coexistence)") +
+  xlab("Number of Invasive Species") +
+  theme(text = element_text(size = 15)) +
+  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
+  geom_boxplot(width = 0.1) +
   stat_summary(fun.y=median, geom="point", size=3)
 
-sp4_sum_noout = sp4_allpred %>%
-  filter(prop_feasible < 0.5)
-
-sp4_sum_noout$origin = as.factor(sp4_sum_noout$origin)
-
-sp4_sum_noout = sp4_sum_noout %>%
-  mutate(origin = fct_relevel(origin, "Mixed", "Native", "Invasive"))
-
-## ORIGIN & RAINFALL ####
-pf = ggplot(sp4_sum_noout, aes(x=rainfall, y=prop_feasible)) +
-  scale_color_manual(values = c("#52BCA3", "#5D69B1", "#fab14f")) +
-  geom_jitter(alpha = 0.15, aes(color = origin)) +
-  facet_wrap(~origin) +
-  ylab("Proportion of Coexistence") +
-  xlab("") +
-  geom_violin() +
-  labs(color = "Origin") +
-  theme(text = element_text(size = 15)) +
-  ggtitle("4 Species") + 
-  stat_summary(fun.y=median, geom="point", size=3, aes(color = origin))
-
-nd = ggplot(sp4_allpred, aes(x=rainfall, y=mean_niche)) +
-  scale_color_manual(values = c("#52BCA3", "#5D69B1", "#fab14f")) +
-  geom_jitter(alpha = 0.15, aes(color = origin)) +
-  facet_wrap(~origin) +
-  ylab("Niche Differences") +
-  xlab("") +
-  geom_violin() +
-  labs(color = "Origin") +
-  #ggtitle("4 Species") + 
-  theme(text = element_text(size = 15)) +
-  geom_boxplot(width = 0.1, aes(color = origin)) +
-  stat_summary(fun.y=median, geom="point", size=3, aes(color = origin))
-
-fd = ggplot(sp4_allpred, aes(x=rainfall, y=mean_fitness)) +
-  scale_color_manual(values = c("#52BCA3", "#5D69B1", "#fab14f")) +
-  geom_jitter(alpha = 0.15, aes(color = origin)) +
-  facet_wrap(~origin) +
-  ylab("Fitness Differences") +
-  xlab("Rainfall Treatment") +
-  geom_violin() +
-  theme(text = element_text(size = 15)) +
-  labs(color = "Origin") +
-  #ggtitle("4 Species") + 
-  geom_boxplot(width = 0.1, aes(color = origin)) +
-  stat_summary(fun.y=median, geom="point", size=3, aes(color = origin))
-
-ggarrange(pf, nd, fd, ncol = 1, nrow = 3, common.legend = TRUE, legend = "bottom", labels = "AUTO")
-
-ggsave(paste0(fig_loc, "rain_origin_violin_plots.png"), width = 5.5, height = 8)
-
-ggplot(sp4_sum_noout, aes(x=rainfall, y=prop_feasible)) +
-  scale_color_manual(values = c("#52BCA3", "#5D69B1", "#fab14f")) +
+pfo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=prop_feasible)) +
   geom_jitter(alpha = 0.15) +
-  ylab("Proportion of Coexistence") +
-  xlab("") +
-  geom_violin() +
+  ylab("Prop. Coexistence") +
+  xlab("Number of Invasive Species") +
   theme(text = element_text(size = 15)) +
-  ggtitle("4 Species") + 
-  geom_boxplot(width = 0.1)
+  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
+  geom_boxplot(width = 0.1) +
+  stat_summary(fun.y=median, geom="point", size=3)
 
+
+ndo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=mean_niche)) +
+  geom_jitter(alpha = 0.15) +
+  ylab("Niche Differences") +
+  xlab("Number of Invasive Species") +
+  theme(text = element_text(size = 15)) +
+  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
+  geom_boxplot(width = 0.1) +
+  stat_summary(fun.y=median, geom="point", size=3)
+
+
+fdo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=mean_fitness)) +
+  geom_jitter(alpha = 0.15) +
+  ylab("Fitness Differences") +
+  xlab("Number of Invasive Species") +
+  theme(text = element_text(size = 15)) +
+  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
+  geom_boxplot(width = 0.1) +
+  stat_summary(fun.y=median, geom="point", size=3)
+
+ggarrange(pfo, lpfo, ndo, fdo, ncol = 1, nrow = 4, common.legend = TRUE, legend = "bottom", labels = "AUTO")
+
+ggsave(paste0(fig_loc, "origin_violin_plots.png"), width = 6.5, height = 10)
 
 ## FDIV ####
-fdivpf = ggplot(sp4_allpred, aes(x=fdiv, y=prop_feasible)) +
+fdivpf = ggplot(sp8_sum, aes(x=fdiv, y=prop_feasible)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Proportion of Coexistence") +
   xlab(" ") +
-  ggtitle("4 Species")
+  ggtitle("8 Species")
 
-fdivnd = ggplot(sp4_allpred, aes(x=fdiv, y=mean_niche)) +
+fdivnd = ggplot(sp8_sum, aes(x=fdiv, y=mean_niche)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Niche Differences") +
   xlab("Functional Diversity") +
   ggtitle(" ")
 
-fdivfd = ggplot(sp4_allpred, aes(x=fdiv, y=mean_fitness)) +
+fdivfd = ggplot(sp8_sum, aes(x=fdiv, y=mean_fitness)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Fitness Differences") +
@@ -148,39 +156,39 @@ ggarrange(fdivpf, fdivnd, fdivfd, ncol = 3, nrow = 1, labels = "AUTO")
 ggsave(paste0(fig_loc, "fdiv_overall_patterns.png"), width = 7, height = 3)
 
 ## INDIRECT INT ####
-cpopf = ggplot(sp4_allpred, aes(x=mean_cpo, y=prop_feasible)) +
+cpopf = ggplot(sp8_sum, aes(x=mean_cpo, y=prop_feasible)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Proportion of Coexistence") +
   xlab(" ") 
 
-cpdpf = ggplot(sp4_allpred, aes(x=mean_cpd, y=prop_feasible)) +
+cpdpf = ggplot(sp8_sum, aes(x=mean_cpd, y=prop_feasible)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Proportion of Coexistence") +
   xlab(" ") +
-  ggtitle("4 Species")
+  ggtitle("8 Species")
 
-cpond = ggplot(sp4_allpred, aes(x=mean_cpo, y=mean_niche)) +
+cpond = ggplot(sp8_sum, aes(x=mean_cpo, y=mean_niche)) +
   geom_point() +
-  geom_smooth() +
+  geom_smooth(method = "lm") +
   ylab("Niche Differences") +
   xlab("Community Pair Overlap") 
 
-cpdnd = ggplot(sp4_allpred, aes(x=mean_cpd, y=mean_niche)) +
+cpdnd = ggplot(sp8_sum, aes(x=mean_cpd, y=mean_niche)) +
   geom_point() +
   geom_smooth() +
   ylab("Niche Differences") +
   xlab("Community Pair Differential") +
   ggtitle(" ")
 
-cpofd = ggplot(sp4_allpred, aes(x=mean_cpo, y=mean_fitness)) +
+cpofd = ggplot(sp8_sum, aes(x=mean_cpo, y=mean_fitness)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Fitness Differences") +
   xlab(" ") 
 
-cpdfd = ggplot(sp4_allpred, aes(x=mean_cpd, y=mean_fitness)) +
+cpdfd = ggplot(sp8_sum, aes(x=mean_cpd, y=mean_fitness)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Fitness Differences") +
@@ -193,70 +201,8 @@ ggarrange(cpdpf, cpdnd, cpdfd,
 
 ggsave(paste0(fig_loc, "indirect_interactions.png"), width = 8, height = 6)
 
+
 ## Network Metrics ####
 ### asymmetry ####
-aspf = ggplot(sp4_allpred, aes(x=mean_asym, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("") +
-  ggtitle("4 Species")
-
-asnd = ggplot(sp4_allpred, aes(x=mean_asym, y=mean_niche)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Niche Differences") +
-  xlab("Asymmetry") +
-  ggtitle("")
-
-asfd = ggplot(sp4_allpred, aes(x=mean_asym, y=mean_fitness)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Fitness Differences") +
-  xlab("") +
-  ggtitle("")
-
-ggarrange(aspf, asnd, asfd, ncol = 3, nrow = 1, labels = "AUTO")
-
-ggsave(paste0(fig_loc, "asymmetry.png"), width = 7, height = 3)
 
 ### skewness ####
-skpf = ggplot(sp4_allpred, aes(x=mean_skew, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("") +
-  ggtitle("4 Species")
-
-sknd = ggplot(sp4_allpred, aes(x=mean_skew, y=mean_niche)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Niche Differences") +
-  xlab("Skewness") +
-  ggtitle("")
-
-skfd = ggplot(sp4_allpred, aes(x=mean_skew, y=mean_fitness)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Fitness Differences") +
-  xlab("") +
-  ggtitle("")
-
-ggarrange(skpf, sknd, skfd, ncol = 3, nrow = 1, labels = "AUTO")
-
-ggsave(paste0(fig_loc, "skewness.png"), width = 7, height = 3)
-
-## N & F v Feasible ####
-ggplot(sp4_allpred, aes(x=mean_niche, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("Niche Differences") +
-  ggtitle("4 Species")
-
-ggplot(sp4_allpred, aes(x=mean_fitness, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("Fitness Differences") +
-  ggtitle("4 Species")

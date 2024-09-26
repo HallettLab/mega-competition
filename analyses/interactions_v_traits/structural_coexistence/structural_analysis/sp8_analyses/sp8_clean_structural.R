@@ -30,7 +30,7 @@ rm(sp8, sp8_1, sp8_2, sp8_3, sp8_4, sp8_5, sp8_6)
 
 ## make community variable
 sp8_all = sp8_all %>%
-  mutate(comm = paste0(ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL))
+  mutate(comp = paste0(ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL))
 
 ## check number of communities
 comm_num = unique(sp8_all$comm)
@@ -43,7 +43,7 @@ sp8_clean = sp8_all %>%
 
 ## look for completion
 check_complete = no_NAs %>%
-  group_by(comm, rainfall, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
+  group_by(comp, rainfall, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
   summarise(num_iter = n())
 
 unique(check_complete$num_iter)
