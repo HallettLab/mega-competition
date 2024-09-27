@@ -11,7 +11,7 @@ file_path = "analyses/interactions_v_traits/structural_coexistence/"
 fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sept_2024/sp5/"
 
 ## read in data
-sp5 = read.csv(paste0(file_path, "run_structural/structural_results_files/5_sp_structural_results_20240904.csv"))
+sp5 = read.csv(paste0(file_path, "run_structural/structural_results_files/sp5/5_sp_structural_results_20240904.csv"))
 
 fdiv5 = read.csv(paste0(file_path, "calc_comm_attributes/sp5_fdiv.csv")) %>%
   select(-X)
@@ -74,7 +74,8 @@ pf = ggplot(sp5sum, aes(x=rainfall, y=prop_feasible)) +
   theme(text = element_text(size = 15)) +
   geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
   geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+  stat_summary(fun.y=median, geom="point", size=3) +
+  ggtitle("5 Species")
 
 nd = ggplot(sp5sum, aes(x=rainfall, y=mean_niche)) +
   geom_jitter(alpha = 0.15) +
@@ -83,7 +84,8 @@ nd = ggplot(sp5sum, aes(x=rainfall, y=mean_niche)) +
   theme(text = element_text(size = 15)) +
   geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
   geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+  stat_summary(fun.y=median, geom="point", size=3) +
+  ggtitle(" ")
 
 fd = ggplot(sp5sum, aes(x=rainfall, y=mean_fitness)) +
   geom_jitter(alpha = 0.15) +
@@ -92,7 +94,8 @@ fd = ggplot(sp5sum, aes(x=rainfall, y=mean_fitness)) +
   theme(text = element_text(size = 15)) +
   geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
   geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+  stat_summary(fun.y=median, geom="point", size=3) +
+  ggtitle(" ")
 
 ggarrange(pf, nd, fd, ncol = 3, nrow = 1, common.legend = TRUE, legend = "bottom", labels = "AUTO")
 
