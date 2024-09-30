@@ -407,68 +407,6 @@ ggplot(sp5sum, aes(x = rainfall, y = mean_cpo)) +
 
 ## Network Metrics ####
 ### asymmetry ####
-aspf = ggplot(sp4_allpred, aes(x=mean_asym, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("") +
-  ggtitle("4 Species")
 
-asnd = ggplot(sp4_allpred, aes(x=mean_asym, y=mean_niche)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Niche Differences") +
-  xlab("Asymmetry") +
-  ggtitle("")
-
-asfd = ggplot(sp4_allpred, aes(x=mean_asym, y=mean_fitness)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Fitness Differences") +
-  xlab("") +
-  ggtitle("")
-
-ggarrange(aspf, asnd, asfd, ncol = 3, nrow = 1, labels = "AUTO")
-
-ggsave(paste0(fig_loc, "asymmetry.png"), width = 7, height = 3)
 
 ### skewness ####
-skpf = ggplot(sp4_allpred, aes(x=mean_skew, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("") +
-  ggtitle("4 Species")
-
-sknd = ggplot(sp4_allpred, aes(x=mean_skew, y=mean_niche)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Niche Differences") +
-  xlab("Skewness") +
-  ggtitle("")
-
-skfd = ggplot(sp4_allpred, aes(x=mean_skew, y=mean_fitness)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Fitness Differences") +
-  xlab("") +
-  ggtitle("")
-
-ggarrange(skpf, sknd, skfd, ncol = 3, nrow = 1, labels = "AUTO")
-
-ggsave(paste0(fig_loc, "skewness.png"), width = 7, height = 3)
-
-## N & F v Feasible ####
-ggplot(sp4_allpred, aes(x=mean_niche, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("Niche Differences") +
-  ggtitle("4 Species")
-
-ggplot(sp4_allpred, aes(x=mean_fitness, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("Fitness Differences") +
-  ggtitle("4 Species")

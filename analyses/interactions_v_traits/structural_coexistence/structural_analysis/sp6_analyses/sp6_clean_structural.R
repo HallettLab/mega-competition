@@ -1,9 +1,9 @@
-# Set up 
+# Set up ####
 library(tidyverse)
 
 file_path = "analyses/interactions_v_traits/structural_coexistence/"
 
-## Read in data files
+## Read in Data ####
 sp6_1 = read.csv(paste0(file_path, "run_structural/structural_results_files/sp6/6_sp_structural_results_20240828.csv"))
 
 sp6_2 = read.csv(paste0(file_path, "run_structural/structural_results_files/sp6/6_sp_structural_results_part2_20240910.csv"))
@@ -20,11 +20,12 @@ sp6_7 = read.csv(paste0(file_path, "run_structural/structural_results_files/sp6/
 
 sp6_8 = read.csv(paste0(file_path, "run_structural/structural_results_files/sp6/6_sp_structural_results_part8_20240918.csv"))
 
-## Combine
+## Combine ####
 sp6_all = rbind(sp6_1, sp6_2, sp6_3, sp6_4, sp6_5, sp6_6, sp6_7, sp6_8)
 
 rm(sp6_1, sp6_2, sp6_3, sp6_4, sp6_5, sp6_6, sp6_7, sp6_8)
 
+# Prep Data ####
 ## check row number
 8008*2*100
 ## should have 1601600 rows, have 1601661 - some extras...
@@ -42,6 +43,15 @@ rm(comm_num)
 sp6_clean = sp6_all %>%
   filter(!is.na(feasibility))
 
+# Explore missing dat####
+sp6NA = sp6_all %>%
+  filter(is.na(feasibility)) %>%
+  group_by(comp, rainfall) %>%
+  summarise(num = n()) %>%
+  ungroup() %>%
+  group_by(rainfall) %>%
+  summarise(numcomms = n())
+
 ## look for completion
 check_complete = sp6_clean %>%
   group_by(comp, rainfall, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
@@ -52,4 +62,4 @@ unique(check_complete$num_iter)
 
 ## probably need to re-run these particular communities to make sure there are the correct number of iterations
 
-rm(check_complete, sp8_all)
+rm(check_complete, sp6_all, sp6NA)
