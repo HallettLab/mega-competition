@@ -18,7 +18,6 @@ sp8_5 = read.csv(paste0(file_path, "run_structural/structural_results_files/sp8/
 
 sp8_6 = read.csv(paste0(file_path, "run_structural/structural_results_files/sp8/8_sp_structural_results_part6_20240910.csv"))
 
-
 ## Combine
 sp8_all = rbind(sp8, sp8_1, sp8_2, sp8_3, sp8_4, sp8_5, sp8_6)
 
@@ -41,8 +40,17 @@ rm(comm_num)
 sp8_clean = sp8_all %>%
   filter(!is.na(feasibility))
 
+# Explore missing dat####
+sp8NA = sp8_all %>%
+  filter(is.na(feasibility)) %>%
+  group_by(comp, rainfall) %>%
+  summarise(num = n()) %>%
+  ungroup() %>%
+  group_by(rainfall) %>%
+  summarise(numcomms = n())
+
 ## look for completion
-check_complete = no_NAs %>%
+check_complete = sp8_clean %>%
   group_by(comp, rainfall, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
   summarise(num_iter = n())
 
@@ -52,4 +60,4 @@ unique(check_complete$num_iter)
 ## probably need to re-run this particular community to make sure there are the correct number of iterations
 ## 0011001110010101 D
 
-rm(check_complete, sp8_all)
+rm(check_complete, sp8_all, sp8NA)

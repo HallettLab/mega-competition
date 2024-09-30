@@ -5,37 +5,48 @@
 ## load packages
 library(ggpubr)
 
-calcSE<-function(x){
-  x2<-na.omit(x)
-  sd(x2)/sqrt(length(x2))
-}
-
 ## set file paths
 file_path = "analyses/interactions_v_traits/structural_coexistence/"
 
 fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sept_2024/sp8/"
 
 ## read in data
-sp8 = source(paste0(file_path, "structural_analysis/sp8_analyses/sp8_clean_structural.R"))
+### coexistence metrics/indirect interactions
+source(paste0(file_path, "structural_analysis/sp8_analyses/sp8_clean_structural.R"))
 
-fdiv8 = read.csv(paste0(file_path, "calc_comm_attributes/sp8_fdiv.csv"))
+### functional div
+fdiv8 = read.csv(paste0(file_path, "calc_comm_attributes/fdiv/sp8_fdiv.csv")) %>%
+  select(-X, -comp)
 
-fdiv8$comp = as.character(fdiv8$comp)
+### community weighted mean traits
+cwm8 = read.csv(paste0(file_path, "calc_comm_attributes/cwm/sp8_cwm.csv"))
+
+### network metrics
 
 ## set plot theme
 theme_set(theme_classic())
 
+## create standard error function
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
+
 # Format Data ####
-sp8fdiv = left_join(sp8_clean, fdiv8, by = c("comp", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
+## join fdiv + cwm
+traitdat = left_join(cwm8, fdiv8, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "richness"))
 
-sp8fdiv$niche_diff = as.numeric(sp8fdiv$niche_diff)
+sp8trait = left_join(sp8_clean, traitdat, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
 
-check_NAs = sp8fdiv %>%
-  filter(is.na(niche_diff))
+sp8trait$niche_diff = as.numeric(sp8trait$niche_diff)
+
+#check_NAs = sp8fdiv %>%
+ # filter(is.na(niche_diff))
 ## need to figure out why there were 161 non-numeric values.
 
-sp8_sum = sp8fdiv %>%
-  group_by(comp, rainfall, fdiv, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
+sp8sum = sp8trait %>%
+  group_by(comp, rainfall, fdiv, cwm.height, cwm.ldmc, cwm.sla, cwm.rmf, cwm.crsl, cwm.pf, cwm.d,
+           ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),
             mean_niche = mean(niche_diff),
@@ -48,11 +59,9 @@ sp8_sum = sp8fdiv %>%
             se_cpd = calcSE(comm_pair_diff))  %>%
   mutate(num.inv = sum(ANAR, BRHO, BRNI, CESO, LOMU, TACA, THIR))
 
-#sp8_allpred = left_join(sp8_sum, netsums, by = c("comp", "rainfall", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
-
 # Visualize ####
 ## RAINFALL ####
-pf = ggplot(sp8_sum, aes(x=rainfall, y=prop_feasible)) +
+pf = ggplot(sp8sum, aes(x=rainfall, y=prop_feasible)) +
   geom_jitter(alpha = 0.15) +
   ylab("Proportion of Coexistence") +
   xlab("") +
@@ -62,7 +71,7 @@ pf = ggplot(sp8_sum, aes(x=rainfall, y=prop_feasible)) +
   stat_summary(fun.y=median, geom="point", size=3) +
   ggtitle("8 Species")
 
-nd = ggplot(sp8_sum, aes(x=rainfall, y=mean_niche)) +
+nd = ggplot(sp8sum, aes(x=rainfall, y=mean_niche)) +
   geom_jitter(alpha = 0.15) +
   ylab("Niche Differences") +
   xlab("Rainfall Treatment") +
@@ -72,7 +81,7 @@ nd = ggplot(sp8_sum, aes(x=rainfall, y=mean_niche)) +
   stat_summary(fun.y=median, geom="point", size=3) +
   ggtitle(" ")
 
-fd = ggplot(sp8_sum, aes(x=rainfall, y=mean_fitness)) +
+fd = ggplot(sp8sum, aes(x=rainfall, y=mean_fitness)) +
   geom_jitter(alpha = 0.15) +
   ylab("Fitness Differences") +
   xlab("") +
@@ -87,7 +96,7 @@ ggarrange(pf, nd, fd, ncol = 3, nrow = 1, common.legend = TRUE, legend = "bottom
 ggsave(paste0(fig_loc, "rain_origin_violin_plots_sp8.png"), width = 9, height = 3.5)
 
 ## ORIGIN ####
-lpfo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=log(prop_feasible))) +
+lpfo = ggplot(sp8sum, aes(x=as.factor(num.inv), y=log(prop_feasible))) +
   geom_jitter(alpha = 0.15) +
   ylab("Log(Prop. Coexistence)") +
   xlab("Number of Invasive Species") +
@@ -96,7 +105,7 @@ lpfo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=log(prop_feasible))) +
   geom_boxplot(width = 0.1) +
   stat_summary(fun.y=median, geom="point", size=3)
 
-pfo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=prop_feasible)) +
+pfo = ggplot(sp8sum, aes(x=as.factor(num.inv), y=prop_feasible)) +
   geom_jitter(alpha = 0.15) +
   ylab("Prop. Coexistence") +
   xlab("Number of Invasive Species") +
@@ -106,7 +115,7 @@ pfo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=prop_feasible)) +
   stat_summary(fun.y=median, geom="point", size=3)
 
 
-ndo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=mean_niche)) +
+ndo = ggplot(sp8sum, aes(x=as.factor(num.inv), y=mean_niche)) +
   geom_jitter(alpha = 0.15) +
   ylab("Niche Differences") +
   xlab("Number of Invasive Species") +
@@ -116,7 +125,7 @@ ndo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=mean_niche)) +
   stat_summary(fun.y=median, geom="point", size=3)
 
 
-fdo = ggplot(sp8_sum, aes(x=as.factor(num.inv), y=mean_fitness)) +
+fdo = ggplot(sp8sum, aes(x=as.factor(num.inv), y=mean_fitness)) +
   geom_jitter(alpha = 0.15) +
   ylab("Fitness Differences") +
   xlab("Number of Invasive Species") +
@@ -130,21 +139,21 @@ ggarrange(pfo, lpfo, ndo, fdo, ncol = 1, nrow = 4, common.legend = TRUE, legend 
 ggsave(paste0(fig_loc, "origin_violin_plots.png"), width = 6.5, height = 10)
 
 ## FDIV ####
-fdivpf = ggplot(sp8_sum, aes(x=fdiv, y=prop_feasible)) +
+fdivpf = ggplot(sp8sum, aes(x=fdiv, y=prop_feasible)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Proportion of Coexistence") +
   xlab(" ") +
   ggtitle("8 Species")
 
-fdivnd = ggplot(sp8_sum, aes(x=fdiv, y=mean_niche)) +
+fdivnd = ggplot(sp8sum, aes(x=fdiv, y=mean_niche)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Niche Differences") +
   xlab("Functional Diversity") +
   ggtitle(" ")
 
-fdivfd = ggplot(sp8_sum, aes(x=fdiv, y=mean_fitness)) +
+fdivfd = ggplot(sp8sum, aes(x=fdiv, y=mean_fitness)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Fitness Differences") +
@@ -155,40 +164,203 @@ ggarrange(fdivpf, fdivnd, fdivfd, ncol = 3, nrow = 1, labels = "AUTO")
 
 ggsave(paste0(fig_loc, "fdiv_overall_patterns.png"), width = 7, height = 3)
 
+## CWMS ####
+### Niche diff ####
+nh = ggplot(sp8sum, aes(x=cwm.height, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("8 Species") +
+  ylab("Niche Differences") +
+  xlab("CWM Height")
+
+nl = ggplot(sp8sum, aes(x=cwm.ldmc, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM LDMC")
+
+ns = ggplot(sp8sum, aes(x=cwm.sla, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM SLA")
+
+nr = ggplot(sp8sum, aes(x=cwm.rmf, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM RMF")
+
+nc = ggplot(sp8sum, aes(x=cwm.crsl, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab("Niche Differences") +
+  xlab("CWM CRSL")
+
+np = ggplot(sp8sum, aes(x=cwm.pf, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM PF")
+
+nd = ggplot(sp8sum, aes(x=cwm.d, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM Diameter")
+
+ggarrange(nh, nl, ns, nr, nc, np, nd, nrow = 2, ncol = 4)
+
+ggsave(paste0(fig_loc, "cwm_ndiff.png"), width = 10, height = 4.5)
+
+### Fitness diff ####
+fh = ggplot(sp8sum, aes(x=cwm.height, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("8 Species") +
+  ylab("Fitness Differences") +
+  xlab("CWM Height")
+
+fl = ggplot(sp8sum, aes(x=cwm.ldmc, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM LDMC")
+
+fs = ggplot(sp8sum, aes(x=cwm.sla, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM SLA")
+
+fr = ggplot(sp8sum, aes(x=cwm.rmf, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM RMF")
+
+fc = ggplot(sp8sum, aes(x=cwm.crsl, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab("Fitness Differences") +
+  xlab("CWM CRSL")
+
+fp = ggplot(sp8sum, aes(x=cwm.pf, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM PF")
+
+fd = ggplot(sp8sum, aes(x=cwm.d, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM Diameter")
+
+ggarrange(fh, fl, fs, fr, fc, fp, fd, nrow = 2, ncol = 4)
+
+ggsave(paste0(fig_loc, "cwm_fdiff.png"), width = 10, height = 4.5)
+
+### Prop Coexist ####
+pfh = ggplot(sp8sum, aes(x=cwm.height, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("8 Species") +
+  ylab("Prop Feasible") +
+  xlab("CWM Height")
+
+pfl = ggplot(sp8sum, aes(x=cwm.ldmc, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM LDMC")
+
+pfs = ggplot(sp8sum, aes(x=cwm.sla, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM SLA")
+
+pfr = ggplot(sp8sum, aes(x=cwm.rmf, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM RMF")
+
+pfc = ggplot(sp8sum, aes(x=cwm.crsl, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab("Prop Feasible") +
+  xlab("CWM CRSL")
+
+pfp = ggplot(sp8sum, aes(x=cwm.pf, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM PF")
+
+pfd = ggplot(sp8sum, aes(x=cwm.d, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM Diameter")
+
+ggarrange(pfh, pfl, pfs, pfr, pfc, pfp, pfd, nrow = 2, ncol = 4)
+
+ggsave(paste0(fig_loc, "cwm_propfeas.png"), width = 10, height = 4.5)
+
 ## INDIRECT INT ####
-cpopf = ggplot(sp8_sum, aes(x=mean_cpo, y=prop_feasible)) +
+cpopf = ggplot(sp8sum, aes(x=mean_cpo, y=prop_feasible)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Proportion of Coexistence") +
   xlab(" ") 
 
-cpdpf = ggplot(sp8_sum, aes(x=mean_cpd, y=prop_feasible)) +
+cpdpf = ggplot(sp8sum, aes(x=mean_cpd, y=prop_feasible)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Proportion of Coexistence") +
   xlab(" ") +
   ggtitle("8 Species")
 
-cpond = ggplot(sp8_sum, aes(x=mean_cpo, y=mean_niche)) +
+cpond = ggplot(sp8sum, aes(x=mean_cpo, y=mean_niche)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Niche Differences") +
   xlab("Community Pair Overlap") 
 
-cpdnd = ggplot(sp8_sum, aes(x=mean_cpd, y=mean_niche)) +
+cpdnd = ggplot(sp8sum, aes(x=mean_cpd, y=mean_niche)) +
   geom_point() +
   geom_smooth() +
   ylab("Niche Differences") +
   xlab("Community Pair Differential") +
   ggtitle(" ")
 
-cpofd = ggplot(sp8_sum, aes(x=mean_cpo, y=mean_fitness)) +
+cpofd = ggplot(sp8sum, aes(x=mean_cpo, y=mean_fitness)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Fitness Differences") +
   xlab(" ") 
 
-cpdfd = ggplot(sp8_sum, aes(x=mean_cpd, y=mean_fitness)) +
+cpdfd = ggplot(sp8sum, aes(x=mean_cpd, y=mean_fitness)) +
   geom_point() +
   geom_smooth(method = "lm") +
   ylab("Fitness Differences") +
@@ -206,3 +378,13 @@ ggsave(paste0(fig_loc, "indirect_interactions.png"), width = 8, height = 6)
 ### asymmetry ####
 
 ### skewness ####
+
+# Summary ####
+sp8fsum = sp8sum %>%
+  group_by(prop_feasible) %>%
+  summarise(numcomm = n())
+
+
+
+
+
