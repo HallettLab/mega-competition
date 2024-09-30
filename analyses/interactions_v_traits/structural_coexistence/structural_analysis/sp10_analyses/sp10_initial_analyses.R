@@ -369,93 +369,12 @@ ggarrange(cpdpf, cpdnd, cpdfd,
 
 ggsave(paste0(fig_loc, "indirect_interactions.png"), width = 8, height = 6)
 
-
-
-
-
-### Rainfall x Indirect interactions ####
-ggplot(sp5sum, aes(x = rainfall, y = mean_cpd)) +
-  geom_jitter(alpha = 0.15) +
-  xlab("Rainfall Treatment") +
-  ylab("Community Pair Differential") +
-  theme(text = element_text(size = 15)) +
-  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
-  geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
-
-ggplot(sp5sum, aes(x = rainfall, y = mean_cpo)) +
-  geom_jitter(alpha = 0.15) +
-  xlab("Rainfall Treatment") +
-  ylab("Community Pair Overlap") +
-  theme(text = element_text(size = 15)) +
-  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
-  geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
-
 ## Network Metrics ####
 ### asymmetry ####
-aspf = ggplot(sp4_allpred, aes(x=mean_asym, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("") +
-  ggtitle("4 Species")
-
-asnd = ggplot(sp4_allpred, aes(x=mean_asym, y=mean_niche)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Niche Differences") +
-  xlab("Asymmetry") +
-  ggtitle("")
-
-asfd = ggplot(sp4_allpred, aes(x=mean_asym, y=mean_fitness)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Fitness Differences") +
-  xlab("") +
-  ggtitle("")
-
-ggarrange(aspf, asnd, asfd, ncol = 3, nrow = 1, labels = "AUTO")
-
-ggsave(paste0(fig_loc, "asymmetry.png"), width = 7, height = 3)
 
 ### skewness ####
-skpf = ggplot(sp4_allpred, aes(x=mean_skew, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("") +
-  ggtitle("4 Species")
 
-sknd = ggplot(sp4_allpred, aes(x=mean_skew, y=mean_niche)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Niche Differences") +
-  xlab("Skewness") +
-  ggtitle("")
-
-skfd = ggplot(sp4_allpred, aes(x=mean_skew, y=mean_fitness)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Fitness Differences") +
-  xlab("") +
-  ggtitle("")
-
-ggarrange(skpf, sknd, skfd, ncol = 3, nrow = 1, labels = "AUTO")
-
-ggsave(paste0(fig_loc, "skewness.png"), width = 7, height = 3)
-
-## N & F v Feasible ####
-ggplot(sp4_allpred, aes(x=mean_niche, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("Niche Differences") +
-  ggtitle("4 Species")
-
-ggplot(sp4_allpred, aes(x=mean_fitness, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("Fitness Differences") +
-  ggtitle("4 Species")
+# Summary ####
+sp10fsum = sp10sum %>%
+  group_by(prop_feasible) %>%
+  summarise(numcomm = n())
