@@ -36,6 +36,15 @@ rm(comm_num)
 sp10_clean = sp10_all %>%
   filter(!is.na(feasibility))
 
+# Explore missing dat####
+sp10NA = sp10_all %>%
+  filter(is.na(feasibility)) %>%
+  group_by(comp, rainfall) %>%
+  summarise(num = n()) %>%
+  ungroup() %>%
+  group_by(rainfall) %>%
+  summarise(numcomms = n())
+
 ## look for completion
 check_complete = sp10_clean %>%
   group_by(comp, rainfall, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
@@ -46,4 +55,4 @@ unique(check_complete$num_iter)
 
 ## probably need to re-run these particular communities to make sure there are the correct number of iterations
 
-rm(check_complete, sp10_all)
+rm(check_complete, sp10_all, sp10NA)

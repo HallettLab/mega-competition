@@ -11,10 +11,17 @@ file_path = "analyses/interactions_v_traits/structural_coexistence/"
 fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sept_2024/sp10/"
 
 ## read in data
+### coexistence metrics/indirect interactions
 source(paste0(file_path, "structural_analysis/sp10_analyses/sp10_clean_structural.R"))
 
-fdiv10 = read.csv(paste0(file_path, "calc_comm_attributes/sp10_fdiv.csv")) %>%
-  select(-X)
+### functional div
+fdiv10 = read.csv(paste0(file_path, "calc_comm_attributes/fdiv/sp10_fdiv.csv")) %>%
+  select(-X, -comp)
+
+### community weighted mean traits
+cwm10 = read.csv(paste0(file_path, "calc_comm_attributes/cwm/sp10_cwm.csv"))
+
+### network metrics
 
 ## set plot theme
 theme_set(theme_classic())
@@ -26,12 +33,16 @@ calcSE<-function(x){
 }
 
 # Format Data ####
-sp10fdiv = left_join(sp10_clean, fdiv10, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
+## join fdiv + cwm
+traitdat = left_join(cwm10, fdiv10, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "richness"))
 
-sp10fdiv$niche_diff = as.numeric(sp10fdiv$niche_diff)
+sp10trait = left_join(sp10_clean, traitdat, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
 
-sp10sum = sp10fdiv %>%
-  group_by(rainfall, fdiv, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
+sp10trait$niche_diff = as.numeric(sp10trait$niche_diff)
+
+sp10sum = sp10trait %>%
+  group_by(rainfall, fdiv, cwm.height, cwm.ldmc, cwm.sla, cwm.rmf, cwm.crsl, cwm.pf, cwm.d,
+           ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),
             mean_niche = mean(niche_diff),
@@ -148,6 +159,169 @@ fdivfd = ggplot(sp10sum, aes(x=fdiv, y=mean_fitness)) +
 ggarrange(fdivpf, fdivnd, fdivfd, ncol = 3, nrow = 1, labels = "AUTO")
 
 ggsave(paste0(fig_loc, "fdiv_overall_patterns.png"), width = 7, height = 3)
+
+## CWMS ####
+### Niche diff ####
+nh = ggplot(sp10sum, aes(x=cwm.height, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("10 Species") +
+  ylab("Niche Differences") +
+  xlab("CWM Height")
+
+nl = ggplot(sp10sum, aes(x=cwm.ldmc, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM LDMC")
+
+ns = ggplot(sp10sum, aes(x=cwm.sla, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM SLA")
+
+nr = ggplot(sp10sum, aes(x=cwm.rmf, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM RMF")
+
+nc = ggplot(sp10sum, aes(x=cwm.crsl, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab("Niche Differences") +
+  xlab("CWM CRSL")
+
+np = ggplot(sp10sum, aes(x=cwm.pf, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM PF")
+
+nd = ggplot(sp10sum, aes(x=cwm.d, y=mean_niche)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM Diameter")
+
+ggarrange(nh, nl, ns, nr, nc, np, nd, nrow = 2, ncol = 4)
+
+ggsave(paste0(fig_loc, "cwm_ndiff.png"), width = 10, height = 4.5)
+
+### Fitness diff ####
+fh = ggplot(sp10sum, aes(x=cwm.height, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("10 Species") +
+  ylab("Fitness Differences") +
+  xlab("CWM Height")
+
+fl = ggplot(sp10sum, aes(x=cwm.ldmc, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM LDMC")
+
+fs = ggplot(sp10sum, aes(x=cwm.sla, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM SLA")
+
+fr = ggplot(sp10sum, aes(x=cwm.rmf, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM RMF")
+
+fc = ggplot(sp10sum, aes(x=cwm.crsl, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab("Fitness Differences") +
+  xlab("CWM CRSL")
+
+fp = ggplot(sp10sum, aes(x=cwm.pf, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM PF")
+
+fd = ggplot(sp10sum, aes(x=cwm.d, y=mean_fitness)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM Diameter")
+
+ggarrange(fh, fl, fs, fr, fc, fp, fd, nrow = 2, ncol = 4)
+
+ggsave(paste0(fig_loc, "cwm_fdiff.png"), width = 10, height = 4.5)
+
+### Prop Coexist ####
+pfh = ggplot(sp10sum, aes(x=cwm.height, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("8 Species") +
+  ylab("Prop Feasible") +
+  xlab("CWM Height")
+
+pfl = ggplot(sp10sum, aes(x=cwm.ldmc, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM LDMC")
+
+pfs = ggplot(sp10sum, aes(x=cwm.sla, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM SLA")
+
+pfr = ggplot(sp10sum, aes(x=cwm.rmf, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM RMF")
+
+pfc = ggplot(sp10sum, aes(x=cwm.crsl, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab("Prop Feasible") +
+  xlab("CWM CRSL")
+
+pfp = ggplot(sp10sum, aes(x=cwm.pf, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM PF")
+
+pfd = ggplot(sp10sum, aes(x=cwm.d, y=prop_feasible)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  ylab(" ") +
+  xlab("CWM Diameter")
+
+ggarrange(pfh, pfl, pfs, pfr, pfc, pfp, pfd, nrow = 2, ncol = 4)
+
+ggsave(paste0(fig_loc, "cwm_propfeas.png"), width = 10, height = 4.5)
 
 ## INDIRECT INT ####
 cpopf = ggplot(sp10sum, aes(x=mean_cpo, y=prop_feasible)) +
