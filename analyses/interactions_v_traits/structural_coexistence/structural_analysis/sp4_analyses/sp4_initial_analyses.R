@@ -4,6 +4,7 @@
 # Set up ####
 ## load packages
 library(ggpubr)
+library(tidyverse)
 
 ## set file paths
 file_path = "analyses/interactions_v_traits/structural_coexistence/"
@@ -11,19 +12,27 @@ file_path = "analyses/interactions_v_traits/structural_coexistence/"
 fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sept_2024/sp4/"
 
 ## read in data
-sp4 = read.csv(paste0(file_path, "run_structural/structural_results_files/4_sp_structural_results_20240828.csv"))
+sp4 = read.csv(paste0(file_path, "run_structural/structural_results_files/sp4/4_sp_structural_results_20240828.csv"))
 
-source(paste0(file_path, "calc_comm_attributes/calc_comm_fdiv.R"))
+fdiv4 = read.csv(paste0(file_path, "calc_comm_attributes/sp4_fdiv.csv")) %>%
+  select(-X)
+
+cwm4 = read.csv(paste0(file_path, "calc_comm_attributes/4_sp_cwm_20240916.csv"))
 
 ## set plot theme
 theme_set(theme_classic())
 
+calcSE<-function(x){
+  x2<-na.omit(x)
+  sd(x2)/sqrt(length(x2))
+}
+
 # Format Data ####
-fdiv_4 = fdiv_list[[1]]
+sp4fdiv = left_join(sp4, fdiv4, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
 
-sp4_fdiv = left_join(sp4_clean, fdiv_4, by = c("comp", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
+sp4fdiv$niche_diff = as.numeric(sp4fdiv$niche_diff)
 
-sp4_sum = sp4_fdiv %>%
+sp4sum = sp4fdiv %>%
   group_by(comp, rainfall, fdiv, ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),

@@ -1,5 +1,8 @@
 ## Comm weighted mean traits
 
+# Set up ####
+library(RcppAlgos)
+
 ## load trait data
 source("analyses/traits/clean_trait_data.R")
 
@@ -26,55 +29,90 @@ trait_sum = traits %>%
             m.pf = mean(PF),
             m.d = mean(D)) 
 
-## prep loop
+# Calc CWMs ####
+## create vector of species
 all.sp = unique(trait_sum$phyto)
 
-comp4 = data.frame(comboGeneral(all.sp, m=4, freqs = 1))
+## create vector of richness levels
+richness = c(4:16)
 
-comp15 = data.frame(comboGeneral(all.sp, m=15, freqs = 1))
+## create empty list
+cwm_list = list()
 
-
+## iterate thru each richness level & calc trait cwm
 for(r in 1:length(richness)) {
+  
+  ## select a richness level
+  rich = richness[r]
+ 
+  ## get composition df
+  comp = data.frame(comboGeneral(all.sp, m=rich, freqs = 1))
 
+  ## create empty output df
+  cwm_all = data.frame(matrix(nrow = nrow(comp), ncol = 24))
   
+  ## rename columns
+  names(cwm_all) = c("cwm.height", "cwm.ldmc", "cwm.sla", "cwm.rmf", "cwm.crsl", "cwm.pf", "cwm.d", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "richness")
   
-  
-for(j in 1:nrow(comp4)){
+  ## loop thru each composition
+  for(c in 1:nrow(comp)) {
+    
+    ## select a composition
+    cc = as.character(comp[c,])
+    
+    ## calc cwm traits
+    cwm = trait_sum %>%
+      filter(phyto %in% cc) %>%
+      summarise(cwm.height = mean(m.height),
+                cwm.ldmc = mean(m.ldmc),
+                cwm.sla = mean(m.sla),
+                cwm.rmf = mean(m.rmf),
+                cwm.crsl = mean(m.crsl),
+                cwm.pf = mean(m.pf),
+                cwm.d = mean(m.d)) %>%
+      ## change sp comp to 1's and 0's for P/A
+      mutate(ACAM = ifelse("ACAM" %in% cc, 1, 0), 
+             AMME = ifelse("AMME" %in% cc, 1, 0),
+             ANAR = ifelse("ANAR" %in% cc, 1, 0),
+             BRHO = ifelse("BRHO" %in% cc, 1, 0),
+             BRNI = ifelse("BRNI" %in% cc, 1, 0),
+             CESO = ifelse("CESO" %in% cc, 1, 0),
+             GITR = ifelse("GITR" %in% cc, 1, 0),
+             LENI = ifelse("LENI" %in% cc, 1, 0),
+             LOMU = ifelse("LOMU" %in% cc, 1, 0),
+             MAEL = ifelse("MAEL" %in% cc, 1, 0),
+             MICA = ifelse("MICA" %in% cc, 1, 0),
+             PLER = ifelse("PLER" %in% cc, 1, 0),
+             PLNO = ifelse("PLNO" %in% cc, 1, 0),
+             TACA = ifelse("TACA" %in% cc, 1, 0),
+             THIR = ifelse("THIR" %in% cc, 1, 0),
+             TWIL = ifelse("TWIL" %in% cc, 1, 0),
+             richness = rich)
 
-  cc = as.character(comp4[j,])
-
-  cwm = trait_sum %>%
-    filter(phyto %in% cc) %>%
-    summarise(cwm.height = mean(m.height),
-              cwm.ldmc = mean(m.ldmc),
-              cwm.sla = mean(m.sla),
-              cwm.rmf = mean(m.rmf),
-              cwm.crsl = mean(m.crsl),
-              cwm.pf = mean(m.pf),
-              cwm.d = mean(m.d)) %>%
-    mutate(ACAM = ifelse("ACAM" %in% cc, 1, 0), ## change to 1's and 0's for P/A
-         AMME = ifelse("AMME" %in% cc, 1, 0),
-         ANAR = ifelse("ANAR" %in% cc, 1, 0),
-         BRHO = ifelse("BRHO" %in% cc, 1, 0),
-         BRNI = ifelse("BRNI" %in% cc, 1, 0),
-         CESO = ifelse("CESO" %in% cc, 1, 0),
-         GITR = ifelse("GITR" %in% cc, 1, 0),
-         LENI = ifelse("LENI" %in% cc, 1, 0),
-         LOMU = ifelse("LOMU" %in% cc, 1, 0),
-         MAEL = ifelse("MAEL" %in% cc, 1, 0),
-         MICA = ifelse("MICA" %in% cc, 1, 0),
-         PLER = ifelse("PLER" %in% cc, 1, 0),
-         PLNO = ifelse("PLNO" %in% cc, 1, 0),
-         TACA = ifelse("TACA" %in% cc, 1, 0),
-         THIR = ifelse("THIR" %in% cc, 1, 0),
-         TWIL = ifelse("TWIL" %in% cc, 1, 0))
+    ## append to df in a set row
+    cwm_all[c,] = cwm
   
-  write.table(cwm, "analyses/interactions_v_traits/structural_coexistence/calc_comm_attributes/4_sp_cwm_20240916.csv", append = TRUE, row.names = FALSE, sep = ",", col.names = FALSE)
-  
-
   }
+  
+  ## append to list
+  cwm_list[[r]] = cwm_all
+  
 }
 
 
+# Save Outputs to CSV ####
+path = "analyses/interactions_v_traits/structural_coexistence/calc_comm_attributes/cwm/"
 
-         
+write.csv(cwm_list[[1]], paste0(path, "sp4_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[2]], paste0(path, "sp5_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[3]], paste0(path, "sp6_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[4]], paste0(path, "sp7_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[5]], paste0(path, "sp8_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[6]], paste0(path, "sp9_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[7]], paste0(path, "sp10_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[8]], paste0(path, "sp11_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[9]], paste0(path, "sp12_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[10]], paste0(path, "sp13_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[11]], paste0(path, "sp14_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[12]], paste0(path, "sp15_cwm.csv"), row.names = FALSE)
+write.csv(cwm_list[[13]], paste0(path, "sp16_cwm.csv"), row.names = FALSE)
