@@ -537,17 +537,9 @@ ggarrange(skpf, sknd, skfd, ncol = 3, nrow = 1, labels = "AUTO")
 
 ggsave(paste0(fig_loc, "skewness.png"), width = 7, height = 3)
 
-## N & F v Feasible ####
-ggplot(sp4_allpred, aes(x=mean_niche, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("Niche Differences") +
-  ggtitle("4 Species")
+# Summary ####
+sp4fsum = sp4sum %>%
+  group_by(prop_feasible) %>%
+  summarise(numcomm = n())
 
-ggplot(sp4_allpred, aes(x=mean_fitness, y=prop_feasible)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  ylab("Proportion of Coexistence") +
-  xlab("Fitness Differences") +
-  ggtitle("4 Species")
+sum(sp4fsum[sp4fsum$prop_feasible != 0 & !is.na(sp4fsum$prop_feasible),]$numcomm)

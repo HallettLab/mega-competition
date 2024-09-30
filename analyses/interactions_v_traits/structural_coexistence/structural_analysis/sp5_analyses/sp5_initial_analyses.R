@@ -410,3 +410,10 @@ ggplot(sp5sum, aes(x = rainfall, y = mean_cpo)) +
 
 
 ### skewness ####
+
+# Summary ####
+sp5fsum = sp5sum %>%
+  group_by(prop_feasible) %>%
+  summarise(numcomm = n())
+
+sum(sp5fsum[sp5fsum$prop_feasible != 0 & !is.na(sp5fsum$prop_feasible),]$numcomm)

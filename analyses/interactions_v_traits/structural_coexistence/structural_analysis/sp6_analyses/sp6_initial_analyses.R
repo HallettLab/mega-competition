@@ -375,3 +375,10 @@ ggsave(paste0(fig_loc, "indirect_interactions.png"), width = 8, height = 6)
 ### asymmetry ####
 
 ### skewness ####
+
+# Summary ####
+sp6fsum = sp6sum %>%
+  group_by(prop_feasible) %>%
+  summarise(numcomm = n())
+
+sum(sp6fsum[sp6fsum$prop_feasible != 0,]$numcomm)
