@@ -127,7 +127,7 @@ for(j in 1:nrow(comp4)){
       # Save Output ####
       ## need to do this one row at a time
       ## need to APPEND to the file, not write over
-      write.table(output_row, "analyses/interactions_v_traits/structural_coexistence/run_structural/4_sp_network_metrics_20240905.csv", append = TRUE, row.names = FALSE, sep = ",", col.names = FALSE)
+      write.table(output_row, "analyses/interactions_v_traits/structural_coexistence/calc_comm_attributes/4_sp_network_metrics_20241007.csv", append = TRUE, row.names = FALSE, sep = ",", col.names = FALSE)
       
       
     }

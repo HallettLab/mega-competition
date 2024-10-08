@@ -103,9 +103,21 @@ skew = function(alpha) {
 
 
 # Modularity ####
-test = graph_from_adjacency_matrix(tmp_alphas)
+mod = function(alpha) {
+  
+  g = graph_from_adjacency_matrix(tmp_alphas, weighted = TRUE, mode = 'directed')
+  mod = cluster_spinglass(g, spins = 100, implementation = c("neg"))
+  mod_value = modularity(mod)
+  
+  return(mod_value)
+  
+}
 
-modularity(x = , membership = ,)
+
+
+#test = graph_from_adjacency_matrix(tmp_alphas)
+
+#modularity(x = , membership = ,)
 
 ## x = input graph (the matrix/network)
 ## membership vector fo the community structure; one value for each vertex
@@ -116,6 +128,9 @@ modularity(x = , membership = ,)
 ## Bimler et al. 2024, supplementary info page 15
     ## uses modularity from Traag & Bruggeman 2009
     ## uses cluster_spinglass() function from igraph, setting implementation to 'neg'
+
+
+
 
 
 # Intransitivity ####
