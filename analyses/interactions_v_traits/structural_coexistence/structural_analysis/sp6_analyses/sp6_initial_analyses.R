@@ -4,9 +4,10 @@
 
 # Set up ####
 file_path = "analyses/interactions_v_traits/structural_coexistence/structural_analysis/sp6_analyses/"
-source(paste0(file_path, "sp6_prep_data_for_vis.R"))
-
 fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sept_2024/sp6/"
+
+## read in prepped data
+source(paste0(file_path, "sp6_prep_data_for_vis.R"))
 
 # Visualize ####
 ## RAINFALL ####
@@ -361,9 +362,109 @@ ggarrange(cpdpf, cpdnd, cpdfd,
 ggsave(paste0(fig_loc, "indirect_interactions.png"), width = 8, height = 6)
 
 ## Network Metrics ####
+### dominance ####
+ndom = ggplot(sp6sum, aes(x=mean_dom, y=mean_niche)) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Dominance") +
+  ylab("Mean Niche Differences")
+
+fdom = ggplot(sp6sum, aes(x=mean_dom, y=mean_fitness)) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle(" ") +
+  xlab("Mean Dominance") +
+  ylab("Mean Fitness Differences")
+
+domhist = ggplot(sp6sum, aes(x=mean_dom)) +
+  geom_histogram() +
+  xlab("Mean Dominance") +
+  ylab("Count")
+
+ggarrange(ndom, fdom, domhist, ncol = 1, nrow = 3, labels = "AUTO")
+
+ggsave(paste0(fig_loc, "netmet_dom_ndiff_fdiff_hist.png"), width = 5, height = 7.5)
+
 ### asymmetry ####
+nasym = ggplot(sp6sum, aes(x=mean_asym, y=mean_niche)) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Asymmetry") +
+  ylab("Mean Niche Differences")
+
+fasym = ggplot(sp6sum, aes(x=mean_asym, y=mean_fitness)) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Asymmetry") +
+  ylab("Mean Fitness Differences")
+
+asymhist = ggplot(sp6sum, aes(x=mean_asym)) +
+  geom_histogram()  +
+  xlab("Mean Asymmetry") +
+  ylab("Count")
+
+ggarrange(nasym, fasym, asymhist, ncol = 1, nrow = 3, labels = "AUTO")
+
+ggsave(paste0(fig_loc, "netmet_asym_ndiff_fdiff_hist.png"), width = 5, height = 7.5)
 
 ### skewness ####
+nskew = ggplot(sp6sum, aes(x=mean_skew, y=mean_niche)) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Skewness") +
+  ylab("Mean Niche Differences")
+
+fskew = ggplot(sp6sum, aes(x=mean_skew, y=mean_fitness)) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Skewness") +
+  ylab("Mean Fitness Differences")
+
+skewhist = ggplot(sp6sum, aes(x=mean_skew)) +
+  geom_histogram()  +
+  xlab("Mean Skewness") +
+  ylab("Count")
+
+ggarrange(nskew, fskew, skewhist, ncol = 1, nrow = 3, labels = "AUTO")
+
+ggsave(paste0(fig_loc, "netmet_skew_ndiff_fdiff_hist.png"), width = 5, height = 7.5)
+
+### modularity ####
+nmod = ggplot(sp6sum, aes(x=mean_mod, y=mean_niche)) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Modularity") +
+  ylab("Mean Niche Differences")
+
+fmod = ggplot(sp6sum, aes(x=mean_mod, y=mean_fitness)) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Modularity") +
+  ylab("Mean Fitness Differences")
+
+modhist = ggplot(sp6sum, aes(x=mean_mod)) +
+  geom_histogram()  +
+  xlab("Mean Modularity") +
+  ylab("Count")
+
+ggarrange(nmod, fmod, modhist, ncol = 1, nrow = 3, labels = "AUTO")
+
+ggsave(paste0(fig_loc, "netmet_mod_ndiff_fdiff_hist.png"), width = 5, height = 7.5)
 
 # Summary ####
 sp6fsum = sp6sum %>%

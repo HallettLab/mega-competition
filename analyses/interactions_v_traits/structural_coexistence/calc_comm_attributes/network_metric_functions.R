@@ -1,3 +1,4 @@
+## Script Purpose: set up functions to calculate network metrics
 
 # Set up ####
 library(tidyverse)
@@ -12,6 +13,8 @@ library(bipartite)
 ## D = diagonal dominance of the matrix
 
 ## metric taken from Daniel et al. 2024
+
+## Dominance = 1/n * sum( abs(alpha_ii) - sum(alpha_ij) )
 
 dominance <- function(alpha){
   
@@ -31,7 +34,9 @@ dominance <- function(alpha){
            sp2 = abs(test[,3]), ## get abs value
            sp3 = abs(test[,4]), ## get abs value
            sp4 = abs(test[,5]), ## get abs value
-           d2=rowSums(across(sp1:sp4)), ## sum all alpha_ij for a species
+           sp5 = abs(test[,6]),
+           sp6 = abs(test[,7]),
+           d2=rowSums(across(sp1:sp6)), ## sum all alpha_ij for a species
            dom = d - d2) ## calc dominance for a species
   
   return(mean(test2$dom))
@@ -49,11 +54,11 @@ dominance <- function(alpha){
 ## Important Q ####
 ## I wonder if we should also take the abs of the difference before summing together; otherwise the directionality of the pairs might matter?
 
-asymmetry <- function(alpha, sp1, sp2, sp3, sp4, n){
+asymmetry <- function(alpha, sp1, sp2, sp3, sp4, sp5, sp6, n){
 
   ## set alpha_ii's to 0 in the matrix to avoid messing up future calcs
   diag(alpha) = 0
-    
+
   ## pull out pairwise interaction coefficients
   a_12 = alpha[sp1, sp2]  
   a_21 = alpha[sp2, sp1]
@@ -63,23 +68,65 @@ asymmetry <- function(alpha, sp1, sp2, sp3, sp4, n){
     
   a_14 = alpha[sp1, sp4]
   a_41 = alpha[sp4, sp1]
+  
+  a_15 = alpha[sp1, sp5]
+  a_51 = alpha[sp5, sp1]
+  
+  a_16 = alpha[sp1, sp6]
+  a_61 = alpha[sp6, sp1]
     
   a_23 = alpha[sp2, sp3]
   a_32 = alpha[sp3, sp2]
     
   a_24 = alpha[sp2, sp4]
   a_42 = alpha[sp4, sp2]
+  
+  a_25 = alpha[sp2, sp5]
+  a_52 = alpha[sp5, sp2]
+  
+  a_26 = alpha[sp2, sp6]
+  a_62 = alpha[sp6, sp2]
     
   a_34 = alpha[sp3, sp4]
   a_43 = alpha[sp4, sp3]
+  
+  a_35 = alpha[sp3, sp5]
+  a_53 = alpha[sp5, sp3]
+  
+  a_36 = alpha[sp3, sp6]
+  a_63 = alpha[sp6, sp3]
+  
+  a_45 = alpha[sp4, sp5]
+  a_54 = alpha[sp5, sp4]
+  
+  a_46 = alpha[sp4, sp6]
+  a_64 = alpha[sp6, sp4]
+  
+  a_56 = alpha[sp5, sp6]
+  a_65 = alpha[sp6, sp5]
     
   ## calculate the asymmetry
-  A = sum( (abs(a_12) - abs(a_21)), 
-        (abs(a_13) - abs(a_31)),
-        (abs(a_14) - abs(a_41)),
-        (abs(a_23) - abs(a_32)),
-        (abs(a_24) - abs(a_42)),
-        (abs(a_34) - abs(a_43)) ) / n
+  A = sum( abs(a_12 - a_21), 
+           abs(a_13 - a_31),
+           abs(a_14 - a_41),
+           abs(a_15 - a_51),
+           abs(a_16 - a_61),
+           
+           abs(a_23 - a_32),
+           abs(a_24 - a_42),
+           abs(a_25 - a_52),
+           abs(a_26 - a_62),
+           
+           abs(a_34 - a_43),
+           abs(a_35 - a_53),
+           abs(a_36 - a_63),
+           
+           abs(a_45 - a_54),
+           abs(a_46 - a_64),
+           
+           abs(a_56 - a_65)
+           
+        ) / n
    
     return(A)
     
@@ -91,7 +138,9 @@ skew = function(alpha) {
   
   diag(alpha) = NA
   
-  sk = skewness(c(alpha[,1], alpha[,2], alpha[,3], alpha[,4]), na.rm = TRUE)
+  sk = skewness(c(alpha[,1], alpha[,2], alpha[,3], alpha[,4], alpha[,5], alpha[,6]), na.rm = TRUE)
+  
+  #skewness(alpha)
   
   return(sk)
   

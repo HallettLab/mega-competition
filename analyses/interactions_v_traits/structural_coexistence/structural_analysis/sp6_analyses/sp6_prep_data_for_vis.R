@@ -1,6 +1,7 @@
 # Set up ####
 ## load packages
 library(ggpubr)
+library(tidyverse)
 
 ## set file paths
 file_path = "analyses/interactions_v_traits/structural_coexistence/"
@@ -17,6 +18,7 @@ fdiv6 = read.csv(paste0(file_path, "calc_comm_attributes/fdiv/sp6_fdiv.csv")) %>
 cwm6 = read.csv(paste0(file_path, "calc_comm_attributes/cwm/sp6_cwm.csv"))
 
 ### network metrics
+source(paste0(file_path, "structural_analysis/sp6_analyses/sp6_clean_network_metrics.R"))
 
 ## set plot theme
 theme_set(theme_classic())
@@ -31,12 +33,16 @@ calcSE<-function(x){
 ## join fdiv + cwm
 traitdat = left_join(cwm6, fdiv6, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "richness"))
 
-sp6trait = left_join(sp6_clean, traitdat, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
+## join traits & netmets
+preds = left_join(sp6net, traitdat, by = c("ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
+
+## join predictors with structural metrics
+sp6trait = left_join(sp6_clean, preds, by = c("rainfall", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL"))
 
 sp6trait$niche_diff = as.numeric(sp6trait$niche_diff)
 
 sp6sum = sp6trait %>%
-  group_by(comp, rainfall, fdiv, cwm.height, cwm.ldmc, cwm.sla, cwm.rmf, cwm.crsl, cwm.pf, cwm.d,
+  group_by(comp, rainfall, fdiv, cwm.height, cwm.ldmc, cwm.sla, cwm.rmf, cwm.crsl, cwm.pf, cwm.d, mean_dom, se_dom, mean_asym, se_asym, mean_skew, se_skew, mean_mod, se_mod,
            ACAM, AMME, ANAR, BRHO, BRNI, CESO, GITR, LENI, LOMU, MAEL, MICA, PLER, PLNO, TACA, THIR, TWIL) %>%
   summarise(num_feas = sum(feasibility),
             prop_feasible = num_feas/n(),

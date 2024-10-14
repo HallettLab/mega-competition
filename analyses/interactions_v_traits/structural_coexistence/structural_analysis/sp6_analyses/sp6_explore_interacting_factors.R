@@ -80,9 +80,10 @@ ggsave(paste0(fig_loc, "cwm_ag_rainfall_ndiff_fdiff.png"), width = 10, height = 
 
 
 ### BG Traits ####
+#### niche diffs ####
 nrr = ggplot(sp6sum, aes(x=cwm.rmf, y=mean_niche, color = rainfall)) +
   geom_point(alpha = 0.25, size = 0.75) +
-  geom_smooth(method = "lm",  size = 1.5) +
+  geom_smooth(method = "lm",  linewidth = 1.5) +
   ggtitle(" ") +
   ylab(" ") +
   xlab("CWM RMF")+
@@ -90,15 +91,16 @@ nrr = ggplot(sp6sum, aes(x=cwm.rmf, y=mean_niche, color = rainfall)) +
 
 ncr = ggplot(sp6sum, aes(x=cwm.crsl, y=mean_niche, color = rainfall)) +
   geom_point(alpha = 0.25, size = 0.75) +
-  geom_smooth(method = "lm",  size = 1.5) +
+  geom_smooth(method = "lm",  linewidth = 1.5) +
   ggtitle("6 Species") +
   ylab("Niche Differences") +
   xlab("CWM CRSL")+
-  scale_color_manual(values = c("#66C5CC","#F89C74"))
+  scale_color_manual(values = c("#66C5CC","#F89C74")) +
+  labs(color = "Rainfall")
 
 npr = ggplot(sp6sum, aes(x=cwm.pf, y=mean_niche, color = rainfall)) +
   geom_point(alpha = 0.25, size = 0.75) +
-  geom_smooth(method = "lm",  size = 1.5) +
+  geom_smooth(method = "lm",  linewidth = 1.5) +
   ggtitle(" ") +
   ylab("Niche Differences") +
   xlab("CWM PF")+
@@ -106,7 +108,7 @@ npr = ggplot(sp6sum, aes(x=cwm.pf, y=mean_niche, color = rainfall)) +
 
 ndr = ggplot(sp6sum, aes(x=cwm.d, y=mean_niche, color = rainfall)) +
   geom_point(alpha = 0.25, size = 0.75) +
-  geom_smooth(method = "lm",  size = 1.5) +
+  geom_smooth(method = "lm",  linewidth = 1.5) +
   ggtitle(" ") +
   ylab(" ") +
   xlab("CWM Diameter") +
@@ -116,9 +118,7 @@ ggarrange(ncr, nrr, npr, ndr, nrow = 2, ncol = 2, common.legend = T, legend = "b
 
 ggsave(paste0(fig_loc, "cwm_bg_rainfall_ndiff.png"), width = 7, height = 6)
 
-
-
-#### BG traits ####
+#### fitness diffs ####
 frr = ggplot(sp6sum, aes(x=cwm.rmf, y=mean_fitness, color = rainfall)) +
   geom_point(alpha = 0.25, size = 0.75) +
   geom_smooth(method = "lm",  size = 1.5) +
@@ -184,7 +184,6 @@ fdivfdr = ggplot(sp6sum, aes(x=fdiv, y=mean_fitness, color = rainfall)) +
   xlab("Functional Diversity") +
   ggtitle(" ") +
   scale_color_manual(values = c("#66C5CC","#F89C74"))
-
 
 ggarrange(fdivndr, fdivfdr, ncol = 2, nrow = 1, labels = "AUTO", common.legend = T, legend = "bottom")
 
@@ -278,3 +277,4 @@ ggplot(sp6sum, aes(x=as.factor(num.inv), y=mean_cpo)) +
   geom_boxplot(width = 0.1) +
   stat_summary(fun.y=median, geom="point", size=3) +
   ggtitle(" ")
+
