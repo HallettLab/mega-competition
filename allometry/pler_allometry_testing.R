@@ -85,9 +85,9 @@ summary(inflorseeds)
   #geom_smooth(method = "lm", formula = y ~ poly(x,2))
 
 ## *Model 
-
-#bioseeds <- lm(seed.num~total.biomass.g, data = pler_allo)
-#summary(bioseeds)
+### tot bio for Jake/CAREER ####
+bioseeds <- lm(seed.num~total.biomass.g, data = pler_allo)
+summary(bioseeds)
 # y = 3.143 + 346.885x
 ## we can't use this relationship as we haven't measured total biomass for all fo the samples...
 
@@ -101,6 +101,25 @@ annotate_figure(plot, top = text_grob("PLER",
                                       color = "black", face = "bold", size = 14))
 
 ggsave("allometry/methods_figures/PLER.png", height = 3, width = 6.5)
+
+## version for Jake/CAREER ####
+totbio1 <- ggplot(pler_allo, aes(x=total.biomass.g)) +
+  geom_histogram() +
+  xlab("Aboveground Biomass (g)") +
+  ylab("Count")
+
+totbio2 <- ggplot(pler_allo, aes(x=total.biomass.g, y=seed.num)) +
+  geom_point() +
+  geom_smooth(method = "lm", alpha = 0.25, linewidth = 0.75, formula = y ~ x) +
+  xlab("Aboveground Biomass (g)") +
+  ylab("Seed Number")
+
+plot <- ggarrange(totbio1, totbio2, labels = "AUTO", ncol = 2, nrow = 1)
+
+annotate_figure(plot, top = text_grob("PLER", 
+                                      color = "black", face = "bold", size = 14))
+
+ggsave("allometry/methods_figures/PLER_career_version.png", height = 3, width = 6.5)
 
 # Save Output ####
 ## save the model outputs
@@ -124,4 +143,4 @@ PLER.allo.output <- data.frame(Species = "PLER",
            viability_D_se = NA)
 
 # Clean Env ####
-rm(list = c("allo_lead", "pler_allo","inflorseeds", "final1", "final2", "plot"))
+rm(list = c("allo_lead", "pler_allo","inflorseeds", "final1", "final2", "plot", "bioseeds", "totbio1", "totbio2"))
