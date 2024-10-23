@@ -35,4 +35,4 @@ allo.df <- do.call("rbind", list(ACAM.allo.output, ANAR.allo.output, AMME.allo.o
 
 
 ## clean up env
-rm(list = c("ACAM.allo.output", "ANAR.allo.output", "AMME.allo.output", "BRHO.allo.output", "BRNI.allo.output", "CESO.allo.output", "CLPU.allo.output", "GITR.allo.output", "LENI.allo.output", "LOMU.allo.output", "MAEL.allo.output", "MICA.allo.output", "PLER.allo.output", "PLNO.allo.output", "TACA.allo.output", "THIR.allo.output", "TWIL.allo.output"))
+rm(list = c("ACAM.allo.output", "ANAR.allo.output", "AMME.allo.output", "BRHO.allo.output", "BRNI.allo.output", "CESO.allo.output", "CLPU.allo.output", "GITR.allo.output", "LENI.allo.output", "LOMU.allo.output", "MAEL.allo.output", "MICA.allo.output", "PLER.allo.output", "PLER.allo.output.CAREER", "PLNO.allo.output", "TACA.allo.output", "THIR.allo.output", "TWIL.allo.output"))

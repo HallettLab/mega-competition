@@ -142,5 +142,25 @@ PLER.allo.output <- data.frame(Species = "PLER",
            viability_D = NA,
            viability_D_se = NA)
 
+## for Jake/CAREER ####
+PLER.allo.output.CAREER <- data.frame(Species = "PLER", 
+                               intercept = 0, 
+                               intercept_pval = NA, 
+                               intercept_se = NA, 
+                               
+                               slope = summary(bioseeds)$coefficients[2,1], 
+                               slope_pval = summary(bioseeds)$coefficients[2,4], 
+                               slope_se = summary(bioseeds)$coefficients[2,2], 
+                               
+                               seeds_C = NA,
+                               seeds_C_se = NA,
+                               seeds_D = NA,
+                               seeds_D_se = NA, 
+                               
+                               viability_C = NA,
+                               viability_C_se = NA,
+                               viability_D = NA,
+                               viability_D_se = NA)
+
 # Clean Env ####
 rm(list = c("allo_lead", "pler_allo","inflorseeds", "final1", "final2", "plot", "bioseeds", "totbio1", "totbio2"))
