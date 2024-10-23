@@ -10,6 +10,16 @@ fig_loc = "analyses/interactions_v_traits/structural_coexistence/prelim_figs/sep
 source(paste0(file_path, "sp6_prep_data_for_vis.R"))
 
 # Visualize ####
+## Niche vs Fitness ####
+ggplot(sp6sum, aes(x=mean_niche, y=mean_fitness)) +
+  geom_point() +
+  facet_wrap(~rainfall) +
+  geom_smooth(method = "lm") +
+  xlab("Niche Differences") +
+  ylab("Fitness Differences")
+
+ggsave(paste0(fig_loc, "niche_v_fitness.png"), width = 6, height = 3)
+
 ## RAINFALL ####
 pf = ggplot(sp6sum, aes(x=rainfall, y=prop_feasible)) +
   geom_jitter(alpha = 0.15) +
@@ -72,59 +82,49 @@ ndiff_inv = ggplot(sp6sum, aes(x=as.factor(num.inv), y=mean_niche)) +
   theme(text = element_text(size = 15)) +
   geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
   geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+  stat_summary(fun.y=median, geom="point", size=3) +
+  facet_wrap(~rainfall)
 
 fdiff_inv = ggplot(sp6sum, aes(x=as.factor(num.inv), y=mean_fitness)) +
   geom_jitter(alpha = 0.15) +
   ylab("Fitness Differences") +
-  xlab("Num. Invasive Species") +
+  xlab("Number Invasive Species") +
   theme(text = element_text(size = 15)) +
   geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
   geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+  stat_summary(fun.y=median, geom="point", size=3) +
+  facet_wrap(~rainfall)
 
-### Num Native ####
-ndiff_nat = ggplot(sp6sum, aes(x=as.factor(num.nat), y=mean_niche)) +
-  geom_jitter(alpha = 0.15) +
-  ylab(" ") +
-  xlab(" ") +
-  theme(text = element_text(size = 15)) +
-  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
-  geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+ggarrange(ndiff_inv, 
+          fdiff_inv, ncol = 1, nrow = 2)
 
-fdiff_nat = ggplot(sp6sum, aes(x=as.factor(num.nat), y=mean_fitness)) +
-  geom_jitter(alpha = 0.15) +
-  ylab(" ") +
-  xlab("Num. Native Species") +
-  theme(text = element_text(size = 15)) +
-  geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
-  geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+ggsave(paste0(fig_loc, "inv_rainfall_ndiff_fdiff.png"), width = 7, height = 6)
+
 
 ### Num Legumes ####
 ndiff_leg = ggplot(sp6sum, aes(x=as.factor(num.legume), y=mean_niche)) +
   geom_jitter(alpha = 0.15) +
-  ylab(" ") +
+  ylab("Niche Differences") +
   xlab(" ") +
   theme(text = element_text(size = 15)) +
   geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
   geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+  stat_summary(fun.y=median, geom="point", size=3) +
+  facet_wrap(~rainfall)
 
 fdiff_leg = ggplot(sp6sum, aes(x=as.factor(num.legume), y=mean_fitness)) +
   geom_jitter(alpha = 0.15) +
-  ylab(" ") +
-  xlab("Num. Legumes") +
+  ylab("Fitness Differences") +
+  xlab("Number of Legumes") +
   theme(text = element_text(size = 15)) +
   geom_violin(fill = adjustcolor("white", alpha.f = 0.5), size = 0.7) +
   geom_boxplot(width = 0.1) +
-  stat_summary(fun.y=median, geom="point", size=3)
+  stat_summary(fun.y=median, geom="point", size=3) +
+  facet_wrap(~rainfall)
 
-ggarrange(ndiff_inv, ndiff_nat, ndiff_leg, 
-          fdiff_inv, fdiff_nat, fdiff_leg, ncol = 3, nrow = 2)
+ggarrange(ndiff_leg, fdiff_leg, ncol = 1, nrow = 2)
 
-ggsave(paste0(fig_loc, "originxFG_ndiff_fdiff.png"), width = 9, height = 6)
+ggsave(paste0(fig_loc, "legume_rainfall_ndiff_fdiff.png"), width = 7, height = 6)
 
 ## FDIV ####
 fdivpf = ggplot(sp6sum, aes(x=fdiv, y=prop_feasible)) +
@@ -448,6 +448,24 @@ nmod = ggplot(sp6sum, aes(x=mean_mod, y=mean_niche)) +
   ggtitle("6 Species") +
   xlab("Mean Modularity") +
   ylab("Mean Niche Differences")
+
+ggplot(sp6sum, aes(x=mean_mod, y=mean_niche, color = as.factor(num.legume))) +
+  geom_point() +
+  facet_wrap(~rainfall, scales = "free") +
+  geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Modularity") +
+  ylab("Mean Niche Differences")
+
+ggplot(sp6sum, aes(x=mean_mod, fill = as.factor(num.legume), color = as.factor(num.legume))) +
+  geom_histogram(alpha = 0.25) +
+  facet_grid(as.factor(num.legume)~rainfall) +
+  #geom_smooth(method = "lm") +
+  ggtitle("6 Species") +
+  xlab("Mean Modularity") +
+  ylab("Count") +
+  labs(fill = "Num Legumes", color = "Num Legumes")
+ggsave(paste0(fig_loc, "mod_hist_num_legumes.png"), width = 6, height = 6)
 
 fmod = ggplot(sp6sum, aes(x=mean_mod, y=mean_fitness)) +
   geom_point() +
