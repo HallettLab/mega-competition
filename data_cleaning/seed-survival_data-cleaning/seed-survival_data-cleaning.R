@@ -49,3 +49,5 @@ surv.sum <- surv %>%
 
 
 rm(list = c("rm", "surv"))
+
+#write.csv(surv.sum, "data/seed_survival_for_Jake_20241115.csv", row.names = F)

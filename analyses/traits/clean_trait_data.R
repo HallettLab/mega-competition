@@ -114,12 +114,35 @@ MC.pca.ID <- cbind(temp, MC.pca$x[,1:7])
 autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "origin", size = 1.75, loadings.colour = "black",
          loadings.label.colour="black", loadings.label.repel=TRUE) +
   theme_classic() +
-  scale_color_manual(values = c("#5D69B1", "#E58606")) +
+  scale_color_manual(values = c("#99C945", "#CC61B0")) +
   theme(
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
-    legend.title = element_blank())
+    legend.title = element_blank()) +
+  theme(text = element_text(size = 15))
 
-ggsave("analyses/traits/preliminary_figures/pca_updatedheight_fg.png", width = 7, height = 5)
+ggsave("analyses/traits/preliminary_figures/pca_CNGA.png", width = 7, height = 5)
+
+autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "fg_origin", size = 2, loadings.colour = "black",
+         loadings.label.colour="black", loadings.label.repel=TRUE) +
+  theme_classic() +
+  scale_color_manual(values = c("#99C945", "#CC61B0", "#E58606", "#5D69B1", "#24796C")) +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank()) +
+  theme(text = element_text(size = 15))
+ggsave("analyses/traits/preliminary_figures/pca_fg_origin.png", width = 7, height = 5)
+
+#E58606,#5D69B1,#52BCA3,#99C945,#CC61B0,#24796C,#DAA51B,#2F8AC4,#764E9F,#ED645A,#CC3A8E,#A5AA99
+autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = T, label = F, col = "fg", size = 2, loadings.colour = "black",
+         loadings.label.colour="black", loadings.label.repel=TRUE) +
+  theme_classic() +
+  scale_color_manual(values = c("#99C945", "#CC61B0", "#E58606", "#5D69B1", "#24796C")) +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1),
+    legend.title = element_blank()) +
+  theme(text = element_text(size = 15))
+
+ggsave("analyses/traits/preliminary_figures/pca_fg.png", width = 7, height = 5)
 
 ### POSTER FIG ####
 autoplot(MC.pca, x = 1, y = 2, data = MC.pca.ID, frame = F, loadings = T, loadings.label = F, label = F, col = "origin", size = 3, loadings.colour = "black") +

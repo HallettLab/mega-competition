@@ -87,12 +87,23 @@ final2 <- ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
  # geom_point() +
   #geom_smooth(method = "lm", formula = y ~ log(x))
 
+ggplot(brho_allo, aes(x=total.biomass.g, y=seed.num)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+ggplot(brho_allo, aes(x=inflor.g, y=seed.num)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
 
 ## Model ####
 brho_fallo_rel <- lm(seed.num~inflor.g, data = brho_allo)
 summary(brho_fallo_rel)
 ## slope = 951.7297
 # y = 0.7543 + 951.7297x
+
+brho_tb_allo_rel <- lm(seed.num~total.biomass.g, data = brho_allo)
+summary(brho_tb_allo_rel)
 
 # inflorseeds2 <- lm(seed.num ~ inflor.g + I(inflor.g^2), data = brho_allo)
 # summary(inflorseeds2)
@@ -127,5 +138,24 @@ BRHO.allo.output <- data.frame(Species = "BRHO",
            viability_D = NA,
            viability_D_se = NA)
 
+BRHO.tb.allo.output <- data.frame(Species = "BRHO", 
+                               intercept = 0, 
+                               intercept_pval = NA, 
+                               intercept_se = NA, 
+                               
+                               slope = brho_tb_allo_rel$coefficients[2], 
+                               slope_pval = summary(brho_tb_allo_rel)$coefficients[2,4], 
+                               slope_se = summary(brho_tb_allo_rel)$coefficients[2,2], 
+                               
+                               seeds_C = NA,
+                               seeds_C_se = NA,
+                               seeds_D = NA,
+                               seeds_D_se = NA, 
+                               
+                               viability_C = NA,
+                               viability_C_se = NA,
+                               viability_D = NA,
+                               viability_D_se = NA)
+
 # Clean Env ####
-rm(allo_lead, brho_allo, date, brho_fallo_rel, final1, final2, plot)
+rm(allo_lead, brho_allo, date, brho_fallo_rel, final1, final2, plot, brho_tb_allo_rel)

@@ -24,7 +24,8 @@ lambdas_sum <- lambdas %>%
   summarise(mean_parameter = mean(lambda),
             median_parameter = median(lambda),
             hdi_lo = hdi(lambda, ci = 0.95)$CI_low, 
-            hdi_hi = hdi(lambda, ci = 0.95)$CI_high) %>%
+            hdi_hi = hdi(lambda, ci = 0.95)$CI_high,
+            sd_lambda = sd(lambda)) %>%
   mutate(parameter_type = "lambda")
 
 # Format Other params ####
@@ -92,12 +93,20 @@ alphas <- ricker_posteriors2 %>%
   summarise(mean_parameter = mean(alpha_value), 
             median_parameter = median(alpha_value),
             hdi_lo = hdi(alpha_value, ci = 0.95)$CI_low, 
-            hdi_hi = hdi(alpha_value, ci = 0.95)$CI_high) %>%
+            hdi_hi = hdi(alpha_value, ci = 0.95)$CI_high,
+            sd_alpha = sd(alpha_value)) %>%
   mutate(hdi_width = abs(hdi_hi - hdi_lo)) %>%
   filter(hdi_width < 1)
 
 ## filter based on the width of hdi, not based on reps
 
+## select brho to find prior info for GH experiment
+
+GHfacil_priors = alphas %>%
+  filter(species == "BRHO", parameter_type == "alpha_brho_c")
+## mean = 0.05728218; sd = 0.01087567
+GHfacil_priors = alphas %>%
+  filter(species == "ACAM", parameter_type == "alpha_brho_c")
 #%>%
   #mutate(parameter_type = alpha_name) %>%
   #select(-alpha_name) %>%

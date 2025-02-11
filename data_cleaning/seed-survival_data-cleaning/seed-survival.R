@@ -1,4 +1,7 @@
 # Seed survival
+
+library(ggfortify)
+
 ## create a function to calculate standard error
 calcSE<-function(x){
   x2<-na.omit(x)
@@ -98,8 +101,6 @@ summary(pca)
 
 all.pca <- cbind(trait, pca$x[,1:4])
 all.pca$FunGroup <- paste(all.pca$nat.inv, all.pca$group, sep = " ")
-
-library(ggfortify)
 
 autoplot(pca, x = 1, y = 2, data = all.pca, frame = F, loadings = T, loadings.label = T, label = T, col = "FunGroup", size = 1) +
   theme_classic() +
