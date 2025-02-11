@@ -6,6 +6,8 @@ library(RcppAlgos)
 ## load trait data
 source("analyses/traits/clean_trait_data.R")
 
+path = "analyses/interactions_v_traits/structural_coexistence/calc_comm_attributes/cwm/"
+
 # Prep Trait Data ####
 ## select traits
 all.traits <- c("Height_cm", "LDMC", "SLA.cm2.g", "RMF",  "Coarse.root.specific.length.cm.g", "Proportion.fine.roots", "Coarse.root.diameter.mm")
@@ -34,7 +36,9 @@ trait_sum = traits %>%
 all.sp = unique(trait_sum$phyto)
 
 ## create vector of richness levels
-richness = c(4:16)
+#richness = c(4:16)
+
+richness = 6
 
 ## create empty list
 cwm_list = list()
@@ -49,10 +53,10 @@ for(r in 1:length(richness)) {
   comp = data.frame(comboGeneral(all.sp, m=rich, freqs = 1))
 
   ## create empty output df
-  cwm_all = data.frame(matrix(nrow = nrow(comp), ncol = 24))
+  cwm_all = data.frame(matrix(nrow = nrow(comp), ncol = 31))
   
   ## rename columns
-  names(cwm_all) = c("cwm.height", "cwm.ldmc", "cwm.sla", "cwm.rmf", "cwm.crsl", "cwm.pf", "cwm.d", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "richness")
+  names(cwm_all) = c("cwm.height", "cwm.ldmc", "cwm.sla", "cwm.rmf", "cwm.crsl", "cwm.pf", "cwm.d", "cv.height", "cv.ldmc", "cv.sla", "cv.rmf", "cv.crsl", "cv.pf", "cv.d", "ACAM", "AMME", "ANAR", "BRHO", "BRNI", "CESO", "GITR", "LENI", "LOMU", "MAEL", "MICA", "PLER", "PLNO", "TACA", "THIR", "TWIL", "richness")
   
   ## loop thru each composition
   for(c in 1:nrow(comp)) {
@@ -63,13 +67,25 @@ for(r in 1:length(richness)) {
     ## calc cwm traits
     cwm = trait_sum %>%
       filter(phyto %in% cc) %>%
+      
+      ## mean traits
       summarise(cwm.height = mean(m.height),
                 cwm.ldmc = mean(m.ldmc),
                 cwm.sla = mean(m.sla),
                 cwm.rmf = mean(m.rmf),
                 cwm.crsl = mean(m.crsl),
                 cwm.pf = mean(m.pf),
-                cwm.d = mean(m.d)) %>%
+                cwm.d = mean(m.d),
+                
+                ## cv of traits
+                cv.height = sd(m.height)/mean(m.height),
+                cv.ldmc = sd(m.ldmc)/mean(m.ldmc),
+                cv.sla = sd(m.sla)/mean(m.sla),
+                cv.rmf = sd(m.rmf)/mean(m.rmf),
+                cv.crsl = sd(m.crsl)/mean(m.crsl),
+                cv.pf = sd(m.pf)/mean(m.pf),
+                cv.d = sd(m.d)/mean(m.d)) %>%
+      
       ## change sp comp to 1's and 0's for P/A
       mutate(ACAM = ifelse("ACAM" %in% cc, 1, 0), 
              AMME = ifelse("AMME" %in% cc, 1, 0),
@@ -105,7 +121,7 @@ path = "analyses/interactions_v_traits/structural_coexistence/calc_comm_attribut
 
 write.csv(cwm_list[[1]], paste0(path, "sp4_cwm.csv"), row.names = FALSE)
 write.csv(cwm_list[[2]], paste0(path, "sp5_cwm.csv"), row.names = FALSE)
-write.csv(cwm_list[[3]], paste0(path, "sp6_cwm.csv"), row.names = FALSE)
+#write.csv(cwm_list[[1]], paste0(path, "sp6_cwm_cv.csv"), row.names = FALSE)
 write.csv(cwm_list[[4]], paste0(path, "sp7_cwm.csv"), row.names = FALSE)
 write.csv(cwm_list[[5]], paste0(path, "sp8_cwm.csv"), row.names = FALSE)
 write.csv(cwm_list[[6]], paste0(path, "sp9_cwm.csv"), row.names = FALSE)
